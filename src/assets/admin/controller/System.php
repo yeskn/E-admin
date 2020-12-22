@@ -33,7 +33,7 @@ class System extends BaseAdmin
         $form->text('web_name', '网站名称')->inline()->required();
         $form->text('web_miitbeian', '网站备案号')->inline()->required();
         $form->text('web_copyright', '网站版权信息')->inline()->required();
-        return $this->view($form);
+        return $form;
     }
     /**
      * 系统配置信息

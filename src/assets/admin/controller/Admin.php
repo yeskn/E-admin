@@ -7,8 +7,6 @@
  */
 
 namespace app\admin\controller;
-
-
 use Eadmin\controller\BaseAdmin;
 use Eadmin\facade\Button;
 use Eadmin\form\Form;
@@ -19,7 +17,6 @@ use Eadmin\model\AdminModel;
 use Eadmin\model\SystemAuth;
 use Eadmin\service\AdminService;
 use Eadmin\service\TokenService;
-use Eadmin\tools\Data;
 
 /**
  * 系统用户管理
@@ -60,7 +57,6 @@ class Admin extends BaseAdmin
             $action->hideDetail();
             $button = Button::create('重置密码', 'primary', 'small', 'el-icon-key', true)
                 ->href(url('resetPassword', ['id' => $data['id']]), 'modal');
-
             $action->prepend($button);
 
         });
@@ -68,7 +64,70 @@ class Admin extends BaseAdmin
         $grid->deling(function ($ids, $trueDelete) {
             if (!$trueDelete) {
                 if ($ids === true || in_array(config('admin.admin_auth_id'), $ids)) {
-                    $this->errorCode(999, '超级管理员不可以删除噢!');
+                    eadmin_msg_error('超级管理员不可以删除噢!');
+                }
+            }
+        });
+        //更新前回调
+        $grid->updateing(function ($ids, $data) {
+            if (in_array(config('admin.admin_auth_id'), $ids)) {
+                if ($data['status'] == 0) {
+                    eadmin_msg_warn('超级管理员不可以禁用噢!!');
+                }
+            }
+        });
+        $grid->filter(function (Filter $filter) {
+            $filter->like('username', '用户账号');
+            $filter->like('phone', '手机号');
+            $filter->eq('status', '账号状态')->select([
+                1 => '正常',
+                0 => '已禁用'
+            ]);
+            $filter->dateRange('create_time', '创建时间');
+        });
+        $grid->quickSearch();
+        return $grid;
+    }
+    /**
+     * 系统用户列表
+     * @auth true
+     * @login true
+     * @method get
+     */
+    public function test()
+    {
+        $grid = new Grid(new AdminModel());
+        $grid->indexColumn();
+        $grid->setTitle('系统用户');
+        $grid->userInfo('avatar', 'nickname', '头像');
+        $grid->column('username', '用户账号')->display(function ($val, $data) {
+            if ($data['id'] == config('admin.admin_auth_id')) {
+                return "{$val} <el-badge value=\"超级管理员\" type=\"primary\" style='margin-top: 10px;' />";
+            } else {
+                return $val;
+            }
+        });
+        $grid->column('phone', '手机号');
+        $grid->column('mail', '邮箱');
+        $grid->column('status', '账号状态')->switch([1 => '正常'], [0 => '已禁用']);
+        $grid->column('create_time', '创建时间');
+        $grid->setFormDialog();
+        $grid->actions(function (Actions $action, $data) {
+            if ($data['id'] == config('admin.admin_auth_id')) {
+                $action->hideDel();
+            }
+            $action->width(300);
+            $action->hideDetail();
+            $button = Button::create('重置密码', 'primary', 'small', 'el-icon-key', true)
+                ->href(url('resetPassword', ['id' => $data['id']]), 'modal');
+            $action->prepend($button);
+
+        });
+        //删掉前回调
+        $grid->deling(function ($ids, $trueDelete) {
+            if (!$trueDelete) {
+                if ($ids === true || in_array(config('admin.admin_auth_id'), $ids)) {
+                    $this->errorCode(999, '超级管理员不可以删除噢123!');
                 }
             }
         });
@@ -114,7 +173,7 @@ class Admin extends BaseAdmin
             $data['password'] = $data['new_password'];
             return $data;
         });
-        return $this->view($form);
+        return $form;
     }
     /**
      * 重置密码
@@ -133,7 +192,7 @@ class Admin extends BaseAdmin
             $data['password'] = $data['new_password'];
             return $data;
         });
-        return $this->view($form);
+        return $form;
     }
 
     /**
@@ -219,7 +278,7 @@ class Admin extends BaseAdmin
         $form->text('mail', '邮箱')->rule([
             'email' => '请输入正确的邮箱',
         ]);
-        return $this->view($form);
+        return $form;
     }
 
     /**

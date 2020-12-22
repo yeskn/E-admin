@@ -96,6 +96,6 @@ class Auth extends BaseAdmin
 
             }
         });
-        return $this->view($form);
+        return $form;
     }
 }
