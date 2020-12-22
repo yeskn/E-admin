@@ -82,8 +82,8 @@ EOF;
         $table = new Table($columns, $datas);
         $content = new Content();
         $button = Button::create('创建扩展', 'primary','mini','',true)->href('plug/add','modal');
-        $view = $content->title('插件管理 | &nbsp;'.$button)->body($table);
-        return $this->view($view);
+        $view = $content->title('插件管理 | &nbsp;'.$button)->body($table)->view();
+        return Component::view($view);
     }
     /**
      * 创建扩展
@@ -112,7 +112,7 @@ EOF;
             Console::call('eadmin:plug',$cmd);
             Component::message()->success('添加成功')->refresh();
         });
-        return $this->view($form);
+        return $form;
 
     }
     /**
