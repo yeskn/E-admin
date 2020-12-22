@@ -13,7 +13,7 @@
     ],
     "require": {
         "php": ">=7.1.0",
-        "rockys/think-easy": "1.1.x-dev"
+        "rockys/e-admin": "1.0.x-dev"
     },
     "autoload": {
         "psr-4": {

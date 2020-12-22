@@ -24,7 +24,6 @@ class BaseAdmin extends Controller
         $view = $content->title($this->grid()->title())->body($this->grid())->view();
         Component::view($view);
     }
-
     /**
      * 显示创建资源表单页.
      *
@@ -36,7 +35,6 @@ class BaseAdmin extends Controller
         $view = $content->title($this->form()->title())->body($this->form()->addExtraData(['submitFromMethod' => 'form']))->view();
         Component::view($view);
     }
-
     /**
      * 保存新建的资源
      *
@@ -49,14 +47,11 @@ class BaseAdmin extends Controller
         $form = $this->$submitFromMethod();
         $res = $form->save($request->post());
         if ($res !== false) {
-            Component::notification()->success('操作完成','数据保存成功',$form->getRedirectUrl());
+            eadmin_success('操作完成','数据更新成功')->redirect($url);
         } else {
-            Component::message()->error('数据保存失败');
+            eadmin_msg_error('数据保存失败');
         }
-
-
     }
-
     /**
      * 显示指定的资源
      *
@@ -93,9 +88,13 @@ class BaseAdmin extends Controller
     public function update(Request $request, $id)
     {
         $url = '';
+        $grid = $this->request->put('eadmin_grid');
         if ($id == 'batch') {
             $ids = $request->put('ids');
-            $res = $this->grid()->update($ids, $request->put());
+            if($grid == 'index'){
+                $grid = 'grid';
+            }
+            $res = $this->$grid()->update($ids, $request->put());
         } else {
             $submitFromMethod = $request->put('submitFromMethod');
             $form = $this->$submitFromMethod();
@@ -103,11 +102,10 @@ class BaseAdmin extends Controller
             $url = $form->getRedirectUrl();
         }
         if ($res !== false) {
-            Component::notification()->success('操作完成','数据更新成功',$url);
+            eadmin_success('操作完成','数据更新成功')->redirect($url);
         } else {
-            Component::message()->error('数据保存失败');
+            eadmin_msg_error('数据保存失败');
         }
-
     }
 
     /**
@@ -118,27 +116,15 @@ class BaseAdmin extends Controller
      */
     public function delete($id)
     {
-        $res = $this->grid()->destroy($id);
-        if ($res !== false) {
-            Component::notification()->success('操作完成','删除成功');
-        } else {
-            Component::message()->error('数据保存失败');
+        $grid = $this->request->delete('eadmin_grid');
+        if($grid == 'index'){
+            $grid = 'grid';
         }
-
-    }
-
-    public function view($build)
-    {
-        if (request()->method() == 'GET') {
-            if($build instanceof Grid || $build instanceof Form || $build instanceof Detail){
-                $content = new Content();
-                $view = $content->title($build->title())->body($build)->view();
-                Component::view($view);
-            }else{
-                Component::view($build->view());
-            }
+        $res = $this->$grid()->destroy($id);
+        if ($res !== false) {
+            eadmin_success('操作完成','删除成功');
         } else {
-            return $build;
+            eadmin_msg_error('数据保存失败');
         }
     }
 }

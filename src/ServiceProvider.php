@@ -9,6 +9,7 @@
 namespace Eadmin;
 
 
+use Eadmin\middleware\Response;
 use think\facade\Db;
 use think\route\Resource;
 use think\Service;
@@ -35,6 +36,7 @@ class ServiceProvider extends Service
         PlugService::instance()->register();
         $this->registerView();
         $this->app->middleware->route( \Eadmin\middleware\Permission::class);
+        $this->app->middleware->controller(Response::class);
     }
 
     protected function registerView(){

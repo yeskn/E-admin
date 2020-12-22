@@ -739,6 +739,7 @@
                         url: url +'/batch.rest',
                         method: 'put',
                         data:{
+                            eadmin_grid:'{:request()->action()}',
                             ids:ids,
                             delete_time:null,
                         },
@@ -776,6 +777,7 @@
                         url: url+'/delete.rest',
                         method: 'delete',
                         data:{
+                            eadmin_grid:'{:request()->action()}',
                             ids:deleteIds,
                             trueDelete:this.deleteColumnShow
                         },

@@ -96,7 +96,6 @@ class Button extends View
         $this->setAttr(':table-data-update.sync', 'tableDataUpdate');
         return $this->html();
     }
-
     /**
      * 复制文本
      * @param $text

@@ -41,6 +41,7 @@
                 const param = {}
                 param[field] = sort
                 param.ids = [row.id]
+                param.eadmin_grid = '{:request()->action()}'
                 this.$request({
                     url: this.requestUrl +'/batch.rest',
                     method: 'put',
@@ -54,6 +55,7 @@
                     params:this.globalRequestParams,
                     method: 'put',
                     data:{
+                        eadmin_grid:'{:request()->action()}',
                         action:'buldview_drag_sort',
                         sortable_data:{
                             id:data.id,
@@ -81,6 +83,7 @@
                     params:this.globalRequestParams,
                     method: 'put',
                     data:{
+                        eadmin_grid:'{:request()->action()}',
                         action:'buldview_drag_sort',
                         sortable_data:{
                             id:data.id,
@@ -115,6 +118,9 @@
                     this.$request({
                         url: this.requestUrl+'/'+row.id+'.rest',
                         method: 'delete',
+                        data:{
+                            eadmin_grid:'{:request()->action()}',
+                        },
                     }).then(res=>{
                         this.deleteTreeData(this.tableData,row.id)
                         this.$emit('update:tableData', this.tableData)
