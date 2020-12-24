@@ -12,6 +12,7 @@ use Composer\Autoload\ClassLoader;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use think\App;
+use think\facade\Cache;
 use think\facade\Console;
 use think\facade\Db;
 use think\helper\Arr;
@@ -23,7 +24,7 @@ class PlugService extends Service
     protected $plugPaths = [];
     protected $plugs = [];
     protected static $loader;
-
+    protected $installedPlug = [];
     public function __construct(App $app)
     {
         parent::__construct($app);
@@ -93,13 +94,23 @@ class PlugService extends Service
      */
     public function all($search='')
     {
-        $plugs = GitlabService::instance()->getGroupProject(57,$search,1,100);
+        $cacheKey = 'eadmin_plugs_'.$search;
+        $plugs = Cache::get($cacheKey);
+        if(!$plugs){
+            $plugs = GitlabService::instance()->getGroupProject(57,$search,1,100);
+        }
         $delNames = [];
         foreach ($plugs as $plug){
-            $content = GitlabService::instance()->getFile($plug['id'],'composer.json');
+            if(isset($plug['composer'])){
+                $content = $plug['composer'];
+            }else{
+                $content = GitlabService::instance()->getFile($plug['id'],'composer.json');
+            }
             if($content){
                 $info = $this->getInfo($content);
-                $info['title'] = $info['name']. " ({$plug['name']})";
+                $info['composer'] = $content;
+                $info['id'] = $plug['id'];
+                $info['title'] = $plug['name'];
                 $info['web_url'] = $plug['web_url'];
                 $info['description'] = $plug['description'];
                 $info['download'] = "https://gitlab.my8m.com/api/v4/projects/{$plug['id']}/repository/archive.zip";
@@ -108,10 +119,27 @@ class PlugService extends Service
                     $info['status'] = false;
                     $delNames[] = trim($info['name']);
                 };
+                if($info['install']){
+                    $this->installedPlug[] = $info;
+                }
             }
         }
         Db::name('system_plugs')->whereIn('name',$delNames)->delete();
+        if(! Cache::has($cacheKey)){
+            Cache::set($cacheKey,$this->plugs,60 * 5);
+        }
         return $this->plugs;
+    }
+
+    /**
+     * 已安装插件
+     * @return array
+     */
+    public function installed($search=''){
+        if(count($this->plugs) == 0){
+            $this->all($search);
+        }
+        return  $this->installedPlug;
     }
     protected function getInfo($content)
     {

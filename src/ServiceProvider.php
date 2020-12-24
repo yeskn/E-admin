@@ -54,6 +54,7 @@ class ServiceProvider extends Service
         $this->app->route->post('log/remove',Log::class.'@remove');
         //插件
         $this->app->route->get('plug/add',Plug::class.'@add');
+        $this->app->route->get('plug/table',Plug::class.'@plugTable');
         $this->app->route->get('plug',Plug::class.'@index');
         $this->app->route->put('plug/enable',Plug::class.'@enable');
         $this->app->route->put('plug/install',Plug::class.'@install');
