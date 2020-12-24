@@ -110,7 +110,7 @@ class PlugService extends Service
                 $info = $this->getInfo($content);
                 $info['composer'] = $content;
                 $info['id'] = $plug['id'];
-                $info['title'] = $plug['name'];
+                $info['title'] = $plug['title'] ?? $plug['name'];
                 $info['web_url'] = $plug['web_url'];
                 $info['description'] = $plug['description'];
                 $info['download'] = "https://gitlab.my8m.com/api/v4/projects/{$plug['id']}/repository/archive.zip";
