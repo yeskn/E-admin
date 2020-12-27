@@ -204,7 +204,7 @@ class Table extends View
         $this->setVar('checkboxOptions', json_encode($checkboxOptions, JSON_UNESCAPED_UNICODE));
         $this->setVar('tableScriptVar', $tableScriptVar);
         $this->setVar('checkboxColumn', json_encode($checkboxColumn, JSON_UNESCAPED_UNICODE));
-
+        $this->setVar('submitUrl', $this->getRequestUrl());
         $tableFieldView = new TableFieldView();
         $this->setVar('tableFieldView', "<eadmin-component data='" . rawurlencode($tableFieldView->render()) . "' :fields='checkboxOptions'></eadmin-component>");
         return $this->render();

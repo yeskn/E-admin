@@ -6,6 +6,7 @@ namespace app\admin\controller;
 use Eadmin\chart\Echart;
 
 use Eadmin\controller\BaseAdmin;
+use Eadmin\facade\Component;
 use Eadmin\facade\CountCard;
 use Eadmin\facade\Quick;
 use Eadmin\grid\Filter;
@@ -57,7 +58,7 @@ class Index extends BaseAdmin
             $row->columnComponentUrl(url('funnelchart'), 12);
             $row->columnComponentUrl(url('barEchart'), 12);
         });
-        $this->view($content);
+        Component::view($content->view());
     }
 
     /**
@@ -85,8 +86,7 @@ class Index extends BaseAdmin
             $echart->count('日志总数量', 50);
             $echart->sum('日志id总和', 'id', 1000);
         });
-
-        $this->view($echart);
+        Component::view($echart->view());
     }
 
     /**
@@ -99,7 +99,7 @@ class Index extends BaseAdmin
         $echart->count('日志总数量');
         $echart->sum('日志id总和', 'id');
         $echart->avg('日志id平均', 'id');
-        $this->view($echart);
+        Component::view($echart->view());
     }
 
     /**
@@ -125,7 +125,7 @@ class Index extends BaseAdmin
             $echart->avg('日志id平均', 'id');
         });
 
-        $this->view($echart);
+        Component::view($echart->view());
     }
 
     /**
@@ -144,7 +144,7 @@ class Index extends BaseAdmin
         });
         $echart->sum('123', 'id');
         $echart->sum('ff', 'id');
-        $this->view($echart);
+        Component::view($echart->view());
     }
 
     /**
@@ -163,6 +163,6 @@ class Index extends BaseAdmin
         });
         $echart->sum('123', 'id');
         $echart->sum('ff', 'id');
-        $this->view($echart);
+        Component::view($echart->view());
     }
 }

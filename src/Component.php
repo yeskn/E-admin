@@ -45,6 +45,9 @@ class Component
             'eadmin_component'=>request()->has('eadmin_component')
         ]));
     }
+    public function display($content){
+        return "<eadmin-component data='" . rawurlencode($content) . "'></eadmin-component>";
+    }
     /**
      * 渲染组件模板
      * @param $template 模板文件名

@@ -43,7 +43,7 @@ class Backup extends BaseAdmin
             $row->columnComponentUrl('backup/config');
         });
         $content->rowComponent($this->table());
-        $this->view($content);
+        Component::view($content->view());
     }
 
 
@@ -78,7 +78,7 @@ class Backup extends BaseAdmin
         $button = Button::create('备份数据库', 'primary', 'mini', '', true)->save('', [], 'backup/add', '', true);
 
         $form->appendSubmitExtend($button);
-        return $this->view($form);
+        return $form;
     }
 
     /**

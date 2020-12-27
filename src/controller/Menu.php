@@ -32,6 +32,7 @@ class Menu extends BaseAdmin
     protected function grid()
     {
         $grid = new Grid(new SystemMenu());
+        $grid->setTitle('系统菜单管理');
         $grid->treeTable();
         $grid->indexColumn();
         $grid->column('name', '菜单名称')->display(function ($val, $data) {

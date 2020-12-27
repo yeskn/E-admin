@@ -35,8 +35,8 @@ class ServiceProvider extends Service
         //注册插件
         PlugService::instance()->register();
         $this->registerView();
-       // $this->app->middleware->route( \Eadmin\middleware\Permission::class);
-        $this->app->middleware->controller(Response::class);
+        $this->app->middleware->route( \Eadmin\middleware\Permission::class);
+        $this->app->middleware->add(Response::class);
     }
 
     protected function registerView(){
