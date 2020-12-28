@@ -6,7 +6,7 @@
  * Time: 21:25
  */
 
-namespace Eadmin\component\basic;
+namespace Eadmin\component\layout;
 
 
 use Eadmin\component\Component;
