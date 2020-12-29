@@ -28,4 +28,7 @@ class Content extends Component
         }
         $this->content[] = $row;
     }
+    public function content($content){
+        $this->content  = $content;
+    }
 }

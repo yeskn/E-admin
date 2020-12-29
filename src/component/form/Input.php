@@ -21,7 +21,18 @@ use Eadmin\component\Component;
 class Input extends Component
 {
     protected $name = 'ElInput';
-    public static function create(){
-        return new self();
+    public function __construct($value,$field=null)
+    {
+        $this->value($value,$field);
+    }
+
+    /**
+     * 创建输入框
+     * @param mexid $value 值
+     * @param string $field 字段
+     * @return Input
+     */
+    public static function create($value,$field=null){
+        return new self($value,$field);
     }
 }
