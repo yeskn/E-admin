@@ -637,7 +637,7 @@ EOF;
                 if (is_string($key)) {
                     $html .= "<span style='font-size: 14px;' v-else-if=\"{$this->relationRowField} != undefined && {$this->rowField} == '{$key}'\">%s</span>";
                 } else {
-                    $$html .= "<span style='font-size: 14px;' v-else-if='{$this->relationRowField} != undefined && {$this->rowField} == {$key}'>%s</span>";
+                    $html .= "<span style='font-size: 14px;' v-else-if='{$this->relationRowField} != undefined && {$this->rowField} == {$key}'>%s</span>";
                 }
                 if (isset($this->tagColor[$key])) {
                     $this->tag($this->tagColor[$key], $this->tagTheme);

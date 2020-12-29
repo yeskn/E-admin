@@ -95,7 +95,7 @@ class Input extends Field
 
     /**
      * 输入框的tabindex
-     * @param $num
+     * @param string $num
      * @return $this
      */
     public function tabindex($num)
@@ -116,7 +116,7 @@ class Input extends Field
 
     /**
      * 控制是否能被用户缩放
-     * @param $type  none, both, horizontal, vertical
+     * @param string $type  none, both, horizontal, vertical
      */
     public function resize($type)
     {

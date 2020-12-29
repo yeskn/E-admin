@@ -37,7 +37,7 @@ class File extends Field
     }
     /**
      * 显示视频
-     * @param $width 宽度
+     * @param string $width 宽度
      * @return $this
      */
     public function video($width='auto'){
@@ -47,7 +47,7 @@ class File extends Field
     }
     /**
      * 显示音频
-     * @param $width 宽度
+     * @param string $width 宽度
      * @return $this
      */
     public function audio($width='auto'){
@@ -57,7 +57,7 @@ class File extends Field
     }
     /**
      * 上传显示方式
-     * @param $type image图片,file文件
+     * @param string $type image图片,file文件
      */
     public function displayType($type){
         $this->setAttr('display-type',$type);
@@ -92,8 +92,8 @@ class File extends Field
 
     /**
      * 图片建议提示
-     * @param $width 宽度
-     * @param $height 高度
+     * @param int $width 宽度
+     * @param int $height 高度
      */
     public function helpSize($width,$height){
         $this->help("建议上传图片尺寸 $width * $height");
@@ -101,9 +101,9 @@ class File extends Field
     }
     /**
      * 裁剪尺寸,暂仅支持单文件
-     * @param $width 宽度
-     * @param $height 高度
-     * @param $auto 是否自动居中裁剪,否显示界面手动裁剪
+     * @param int $width 宽度
+     * @param int $height 高度
+     * @param bool $auto 是否自动居中裁剪,否显示界面手动裁剪
      * @return $this
      */
     public function crop($width,$height,$auto = false){
@@ -136,7 +136,7 @@ class File extends Field
     }
     /**
      * 上传存储类型
-     * @param $uptype local,qiniu,oss
+     * @param string $uptype local,qiniu,oss
      */
     public function disk($diskType){
         $config = config('filesystem.disks.'.$diskType);

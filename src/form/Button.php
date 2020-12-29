@@ -16,7 +16,7 @@ class Button extends View
 
     /**
      * Button constructor.
-     * @param $text 按钮文字
+     * @param string $text 按钮文字
      * @param string $colorType 颜色类型 primary / success / warning / danger / info / text
      * @param string $size 尺寸 medium / small / mini
      * @param string $icon 图标
@@ -39,7 +39,7 @@ class Button extends View
 
     /**
      * 创建下拉按钮元素
-     * @param $text
+     * @param string $text
      * @param string $icon
      * @param bool $divided
      * @return Button
@@ -86,8 +86,8 @@ class Button extends View
      * 打开窗口 modal弹窗对话框 open新窗口 full全屏弹窗对话框 drawer抽屉
      * @Author: rocky
      * 2019/9/11 10:02
-     * @param $url 跳转链接
-     * @param $type 打开方式 full全屏,modal弹窗,open内容页,drawer抽屉
+     * @param string $url 跳转链接
+     * @param string $type 打开方式 full全屏,modal弹窗,open内容页,drawer抽屉
      */
     public function href($url, $type = 'open')
     {
@@ -99,7 +99,7 @@ class Button extends View
     /**
      * 复制文本
      * @param $text
-     * @return $this
+     * @return $this|mixed
      */
     public function copy($text)
     {
@@ -112,10 +112,10 @@ class Button extends View
      * 更新数据
      * @Author: rocky
      * 2019/9/11 10:06
-     * @param $id 更新主键条件
+     * @param int $id 更新主键条件
      * @param array $updateData 更新数据
      * @param string $url
-     * @param $confirm 操作提示
+     * @param string $confirm 操作提示
      * @param bool $prompt 输入框模式
      */
     public function save($id, array $data, $url = '', $confirm = '', bool $prompt = false)
@@ -134,7 +134,7 @@ class Button extends View
      * 批量更新数据
      * @Author: rocky
      * 2019/9/11 10:06
-     * @param $id 更新主键条件
+     * @param int $id 更新主键条件
      * @param array $updateData 更新数据
      * @param string $url
      * @param string $confirm 操作提示
@@ -154,10 +154,10 @@ class Button extends View
 
     /**
      * 删除数据
-     * @param $id 更新主键条件
+     * @param int $id 更新主键条件
      * @param string $confirm 操作提示
      * @param integer $mode 删除模式：0正常删除，1永久删除，2恢复数据（回收站）
-     * @return $this
+     * @return $this|mixed
      */
     public function delete($id, $confirm = '', $mode = 0)
     {
@@ -173,8 +173,8 @@ class Button extends View
 
     /**
      * 上传
-     * @param $url 上传的地址
-     * @param $name 上传的文件字段名
+     * @param string $url 上传的地址
+     * @param string $name 上传的文件字段名
      * @return string
      */
     public function upload($url, $name = 'file')

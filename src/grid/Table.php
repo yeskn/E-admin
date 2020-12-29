@@ -69,7 +69,7 @@ class Table extends View
 
     /**
      * 对话框表单
-     * @param $title 标题
+     * @param string $title 标题
      * @param bool $fullscreen 是否全屏
      * @param string $width 宽度
      */
@@ -88,7 +88,7 @@ class Table extends View
 
     /**
      * 抽屉表单
-     * @param $title 标题
+     * @param string $title 标题
      * @param bool $direction 打开的方向 rtl / ltr / ttb / btt
      * @param string $size 窗体的大小
      */

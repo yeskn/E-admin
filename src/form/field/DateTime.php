@@ -63,7 +63,7 @@ class DateTime extends Field
     }
     /**
      * 显示类型
-     * @param $type year/month/date/week/time/datetime datetimerange/daterange
+     * @param string $type year/month/date/week/time/datetime datetimerange/daterange
      */
     public function setType($type){
         $this->type = $type;
@@ -93,7 +93,7 @@ class DateTime extends Field
     }
     /**
      * 设置显示日期格式
-     * @param $format
+     * @param string $format
      */
     public function format($format){
         $this->setAttr('value-format', $format);

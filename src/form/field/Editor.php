@@ -28,7 +28,7 @@ class Editor extends Field
     }
     /**
      * 上传存储类型
-     * @param $uptype local,qiniu,oss
+     * @param string $uptype local,qiniu,oss
      */
     public function disk($diskType){
         $config = config('filesystem.disks.'.$diskType);
