@@ -21,7 +21,7 @@ use Eadmin\component\Component;
 class Input extends Component
 {
     protected $name = 'ElInput';
-    public function __construct($value,$field=null)
+    public function __construct($value='',$field=null)
     {
         $this->value($value,$field);
     }
@@ -32,7 +32,7 @@ class Input extends Component
      * @param string $field 字段
      * @return Input
      */
-    public static function create($value,$field=null){
+    public static function create($value='',$field=null){
         return new self($value,$field);
     }
 }

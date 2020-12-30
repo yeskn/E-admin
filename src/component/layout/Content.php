@@ -13,6 +13,7 @@ use Eadmin\component\Component;
 
 class Content extends Component
 {
+    protected $isComponent = false;
     protected $name = 'div';
     /**
      * 添加一行
@@ -26,9 +27,6 @@ class Content extends Component
         }else{
             $row->column($content,$span);
         }
-        $this->content[] = $row;
-    }
-    public function content($content){
-        $this->content  = $content;
+        $this->content['default'][] = $row;
     }
 }

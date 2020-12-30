@@ -26,7 +26,7 @@ class Column extends Component
         }else{
             $row->column($content);
         }
-        $this->content[] = $row;
+        $this->content['default'][] = $row;
         return $row;
     }
     /**
@@ -35,7 +35,7 @@ class Column extends Component
      * @return $this
      */
     public function content($content){
-        $this->content = $content;
+        $this->slot($content);
         return $this;
     }
     /**
