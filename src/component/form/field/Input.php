@@ -6,19 +6,17 @@
  * Time: 21:04
  */
 
-namespace Eadmin\component\form;
+namespace Eadmin\component\form\field;
 
-
-use Eadmin\component\basic\Button;
-use Eadmin\component\Component;
+use Eadmin\component\form\Field;
 
 /**
  * Class Input
- * @package Eadmin\component\form
+ * @package Eadmin\component\form\field
  * @method $this size(string $value) 尺寸 medium / small / mini
  * @method $this type(string $value) 输入框类型  text / textarea / hidden / password / number
  */
-class Input extends Component
+class Input extends Field
 {
     protected $name = 'ElInput';
     public function __construct($value='',$field=null)

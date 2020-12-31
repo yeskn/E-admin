@@ -6,6 +6,7 @@ use think\helper\Str;
 
 abstract class Component implements \JsonSerializable
 {
+    use Where;
     //组件名称
     protected $name;
     //属性
@@ -26,33 +27,27 @@ abstract class Component implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * 双向绑定值
-     * @param mexid $value 值
-     * @param string $field 字段
-     */
-    public function value($value, $field = null)
-    {
-        $this->attr('modelValue', $value);
-        empty($field) ? $field = Str::random(10, 3) : $field;
-        $this->attr('modelField', $field);
-    }
-
     public function __call($name, $arguments)
     {
         return $this->attr($name, ...$arguments);
     }
-
+    
+    /**
+     * 插槽内容
+     * @param $content 内容
+     * @param string $name 插槽名称
+     * @return $this
+     */
     protected function slot($content, $name = 'default')
     {
-        $this->content[$name] = $content;
+        $this->content[$name][] = $content;
         return $this;
     }
-
     public function jsonSerialize()
     {
         return [
             'name' => $this->name,
+            'where'=> $this->where,
             'component' => $this->isComponent,
             'attribute' => $this->attribute,
             'content' => $this->content,

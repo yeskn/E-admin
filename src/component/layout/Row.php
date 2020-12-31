@@ -49,7 +49,7 @@ class Row extends Component
         }else{
             $column->content($content);
         }
-        $this->content['default'][] = $column;
+        $this->content($column);
         return $column;
 
     }

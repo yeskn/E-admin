@@ -26,7 +26,7 @@ class Column extends Component
         }else{
             $row->column($content);
         }
-        $this->content['default'][] = $row;
+        $this->content($row);
         return $row;
     }
     /**
