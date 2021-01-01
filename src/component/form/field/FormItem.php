@@ -12,7 +12,9 @@ namespace Eadmin\component\form\field;
 use Eadmin\component\form\Field;
 
 /**
+ * form表单
  * Class FormItem
+ * @link https://element-plus.gitee.io/#/zh-CN/component/form
  * @package Eadmin\component\form\field
  * @method $this size(string $value) 尺寸 medium / small / mini
  * @method $this prop(string $value) 表单域 model 字段
