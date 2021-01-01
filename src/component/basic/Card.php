@@ -6,6 +6,12 @@ namespace Eadmin\component\basic;
 
 use Eadmin\component\Component;
 
+/**
+ * 卡片
+ * Class Card
+ * @link https://element-plus.gitee.io/#/zh-CN/component/card
+ * @package Eadmin\component\basic
+ */
 class Card extends Component
 {
     protected $name = 'ElCard';
