@@ -11,8 +11,8 @@ use Eadmin\component\form\Field;
  * Class Rate
  * @link https://element-plus.gitee.io/#/zh-CN/component/rate
  * @method $this max(int $num) 最大分值
- * @method $this allowHalf(bool $bool) 必选参数，上传的地址
- * @method $this lowThreshold(int $num) 必选参数，低分和中等分数的界限值，值本身被划分在低分中
+ * @method $this allowHalf(bool $bool) 是否允许半选
+ * @method $this lowThreshold(int $num) 低分和中等分数的界限值，值本身被划分在低分中
  * @method $this highThreshold(int $num) 高分和中等分数的界限值，值本身被划分在高分中
  * @method $this colors(array $color) icon 的颜色。若传入数组，共有 3 个元素，为 3 个分段所对应的颜色；若传入对象，可自定义分段，键名为分段的界限值，键值为对应的颜色
  * @method $this voidColor(string $color) 未选中 icon 的颜色
