@@ -25,16 +25,6 @@ class Row extends Component
         return $this->attr(__FUNCTION__, $value);
     }
     /**
-     * 内容
-     * @param string $content
-     * @return $this
-     */
-    public function content($content){
-        $this->slot($content);
-        return $this;
-    }
-
-    /**
      * /**
      * 添加列
      * @param Closure|String $content 内容

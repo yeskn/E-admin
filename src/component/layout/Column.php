@@ -29,15 +29,7 @@ class Column extends Component
         $this->content($row);
         return $row;
     }
-    /**
-     * 内容
-     * @param string $content
-     * @return $this
-     */
-    public function content($content){
-        $this->slot($content);
-        return $this;
-    }
+    
     /**
      * 栅格向左移动格数
      * @param int $value

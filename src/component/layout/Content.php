@@ -27,6 +27,6 @@ class Content extends Component
         }else{
             $row->column($content,$span);
         }
-        return $this->slot($row);
+        return $this->content($row);
     }
 }
