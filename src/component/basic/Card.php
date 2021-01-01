@@ -32,14 +32,8 @@ class Card extends Component
      * @param $content
      */
     public function header($content){
-        return $this->slot($content,'header');
+        return $this->content($content,'header');
     }
 
-    /**
-     * 内容
-     * @param $content
-     */
-    public function content($content){
-        return $this->slot($content);
-    }
+    
 }

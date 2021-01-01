@@ -5,6 +5,7 @@ namespace Eadmin\component\form\field;
 
 
 use Eadmin\component\form\Field;
+use think\helper\Str;
 
 /**
  * 选择器
@@ -35,4 +36,41 @@ use Eadmin\component\form\Field;
 class Select extends Field
 {
     protected $name = 'ElSelect';
+
+    //禁用数据
+    protected $disabledData = [];
+    /**
+     * 禁用选项数据
+     * @param array $data 禁用数据
+     */
+    public function disabledData(array $data){
+        $this->disabledData = $data;
+    }
+
+    /**
+     * 设置选项数据
+     * @param array $data 选项数据
+     * @return Select
+     */
+    public function options(array $data){
+        foreach ($data as $value=>$label){
+            if(in_array($value,$this->disabledData)){
+                $disabled = true;
+            }else{
+                $disabled = false;
+            }
+            $options[] = [
+                'value' => $value,
+                'label' => $label,
+                'disabled' => $disabled,
+            ];
+        }
+        $selectOption = SelectOption::create()
+            ->map($options)
+            ->mapAttr('label','label')
+            ->mapAttr('key','value')
+            ->mapAttr('value','value')
+            ->mapAttr('disabled','disabled');
+        return $this->content($selectOption);
+    }
 }

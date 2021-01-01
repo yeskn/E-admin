@@ -20,6 +20,7 @@ use Eadmin\component\form\Field;
  * @method $this size(string $value) 尺寸 medium / small / mini
  * @method $this labelPosition(string $value) 表单域标签的宽度 right/left/top
  * @method $this labelSuffix(string $value) 表单域标签的后缀
+ * @method $this labelWidth(string $value) 表单域标签的宽度，例如 '50px'
  * @method $this inline(bool $value) 行内表单模式
  * @method $this hideRequiredAsterisk(bool $value) 是否显示必填字段的标签旁边的红色星号
  * @method $this showMessage(bool $value) 是否显示校验错误信息
@@ -30,13 +31,30 @@ use Eadmin\component\form\Field;
 class Form extends Field
 {
     protected $name = 'ElForm';
+    public function __construct($field = null, $data = [])
+    {
+        empty($field) ? $field = Str::random(10, 3) : $field;
+        $this->bind($field, $data);
+        $this->bindAttr('model',$field);
+    }
     /**
-     * 添加一行FormItem
-     * @param FormItem $item
-     * @return Form
+     * 创建
+     * @param string $field 字段
+     * @param array $data 值
+     * @return static
      */
-    public function rowItem($prop,$content){
-        $item = FormItem::create($prop)->modelField($this->attr('modelField'))->item($content);
+    public static function create($field = 'form',$data = [])
+    {
+        return new static($field, $data);
+    }
+    /**
+     * 添加item
+     * @param $prop 字段
+     * @param $label 标签
+     * @return FormItem 
+     */
+    public function item($prop='',$label=''){
+        $item = FormItem::create($prop,$label,$this);
         $this->content($item);
         return $item;
     }

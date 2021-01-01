@@ -28,7 +28,7 @@ class Button extends Component
     protected $name = 'ElButton';
     public function __construct($content)
     {
-        $this->content = $content;
+        $this->content($content);
     }
     /**
      * 创建一个按钮

@@ -32,8 +32,8 @@ abstract class Field extends Component
      */
     public function value($field = null, $value = '')
     {
-        $this->attr('modelValue', $value);
         empty($field) ? $field = Str::random(10, 3) : $field;
-        $this->attr('modelField', $field);
+        $this->bind($field, $value);
+        $this->bindAttr('modelValue',$field);
     }
 }

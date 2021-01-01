@@ -6,7 +6,7 @@ use think\helper\Str;
 
 abstract class Component implements \JsonSerializable
 {
-    use Where;
+    use Where,ForMap;
     //组件名称
     protected $name;
     //属性
@@ -15,6 +15,10 @@ abstract class Component implements \JsonSerializable
     protected $content = [];
     //是否是组件
     protected $isComponent = true;
+    //绑定值
+    protected $bind = [];
+    //属性绑定
+    protected $bindAttribute = [];
     
     /**
      * 设置属性
@@ -31,10 +35,50 @@ abstract class Component implements \JsonSerializable
             return $this;
         }
     }
-
+    public function removeAttr($name){
+        unset($this->attribute[$name]);
+    }
+    public function removeBind($name){
+        unset($this->bind[$name]);
+    }
+    public function removeAttrBind($name){
+        unset($this->bindAttribute[$name]);
+    }
+    /**
+     * 绑定属性对应绑定字段
+     * @param string $name 属性名称
+     * @param string $field 绑定字段名称
+     */
+    public function bindAttr(string $name,$field= null){
+        if(is_null($field)) {
+            return $this->bindAttribute[$name];
+        }else{
+            $this->bindAttribute[$name] = $field;
+            return $this;
+        }
+    }
+    /**
+     * 绑定值
+     * @param string $name 字段名称
+     * @param mexid $value 值
+     * @return $this
+     */
+    public function bind(string $name,$value= null){
+        if(is_null($value)) {
+            return $this->bind[$name];
+        }else{
+            $this->bind[$name] = $value;
+            return $this;
+        }
+    }
     public function __call($name, $arguments)
     {
-        return $this->attr($name, ...$arguments);
+        if(empty($arguments)){
+            return $this->attr($name, true);
+        }else{
+            return $this->attr($name, ...$arguments);
+        }
+
     }
 
     /**
@@ -54,8 +98,11 @@ abstract class Component implements \JsonSerializable
         return [
             'name' => $this->name,
             'where' => $this->where,
+            'map' => $this->map,
             'component' => $this->isComponent,
+            'bind'=>$this->bind,
             'attribute' => $this->attribute,
+            'bindAttribute' => $this->bindAttribute,
             'content' => $this->content,
         ];
     }
