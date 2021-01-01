@@ -7,19 +7,30 @@ namespace Eadmin\component\form;
 use Eadmin\component\Component;
 use think\helper\Str;
 
-/**
- * Class Field
- * @method $this disabled(bool $disabled) 是否禁用
- * @package Eadmin\component\form
- */
 abstract class Field extends Component
 {
+    public function __construct($field = null, $value = '')
+    {
+        $this->value($field, $value);
+    }
+
+    /**
+     * 创建
+     * @param string $field 字段
+     * @param mexid $value 值
+     * @return static
+     */
+    public static function create($field = null, $value = '')
+    {
+        return new static($field, $value);
+    }
+
     /**
      * 双向绑定值
-     * @param mixed $value 值
      * @param string $field 字段
+     * @param mexid $value 值
      */
-    public function value($value, $field = null)
+    public function value($field = null, $value = '')
     {
         $this->attr('modelValue', $value);
         empty($field) ? $field = Str::random(10, 3) : $field;
