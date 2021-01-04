@@ -13,13 +13,11 @@ abstract class Component implements \JsonSerializable
     protected $attribute = [];
     //内容
     protected $content = [];
-    //是否是组件
-    protected $isComponent = true;
     //绑定值
     protected $bind = [];
     //属性绑定
     protected $bindAttribute = [];
-    
+
     /**
      * 设置属性
      * @param string $name 属性名
@@ -29,7 +27,7 @@ abstract class Component implements \JsonSerializable
     public function attr(string $name, $value = null)
     {
         if(is_null($value)) {
-            return $this->attribute[$name];  
+            return $this->attribute[$name];
         }else{
             $this->attribute[$name] = $value;
             return $this;
@@ -99,7 +97,6 @@ abstract class Component implements \JsonSerializable
             'name' => $this->name,
             'where' => $this->where,
             'map' => $this->map,
-            'component' => $this->isComponent,
             'bind'=>$this->bind,
             'attribute' => $this->attribute,
             'bindAttribute' => $this->bindAttribute,

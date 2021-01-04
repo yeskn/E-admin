@@ -11,10 +11,19 @@ namespace Eadmin\component\layout;
 
 use Eadmin\component\Component;
 
+/**
+ * Class Content
+ * @package Eadmin\component\layout
+ * @method $this direction(string $direction) 子元素的排列方向 horizontal / vertical
+ */
 class Content extends Component
 {
-    protected $isComponent = false;
-    protected $name = 'div';
+    protected $name = 'ElContainer';
+    public function __construct()
+    {
+        $this->direction('vertical');
+    }
+
     /**
      * 添加一行
      * @param Closure|String  $content 内容

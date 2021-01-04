@@ -39,4 +39,16 @@ class Button extends Component
     {
         return new self($content);
     }
+
+    /**
+     * 按钮文字
+     * @param string $content 文字
+     * @param string $name
+     * @return Button
+     */
+    public function content($content, $name = 'default')
+    {
+        $this->content['default'] = [$content];
+        return $this;
+    }
 }
