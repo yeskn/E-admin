@@ -66,11 +66,13 @@ class Form extends Field
      * 一对多添加
      * @param string $field 字段
      * @param string $title 标题
+     * @param array $data 数据
      * @return FormMany
      */
-    public function manyItem($field,$title=''){
-        $many =  FormMany::create($field,[0]);
-        $many->title($title);
+    public function manyItem($field,$title='',array $data){
+        $many =  FormMany::create($field,$data);
+        $many->attr('field',$field);
+        $many->attr('title',$title);
         $this->content($many);
         return $many;
     }

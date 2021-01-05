@@ -1,7 +1,7 @@
 <template>
     <el-divider content-position='left'>{{title}}</el-divider>
     <div v-for="(item,index) in value">
-        <slot></slot>
+        <slot :row="item" :field="field"></slot>
         <el-form-item>
             <el-button size="mini" v-if="value.length - 1 == index" type='primary' plain @click="add">新增</el-button>
             <el-button size="mini" type='danger' v-show='value.length > 1' @click="remove(index)">移除</el-button>
@@ -17,7 +17,8 @@
         name: "EadminManyItem",
         props: {
             title:String,
-            modelValue: Array
+            modelValue: Array,
+            field:String
         },
         emits:['update:modelValue'],
         setup(props,ctx){
@@ -33,7 +34,8 @@
             }
             //添加元素
             function add(manyData){
-                value.push({})
+                value.push({test12:'213'})
+                console.log(value)
             }
             //移除元素
             function remove(index){

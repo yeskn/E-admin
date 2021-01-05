@@ -12,10 +12,10 @@
         render(){
            return this.render
         },
-        setup(props){
+        setup(props,ctx){
             const state = inject(store)
             const modelValue = state.proxyData
-            const renderComponent = (data)=>{
+            const renderComponent = (data,slotProps)=>{
                 let expression,children  = {},renderArr = [],name
                 //属性绑定
                 for(let bindAttr in data.bindAttribute){
@@ -24,16 +24,37 @@
                 }
                 //双向绑定值
                 if(data.bindAttribute && data.bindAttribute.modelValue){
-                    const field = data.bindAttribute.modelValue
-                    expression = 'data.attribute.modelValue = modelValue.'+field
-                    eval(expression)
-                    data.attribute['onUpdate:modelValue'] = value => {
-                        expression = 'modelValue.'+field + ' = value'
+                    let field = data.bindAttribute.modelValue
+                   // 本次渲染是循环属性
+                    if(slotProps && slotProps.row){
+                        console.log(slotProps.row)
+                        console.log(data.name)
+                        data.attribute.modelValue = slotProps.row[field]
+                        data.attribute['onUpdate:modelValue'] = value => {
+                            slotProps.row[field] = value
+                        }
+                    }else{
+                        expression = 'data.attribute.modelValue = modelValue.'+field
                         eval(expression)
+                        data.attribute['onUpdate:modelValue'] = value => {
+                            expression = 'modelValue.'+field + ' = value'
+                            eval(expression)
+                        }
                     }
+
                 }
+
+
                 //插槽名称对应内容
                 for(let slot in data.content){
+                    children[slot] = (props) => {
+                       console.log(renderArr[slot])
+                        return renderArr[slot]
+                    }
+                    // if(JSON.stringify(propsSlot) === '{}'){
+                    //    // propsSlot = slotProps
+                    // }
+                    // console.log(propsSlot)
                     renderArr[slot] = []
                     data.content[slot].forEach(item=>{
                         if(typeof(item.where) == 'object' && (item.where.AND.length > 0 || item.where.OR.length > 0)){
@@ -47,7 +68,7 @@
                             eval(expression)
                         }else{
                             if(typeof(item) == 'object'){
-                                renderArr[slot].push(renderComponent(item))
+                                renderArr[slot].push(renderComponent(item,slotProps))
                             }else{
                                 renderArr[slot].push( h({
                                     setup(){
@@ -60,7 +81,7 @@
                             }
                         }
                     })
-                    children[slot] = (props) => renderArr[slot]
+
                 }
                 name = resolveComponent(data.name)
                 if(data.map.bindName){
