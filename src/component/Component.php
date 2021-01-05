@@ -81,7 +81,7 @@ abstract class Component implements \JsonSerializable
 
     /**
      * 插槽内容
-     * @param $content 内容
+     * @param mixed $content 内容
      * @param string $name 插槽名称
      * @return $this
      */

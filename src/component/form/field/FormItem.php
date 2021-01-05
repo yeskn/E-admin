@@ -53,7 +53,7 @@ class FormItem extends Field
     }
     /**
      * 添加内容
-     * @param mexid $content 
+     * @param mixed $content 
      * @param string $name 插槽名称默认即可default
      * @return static
      */

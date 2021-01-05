@@ -29,7 +29,6 @@
                     eval(expression)
                     data.attribute['onUpdate:modelValue'] = value => {
                         expression = 'modelValue.'+field + ' = value'
-                        console.log(expression)
                         eval(expression)
                     }
                 }
@@ -66,7 +65,6 @@
                 name = resolveComponent(data.name)
                 if(data.map.bindName){
                     let field = data.map.bindName
-                    console.log(field)
                     return modelValue[field].map(item=>{
                         for(let attr in data.map.attribute){
                             data.attribute[attr] = item[data.map.attribute[attr]]

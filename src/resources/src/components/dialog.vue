@@ -26,6 +26,7 @@
                 type: Boolean,
                 default: false,
             },
+            dialogContent:Object
         },
         emits:['update:modelValue'],
         setup(props,ctx){
@@ -36,7 +37,7 @@
             watch(visible,(value)=>{
                 ctx.emit('update:modelValue',value)
             })
-            const content = ctx.attrs.dialogContent
+            const content = props.dialogContent
             function opend(){
                 visible.value = true
             }

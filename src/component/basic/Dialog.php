@@ -35,8 +35,9 @@ class Dialog extends Field
 
     public static function create($content = null, $field = '')
     {
-
         $self = new self($field, false);
+        $self->closeOnClickModal(false);
+        $self->width('35%');
         $self->content($content, 'reference');
         return $self;
     }

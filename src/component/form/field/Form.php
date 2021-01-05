@@ -52,8 +52,8 @@ class Form extends Field
     }
     /**
      * 添加item
-     * @param $prop 字段
-     * @param $label 标签
+     * @param string $prop 字段
+     * @param string $label 标签
      * @return FormItem
      */
     public function item($prop='',$label=''){
@@ -62,6 +62,18 @@ class Form extends Field
         return $item;
     }
 
+    /**
+     * 一对多添加
+     * @param string $field 字段
+     * @param string $title 标题
+     * @return FormMany
+     */
+    public function manyItem($field,$title=''){
+        $many =  FormMany::create($field,[0]);
+        $many->title($title);
+        $this->content($many);
+        return $many;
+    }
     /**
      * 表单操作定义
      * @param \Closure $closure

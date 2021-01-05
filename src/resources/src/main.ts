@@ -5,7 +5,7 @@ import {store,state} from './store'
 import './styles/index.scss'
 import app from  './app'
 import './component'
-app.use(ElementPlus)
+app.use(ElementPlus,{size: 'medium'})
 app.use(router)
 app.provide(store, state)
 app.mount('#app')
