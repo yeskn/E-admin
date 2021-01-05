@@ -11,6 +11,8 @@ use Eadmin\component\Component;
  * Class Card
  * @link https://element-plus.gitee.io/#/zh-CN/component/card
  * @package Eadmin\component\basic
+ * @method $this shadow(string $shadow) always / hover / never
+ * @method $this bodyStyle(array $style) 设置 body 的样式
  */
 class Card extends Component
 {
@@ -29,11 +31,9 @@ class Card extends Component
 
     /**
      * 头部内容
-     * @param $content
+     * @param string $content
      */
     public function header($content){
         return $this->content($content,'header');
     }
-
-    
 }
