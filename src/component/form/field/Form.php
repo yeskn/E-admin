@@ -9,6 +9,8 @@
 namespace Eadmin\component\form\field;
 
 
+use Eadmin\component\basic\TabPane;
+use Eadmin\component\basic\Tabs;
 use Eadmin\component\form\Field;
 
 /**
@@ -32,7 +34,10 @@ use Eadmin\component\form\Field;
 class Form extends Field
 {
     protected $name = 'EadminForm';
+
     protected $actions;
+
+    protected $tab;
     public function __construct($field = null, $data = [])
     {
         empty($field) ? $field = Str::random(10, 3) : $field;
@@ -49,6 +54,30 @@ class Form extends Field
     public static function create($field = 'form',$data = [])
     {
         return new static($field, $data);
+    }
+
+    /**
+     * 选项卡布局
+     * @param $title 标题
+     * @param \Closure $closure
+     * @return $this
+     */
+    public function tab($title,\Closure $closure){
+        if(!$this->tab){
+            $this->tab = Tabs::create();
+            $this->content($this->tab);
+        }
+        $content = $this->content['default'];
+        $this->content['default'] = [];
+        call_user_func_array($closure,[$this,$this->tab]);
+        $tabPane = new TabPane();
+        $tabPane->label($title);
+        foreach ($this->content['default'] as $slot){
+            $tabPane->content($slot);
+        }
+        $this->content['default'] = $content;
+        $this->tab->content($tabPane);
+        return $this;
     }
     /**
      * 添加item

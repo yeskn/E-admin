@@ -18,6 +18,7 @@
         setup(props, ctx) {
             const state = inject(store)
             const modelValue = state.proxyData
+
             const renderComponent = (data, slotProps) => {
                 let expression, children = {}, name,attribute
                 var field = data.bindAttribute.modelValue
