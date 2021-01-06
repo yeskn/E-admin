@@ -1,24 +1,29 @@
 <template>
     <el-divider content-position='left'>{{title}}</el-divider>
     <div v-for="(item,index) in value">
-        <slot :row="item" :field="field"></slot>
+        <slot :row="item" :$index="index" :prop-field="field"></slot>
         <el-form-item>
             <el-button size="mini" v-if="value.length - 1 == index" type='primary' plain @click="add">新增</el-button>
             <el-button size="mini" type='danger' v-show='value.length > 1' @click="remove(index)">移除</el-button>
             <el-button size="mini" @click="handleUp(index)" v-show='value.length > 1 && index > 0'>上移</el-button>
-            <el-button size="mini" v-show='value.length > 1 && index < value.length-1' @click="handleDown(manyIndex)">下移</el-button>
+            <el-button size="mini" v-show='value.length > 1 && index < value.length-1' @click="handleDown(index)">下移</el-button>
         </el-form-item>
     </div>
 </template>
 
 <script>
+    import render from '/@/components/render.vue'
     import {defineComponent,reactive,watch} from "vue";
     export default defineComponent({
         name: "EadminManyItem",
         props: {
             title:String,
             modelValue: Array,
-            field:String
+            field:String,
+            manyContent:Object
+        },
+        components: {
+            render,
         },
         emits:['update:modelValue'],
         setup(props,ctx){
@@ -29,13 +34,12 @@
             // 上移
             function handleUp (index) {
                 const len = value[index - 1]
-                value[index - 1] = index
+                value[index - 1] = value[index]
                 value[index] = len
             }
             //添加元素
             function add(manyData){
-                value.push({test12:'213'})
-                console.log(value)
+                value.push({test3:'213'})
             }
             //移除元素
             function remove(index){
@@ -44,7 +48,7 @@
             // 下移
             function handleDown (index) {
                 const len = value[index + 1]
-                value[index + 1] = index
+                value[index + 1] = value[index]
                 value[index] = len
             }
             return {

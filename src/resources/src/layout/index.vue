@@ -23,7 +23,6 @@
             headerTop,
             render,
         },
-
         setup(){
             const state = inject(store)
             let proxyData = state.proxyData
@@ -44,7 +43,7 @@
                 }
             }
             //重新加载赋值proxyData
-            watch(()=>state.mainComponent,(newValue,oldVlaue)=>{
+            watch(()=>state.mainComponent,(newValue)=>{
                if(newValue){
                    for(let i in proxyData){
                        delete proxyData[i]

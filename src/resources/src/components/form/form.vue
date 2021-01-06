@@ -14,10 +14,11 @@
     import {defineComponent, inject, ref} from 'vue'
     import request from '/@/utils/axios'
     import render from "/@/components/render.vue"
+    import manyItem from "./manyItem.vue"
     import { store } from '/@/store'
     export default defineComponent({
         components:{
-            render
+            render,manyItem
         },
         inheritAttrs: false,
         name: "EadminForm",
@@ -29,6 +30,7 @@
         setup(props,ctx){
             const state = inject(store)
             const proxyData = state.proxyData
+            console.log(proxyData)
             let loading = ref(false)
             //提交
             function sumbitForm(formName) {
@@ -60,6 +62,7 @@
                 this.$refs[formName].resetFields();
             }
             return {
+                proxyData,
                 loading,
                 resetForm,
                 sumbitForm,

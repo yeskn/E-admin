@@ -70,7 +70,7 @@ class Form extends Field
      * @return FormMany
      */
     public function manyItem($field,$title='',array $data){
-        $many =  FormMany::create($field,$data);
+        $many =  FormMany::create($field,$data,$this);
         $many->attr('field',$field);
         $many->attr('title',$title);
         $this->content($many);

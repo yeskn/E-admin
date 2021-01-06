@@ -5,7 +5,7 @@
                 <slot name="title"></slot>
              </span>
         </template>
-        <render :data="content"></render>
+        <slot></slot>
     </el-dialog>
     <span @click="opend">
         <slot name="reference"></slot>
@@ -25,8 +25,7 @@
             modelValue: {
                 type: Boolean,
                 default: false,
-            },
-            dialogContent:Object
+            }
         },
         emits:['update:modelValue'],
         setup(props,ctx){
@@ -37,12 +36,10 @@
             watch(visible,(value)=>{
                 ctx.emit('update:modelValue',value)
             })
-            const content = props.dialogContent
             function opend(){
                 visible.value = true
             }
             return {
-                content,
                 visible,
                 opend
             }

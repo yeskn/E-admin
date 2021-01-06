@@ -48,13 +48,4 @@ class Drawer extends Field
     {
         return $this->content($content, 'title');
     }
-
-    public function content($content, $name = 'default')
-    {
-        if ($content instanceof Component) {
-            $content->attr('eadminDrawerVisible', $this->bindAttr('modelValue'));
-        }
-        $this->attr('drawerContent', $content);
-        return parent::content($content, $name);
-    }
 }
