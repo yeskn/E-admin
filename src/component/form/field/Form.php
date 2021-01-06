@@ -12,6 +12,7 @@ namespace Eadmin\component\form\field;
 use Eadmin\component\basic\TabPane;
 use Eadmin\component\basic\Tabs;
 use Eadmin\component\form\Field;
+use Eadmin\component\layout\Row;
 
 /**
  * 表单
@@ -38,6 +39,7 @@ class Form extends Field
     protected $actions;
 
     protected $tab;
+    protected $layoutRow = false;
     public function __construct($field = null, $data = [])
     {
         empty($field) ? $field = Str::random(10, 3) : $field;
@@ -87,10 +89,29 @@ class Form extends Field
      */
     public function item($prop='',$label=''){
         $item = FormItem::create($prop,$label,$this);
-        $this->content($item);
+        if(!$this->layoutRow){
+            $this->content($item);
+        }
         return $item;
     }
 
+    /**
+     * 添加一行布局
+     * @param $content
+     * @return $this
+     */
+    public function row($content){
+        $row = new Row();
+        if ($content instanceof \Closure) {
+            $this->layoutRow = true;
+            call_user_func($content, $row);
+            $this->layoutRow = false;
+        } else {
+            $row->column($content, $span);
+        }
+        $this->content($row);
+        return $this;
+    }
     /**
      * 一对多添加
      * @param string $field 字段
@@ -102,7 +123,9 @@ class Form extends Field
         $many =  FormMany::create($field,$data,$this);
         $many->attr('field',$field);
         $many->attr('title',$title);
-        $this->content($many);
+        if(!$this->layoutRow){
+            $this->content($many);
+        }
         return $many;
     }
     /**

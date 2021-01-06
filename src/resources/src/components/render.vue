@@ -21,7 +21,7 @@
 
             const renderComponent = (data, slotProps) => {
                 let expression, children = {}, name,attribute
-                var field = data.bindAttribute.modelValue
+
                 //属性绑定
                 for (let bindAttr in data.bindAttribute) {
                     expression = 'data.attribute[bindAttr] = modelValue.' + data.bindAttribute[bindAttr]
@@ -30,6 +30,7 @@
 
                 //双向绑定值
                 if (data.bindAttribute && data.bindAttribute.modelValue) {
+                    let field = data.bindAttribute.modelValue
                     // 本次渲染是循环属性
                     if (slotProps && slotProps.row) {
                         data.attribute.modelValue = slotProps.row[field]
