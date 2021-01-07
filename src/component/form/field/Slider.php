@@ -30,4 +30,12 @@ use Eadmin\component\form\Field;
 class Slider extends Field
 {
     protected $name = 'ElSlider';
+
+    public function __construct($field = null, $value = '')
+    {
+        if(empty($value)){
+            $value = 0;
+        }
+        parent::__construct($field, $value);
+    }
 }

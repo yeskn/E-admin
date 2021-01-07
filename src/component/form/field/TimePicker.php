@@ -13,13 +13,13 @@ use Eadmin\component\form\Field;
  * @method $this readonly(bool $bool) 完全只读
  * @method $this editable(bool $bool) 文本框可输入
  * @method $this clearable(bool $bool) 是否显示清除按钮
- * @method $this size(string $size) 输入框尺寸 	medium / small / mini
+ * @method $this size(string $size) 输入框尺寸    medium / small / mini
  * @method $this placeholder(string $text) 非范围选择时的占位内容
  * @method $this startPlaceholder(string $text) 范围选择时开始日期的占位内容
  * @method $this endPlaceholder(string $text) 范围选择时开始日期的占位内容
  * @method $this isRange(bool $bool) 是否为时间范围选择
  * @method $this arrowControl(bool $bool) 是否使用箭头进行时间选择
- * @method $this align(string $align) 对齐方式 	left / center / right
+ * @method $this align(string $align) 对齐方式    left / center / right
  * @method $this popperClass(string $class) TimePicker 下拉框的类名
  * @method $this rangeSeparator(string $class) 选择范围时的分隔符
  * @method $this string(string $string) 参考日期格式：https://element-plus.gitee.io/#/zh-CN/component/date-picker#ri-qi-ge-shi
@@ -31,4 +31,19 @@ use Eadmin\component\form\Field;
 class TimePicker extends Field
 {
     protected $name = 'ElTimePicker';
+
+    public function type($type)
+    {
+        $type = strtolower($type);
+        switch ($type) {
+            case 'time':
+                $this->valueFormat('YYYY-MM-DD HH:mm:ss');
+                break;
+            case 'timerange':
+                $this->isRange();
+                $this->valueFormat('YYYY-MM-DD HH:mm:ss');
+                break;
+        }
+        return $this;
+    }
 }

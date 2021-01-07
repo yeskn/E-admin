@@ -26,4 +26,24 @@ use Eadmin\component\form\Field;
 class Switchs extends Field
 {
     protected $name = 'ElSwitch';
+    public function __construct($field = null, $value = '')
+    {
+        parent::__construct($field, $value);
+        $this->state([1 => ''], [0 => '']);
+    }
+
+    /**
+     * 设置状态
+     * @param array $active 开启状态 [1=>'开启']
+     * @param array $inactive 关闭状态 [0=>'关闭]
+     */
+    public function state(array $active, array $inactive)
+    {
+        $activeText = current($active);
+        $inactiveText = current($inactive);
+        $this->activeText(current($active));
+        $this->activeValue(key($active));
+        $this->inactiveText(current($inactive));
+        $this->inactiveValue(key($inactive));
+    }
 }

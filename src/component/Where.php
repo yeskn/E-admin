@@ -10,10 +10,10 @@ trait Where
         'AND' => [],
         'OR' => []
     ];
-    public function getWhere(){
+    protected function getWhere(){
         return $this->where;
     }
-    public function setWhere($where){
+    protected function setWhere($where){
         return $this->where = $where;
     }
     /**

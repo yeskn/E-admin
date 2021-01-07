@@ -16,8 +16,8 @@ use Eadmin\component\form\Field;
  * @method $this size(string $size) 输入框尺寸 	large / medium / small / mini
  * @method $this startPlaceholder(string $text) 范围选择时开始日期的占位内容
  * @method $this endPlaceholder(string $text) 范围选择时开始日期的占位内容
- * @method $this type(string $type) 显示类型 year / month / date / dates / week / datetime / datetimerange / daterange / monthrange
  * @method $this format(string $format) 显示在输入框中的格式 YYYY-MM-DD
+ * @method $this valueFormat(string $format) 显示在输入框中的格式 YYYY-MM-DD
  * @method $this align(string $align) 对齐方式 left / center / right
  * @method $this popperClass(string $align) DatePicker 下拉框的类名
  * @method $this rangeSeparator(string $align) 选择范围时的分隔符
@@ -34,4 +34,34 @@ use Eadmin\component\form\Field;
 class DatePicker extends Field
 {
     protected $name = 'ElDatePicker';
+
+    /**
+     * 显示类型
+     * @param string $type year / month / date / dates / week / datetime / datetimerange / daterange / monthrange
+     * @return $this
+     */
+    public function type($type){
+        $type = strtolower($type);
+        $this->attr('type',$type);
+        switch ($type){
+            case 'datetimerange':
+                $this->valueFormat( 'YYYY-MM-DD HH:mm:ss');
+                break;
+            case 'date':
+            case 'daterange':
+            case 'dates':
+                $this->valueFormat( 'YYYY-MM-DD');
+                break;
+            case 'datetime':
+                $this->valueFormat( 'YYYY-MM-DD HH:mm:ss');
+                break;
+            case 'year':
+                $this->valueFormat( 'YYYY');
+                break;
+            case 'month':
+                $this->valueFormat( 'YYYY-MM');
+                break;
+        }
+        return $this;
+    }
 }

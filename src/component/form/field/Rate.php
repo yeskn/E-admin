@@ -30,4 +30,11 @@ use Eadmin\component\form\Field;
 class Rate extends Field
 {
     protected $name = 'ElRate';
+    public function __construct($field = null, $value = '')
+    {
+        if(empty($value)){
+            $value = 0;
+        }
+        parent::__construct($field, $value);
+    }
 }

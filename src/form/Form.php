@@ -44,6 +44,7 @@ use Eadmin\View;
  * @method \Eadmin\form\field\Input number($field, $label) 数字输入框
  * @method \Eadmin\form\field\Select select($field, $label) 下拉选择器
  * @method \Eadmin\form\field\Radio radio($field, $label) 单选框
+ * @method \Eadmin\form\field\CheckboxGroup checkbox($field, $label) 多选框
  * @method \Eadmin\form\field\Switchs switch ($field, $label) switch开关
  * @method \Eadmin\form\field\Tree tree($field, $label) 树形
  * @method \Eadmin\form\field\DateTime datetime($field, $label) 日期时间
@@ -55,7 +56,7 @@ use Eadmin\View;
  * @method \Eadmin\form\field\DateTime time($field, $label) 时间
  * @method \Eadmin\form\field\DateTime year($field, $label) 年
  * @method \Eadmin\form\field\DateTime month($field, $label) 月
- * @method \Eadmin\form\field\Checkbox checkbox($field, $label) 多选框
+
  * @method \Eadmin\form\field\File file($field, $label) 文件上传
  * @method \Eadmin\form\field\File image($field, $label) 图片上传
  * @method \Eadmin\form\field\Editor editor($field, $label) 富文本编辑器

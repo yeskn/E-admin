@@ -8,7 +8,7 @@ use Eadmin\component\form\Field;
 
 /**
  * 计数器
- * Class InputNumber
+ * Class Number
  * @link https://element-plus.gitee.io/#/zh-CN/component/input-number
  * @method $this min(int $num) 设置计数器允许的最小值
  * @method $this max(int $num) 设置计数器允许的最大值
@@ -21,7 +21,14 @@ use Eadmin\component\form\Field;
  * @method $this placeholder(string $text) 输入框默认 placeholder right
  * @package Eadmin\component\form\field
  */
-class InputNumber extends Field
+class Number extends Field
 {
+    public function __construct($field = null, $value = '')
+    {
+        if(empty($value)){
+            $value = 0;
+        }
+        parent::__construct($field, $value);
+    }
     protected $name = 'ElInputNumber';
 }

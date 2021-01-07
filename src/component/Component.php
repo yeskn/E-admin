@@ -49,7 +49,7 @@ abstract class Component implements \JsonSerializable
      */
     public function bindAttr(string $name,$field= null){
         if(is_null($field)) {
-            return $this->bindAttribute[$name];
+            return $this->bindAttribute[$name] ?? null;
         }else{
             $this->bindAttribute[$name] = $field;
             return $this;
@@ -58,7 +58,7 @@ abstract class Component implements \JsonSerializable
     /**
      * 绑定值
      * @param string $name 字段名称
-     * @param mexid $value 值
+     * @param mixed $value 值
      * @return $this
      */
     public function bind(string $name,$value= null){

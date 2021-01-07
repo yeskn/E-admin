@@ -20,4 +20,59 @@ use Eadmin\component\form\Field;
 class CheckboxGroup extends Field
 {
     protected $name = 'ElCheckboxGroup';
+    //禁用数据
+    protected $disabledData = [];
+    public function __construct($field = null, $value = '')
+    {
+        if(empty($value)){
+            $value = [];
+        }
+        parent::__construct($field, $value);
+    }
+
+    /**
+     * 禁用选项数据
+     * @param array $data 禁用数据
+     */
+    public function disabledData(array $data)
+    {
+        $this->disabledData = $data;
+    }
+
+    /**
+     * 设置选项数据
+     * @param array $data 选项数据
+     * @param bool $buttonTheme 是否按钮样式
+     * @return $this
+     */
+    public function options(array $data, bool $buttonTheme = false)
+    {
+        foreach ($data as $value => $label) {
+            if (in_array($value, $this->disabledData)) {
+                $disabled = true;
+            } else {
+                $disabled = false;
+            }
+            $options[] = [
+                'value' => $value,
+                'label' => $label,
+                'disabled' => $disabled,
+            ];
+        }
+        if ($buttonTheme) {
+            $checkbox = CheckboxButton::create();
+        } else {
+            $checkbox = Checkbox::create();
+        }
+        $field = $checkbox->bindAttr('modelValue');
+        $checkbox->removeBind($field);
+        $checkbox->removeAttr('modelValue');
+        $checkboxOption = $checkbox
+            ->map($options)
+            ->mapAttr('label', 'value')
+            ->mapAttr('key', 'value')
+            ->mapAttr('slotDefault', 'label')
+            ->mapAttr('disabled', 'disabled');
+        return $this->content($checkboxOption);
+    }
 }

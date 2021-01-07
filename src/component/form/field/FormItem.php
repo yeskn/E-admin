@@ -30,6 +30,7 @@ class FormItem extends Field
 {
     protected $name = 'ElFormItem';
     protected $form;
+
     public function __construct($prop, $label, $form = null)
     {
         $this->prop($prop);
@@ -41,39 +42,37 @@ class FormItem extends Field
      * 是否必填
      * @return $this
      */
-    public function required(){
+    public function required()
+    {
         $this->rules([
             [
-                'required'=>true,
-                'trigger'=>'blur',
-                'message'=>'请输入'.$this->attr('label'),
+                'required' => true,
+                'trigger' => 'blur',
+                'message' => '请输入' . $this->attr('label'),
             ]
         ]);
         return $this;
     }
+
     /**
      * 添加内容
-     * @param mixed $content 
+     * @param mixed $content
      * @param string $name 插槽名称默认即可default
      * @return static
      */
-    public function content($content,$name='default')
+    public function content($content, $name = 'default')
     {
-        if($content instanceof Field && $content->bindAttr('modelValue') && $this->form){
-            $field = $content->bindAttr('modelValue');
-            $value = $content->bind($field);
-            $content->removeBind($field);
-            $content->bindAttr('modelValue', $this->form->bindAttr('model') . '.' . $field);
-            $this->form->bind[$this->form->bindAttr('model')][$field] = $value;
+        if ($content instanceof Field && $content->bindAttr('modelValue') && $this->form) {
+            $this->form->setItemComponent($content);
         }
-        return parent::content($content,$name);
+        return parent::content($content, $name);
     }
 
     /**
      * 创建输入框
      * @param string $prop 表单域 model 字段
      * @param string $label 标签文本
-     * @param Form $form 
+     * @param Form $form
      * @return static
      */
     public static function create($prop = '', $label = '', $form = null)

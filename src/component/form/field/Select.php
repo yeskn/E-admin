@@ -36,9 +36,14 @@ use think\helper\Str;
 class Select extends Field
 {
     protected $name = 'ElSelect';
-
     //禁用数据
     protected $disabledData = [];
+    public function __construct($field = null, $value = '')
+    {
+        parent::__construct($field, $value);
+        $this->clearable();
+    }
+    
     /**
      * 禁用选项数据
      * @param array $data 禁用数据
