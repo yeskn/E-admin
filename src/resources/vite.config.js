@@ -24,7 +24,12 @@ export default function () {
         // 开启控制台输出日志
         silent: false,
         // 那个包不需要打包
-        optimizeDeps:[],
+        optimizeDeps: {
+            include:[
+                'element-plus/lib/locale/lang/zh-cn',
+                'dayjs'
+            ]
+        },
 
     }
 }

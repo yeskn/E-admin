@@ -6,7 +6,7 @@ import { action } from '/@/store'
 // create an axios instance
 const service = axios.create({
   // baseURL: window.global_config.VUE_APP_BASE_API, // url = base url + request url
-  baseURL: 'http://e-admin.test', // url = base url + request url
+  baseURL: 'http://eadmin.com', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 30000 // request timeout
 })

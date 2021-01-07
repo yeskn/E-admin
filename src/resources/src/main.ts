@@ -5,7 +5,8 @@ import {store,state} from './store'
 import './styles/index.scss'
 import app from  './app'
 import './component'
-app.use(ElementPlus,{size: 'medium'})
+import zhLocale from 'element-plus/lib/locale/lang/zh-cn'
+app.use(ElementPlus,{size: 'medium', locale :zhLocale})
 app.use(router)
 app.provide(store, state)
 app.mount('#app')

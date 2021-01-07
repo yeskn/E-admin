@@ -30,7 +30,6 @@
         setup(props,ctx){
             const state = inject(store)
             const proxyData = state.proxyData
-            console.log(proxyData)
             let loading = ref(false)
             //提交
             function sumbitForm(formName) {

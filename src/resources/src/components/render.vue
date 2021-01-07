@@ -1,8 +1,7 @@
 <script>
     import {defineComponent, computed, toRaw, h, resolveComponent, inject, withCtx, createVNode} from 'vue'
     import {store} from '/@/store'
-    import {compile} from '@vue/compiler-dom'
-
+    import dayjs from 'dayjs'
     export default defineComponent({
 
         name: "EadminRender",
@@ -20,7 +19,7 @@
             const modelValue = state.proxyData
 
             const renderComponent = (data, slotProps) => {
-                let expression, children = {}, name,attribute
+                let expression, children = {}, name, attribute
 
                 //属性绑定
                 for (let bindAttr in data.bindAttribute) {
@@ -35,12 +34,18 @@
                     if (slotProps && slotProps.row) {
                         data.attribute.modelValue = slotProps.row[field]
                         data.attribute['onUpdate:modelValue'] = value => {
+                            if(data.attribute.valueFormat){
+                                value = dateFormat(value,data.attribute.valueFormat)
+                            }
                             slotProps.row[field] = value
                         }
                     } else {
                         expression = 'data.attribute.modelValue = modelValue.' + field
                         eval(expression)
                         data.attribute['onUpdate:modelValue'] = value => {
+                            if(data.attribute.valueFormat){
+                                value = dateFormat(value,data.attribute.valueFormat)
+                            }
                             expression = 'modelValue.' + field + ' = value'
                             eval(expression)
                         }
@@ -67,15 +72,30 @@
                     let field = data.map.bindName
                     return modelValue[field].map(item => {
                         for (let attr in data.map.attribute) {
-                            data.attribute[attr] = item[data.map.attribute[attr]]
+                            attribute[attr] = item[data.map.attribute[attr]]
                         }
-                        return h(name, attribute, children)
+                        let mapAttribute = {...attribute}
+                        if(mapAttribute.slotDefault){
+                            children.default = ()=> mapAttribute.slotDefault
+                        }
+                        let mapChildren = {...children}
+                        return h(name, mapAttribute, mapChildren)
                     })
                 } else {
                     return h(name, attribute, children)
                 }
             }
-
+            //日期格式格式化 value日期,format格式
+            function dateFormat(value,format){
+                if(Array.isArray(value)){
+                    value = value.map(item=>{
+                        return dayjs(item).format(format)
+                    })
+                }else{
+                    value = dayjs(value).format(format)
+                }
+                return value
+            }
             function userRender(slot, scope) {
                 return slot.map(item => {
                     if (typeof (item.where) == 'object' && (item.where.AND.length > 0 || item.where.OR.length > 0)) {

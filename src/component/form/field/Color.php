@@ -8,7 +8,7 @@ use Eadmin\component\form\Field;
 
 /**
  * 颜色选择器
- * Class ColorPicker
+ * Class Color
  * @link https://element-plus.gitee.io/#/zh-CN/component/color-picker
  * @method $this size(string $size) 尺寸 medium / small / mini
  * @method $this showAlpha(bool $bool) 是否支持透明度选择
@@ -17,7 +17,7 @@ use Eadmin\component\form\Field;
  * @method $this predefine(array $color) 预定义颜色
  * @package Eadmin\component\form\field
  */
-class ColorPicker extends Field
+class Color extends Field
 {
     protected $name = 'ElColorPicker';
 }

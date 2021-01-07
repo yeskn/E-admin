@@ -12,7 +12,6 @@
 </template>
 
 <script>
-    import render from '/@/components/render.vue'
     import {defineComponent,reactive,watch} from "vue";
     export default defineComponent({
         name: "EadminManyItem",
@@ -20,10 +19,6 @@
             title:String,
             modelValue: Array,
             field:String,
-            manyContent:Object
-        },
-        components: {
-            render,
         },
         emits:['update:modelValue'],
         setup(props,ctx){
