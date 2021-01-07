@@ -87,7 +87,7 @@ class FormAction extends Component
         if ($this->hideSubmitButton) {
             $this->submitButton = null;
         }
-        $this->form->action([
+        $this->form->attr('action',[
             'submit' => $this->submitButton,
             'reset' => $this->resetButton,
         ]);

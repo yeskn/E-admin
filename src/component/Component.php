@@ -2,6 +2,7 @@
 
 namespace Eadmin\component;
 
+use Eadmin\component\layout\Column;
 use think\helper\Str;
 
 abstract class Component implements \JsonSerializable
@@ -17,7 +18,6 @@ abstract class Component implements \JsonSerializable
     protected $bind = [];
     //属性绑定
     protected $bindAttribute = [];
-
     /**
      * 设置属性
      * @param string $name 属性名
@@ -90,7 +90,6 @@ abstract class Component implements \JsonSerializable
         $this->content[$name][] = $content;
         return $this;
     }
-
     public function jsonSerialize()
     {
         return [

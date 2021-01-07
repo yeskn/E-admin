@@ -10,6 +10,7 @@ use think\helper\Str;
 abstract class Field extends Component
 {
     protected $default = null;
+    protected $value = null;
     public function __construct($field = null, $value = '')
     {
         $this->bindValue($field, $value);
@@ -23,11 +24,20 @@ abstract class Field extends Component
         $this->default = $value;
         return $this;
     }
+
+    /**
+     * 获取设置固定值
+     * @return |null
+     */
+    public function getValue(){
+        return $this->value;
+    }
     /**
      * 设置值
      * @param mixed $value
      */
     public function value($value){
+        $this->value = $value;
         $field = $this->bindAttr('modelValue');
         $this->bind($field,$value);
         return $this;
@@ -42,7 +52,7 @@ abstract class Field extends Component
     {
         return new static($field, $value);
     }
-
+    
     /**
      * 双向绑定值
      * @param string $field 字段
