@@ -19,6 +19,7 @@
             title:String,
             modelValue: Array,
             field:String,
+            manyData:Object,
         },
         emits:['update:modelValue'],
         setup(props,ctx){
@@ -33,8 +34,8 @@
                 value[index] = len
             }
             //添加元素
-            function add(manyData){
-                value.push({test3:'213'})
+            function add(){
+                value.push(props.manyData)
             }
             //移除元素
             function remove(index){

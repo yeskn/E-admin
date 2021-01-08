@@ -6,13 +6,18 @@
  * Time: 09:22
  */
 
-namespace Eadmin\component\form\field;
+namespace Eadmin\component\form;
 
 
 use Eadmin\component\basic\TabPane;
 use Eadmin\component\basic\Tabs;
 use Eadmin\component\form\Field;
+use Eadmin\component\form\field\DatePicker;
+use Eadmin\component\form\field\TimePicker;
 use Eadmin\component\layout\Row;
+use Eadmin\form\FormModel;
+use think\helper\Str;
+use think\Model;
 
 /**
  * 表单
@@ -53,6 +58,8 @@ use Eadmin\component\layout\Row;
  */
 class Form extends Field
 {
+    use FormModel;
+
     protected $name = 'EadminForm';
     protected $actions;
     protected $tab;
@@ -62,11 +69,19 @@ class Form extends Field
 
     protected $itemComponent = [];
     protected $formItem = [];
-    public function __construct($field = null, $data = [])
+
+    //是否编辑表单
+    protected $isEdit = false;
+
+    public function __construct($data)
     {
-        empty($field) ? $field = Str::random(10, 3) : $field;
-        $this->bind($field, $data);
-        $this->bindAttr('model',$field);
+        if ($data instanceof Model) {
+            $this->setModel($data);
+        } else {
+            $this->data = $data;
+        }
+        $field = Str::random(15, 3);
+        $this->bindAttr('model', $field);
         $this->actions = new FormAction($this);
         $this->labelWidth('100px');
     }
@@ -76,70 +91,85 @@ class Form extends Field
      * @param array $value
      * @return $this
      */
-    public function rules(array $value){
-        $this->attr(__FUNCTION__,$bool);
+    public function rules(array $value)
+    {
+        $this->attr(__FUNCTION__, $bool);
         return $this;
     }
+
     /**
      * 是否在输入框中显示校验结果反馈图标
      * @param bool $value
      * @return $this
      */
-    public function statusIcon(bool $value){
-        $this->attr(__FUNCTION__,$bool);
+    public function statusIcon(bool $value)
+    {
+        $this->attr(__FUNCTION__, $bool);
         return $this;
     }
+
     /**
      * 是否显示必填字段的标签旁边的红色星号
      * @param bool $value
      * @return $this
      */
-    public function hideRequiredAsterisk(bool $value){
-        $this->attr(__FUNCTION__,$bool);
+    public function hideRequiredAsterisk(bool $value)
+    {
+        $this->attr(__FUNCTION__, $bool);
         return $this;
     }
+
     /**
      * 行内表单模式
      * @param bool $bool
      * @return $this
      */
-    public function inline(bool $bool){
-        $this->attr(__FUNCTION__,$bool);
+    public function inline(bool $bool)
+    {
+        $this->attr(__FUNCTION__, $bool);
         return $this;
     }
+
     /**
      * 表单域标签的后缀
      * @param string $value
      * @return $this
      */
-    public function labelSuffix(string $value){
-        $this->attr(__FUNCTION__,$value);
+    public function labelSuffix(string $value)
+    {
+        $this->attr(__FUNCTION__, $value);
         return $this;
     }
+
     /**
      * 表单域标签的宽度
      * @param string $value 例如 '50px'
      * @return $this
      */
-    public function labelWidth(string $value){
-        $this->attr(__FUNCTION__,$value);
+    public function labelWidth(string $value)
+    {
+        $this->attr(__FUNCTION__, $value);
         return $this;
     }
+
     /**
      * 表单域标签的宽度
      * @return $this right/left/top
      */
-    public function labelPosition(){
-        $this->attr(__FUNCTION__,$value);
+    public function labelPosition()
+    {
+        $this->attr(__FUNCTION__, $value);
         return $this;
     }
+
     /**
      * 尺寸
      * @param string $value medium / small / mini
      * @return $this
      */
-    public function size(string $value){
-        $this->attr(__FUNCTION__,$value);
+    public function size(string $value)
+    {
+        $this->attr(__FUNCTION__, $value);
         return $this;
     }
 
@@ -148,78 +178,119 @@ class Form extends Field
      * @param string $sumbitUrl 提交url
      * @return $this
      */
-    public function submitUrl(string $sumbitUrl){
-        $this->attr(__FUNCTION__,$sumbitUrl);
+    public function submitUrl(string $sumbitUrl)
+    {
+        $this->attr(__FUNCTION__, $sumbitUrl);
         return $this;
     }
 
-    /**
-     * 创建
-     * @param string $field 字段
-     * @param array $data 值
-     * @return static
-     */
-    public static function create($field = 'form',$data = [])
-    {
-        return new static($field, $data);
-    }
     /**
      * 添加内容
      * @param mixed $content
      * @param string $name 插槽名称默认即可default
      * @return static
      */
-    public function content($content,$name='default')
+    public function content($content, $name = 'default')
     {
-        if($content instanceof Field && $content->bindAttr('modelValue')){
+        if ($content instanceof Field && $content->bindAttr('modelValue')) {
             $this->valueModel($content);
         }
-        return parent::content($content,$name);
+        return parent::content($content, $name);
     }
 
     /**
      * 绑定值到form
      * @param $component 组件
+     * @param null $data
      */
-    private function valueModel($component){
-        $field = $component->bindAttr('modelValue');
-        $value = $component->bind($field);
-        $component->removeBind($field);
-        $component->bindAttr('modelValue', $this->bindAttr('model') . '.' . $field);
-        $this->bind[$this->bindAttr('model')][$field] = $value;
+    private function valueModel($component, $data = null)
+    {
+        foreach ($component->bindAttribute as $attr => $field) {
+            $value = $this->getData($field, $data);
+            if (!empty($value)) {
+                $component->bind($field, $value);
+            }
+        }
+        foreach ($component->bindAttribute as $attr => $field) {
+            $value = $this->getData($field, $data);
+            $defaultValue = $component->getDefault();
+            $componentValue = $component->getValue();
+            //设置default缺省值
+            if (empty($value) && $value !== 0 && !is_null($defaultValue)) {
+                $value = $defaultValue;
+                $value = $this->getPickerValue($component, $field, $value);
+            }
+            //value固定值
+            if (!is_null($componentValue)) {
+                $value = $componentValue;
+                $value = $this->getPickerValue($component, $field, $value);
+            }
+            $this->setData($field, $value);
+            if (is_null($data)) {
+                $component->bindAttr($attr, $this->bindAttr('model') . '.' . $field);
+            }
+            $component->removeBind($field);
+        }
     }
+
+    /**
+     * 获取时间value特殊处理
+     * @param $component 组件
+     * @param $field 字段
+     * @param $componentValue 值
+     * @return mixed
+     */
+    private function getPickerValue($component, $field, $componentValue)
+    {
+        $value = $componentValue;
+        if ($component instanceof DatePicker || $component instanceof TimePicker) {
+            $startField = $component->bindAttr('startField');
+            $endField = $component->bindAttr('endField');
+            if ($field == $startField && isset($componentValue[0])) {
+                $value = $componentValue[0];
+            }
+            if ($field == $endField && isset($componentValue[1])) {
+                $value = $componentValue[1];
+            }
+        }
+        return $value;
+    }
+
     /**
      * 选项卡布局
      * @param $title 标题
      * @param \Closure $closure
      * @return $this
      */
-    public function tab($title,\Closure $closure){
-        if(!$this->tab){
+    public function tab($title, \Closure $closure)
+    {
+        if (!$this->tab) {
             $this->tab = Tabs::create();
             $this->content($this->tab);
         }
         $this->formItem = [];
         $this->itemBool = false;
-        call_user_func_array($closure,[$this,$this->tab]);
+        call_user_func_array($closure, [$this, $this->tab]);
         $this->itemBool = true;
         $tabPane = new TabPane();
         $tabPane->label($title);
-        foreach ($this->formItem as $item){
+        foreach ($this->formItem as $item) {
             $tabPane->content($item);
         }
         $this->tab->content($tabPane);
         return $this;
     }
+
     /**
      * 添加item
      * @param string $prop 字段
      * @param string $label 标签
      * @return FormItem
      */
-    public function item($prop='',$label=''){
-        $item = FormItem::create($prop,$label,$this);
-        if($this->itemBool){
+    public function item($prop = '', $label = '')
+    {
+        $item = FormItem::create($prop, $label, $this);
+        if ($this->itemBool) {
             $this->content($item);
         }
         $this->formItem[] = $item;
@@ -228,79 +299,107 @@ class Form extends Field
 
     /**
      * 列布局
-     * @param int $span  栅格占据的列数,占满一行24
+     * @param int $span 栅格占据的列数,占满一行24
      * @param \Closure $closure
      * @return $this
      */
-    public function column(int $span,\Closure $closure){
+    public function column(int $span, \Closure $closure)
+    {
         $this->formItem = [];
         $row = new Row();
         $this->itemBool = false;
         call_user_func($closure, $this);
         $this->itemBool = true;
-        foreach ($this->formItem as $item){
-            $row->column($item,$span);
+        foreach ($this->formItem as $item) {
+            $row->column($item, $span);
         }
         $this->content($row);
         return $this;
     }
+
     /**
      * 添加一行布局
      * @param string $title
      * @param \Closure $closure
      * @return $this
      */
-    public function row(string $title,\Closure $closure){
+    public function row(string $title, \Closure $closure)
+    {
         $this->formItem = [];
         $row = new Row();
         $this->itemBool = false;
         call_user_func($closure, $this);
         $this->itemBool = true;
         $row->content("<h4 style='font-size:16px;color: #666666'>{$title}</h4>");
-        foreach ($this->formItem as $item){
+        foreach ($this->formItem as $item) {
             $row->column($item);
         }
         $this->content($row);
         return $this;
     }
+
+    /**
+     * 编辑
+     * @param $id 主键id数据
+     */
+    public function edit($id)
+    {
+        if ($this->model) {
+            $this->data = $this->model->where($this->pkField, $id)->find();
+            $this->editData[$this->pkField] = $this->data[$this->pkField];
+        }
+        $this->isEdit = true;
+    }
+
     /**
      * 一对多添加
      * @param $realtion 关联方法|字段
      * @param $title 标题
      * @param \Closure $closure
      */
-    public function hasMany($realtion,$title,\Closure $closure){
+    public function hasMany($realtion, $title, \Closure $closure)
+    {
         $this->formItem = [];
-        $manyItem =  FormMany::create($realtion,[]);
-        $manyItem->attr('field',$realtion);
-        $manyItem->attr('title',$title);
+        $manyItem = FormMany::create($realtion, []);
         $originItemComponent = $this->itemComponent;
         $this->itemComponent = [];
         $this->itemBool = false;
-        call_user_func_array($closure,[$this]);
+        call_user_func_array($closure, [$this]);
         $this->itemBool = true;
         $itemComponent = $this->itemComponent;
-        $fieldValues = [];
-        foreach ($itemComponent as $component){
-            $field = $component->bindAttr('modelValue');
-            $value = $component->getValue();
-            if(!is_null($value)){
-                $fieldValues[$field] = $value;
+        $datas = $this->getData($realtion);
+        $manyData = [];
+        foreach ($itemComponent as $component) {
+            $componentClone = clone $component;
+            $this->valueModel($componentClone,[]);
+        }
+        if (!$this->isEdit && empty($datas)) {
+            //添加模式默认添加一条
+            $datas[] = $this->editData;
+        }
+        $manyItem->attr('manyData', $this->editData);
+        $manyItem->attr('field', $realtion);
+        $manyItem->attr('title', $title);
+        foreach ($datas as $key => $data) {
+            $this->editData = [];
+            foreach ($itemComponent as $component) {
+                if (count($datas) - 1 == $key) {
+                    $componentClone = $component;
+                } else {
+                    $componentClone = clone $component;
+                }
+                $this->valueModel($componentClone, $data);
             }
+            $manyData[] = $this->editData;
         }
-        $data = [['aa'=>123,'bb'=>1],['aa'=>'3','bb'=>1]];
-        foreach ($data as &$val){
-            $val = array_merge($val,$fieldValues);
-        }
-        $manyItem->value($data);
+        $manyItem->value($manyData);
         $this->itemComponent = $originItemComponent;
-        foreach ($this->formItem as $item){
+        foreach ($this->formItem as $item) {
             $manyItem->content($item);
         }
         $this->content($manyItem);
         return $manyItem;
     }
-   
     protected function formItem($name, $field, $arguments)
     {
         $label = array_pop($arguments);
@@ -329,20 +428,25 @@ class Form extends Field
             $class .= 'Input';
         } elseif (in_array($name, $dates)) {
             $class .= 'DatePicker';
-        }  elseif (in_array($name, $times)) {
+        } elseif (in_array($name, $times)) {
             $class .= 'TimePicker';
-        }elseif ($name == 'radio') {
+        } elseif ($name == 'radio') {
             $class .= 'RadioGroup';
         } elseif ($name == 'checkbox') {
             $class .= 'CheckboxGroup';
         } elseif ($name == 'switch') {
             $class .= 'Switchs';
-        }else {
+        } else {
             $class .= ucfirst($name);
         }
         $component = $class::create($field);
-        $compenentArr = array_merge($inputs,$dates,$times);
+        $compenentArr = array_merge($inputs, $dates, $times);
         if (in_array($name, $compenentArr)) {
+            //由于element时间范围字段返回是一个数组,这里特殊绑定处理成2个字段
+            if ($name == 'dateRange' || $name == 'datetimeRange' || $name == 'timeRange') {
+                $component = $class::create();
+                $component->rangeField($field, $arguments[0]);
+            }
             $component->type($name);
         }
         if ($name == 'hidden') {
@@ -352,29 +456,40 @@ class Form extends Field
         }
         return $component;
     }
+
     /**
      * 表单操作定义
      * @param \Closure $closure
      */
-    public function actions(\Closure $closure){
-        call_user_func_array($closure,[$this->actions]);
+    public function actions(\Closure $closure)
+    {
+        call_user_func_array($closure, [$this->actions]);
     }
-    public function setItemComponent($component){
+
+    public function setItemComponent($component)
+    {
         $this->itemComponent[] = $component;
     }
+
     public function __call($name, $arguments)
     {
         return $this->formItem($name, $arguments[0], array_slice($arguments, 1));
     }
+
     /**
      * 解析组件
      */
-    protected function parseComponent(){
-        foreach ($this->itemComponent as $component){
+    protected function parseComponent()
+    {
+        foreach ($this->itemComponent as $component) {
             //各个组件绑定值赋值
             $this->valueModel($component);
         }
+        $field = $this->bindAttr('model');
+        //将值绑定到form
+        $this->bind($field, $this->editData);
     }
+
     public function jsonSerialize()
     {
         $this->parseComponent();

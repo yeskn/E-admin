@@ -6,7 +6,7 @@
  * Time: 09:45
  */
 
-namespace Eadmin\component\form\field;
+namespace Eadmin\component\form;
 
 
 use Eadmin\component\form\Field;

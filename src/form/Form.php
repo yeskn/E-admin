@@ -900,7 +900,7 @@ EOF;
     {
         $this->script .= $js . PHP_EOL;
     }
-
+    
     protected function setData($field, $val)
     {
         if ($this->model instanceof Model) {

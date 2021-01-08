@@ -1,9 +1,9 @@
 <template>
-    <el-form ref="EadminForm" v-bind="$attrs">
+    <el-form ref="EadminForm" v-bind="$attrs" @submit.native.prevent>
         <slot></slot>
         <el-form-item>
             <slot name="leftAction"></slot>
-            <render v-if="action.submit" :loading="loading" :data="action.submit" @click="sumbitForm('EadminForm')"></render>
+            <render v-if="action.submit" native-type="submit" :loading="loading" :data="action.submit" @click="sumbitForm('EadminForm')"></render>
             <render v-if="action.reset" :data="action.reset" @click="resetForm('EadminForm')"></render>
             <slot name="rightAction"></slot>
         </el-form-item>

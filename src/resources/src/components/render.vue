@@ -17,16 +17,14 @@
         setup(props, ctx) {
             const state = inject(store)
             const modelValue = state.proxyData
-
+            console.log(modelValue)
             const renderComponent = (data, slotProps) => {
                 let expression, children = {}, name, attribute
-
                 //属性绑定
                 for (let bindAttr in data.bindAttribute) {
                     expression = 'data.attribute[bindAttr] = modelValue.' + data.bindAttribute[bindAttr]
                     eval(expression)
                 }
-
                 //双向绑定值
                 if (data.bindAttribute && data.bindAttribute.modelValue) {
                     let field = data.bindAttribute.modelValue
@@ -35,7 +33,18 @@
                         data.attribute.modelValue = slotProps.row[field]
                         data.attribute['onUpdate:modelValue'] = value => {
                             if(data.attribute.valueFormat){
-                                value = dateFormat(value,data.attribute.valueFormat)
+                                //时间特殊处理
+                                if(value == null){
+                                    slotProps.row[data.bindAttribute.startField] = null
+                                    slotProps.row[data.bindAttribute.endField] = null
+                                }else{
+                                    value = dateFormat(value,data.attribute.valueFormat)
+                                    if(data.attribute.hasOwnProperty('startField') && data.attribute.hasOwnProperty('endField')){
+                                        slotProps.row[data.bindAttribute.startField] = value[0]
+                                        slotProps.row[data.bindAttribute.endField] = value[1]
+                                    }
+                                }
+
                             }
                             slotProps.row[field] = value
                         }
@@ -44,7 +53,21 @@
                         eval(expression)
                         data.attribute['onUpdate:modelValue'] = value => {
                             if(data.attribute.valueFormat){
-                                value = dateFormat(value,data.attribute.valueFormat)
+                                //时间特殊处理
+                                if(value == null){
+                                    expression = 'modelValue.' + data.bindAttribute.startField + ' = null'
+                                    eval(expression)
+                                    expression = 'modelValue.' + data.bindAttribute.endField + ' = null'
+                                    eval(expression)
+                                }else{
+                                    value = dateFormat(value,data.attribute.valueFormat)
+                                    if(data.attribute.hasOwnProperty('startField') && data.attribute.hasOwnProperty('endField')){
+                                        expression = 'modelValue.' + data.bindAttribute.startField + ' = value[0]'
+                                        eval(expression)
+                                        expression = 'modelValue.' + data.bindAttribute.endField + ' = value[1]'
+                                        eval(expression)
+                                    }
+                                }
                             }
                             expression = 'modelValue.' + field + ' = value'
                             eval(expression)

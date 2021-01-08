@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Eadmin\component\form\field;
+namespace Eadmin\component\form;
 
 
 use Eadmin\component\basic\Button;
