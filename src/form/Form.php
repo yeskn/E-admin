@@ -56,7 +56,6 @@ use Eadmin\View;
  * @method \Eadmin\form\field\DateTime time($field, $label) 时间
  * @method \Eadmin\form\field\DateTime year($field, $label) 年
  * @method \Eadmin\form\field\DateTime month($field, $label) 月
-
  * @method \Eadmin\form\field\File file($field, $label) 文件上传
  * @method \Eadmin\form\field\File image($field, $label) 图片上传
  * @method \Eadmin\form\field\Editor editor($field, $label) 富文本编辑器

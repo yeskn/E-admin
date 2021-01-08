@@ -5,26 +5,119 @@ namespace Eadmin\component\form\field;
 
 
 use Eadmin\component\form\Field;
+use Eadmin\service\TokenService;
+use Overtrue\Flysystem\Qiniu\Plugins\UploadToken;
+use think\facade\Filesystem;
 
 /**
  * 上传
  * Class Upload
  * @link https://element-plus.gitee.io/#/zh-CN/component/upload
- * @method $this headers($object) 设置上传的请求头部
- * @method $this action(string $action) 必选参数，上传的地址
- * @method $this multiple(bool $bool) 是否支持多选文件
- * @method $this data($object) 上传时附带的额外参数
- * @method $this name(string $name) 上传的文件字段名
- * @method $this withCredentials(bool $bool) 支持发送 cookie 凭证信息
- * @method $this showFileList(bool $bool) 是否显示已上传文件列表
+ * @method $this isUniqidmd5(bool $bool) 唯一文件名
+ * @method $this displayType(string $value) 上传显示方式 image图片,file文件
  * @method $this drag(bool $bool) 是否启用拖拽上传
- * @method $this accept(string $type) 接受上传的文件类型（thumbnail-mode 模式下此参数无效）
- * @method $this listType(string $type) 文件列表的类型 text / picture / picture-card
- * @method $this autoUpload(bool $bool) 是否在选取文件后立即进行上传
- * @method $this fileList(array $list) 上传的文件列表, 例如: [{name: 'food.jpg', url: 'https://xxx.cdn.com/xxx.jpg'}]
  * @package Eadmin\component\form\field
  */
 class Upload extends Field
 {
-    protected $name = 'ElUpload';
+    protected $name = 'EadminUpload';
+    public function __construct($field = null, string $value = '')
+    {
+        parent::__construct($field, $value);
+        $this->attr('url',request()->domain().'/eadmin/upload');
+        $this->attr('token',TokenService::instance()->get());
+        $this->disk(config('admin.uploadDisks'));
+    }
+
+    /**
+     * 多文件上传
+     */
+    public function multiple(){
+        $this->attr('singleFile',false);
+        return $this;
+    }
+    /**
+     * 上传存储类型
+     * @param $uptype local,qiniu,oss
+     */
+    public function disk($diskType){
+        $config = config('filesystem.disks.'.$diskType);
+        $uptype = $config['type'];
+        $accessKey = '';
+        $accessKeySecret = '';
+        $this->attr('upType',$diskType);
+        if($uptype == 'qiniu'){
+            $this->attr('bucket',$config['bucket']);
+            $this->attr('domain',$config['domain']);
+            Filesystem::disk('qiniu')->addPlugin(new UploadToken());
+            $this->attr('uploadToken',Filesystem::disk('qiniu')->getUploadToken(null,3600*3));
+        }elseif ($uptype == 'oss'){
+            $this->attr('accessKey',$config['accessKey']);
+            $this->attr('secretKey',$config['secretKey']);
+            $this->attr('bucket',$config['bucket']);
+            $this->attr('endpoint',$config['endpoint']);
+            $this->attr('domain',$config['domain']);
+            $this->attr('region',$config['region']);
+        }
+        return $this;
+    }
+    /**
+     * 指定保存目录
+     */
+    public function saveDir($path){
+        if(substr($path,-1) != '/'){
+            $path.='/';
+        }
+        $this->attr('saveDir',$path);
+        return $this;
+    }
+    /**
+     * 显示尺寸
+     * @param $width 宽度
+     * @param $height 高度
+     * @return $this
+     */
+    public function size($width,$height){
+        $this->attr('width',$width);
+        $this->attr('height',$height);
+        return $this;
+    }
+    /**
+     * 裁剪尺寸,暂仅支持单文件
+     * @param $width 宽度
+     * @param $height 高度
+     * @param $auto 是否自动居中裁剪,否显示界面手动裁剪
+     * @return $this
+     */
+    public function crop($width,$height,$auto = false){
+        $this->attr('cropWidth',$width);
+        $this->attr('cropHeight',$height);
+        $this->attr('cropperOn',true);
+        $this->attr('cropperAuto',$auto);
+        return $this;
+    }
+    /**
+     * 图片建议提示
+     * @param $width 宽度
+     * @param $height 高度
+     */
+    public function helpSize($width,$height){
+        $this->help("建议上传图片尺寸 $width * $height");
+        return $this;
+    }
+    /**
+     * 限制上传类型
+     * @param string $vals
+     */
+    public function ext($vals){
+        if(is_string($vals)){
+            $vals = explode(',',$vals);
+        }
+        $vals = array_map(function ($item){
+            return ".{$item}";
+        },$vals);
+        $accept = implode(',',$vals);
+        $this->attr('accept',$accept);
+        return $this;
+    }
 }

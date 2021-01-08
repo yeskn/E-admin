@@ -27,7 +27,45 @@ export default function () {
         optimizeDeps: {
             include:[
                 'element-plus/lib/locale/lang/zh-cn',
-                'dayjs'
+                'dayjs',
+                'tinymce/plugins/',
+            ,'tinymce/tinymce'
+            ,'tinymce/themes/silver'
+            ,'tinymce/icons/default'
+            ,'tinymce/plugins/advlist'
+            ,'tinymce/plugins/anchor'
+            ,'tinymce/plugins/autolink'
+            ,'tinymce/plugins/autosave'
+            ,'tinymce/plugins/code'
+            ,'tinymce/plugins/codesample'
+            ,'tinymce/plugins/colorpicker'
+            ,'tinymce/plugins/contextmenu'
+            ,'tinymce/plugins/directionality'
+            ,'tinymce/plugins/fullscreen'
+            ,'tinymce/plugins/hr'
+            ,'tinymce/plugins/image'
+            ,'tinymce/plugins/imagetools'
+            ,'tinymce/plugins/insertdatetime'
+            ,'tinymce/plugins/link'
+            ,'tinymce/plugins/lists'
+            ,'tinymce/plugins/media'
+            ,'tinymce/plugins/nonbreaking'
+            ,'tinymce/plugins/noneditable'
+            ,'tinymce/plugins/pagebreak'
+            ,'tinymce/plugins/preview'
+            ,'tinymce/plugins/save'
+            ,'tinymce/plugins/searchreplace'
+            ,'tinymce/plugins/spellchecker'
+            ,'tinymce/plugins/tabfocus'
+            ,'tinymce/plugins/table'
+            ,'tinymce/plugins/template'
+            ,'tinymce/plugins/textcolor'
+            ,'tinymce/plugins/textpattern'
+            ,'tinymce/plugins/visualblocks'
+            ,'tinymce/plugins/visualchars'
+            ,'tinymce/plugins/wordcount'
+            ,'tinymce/plugins/print'
+
             ]
         },
 

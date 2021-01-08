@@ -45,10 +45,10 @@ use think\Model;
  * @method \Eadmin\component\form\field\Slider slider($field, $label) 滑块
  * @method \Eadmin\component\form\field\Color color($field, $label) 颜色选择器
  * @method \Eadmin\component\form\field\Rate rate($field, $label) 评分组件
- * @method \Eadmin\component\form\field\Tree tree($field, $label) 树形
- * @method \Eadmin\component\form\field\File file($field, $label) 文件上传
- * @method \Eadmin\component\form\field\File image($field, $label) 图片上传
+ * @method \Eadmin\component\form\field\Upload file($field, $label) 文件上传
+ * @method \Eadmin\component\form\field\Upload image($field, $label) 图片上传
  * @method \Eadmin\component\form\field\Editor editor($field, $label) 富文本编辑器
+ * @method \Eadmin\component\form\field\Tree tree($field, $label) 树形
  * @method \Eadmin\component\form\field\Cascader cascader(...$field, $label) 级联选择器
  * @method \Eadmin\component\form\field\Transfer transfer($field, $label) 穿梭框
  * @method \Eadmin\component\form\field\Icon icon($field, $label) 图标选择器
@@ -377,11 +377,11 @@ class Form extends Field
             //添加模式默认添加一条
             $datas[] = $this->editData;
         }
+        $this->editData = [];
         $manyItem->attr('manyData', $this->editData);
         $manyItem->attr('field', $realtion);
         $manyItem->attr('title', $title);
         foreach ($datas as $key => $data) {
-            $this->editData = [];
             foreach ($itemComponent as $component) {
                 if (count($datas) - 1 == $key) {
                     $componentClone = $component;
@@ -391,6 +391,7 @@ class Form extends Field
                 $this->valueModel($componentClone, $data);
             }
             $manyData[] = $this->editData;
+            $this->editData = [];
         }
         $manyItem->value($manyData);
         $this->itemComponent = $originItemComponent;
@@ -424,12 +425,18 @@ class Form extends Field
             'time',
             'timeRange',
         ];
+        $uploads = [
+            'file',
+            'image',
+        ];
         if (in_array($name, $inputs)) {
             $class .= 'Input';
         } elseif (in_array($name, $dates)) {
             $class .= 'DatePicker';
         } elseif (in_array($name, $times)) {
             $class .= 'TimePicker';
+        } elseif (in_array($name, $uploads)) {
+            $class .= 'Upload';
         } elseif ($name == 'radio') {
             $class .= 'RadioGroup';
         } elseif ($name == 'checkbox') {
@@ -441,6 +448,9 @@ class Form extends Field
         }
         $component = $class::create($field);
         $compenentArr = array_merge($inputs, $dates, $times);
+        if($name == 'image'){
+            $component->displayType('image')->imageExt()->size(120, 120)->isUniqidmd5();
+        }
         if (in_array($name, $compenentArr)) {
             //由于element时间范围字段返回是一个数组,这里特殊绑定处理成2个字段
             if ($name == 'dateRange' || $name == 'datetimeRange' || $name == 'timeRange') {

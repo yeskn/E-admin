@@ -6,10 +6,19 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@tinymce/tinymce-vue": "^4.0.0",
+    "ali-oss": "^6.13.1",
     "axios": "^0.20.0-0",
     "dayjs": "^1.10.2",
     "element-plus": "^1.0.1-beta.23",
+    "hls.js": "^0.14.17",
+    "js-md5": "^0.7.3",
+    "qiniu-js": "^3.1.2",
+    "simple-uploader.js": "^0.5.6",
+    "tinymce": "^5.6.2",
     "vue": "^3.0.4",
+    "vue-aplayer": "^1.6.1",
+    "vue-cropper": "^0.5.6",
     "vue-router": "^4.0.1"
   },
   "devDependencies": {

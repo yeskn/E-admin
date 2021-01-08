@@ -27,7 +27,7 @@ abstract class Component implements \JsonSerializable
     public function attr(string $name, $value = null)
     {
         if(is_null($value)) {
-            return $this->attribute[$name];
+            return $this->attribute[$name] ?? null;
         }else{
             $this->attribute[$name] = $value;
             return $this;

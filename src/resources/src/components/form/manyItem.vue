@@ -4,11 +4,14 @@
         <slot :row="item" :$index="index" :prop-field="field"></slot>
         <el-form-item>
             <el-button size="mini" v-if="value.length - 1 == index" type='primary' plain @click="add">新增</el-button>
-            <el-button size="mini" type='danger' v-show='value.length > 1' @click="remove(index)">移除</el-button>
+            <el-button size="mini" type='danger' v-show='value.length > 0' @click="remove(index)">移除</el-button>
             <el-button size="mini" @click="handleUp(index)" v-show='value.length > 1 && index > 0'>上移</el-button>
             <el-button size="mini" v-show='value.length > 1 && index < value.length-1' @click="handleDown(index)">下移</el-button>
         </el-form-item>
     </div>
+    <el-form-item v-if="value.length == 0">
+         <el-button size="mini" type='primary' plain @click="add">新增</el-button>
+    </el-form-item>
 </template>
 
 <script>

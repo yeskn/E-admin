@@ -23,19 +23,6 @@ class File extends Field
     }
 
     /**
-     * 唯一文件名
-     * @return $this
-     */
-    public function isUniqidmd5(bool $bool = true){
-        if($bool){
-            $bool = 'true';
-        }else{
-            $bool = 'false';
-        }
-        $this->setAttr(':is-uniqidmd5',$bool);
-        return $this;
-    }
-    /**
      * 显示视频
      * @param $width 宽度
      * @return $this
