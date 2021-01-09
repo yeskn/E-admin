@@ -7,6 +7,11 @@ namespace Eadmin\component\form;
 use Eadmin\component\Component;
 use think\helper\Str;
 
+/**
+ * Class Field
+ * @package Eadmin\component\form
+ * @method $this disabled(bool $vlaue) 禁用
+ */
 abstract class Field extends Component
 {
     protected $default = null;
@@ -66,7 +71,7 @@ abstract class Field extends Component
      */
     protected function bindValue($field = null, $value = '')
     {
-        empty($field) ? $field = Str::random(10, 3) : $field;
+        empty($field) ? $field = Str::random(15, 3) : $field;
         $this->bind($field, $value);
         $this->bindAttr('modelValue',$field);
         return $this;

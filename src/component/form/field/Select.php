@@ -43,7 +43,7 @@ class Select extends Field
         parent::__construct($field, $value);
         $this->clearable();
     }
-    
+
     /**
      * 禁用选项数据
      * @param array $data 禁用数据
@@ -51,7 +51,69 @@ class Select extends Field
     public function disabledData(array $data){
         $this->disabledData = $data;
     }
-
+    /**
+     * 设置分组选项数据
+     * @param array $data
+     * @return $this
+     */
+    public function groupOptions(array $data){
+        /* 格式
+         $datas = [
+            [
+                'label' => '第一个分组',
+                'value' => 2,
+                'options' => [
+                    [
+                        'label' => '第一个标签',
+                        'value' => 1
+                    ]
+                ]
+            ],
+            [
+                'label' => '第二个分组',
+                'value' => 2,
+                'options' => [
+                    [
+                        'label' => '第二个标签',
+                        'value' => 2
+                    ]
+                ]
+            ]
+         ];
+        */
+        foreach ($data as $key=>$option){
+            $groups = [];
+            $options =[];
+            if(in_array($option['value'],$this->disabledData)){
+                $disabled = true;
+            }else{
+                $disabled = false;
+            }
+            foreach ($option['options'] as $item){
+                if(in_array($item['value'],$this->disabledData)){
+                    $disabled = true;
+                }else{
+                    $disabled = false;
+                }
+                $options[] = [
+                    'value' => $item['value'],
+                    'label' => $item['label'],
+                    'disabled' => $disabled,
+                ];
+            }
+            $selectOption = SelectOption::create()
+                ->map($options)
+                ->mapAttr('label','label')
+                ->mapAttr('key','value')
+                ->mapAttr('value','value')
+                ->mapAttr('disabled','disabled');
+            $selectGroup = OptionGroup::create()
+                ->attr('label', $option['label'])
+                ->attr('disabled', $disabled)
+                ->content($selectOption);
+            $this->content($selectGroup);
+        }
+    }
     /**
      * 设置选项数据
      * @param array $data 选项数据

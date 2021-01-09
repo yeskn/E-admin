@@ -84,7 +84,7 @@
         </template>
       </label>
     </span>
-    <el-dialog title="图片剪裁" :visible.sync="dialogVisible" append-to-body width="50%">
+    <el-dialog title="图片剪裁" v-model="dialogVisible" append-to-body width="50%">
       <div class="cropper-content">
         <div class="vue-cropper-content">
           <VueCropper
@@ -208,8 +208,8 @@ export default {
       default: false
     },
     cropperAuto: {
-      type: String,
-      default: '0'
+      type: Boolean,
+      default: false
     },
     drag: {
       type: Boolean,
@@ -378,12 +378,14 @@ export default {
     this.uploader.on('fileAdded', function(file, event) {
       if (that.checkExt(file)) {
         if (that.cropperOn && file.name.indexOf('eadmincropper') == -1) {
+
           var reader = new FileReader()
+
           reader.readAsDataURL(file.file)
           reader.onload = function(e) {
             that.cropper.img = this.result
             that.dialogVisible = true
-            if (that.cropperAuto == 1) {
+            if (that.cropperAuto) {
               setTimeout(function() {
                 that.cropperFinish()
               }, 500)

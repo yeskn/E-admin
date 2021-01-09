@@ -3,7 +3,6 @@
     import {store} from '/@/store'
     import dayjs from 'dayjs'
     export default defineComponent({
-
         name: "EadminRender",
         props: {
             data: {
@@ -17,7 +16,6 @@
         setup(props, ctx) {
             const state = inject(store)
             const modelValue = state.proxyData
-            console.log(modelValue)
             const renderComponent = (data, slotProps) => {
                 let expression, children = {}, name, attribute
                 //属性绑定
@@ -83,8 +81,12 @@
                         return userRender(data.content[slot], scope)
                     }
                 }
-                name = resolveComponent(data.name)
+
                 attribute = {...data.attribute}
+                if(data.name == 'html'){
+                    return h('span', attribute, children)
+                }
+                name = resolveComponent(data.name)
                 //for 遍历中的 ElFormItem prop处理
                 if(data.name == 'ElFormItem'){
                     if(slotProps && slotProps.propField){
@@ -105,6 +107,7 @@
                         return h(name, mapAttribute, mapChildren)
                     })
                 } else {
+
                     return h(name, attribute, children)
                 }
             }
@@ -140,7 +143,7 @@
                                         ...modelValue
                                     }
                                 },
-                                template: item
+                                template: `${item}`
                             })
                         }
                     }
@@ -191,9 +194,22 @@
                 expression += evals.join(' ' + op + ' ')
                 return expression
             }
-
+            //赋值方法
+            function setProxyData(data){
+                for(let field in data.bind){
+                    modelValue[field] = data.bind[field]
+                }
+                for(let slot in data.content){
+                    data.content[slot].forEach(item=>{
+                        if(typeof(item) == 'object'){
+                            setProxyData(item)
+                        }
+                    })
+                }
+            }
             const render = computed(() => {
                 if (props.data) {
+                    setProxyData(props.data)
                     const jsonRender = toRaw(props.data)
                     return renderComponent(jsonRender)
                 } else {

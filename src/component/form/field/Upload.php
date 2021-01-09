@@ -82,29 +82,29 @@ class Upload extends Field
         $this->attr('height',$height);
         return $this;
     }
-    /**
-     * 裁剪尺寸,暂仅支持单文件
-     * @param $width 宽度
-     * @param $height 高度
-     * @param $auto 是否自动居中裁剪,否显示界面手动裁剪
-     * @return $this
-     */
-    public function crop($width,$height,$auto = false){
-        $this->attr('cropWidth',$width);
-        $this->attr('cropHeight',$height);
-        $this->attr('cropperOn',true);
-        $this->attr('cropperAuto',$auto);
-        return $this;
-    }
-    /**
-     * 图片建议提示
-     * @param $width 宽度
-     * @param $height 高度
-     */
-    public function helpSize($width,$height){
-        $this->help("建议上传图片尺寸 $width * $height");
-        return $this;
-    }
+//    /**
+//     * 裁剪尺寸,暂仅支持单文件
+//     * @param $width 宽度
+//     * @param $height 高度
+//     * @param $auto 是否自动居中裁剪,否显示界面手动裁剪
+//     * @return $this
+//     */
+//    public function crop($width,$height,$auto = false){
+//        $this->attr('cropWidth',$width);
+//        $this->attr('cropHeight',$height);
+//        $this->attr('cropperOn',true);
+//        $this->attr('cropperAuto',$auto);
+//        return $this;
+//    }
+//    /**
+//     * 图片建议提示
+//     * @param $width 宽度
+//     * @param $height 高度
+//     */
+//    public function helpSize($width,$height){
+//        $this->help("建议上传图片尺寸 $width * $height");
+//        return $this;
+//    }
     /**
      * 限制上传类型
      * @param string $vals

@@ -22,4 +22,19 @@ use Eadmin\component\Component;
 class Tag extends Component
 {
     protected $name = 'ElTag';
+    public function __construct($content)
+    {
+        if(!empty($content)){
+            $this->content($content);
+        }
+    }
+
+    /**
+     * 创建
+     * @param $content 标签内容
+     * @return static
+     */
+    public static function create($content=''){
+        return new static($content);
+    }
 }

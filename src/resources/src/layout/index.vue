@@ -29,26 +29,13 @@
             const mainComponent = computed(()=>{
                return  state.mainComponent
             })
-            //赋值方法
-            function setProxyData(data){
-                for(let field in data.bind){
-                    proxyData[field] = data.bind[field]
-                }
-                for(let slot in data.content){
-                    data.content[slot].forEach(item=>{
-                        if(typeof(item) == 'object'){
-                            setProxyData(item)
-                        }
-                    })
-                }
-            }
+
             //重新加载赋值proxyData
             watch(()=>state.mainComponent,(newValue)=>{
                if(newValue){
                    for(let i in proxyData){
                        delete proxyData[i]
                    }
-                   setProxyData(newValue)
                 }
             })
             return {

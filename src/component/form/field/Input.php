@@ -41,4 +41,9 @@ use Eadmin\component\form\Field;
 class Input extends Field
 {
     protected $name = 'ElInput';
+    public function __construct($field = null, $value = '')
+    {
+        parent::__construct($field, $value);
+        $this->clearable();
+    }
 }
