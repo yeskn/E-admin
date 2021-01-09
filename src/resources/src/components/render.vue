@@ -13,7 +13,7 @@
         render() {
             return this.render
         },
-        setup(props, ctx) {
+        setup(props) {
             const state = inject(store)
             const modelValue = state.proxyData
             const renderComponent = (data, slotProps) => {

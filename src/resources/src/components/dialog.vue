@@ -13,8 +13,9 @@
 </template>
 
 <script>
-    import {defineComponent, ref,watch} from "vue";
+    import {defineComponent, ref,watch,inject} from "vue";
     import render from '/@/components/render.vue'
+    import { store } from '/@/store'
     export default defineComponent({
         name: "EadminDialog",
         components: {
@@ -29,12 +30,17 @@
         },
         emits:['update:modelValue'],
         setup(props,ctx){
+            const state = inject(store)
+            let proxyData = state.proxyData
+            console.log(props.modelValue)
             const visible = ref(props.modelValue)
             watch(()=>props.modelValue,(value)=>{
-                visible.value = value
+                console.log(1)
+                //visible.value = value
             })
             watch(visible,(value)=>{
                 ctx.emit('update:modelValue',value)
+                console.log(proxyData)
             })
             function opend(){
                 visible.value = true

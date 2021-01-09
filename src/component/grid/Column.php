@@ -68,15 +68,39 @@ class Column extends Component
         $this->tag = Tag::create()->type($color)->size($size)->effect($theme);
         return $this;
     }
+
+    /**
+     * 获取当前列字段数据
+     * @param $data 行数据
+     * @return string
+     */
+    private function getData($data){
+        $prop = $this->attr('prop');
+        $fields = explode('.',$prop);
+        foreach ($fields as $field){
+            if (isset($data[$field])) {
+                $data = $data[$field];
+            } else {
+                $data = null;
+            }
+        }
+
+        return $data;
+    }
     /**
      * 解析每行数据
      * @param $data 数据
+     * @return Html
      */
-    public function row(&$data)
+    public function row($data)
     {
-        $value = '';
-        if (isset($data[$this->prop])) {
-            $value = $data[$this->prop];
+        //获取当前列字段数据
+        $originValue = $this->getData($data);
+        if(is_null($originValue)){
+            //空默认占位符
+            $value = '--';
+        }else{
+            $value = $originValue;
         }
         //映射内容颜色处理
         if (isset($this->tagColor[$value])) {
@@ -92,10 +116,9 @@ class Column extends Component
         }
         //自定义内容显示处理
         if (!is_null($this->closure)) {
-            $value = call_user_func_array($this->closure, [$value, $data]);
+            $value = call_user_func_array($this->closure, [$originValue, $data]);
         }
-        $data[$this->prop] = Html::create()->content($value);
-        return $this;
+        return Html::create()->content($value);
     }
 
     /**

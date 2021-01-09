@@ -18,6 +18,7 @@ use Eadmin\component\form\field\Select;
 use Eadmin\component\form\field\TimePicker;
 use Eadmin\component\form\FormAction;
 use Eadmin\component\form\FormItem;
+use Eadmin\component\form\FormMany;
 use Eadmin\component\layout\Row;
 use think\helper\Str;
 use think\Model;

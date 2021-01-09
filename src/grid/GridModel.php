@@ -54,8 +54,6 @@ trait GridModel
         if (count($fields) > 1) {
             array_pop($fields);
             $relation = implode('.', $fields);
-        }
-        if (count($fields) > 1) {
             foreach ($fields as $field) {
                 $this->setRelation($field, $relation);
             }
@@ -68,9 +66,9 @@ trait GridModel
            //预关联加载
            $this->withRelations();
            if($this->hidePage){
-               $this->data = $this->db->select()->toArray();
+               $this->data = $this->db->select();
            }else{
-               $this->data = $this->db->page(Request::get('page', 1), Request::get('size', $this->pagination->attr('pageSize')))->select()->toArray();
+               $this->data = $this->db->page(Request::get('page', 1), Request::get('size', $this->pagination->attr('pageSize')))->select();
            }
        }
     }

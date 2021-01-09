@@ -39,7 +39,11 @@ class Button extends Component
     {
         return new self($content);
     }
-
+    public function form($form){
+        $dialog = Dialog::create($this)->content($form);
+        $form->attr('eadminDialogVisible',$dialog->bindAttr('modelValue'));
+        return $dialog;
+    }
     /**
      * 按钮文字
      * @param string $content 文字

@@ -1,5 +1,6 @@
 <template>
-    <el-table :data="tableData" v-bind="$attrs">
+    <el-button @click="open">da</el-button>
+    <el-table v-loading="loading" :data="tableData" v-bind="$attrs">
         <el-table-column v-for="column in columns" v-bind="column">
             <template #header>
                 <render :data="column.header"></render>
@@ -13,7 +14,7 @@
 </template>
 
 <script>
-    import {defineComponent} from "vue";
+    import {defineComponent,ref} from "vue";
     import render from "/@/components/render.vue"
     export default defineComponent({
         name: "EadminGrid",
@@ -26,9 +27,23 @@
             pagination:[Object,Boolean],
         },
         inheritAttrs:false,
-        setup(props,ctx){
+        setup(props){
+            const loading = ref(false)
             const tableData = props.data
+            function open() {
+                this.$alert('这是一段内容', '标题名称', {
+                    confirmButtonText: '确定',
+                    callback: action => {
+                        this.$message({
+                            type: 'info',
+                            message: `action: ${ action }`
+                        });
+                    }
+                });
+            }
             return {
+                open,
+                loading,
                 tableData
             }
         }
