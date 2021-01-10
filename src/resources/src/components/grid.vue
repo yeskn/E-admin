@@ -78,11 +78,12 @@
             hideTools:Boolean,
             selection:Boolean,
             filter:[Object, Boolean],
-            filterForm:Object
+            filterForm:[Array,Object]
         },
         inheritAttrs: false,
         emits:['update:modelValue'],
         setup(props,ctx) {
+            console.log(props.filterForm)
             const loading = ref(false)
             const quickSearch = ref('')
             const selectionData = ref([])

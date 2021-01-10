@@ -217,6 +217,9 @@ class Form extends Field
         }
         foreach ($component->bindAttribute as $attr => $field) {
             $value = $this->getData($field, $data);
+            if(is_null($value) && ($component instanceof DatePicker || $component instanceof TimePicker) && $startField = $component->bindAttr('startField')){
+                $value = [];
+            }
             $defaultValue = $component->getDefault();
             $componentValue = $component->getValue();
             //设置default缺省值
@@ -451,6 +454,7 @@ class Form extends Field
         } else {
             $class .= ucfirst($name);
         }
+        $prop = $field;
         $component = $class::create($field);
         $compenentArr = array_merge($inputs, $dates, $times);
         if ($name == 'image') {
@@ -464,6 +468,7 @@ class Form extends Field
                 $component->rangeField($field, $arguments[0]);
                 $component->startPlaceholder('请选择开始' . $label . '时间');
                 $component->endPlaceholder('请选择结束' . $label . '时间');
+                $prop = $component->bindAttr('modelValue');
             }
             $component->type($name);
         }
@@ -477,7 +482,7 @@ class Form extends Field
                 $component->placeholder('请选择' . $label);
             }
 
-            $this->item($field, $label)->content($component);
+            $this->item($prop, $label)->content($component);
         }
         return $component;
     }
