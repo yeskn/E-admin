@@ -6,6 +6,7 @@ namespace Eadmin\component\form;
 
 use Eadmin\component\basic\Button;
 use Eadmin\component\Component;
+use Eadmin\form\Form;
 
 /**
  * Class FormAction

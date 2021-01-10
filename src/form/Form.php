@@ -106,7 +106,7 @@ class Form extends Field
      * @param bool $value
      * @return $this
      */
-    public function statusIcon(bool $value)
+    public function statusIcon(bool $value = true)
     {
         $this->attr(__FUNCTION__, $bool);
         return $this;
@@ -117,7 +117,7 @@ class Form extends Field
      * @param bool $value
      * @return $this
      */
-    public function hideRequiredAsterisk(bool $value)
+    public function hideRequiredAsterisk(bool $value = true)
     {
         $this->attr(__FUNCTION__, $bool);
         return $this;
@@ -128,7 +128,7 @@ class Form extends Field
      * @param bool $bool
      * @return $this
      */
-    public function inline(bool $bool)
+    public function inline(bool $bool = true)
     {
         $this->attr(__FUNCTION__, $bool);
         return $this;
@@ -375,7 +375,7 @@ class Form extends Field
         $manyData = [];
         foreach ($itemComponent as $component) {
             $componentClone = clone $component;
-            $this->valueModel($componentClone,[]);
+            $this->valueModel($componentClone, []);
         }
         if (!$this->isEdit && empty($datas)) {
             //添加模式默认添加一条
@@ -405,6 +405,7 @@ class Form extends Field
         $this->content($manyItem);
         return $manyItem;
     }
+
     protected function formItem($name, $field, $arguments)
     {
         $label = array_pop($arguments);
@@ -452,7 +453,7 @@ class Form extends Field
         }
         $component = $class::create($field);
         $compenentArr = array_merge($inputs, $dates, $times);
-        if($name == 'image'){
+        if ($name == 'image') {
             //图片组件
             $component->displayType('image')->imageExt()->size(120, 120)->isUniqidmd5();
         }
@@ -461,8 +462,8 @@ class Form extends Field
             if ($name == 'dateRange' || $name == 'datetimeRange' || $name == 'timeRange') {
                 $component = $class::create();
                 $component->rangeField($field, $arguments[0]);
-                $component->startPlaceholder('请选择开始'.$label.'时间');
-                $component->endPlaceholder('请选择结束'.$label.'时间');
+                $component->startPlaceholder('请选择开始' . $label . '时间');
+                $component->endPlaceholder('请选择结束' . $label . '时间');
             }
             $component->type($name);
         }
@@ -470,10 +471,10 @@ class Form extends Field
             //隐藏域
             $this->content($component);
         } else {
-            if($component instanceof Input){
-                $component->placeholder('请输入'.$label);
-            }elseif ($component instanceof Select){
-                $component->placeholder('请选择'.$label);
+            if ($component instanceof Input) {
+                $component->placeholder('请输入' . $label);
+            } elseif ($component instanceof Select) {
+                $component->placeholder('请选择' . $label);
             }
 
             $this->item($field, $label)->content($component);
@@ -495,11 +496,25 @@ class Form extends Field
         $this->itemComponent[] = $component;
     }
 
+    /**
+     * 提交成功事件
+     * @param array $value
+     * @return $this
+     */
+    public function eventSuccess(array $value)
+    {
+        $this->event('success', $value);
+        return $this;
+    }
+
     public function __call($name, $arguments)
     {
         return $this->formItem($name, $arguments[0], array_slice($arguments, 1));
     }
-
+    public function popItem(){
+        $item =  array_pop($this->content['default']);
+        return $item;
+    }
     /**
      * 解析组件
      */

@@ -8,6 +8,8 @@
 
 namespace Eadmin\grid;
 
+use Eadmin\component\form\FormAction;
+use Eadmin\form\Form;
 use think\db\Query;
 use think\facade\Db;
 use think\Model;
@@ -18,27 +20,19 @@ use think\model\relation\HasOne;
 use think\model\relation\MorphMany;
 use think\model\relation\MorphOne;
 use Eadmin\form\field\Input;
-use Eadmin\View;
 
-class Filter extends View
+class Filter
 {
-    public $formItem = [];
-    public $scriptArr = [];
     //模型
     protected $model;
     //当前模型db
     protected $db;
-    //
-
-    protected $fields = [];
-    protected $mode = 'filter';
-    protected $columnLabel = '';
-    protected $usingData = [];
     protected $jsonNode = '';
     protected $relationExistSql = '';
     protected $ifWhere = true;
     protected $relationLastDb = null;
     protected $relationLastMethod = '';
+
     public function __construct($model)
     {
         if ($model instanceof Model) {
@@ -51,30 +45,16 @@ class Filter extends View
             $this->db = Db::name($model);
         }
         $this->tableFields = $this->db->getTableFields();
-    }
-    public function label($value){
-        $this->columnLabel  = $value;
-    }
-    /**
-     * 筛选模式
-     * @param string $mode
-     * @return Model|null
-     */
-    public function mode(string $mode = '')
-    {
-        if(!empty($mode)){
-            $this->mode = $mode;
-        }
-        return $this->mode;
+        $this->form = Form::create()
+            ->inline()
+            ->removeAttr('labelWidth')
+            ->removeAttr('submitUrl')
+            ->size('small');
+        $this->form->actions(function (FormAction $action) {
+            $action->submitButton()->content('筛选');
+        });
     }
 
-    public function __call($name, $arguments)
-    {
-        if (count($this->formItem) > 0) {
-            $formItem = end($this->formItem);
-            call_user_func_array([$formItem, $name], $arguments);
-        }
-    }
     /**
      * 模糊查询
      * @param $field 字段
@@ -85,9 +65,10 @@ class Filter extends View
     public function like($field, $label = '')
     {
         $this->paseFilter(__FUNCTION__, $field);
-        $this->formItem($field, $label);
+        $this->form->text($field, $label)->prefixIcon('el-icon-search');
         return $this;
     }
+
     /**
      * json查询
      * @param $field 字段
@@ -95,13 +76,14 @@ class Filter extends View
      * @param $label 标签
      * @return $this
      */
-    public function json($field,$node, $label = '')
+    public function json($field, $node, $label = '')
     {
         $this->jsonNode = $node;
         $this->paseFilter(__FUNCTION__, $field);
-        $this->formItem($field.'__json_'.$node, $label);
+        $this->form->text($field . '__json_' . $node, $label)->prefixIcon('el-icon-search');
         return $this;
     }
+
     /**
      * json模糊查询
      * @param $field 字段
@@ -109,13 +91,14 @@ class Filter extends View
      * @param $label 标签
      * @return $this
      */
-    public function jsonLike($field, $node,$label = '')
+    public function jsonLike($field, $node, $label = '')
     {
         $this->jsonNode = $node;
         $this->paseFilter(__FUNCTION__, $field);
-        $this->formItem($field.'__json_'.$node, $label);
+        $this->form->text($field . '__json_' . $node, $label)->prefixIcon('el-icon-search');
         return $this;
     }
+
     /**
      * json数组模糊查询
      * @param $field 字段
@@ -123,12 +106,14 @@ class Filter extends View
      * @param $label 标签
      * @return $this
      */
-    public function jsonArrLike($field, $node,$label = ''){
+    public function jsonArrLike($field, $node, $label = '')
+    {
         $this->jsonNode = $node;
         $this->paseFilter(__FUNCTION__, $field);
-        $this->formItem($field.'__json_'.$node, $label);
+        $this->form->text($field . '__json_' . $node, $label)->prefixIcon('el-icon-search');
         return $this;
     }
+
     /**
      * in查询
      * @param $field 字段
@@ -138,7 +123,7 @@ class Filter extends View
     public function in($field, $label = '')
     {
         $this->paseFilter(__FUNCTION__, $field);
-        $this->formItem($field, $label);
+        $this->form->text($field, $label)->prefixIcon('el-icon-search');
         return $this;
     }
 
@@ -151,7 +136,7 @@ class Filter extends View
     public function notIn($field, $label = '')
     {
         $this->paseFilter(__FUNCTION__, $field);
-        $this->formItem($field, $label);
+        $this->form->text($field, $label)->prefixIcon('el-icon-search');
         return $this;
     }
 
@@ -164,7 +149,7 @@ class Filter extends View
     public function eq($field, $label = '')
     {
         $this->paseFilter(__FUNCTION__, $field);
-        $this->formItem($field, $label);
+        $this->form->text($field, $label)->prefixIcon('el-icon-search');
         return $this;
     }
 
@@ -177,7 +162,7 @@ class Filter extends View
     public function findIn($field, $label = '')
     {
         $this->paseFilter(__FUNCTION__, $field);
-        $this->formItem($field, $label);
+        $this->form->text($field, $label)->prefixIcon('el-icon-search');
         return $this;
     }
 
@@ -190,7 +175,7 @@ class Filter extends View
     public function neq($field, $label = '')
     {
         $this->paseFilter(__FUNCTION__, $field);
-        $this->formItem($field, $label)->prepend('不等于');
+        $this->form->text($field, $label)->prepend('不等于')->prefixIcon('el-icon-search');
         return $this;
     }
 
@@ -203,7 +188,7 @@ class Filter extends View
     public function egt($field, $label = '')
     {
         $this->paseFilter(__FUNCTION__, $field);
-        $this->formItem($field, $label)->prepend('大于等于');
+        $this->form->text($field, $label)->prepend('大于等于')->prefixIcon('el-icon-search');
         return $this;
     }
 
@@ -216,7 +201,7 @@ class Filter extends View
     public function gt($field, $label = '')
     {
         $this->paseFilter(__FUNCTION__, $field);
-        $this->formItem($field, $label)->prepend('大于');
+        $this->form->text($field, $label)->prepend('大于')->prefixIcon('el-icon-search');
         return $this;
     }
 
@@ -229,7 +214,7 @@ class Filter extends View
     public function elt($field, $label = '')
     {
         $this->paseFilter(__FUNCTION__, $field);
-        $this->formItem($field, $label)->prepend('小于等于');
+        $this->form->text($field, $label)->prepend('小于等于')->prefixIcon('el-icon-search');
         return $this;
     }
 
@@ -242,7 +227,7 @@ class Filter extends View
     public function lt($field, $label = '')
     {
         $this->paseFilter(__FUNCTION__, $field);
-        $this->formItem($field, $label)->prepend('小于');
+        $this->form->text($field, $label)->prepend('小于')->prefixIcon('el-icon-search');
         return $this;
     }
 
@@ -255,8 +240,8 @@ class Filter extends View
     public function between($field, $label = '')
     {
         $this->paseFilter(__FUNCTION__, $field);
-        $this->formItem($field . '__between_start', $label)->placeholder("请输入开始$label");
-        $this->formItem($field . '__between_end', '-')->placeholder("请输入结束$label");
+        $this->form->text($field . '__between_start', $label)->placeholder("请输入开始$label");
+        $this->form->text($field . '__between_end', '-')->placeholder("请输入结束$label");
         return $this;
     }
 
@@ -264,12 +249,12 @@ class Filter extends View
      * 日期筛选
      * @param $field 字段
      * @param $label 标签
-     * @return \Eadmin\form\field\DateTime
+     * @return \Eadmin\component\form\field\DatePicker
      */
     public function date($field, $label = '')
     {
         $this->paseFilter('eq', $field);
-        $this->formItem($field, $label, 'DateTime');
+        $this->form->date($field, $label);
         return $this;
     }
 
@@ -277,13 +262,12 @@ class Filter extends View
      * 时间筛选
      * @param $field 字段
      * @param $label 标签
-     * @return \Eadmin\form\field\DateTime
+     * @return \Eadmin\component\form\field\TimePicker
      */
     public function time($field, $label = '')
     {
         $this->paseFilter('eq', $field);
-        $formItem = $this->formItem($field, $label, 'DateTime');
-        $formItem->setType('time');
+        $this->form->time($field, $label);
         return $formItem;
     }
 
@@ -291,13 +275,12 @@ class Filter extends View
      * 日期时间筛选
      * @param $field 字段
      * @param $label 标签
-     * @return \Eadmin\form\field\DateTime
+     * @return \Eadmin\component\form\field\DatePicker
      */
     public function datetime($field, $label = '')
     {
         $this->paseFilter('eq', $field);
-        $formItem = $this->formItem($field, $label, 'DateTime');
-        $formItem->setType('datetime');
+        $this->form->datetime($field, $label);
         return $formItem;
     }
 
@@ -305,14 +288,12 @@ class Filter extends View
      * 日期时间范围筛选
      * @param $field 字段
      * @param $label 标签
-     * @return \Eadmin\form\field\DateTime
+     * @return \Eadmin\component\form\field\DatePicker
      */
     public function datetimeRange($field, $label = '')
     {
         $this->paseFilter('dateBetween', $field);
-        $formItem = $this->formItem($field, $label, 'DateTime');
-        $formItem->setType('datetime')->range();
-        return $formItem;
+        return $this->form->datetimeRange($field . '__start', $field . '__end', $label);
     }
 
     /**
@@ -333,56 +314,48 @@ class Filter extends View
      * 日期范围筛选
      * @param $field 字段
      * @param $label 标签
-     * @return \Eadmin\form\field\DateTime
+     * @return \Eadmin\component\form\field\DatePicker
      */
     public function dateRange($field, $label = '')
     {
         $this->paseFilter('dateBetween', $field);
-        $formItem = $this->formItem($field, $label, 'DateTime');
-        $formItem->setType('date')->range();
-        return $formItem;
+        return $this->form->dateRange($field . '__start', $field . '__end', $label);
     }
 
     /**
      * 时间范围筛选
      * @param $field 字段
      * @param $label 标签
-     * @return \Eadmin\form\field\DateTime
+     * @return \Eadmin\component\form\field\TimePicker
      */
     public function timeRange($field, $label = '')
     {
         $this->paseFilter('dateBetween', $field);
-        $formItem = $this->formItem($field, $label, 'DateTime');
-        $formItem->setType('time')->range();
-        return $formItem;
+        return $this->form->timeRange($field . '__start', $field . '__end', $label);
     }
 
     /**
      * 年日期筛选
      * @param $field 字段
      * @param $label 标签
-     * @return \Eadmin\form\field\DateTime
+     * @return \Eadmin\component\form\field\DatePicker
      */
     public function year($field, $label = '')
     {
         $this->paseFilter(__FUNCTION__, $field);
-        $formItem = $this->formItem($field, $label, 'DateTime');
-        $formItem->setType(__FUNCTION__);
-        return $formItem;
+        return $this->form->year($field, $label);
     }
 
     /**
      * 月日期筛选
      * @param $field 字段
      * @param $label 标签
-     * @return \Eadmin\form\field\DateTime
+     * @return \Eadmin\component\form\field\DatePicker
      */
     public function month($field, $label = '')
     {
         $this->paseFilter(__FUNCTION__, $field);
-        $formItem = $this->formItem($field, $label, 'DateTime');
-        $formItem->setType(__FUNCTION__);
-        return $formItem;
+        return $this->form->month($field, $label);
     }
 
     /**
@@ -394,109 +367,61 @@ class Filter extends View
     public function notBetween($field, $label = '')
     {
         $this->paseFilter(__FUNCTION__, $field);
-        $this->formItem($field . '__between_start', $label = '')->prepend('不存在区间');
-        $this->formItem($field . '__between_end', '-')->placeholder("请输入$label");
+        $this->form->text($field . '__between_start', $label)->placeholder("不存在区间");
+        $this->form->text($field . '__between_end', '-')->placeholder("请输入$label");
         return $this;
     }
 
     /**
      * 单选框
      * @param $options 选项值
-     * @return \Eadmin\form\field\Radio
+     * @return \Eadmin\component\form\field\RadioGroup
      */
     public function radio(array $options)
     {
-        $this->usingData = $options;
-        $formItem = array_pop($this->formItem);
-        $formItem = $this->formItem($formItem->field, $formItem->label, 'radio');
-        if ($this->mode == 'column') {
-            $formItem->vertical();
-        }
-        $formItem->options($options);
-        return $formItem;
+        $item = $this->form->popItem();
+        $field = $item->attr('prop');
+        $label = $item->attr('label');
+        return $this->form->radio($field,$label)->options($options);
     }
 
     /**
      * 多选框
      * @param $options 选项值
-     * @return \Eadmin\form\field\Checkbox
+     * @return \Eadmin\component\form\field\CheckboxGroup
      */
     public function checkbox(array $options)
     {
-        $this->usingData = $options;
-        $formItem = array_pop($this->formItem);
-        $formItem = $this->formItem($formItem->field, $formItem->label, 'checkbox');
-        if ($this->mode == 'column') {
-            $formItem->vertical();
-        }
-        $formItem->options($options);
-        return $formItem;
+        $item = $this->form->popItem();
+        $field = $item->attr('prop');
+        $label = $item->attr('label');
+        return $this->form->checkbox($field,$label)->options($options);
     }
 
     /**
      * 分组下拉框
      * @param $options 选项值
-     * @return \Eadmin\form\field\Select
+     * @return \Eadmin\component\form\field\Select
      */
     public function selectGroup(array $options)
     {
-        $this->usingData = $options;
-        $formItem = array_pop($this->formItem);
-        $formItem = $this->formItem($formItem->field, $formItem->label, 'select');
-        $formItem->groupOptions($options);
-        return $formItem;
+        $item = $this->form->popItem();
+        $field = $item->attr('prop');
+        $label = $item->attr('label');
+        return $this->form->select($field,$label)->groupOptions($options);
     }
 
     /**
      * 下拉框
      * @param $options 选项值
-     * @return \Eadmin\form\field\Select
+     * @return \Eadmin\component\form\field\Select
      */
     public function select(array $options)
     {
-        $this->usingData = $options;
-        $formItem = array_pop($this->formItem);
-        $formItem = $this->formItem($formItem->field, $formItem->label, 'select');
-        if ($this->mode == 'column') {
-            $formItem->width();
-        }
-        $formItem->options($options);
-        return $formItem;
-    }
-
-
-    /**
-     * 添加表单元素
-     * @param $class 组件类
-     * @param $field 字段
-     * @param $label 标签
-     * @return \Eadmin\form\field\Input
-     */
-    protected function formItem($field, $label, $name = 'input', $arguments = [])
-    {
-        $class = "Eadmin\\form\\field\\" . ucfirst($name);
-        $field = str_replace('.', '__', $field);
-        $formItem = new $class($field, $label, $arguments);
-        if ($formItem instanceof Input) {
-            $formItem->prefixIcon('el-icon-search');
-        }
-        $this->formItem[] = $formItem;
-        if ($name == 'checkbox') {
-            $this->fields[$field] = [];
-        } else {
-            $this->fields[$field] = '';
-        }
-        if ($this->mode == 'column' && $name == 'input') {
-            $formItem->placeholder('搜索 按Enter确认');
-        }
-        $this->usingData = json_encode($this->usingData);
-
-        if(!empty($label) && strpos($field,'__between_end') === false){
-            $this->columnLabel = $label;
-        }
-        $formItem->setAttr('@change',"(e)=>filterColumnChange(e,\"{$field}\",\"{$this->columnLabel}\",\"{$name}\",{$this->usingData})");
-        $this->usingData = [];
-        return $formItem;
+        $item = $this->form->popItem();
+        $field = $item->attr('prop');
+        $label = $item->attr('label');
+        return $this->form->select($field,$label)->options($options);
     }
 
     /**
@@ -516,14 +441,14 @@ class Filter extends View
                 $func = function (Filter $filter) use ($dbField, $field, $method) {
                     $filter->filterField($method, $dbField, $field);
                 };
-                while(count($fields) > 1){
+                while (count($fields) > 1) {
                     $relation = array_pop($fields);
-                    $func = function (Filter $filter) use($relation,$func,$dbField) {
+                    $func = function (Filter $filter) use ($relation, $func, $dbField) {
                         $filter->relationWhere($relation, $func);
                     };
                 }
                 $relation = array_pop($fields);
-                return $this->relationWhere($relation,$func);
+                return $this->relationWhere($relation, $func);
             }
             $requestField = $field;
         } elseif (is_array($field)) {
@@ -551,8 +476,11 @@ class Filter extends View
         if ($method == 'between' || $method == 'notBetween') {
             $field .= '__between_start';
         }
+        if ($method == 'dateBetween') {
+            $field .= '__start';
+        }
         if ($method == 'json' || $method == 'jsonLike' || $method == 'jsonArrLike') {
-            $field .= '__json_'.$this->jsonNode;
+            $field .= '__json_' . $this->jsonNode;
         }
         if (is_array($dbField)) {
             $dbFields = $dbField;
@@ -611,8 +539,10 @@ class Filter extends View
                     $this->db->whereMonth($dbField, $data[$field]);
                     break;
                 case 'dateBetween':
-                    list($startTime, $endTime) = $data[$field];
-                    $this->db->whereBetween($dbField, [$startTime, $endTime]);
+                    $betweenStart = $data[$field];
+                    $field = str_replace('__start', '__end', $field);
+                    $betweenEnd = $data[$field];
+                    $this->db->whereBetween($dbField, [$betweenStart, $betweenEnd]);
                     break;
                 case 'between':
                     $betweenStart = $data[$field];
@@ -696,7 +626,7 @@ class Filter extends View
                 $pk = $relation->getLocalKey();
                 if ($callback instanceof \Closure) {
                     $this->relationModel = new self(new $relationModel);
-                    $this->relationModel->relationLastDb($this->relationLastDb,$this->relationLastMethod);
+                    $this->relationModel->relationLastDb($this->relationLastDb, $this->relationLastMethod);
                     $this->relationModel->setRelationLastDb($relation_method);
                     $this->relationModel->setIfWhere($this->ifWhere);
                     call_user_func($callback, $this->relationModel);
@@ -712,15 +642,15 @@ class Filter extends View
                     $sql = $this->relationModel->db()->whereRaw("{$foreignKey}={$this->db->getTable()}.{$pk}")->buildSql();
                 } else if ($relation instanceof MorphOne || $relation instanceof MorphMany) {
                     $reflectionClass = new \ReflectionClass($relation);
-                    $propertys = ['morphKey','morphType','type'];
+                    $propertys = ['morphKey', 'morphType', 'type'];
                     $propertyValues = [];
-                    foreach ($propertys as $var){
+                    foreach ($propertys as $var) {
                         $property = $reflectionClass->getProperty($var);
                         $property->setAccessible(true);
-                        $propertyValues[] =  $property->getValue($relation);
+                        $propertyValues[] = $property->getValue($relation);
                     }
-                    list($morphKey,$morphType,$typeValue) = $propertyValues;
-                    $sql = $this->relationModel->db()->whereRaw("{$morphKey}={$this->db->getTable()}.{$this->db->getPk()}")->where($morphType,$typeValue)->buildSql();
+                    list($morphKey, $morphType, $typeValue) = $propertyValues;
+                    $sql = $this->relationModel->db()->whereRaw("{$morphKey}={$this->db->getTable()}.{$this->db->getPk()}")->where($morphType, $typeValue)->buildSql();
                 }
                 $this->relationExistSql = $sql;
                 if ($res !== false || $this->ifWhere == false) {
@@ -730,19 +660,27 @@ class Filter extends View
         }
         return $this;
     }
-    public function setRelationLastDb($method){
-        if($this->relationLastMethod == $method){
+
+    public function setRelationLastDb($method)
+    {
+        if ($this->relationLastMethod == $method) {
             $this->db = $this->relationLastDb;
         }
     }
-    public function relationLastDb($db,$method){
+
+    public function relationLastDb($db, $method)
+    {
         $this->relationLastDb = $db;
-        $this->relationLastMethod  = $method;
+        $this->relationLastMethod = $method;
     }
-    public function setIfWhere(bool $bool){
+
+    public function setIfWhere(bool $bool)
+    {
         $this->ifWhere = $bool;
     }
-    public function getRelationExistSql(){
+
+    public function getRelationExistSql()
+    {
         return $this->relationExistSql;
     }
 
@@ -755,29 +693,11 @@ class Filter extends View
         return $this->db;
     }
 
+    /**
+     * @return Form
+     */
     public function render()
     {
-        $formItemHtml = '';
-        foreach ($this->formItem as $formItem) {
-            if ($this->mode == 'column') {
-                $formItemTmp = "<el-form-item prop='{$formItem->field}'>" . $formItem->render() . "</el-form-item>";
-            } else {
-                $formItemTmp = "<el-form-item label='{$formItem->label}' prop='{$formItem->field}'>" . $formItem->render() . "</el-form-item>";
-            }
-            if (!empty($formItem->md)) {
-                $formItemHtml .= sprintf($formItem->md, $formItemTmp);
-            } else {
-                $formItemHtml .= $formItemTmp;
-            }
-            $this->scriptArr = array_merge($this->scriptArr, $formItem->getScriptVar());
-        }
-        if ($this->mode == 'column') {
-            $this->formItem = [];
-        }
-        array_push($this->scriptArr, "form:" . json_encode($this->fields, JSON_UNESCAPED_UNICODE));
-
-        return $formItemHtml;
+        return $this->form;
     }
-
-
 }

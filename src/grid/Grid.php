@@ -30,6 +30,7 @@ use think\Model;
  * @method $this cellStyle(array $value) 单元格样式
  * @method $this headerCellStyle(array $value) 表头单元格的 style样式
  * @method $this loadDataUrl(string $value) 设置加载数据url
+ * @property Filter $filter
  */
 class Grid extends Component
 {
@@ -47,6 +48,9 @@ class Grid extends Component
     protected $actionColumn;
     //是否隐藏操作列
     protected $hideAction = false;
+    //查询过滤
+    protected $filter = null;
+
     public function __construct($data)
     {
         if ($data instanceof Model) {
@@ -65,13 +69,44 @@ class Grid extends Component
         $this->pagination->pageSize(20)->background()->layout('total, sizes, prev, pager, next, jumper');
         //操作列
         $this->actionColumn = new Actions($this);
-        $this->bindAttValue('loading',false);
+        $this->bindAttValue('modelValue', false);
         $this->loadDataUrl($this->getRequestUrl());
     }
 
     public static function create($data)
     {
         return new static($data);
+    }
+
+    /**
+     * 查询过滤
+     * @param $callback
+     */
+    public function filter($callback)
+    {
+        if ($callback instanceof \Closure) {
+            call_user_func($callback, $this->getFilter());
+        }
+    }
+
+    public function getFilter()
+    {
+        if (is_null($this->filter)) {
+            $this->filter = new Filter($this->db);
+        }
+        return $this->filter;
+    }
+
+    /**
+     * 设置索引列
+     * @param string $type 列类型：selection 多选框 ， index 索引 ， expand 可展开的
+     * @return Column
+     */
+    public function indexColumn($type = 'selection', $label = '')
+    {
+        $column = $this->column('eadminColumnIndex' . $type, $label);
+        $column->attr('type', $type);
+        return $column;
     }
 
     /**
@@ -82,6 +117,7 @@ class Grid extends Component
     {
         $this->actionColumn->setClosure($closure);
     }
+
     /**
      * 隐藏操作列
      * @param bool $bool
@@ -89,6 +125,15 @@ class Grid extends Component
     public function hideAction(bool $bool = true)
     {
         $this->hideAction = $bool;
+    }
+
+    /**
+     * 隐藏工具栏
+     * @param bool $bool
+     */
+    public function hideTools(bool $bool = true)
+    {
+        $this->attr('hideTools', $bool);
     }
 
     /**
@@ -130,7 +175,7 @@ class Grid extends Component
     protected function parseColumn()
     {
         //添加操作列
-        if(!$this->hideAction) {
+        if (!$this->hideAction) {
             $this->column[] = $this->actionColumn->column();
         }
         //解析行数据
@@ -140,7 +185,7 @@ class Grid extends Component
                 $field = $column->attr('prop');
                 $row[$field] = $column->row($data);
             }
-            if(!$this->hideAction){
+            if (!$this->hideAction) {
                 $actionColumn = clone $this->actionColumn;
                 $actionColumn->row($data);
                 $row['EadminAction'] = $actionColumn;
@@ -151,27 +196,41 @@ class Grid extends Component
         $this->bind($field, $this->tableData);
         $this->bindAttr('data', $field);
     }
-    public function getRequestUrl(){
-        $requestUrl = substr(request()->baseUrl(),1);
-        $requestUrl = preg_replace("/(\/[\d]*\/edit\.rest)$/U",'',$requestUrl);
-        $requestUrl = str_replace(['/create.rest','.rest',],['','',''],$requestUrl);
-        if(!empty(request()->action())){
-            $requestUrl = str_replace('/'.request()->action(),'',$requestUrl);
+
+    public function getRequestUrl()
+    {
+        $requestUrl = substr(request()->baseUrl(), 1);
+        $requestUrl = preg_replace("/(\/[\d]*\/edit\.rest)$/U", '', $requestUrl);
+        $requestUrl = str_replace(['/create.rest', '.rest',], ['', '', ''], $requestUrl);
+        if (!empty(request()->action())) {
+            $requestUrl = str_replace('/' . request()->action(), '', $requestUrl);
         }
         return $requestUrl;
     }
+
     public function jsonSerialize()
     {
+        //查询视图
+        if (!is_null($this->filter)) {
+            $form = $this->filter->render();
+            $form->eventSuccess([$this->bindAttr('modelValue') => true]);
+            $this->bindAttr('filterForm', $form->bindAttr('model'));
+            $this->attr('filter', $form);
+        }
+        //总条数
         $this->pagination->total($this->getCount());
-        $this->modelData();;
+        //模型数据
+        $this->modelData();
+        //分页
         if (!$this->hidePage) {
-            $this->tableData = array_splice($this->tableData, 0, Request::get('size',$this->pagination->attr('pageSize')));
+            $this->tableData = array_splice($this->tableData, 0, Request::get('size', $this->pagination->attr('pageSize')));
             $this->attr('pagination', $this->pagination->attribute);
         }
+        //解析列
         $this->parseColumn();
-        if(request()->has('build_request_type')){
-           return ['code'=>200,'data'=>$this->tableData];
-        }else{
+        if (request()->has('build_request_type')) {
+            return ['code' => 200, 'data' => $this->tableData,'total'=>$this->pagination->attr('total')];
+        } else {
             $this->attr('columns', array_column($this->column, 'attribute'));
             return parent::jsonSerialize(); // TODO: Change the autogenerated stub
         }

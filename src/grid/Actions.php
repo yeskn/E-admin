@@ -73,7 +73,7 @@ class Actions extends Component
         //是否隐藏删除
         if (!$this->hideDelButton) {
             $url = $this->grid->getRequestUrl().'/' . $this->id.'.rest';
-            $field = $this->grid->bindAttr('loading');
+            $field = $this->grid->bindAttr('modelValue');
             $this->content(
                 Button::create('删除')
                 ->type('danger')

@@ -46,8 +46,9 @@ class Drawer extends Field
      * @return $this
      */
     public function form(Form $form){
+        $field = $this->bindAttr('modelValue');
+        $form->eventSuccess([$field=>false]);
         $this->content($form);
-        $form->attr('eadminDrawerVisible',$this->bindAttr('modelValue'));
         return $this;
     }
     /**

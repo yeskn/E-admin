@@ -50,8 +50,9 @@ class Dialog extends Field
      * @return $this
      */
     public function form(Form $form){
+        $field = $this->bindAttr('modelValue');
+        $form->eventSuccess([$field=>false]);
         $this->content($form);
-        $form->attr('eadminDialogVisible',$this->bindAttr('modelValue'));
         return $this;
     }
     /**

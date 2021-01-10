@@ -27,6 +27,7 @@
             //提交url
             submitUrl: String,
         },
+        emits: ['success'],
         setup(props,ctx){
             const state = inject(store)
             const proxyData = state.proxyData
@@ -37,20 +38,20 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         loading.value = true
-                        request({
-                            url:props.submitUrl,
-                            method:'POST',
-                            data: ctx.attrs.model
-                        }).then(res=>{
-                            if(ctx.attrs.eadminDialogVisible){
-                                proxyData[ctx.attrs.eadminDialogVisible] = false
-                            }
-                            if(ctx.attrs.eadminDrawerVisible){
-                                proxyData[ctx.attrs.eadminDrawerVisible] = false
-                            }
-                        }).finally(res=>{
+                        if(props.submitUrl){
+                            request({
+                                url:props.submitUrl,
+                                method:'POST',
+                                data: ctx.attrs.model
+                            }).then(res=>{
+                                ctx.emit('success')
+                            }).finally(res=>{
+                                loading.value = false
+                            })
+                        }else{
+                            ctx.emit('success')
                             loading.value = false
-                        })
+                        }
                     } else {
                         return false;
                     }

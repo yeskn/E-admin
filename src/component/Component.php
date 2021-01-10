@@ -37,6 +37,7 @@ abstract class Component implements \JsonSerializable
     }
     public function removeAttr($name){
         unset($this->attribute[$name]);
+        return $this;
     }
     public function removeBind($name){
         unset($this->bind[$name]);

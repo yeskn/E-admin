@@ -46,4 +46,36 @@ class Input extends Field
         parent::__construct($field, $value);
         $this->clearable();
     }
+    /**
+     * 输入框头部内容，只对 type="text" 有效
+     * @param mixed $content
+     * @return Input
+     */
+    public function prefix($content){
+        return $this->content($content,'prefix');
+    }
+    /**
+     * 输入框前置内容，只对 type="text" 有效
+     * @param mixed $content
+     * @return Input
+     */
+    public function suffix($content){
+        return $this->content($content,'suffix');
+    }
+    /**
+     * 输入框前置内容只对 type="text" 有效
+     * @param mixed $content
+     * @return Input
+     */
+    public function prepend($content){
+        return $this->content($content,'prepend');
+    }
+    /**
+     * 输入框后置内容只对 type="text" 有效
+     * @param mixed $content
+     * @return Input
+     */
+    public function append($content){
+        return $this->content($content,'append');
+    }
 }
