@@ -1,0 +1,7 @@
+@import './element-variables.scss';
+.el-button + span{
+  margin-left: 10px;
+}
+span + .el-button{
+  margin-left: 10px;
+}

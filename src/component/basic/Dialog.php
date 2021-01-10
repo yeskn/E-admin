@@ -8,6 +8,7 @@ use Eadmin\component\Component;
 use Eadmin\component\form\Field;
 use Eadmin\component\form\field\Input;
 use Eadmin\component\layout\Content;
+use Eadmin\form\Form;
 use think\helper\Str;
 
 /**
@@ -37,9 +38,21 @@ class Dialog extends Field
     {
         $self = new self($field, false);
         $self->closeOnClickModal(false);
+        $self->appendToBody();
         $self->width('35%');
         $self->content($content, 'reference');
         return $self;
+    }
+
+    /**
+     * 打开form 表单
+     * @param $form form表单
+     * @return $this
+     */
+    public function form(Form $form){
+        $this->content($form);
+        $form->attr('eadminDialogVisible',$this->bindAttr('modelValue'));
+        return $this;
     }
     /**
      * 标题

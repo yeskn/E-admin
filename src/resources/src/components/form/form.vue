@@ -33,11 +33,6 @@
             let loading = ref(false)
             //提交
             function sumbitForm(formName) {
-                if(ctx.attrs.eadminDialogVisible){
-                    proxyData[ctx.attrs.eadminDialogVisible] = false
-                    console.log(proxyData)
-                }
-                return
                 loading.value = true
                 this.$refs[formName].validate((valid) => {
                     if (valid) {

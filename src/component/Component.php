@@ -18,6 +18,8 @@ abstract class Component implements \JsonSerializable
     protected $bind = [];
     //属性绑定
     protected $bindAttribute = [];
+    //事件
+    protected $event = [];
     /**
      * 设置属性
      * @param string $name 属性名
@@ -69,6 +71,19 @@ abstract class Component implements \JsonSerializable
             return $this;
         }
     }
+
+    /**
+     * 绑定属性值
+     * @param $name
+     * @param $value
+     * @return string
+     */
+    protected function bindAttValue($name,$value){
+        $field = Str::random(15, 3);
+        $this->bind($field,$value);
+        $this->bindAttr($name,$field);
+        return $field;
+    }
     public function __call($name, $arguments)
     {
         if(empty($arguments)){
@@ -78,7 +93,11 @@ abstract class Component implements \JsonSerializable
         }
 
     }
-
+    public function event($name,array $value){
+        $name = ucfirst($name);
+        $this->event[$name]= $value;
+        return $this;
+    }
     /**
      * 插槽内容
      * @param mixed $content 内容
@@ -100,6 +119,7 @@ abstract class Component implements \JsonSerializable
             'attribute' => $this->attribute,
             'bindAttribute' => $this->bindAttribute,
             'content' => $this->content,
+            'event'=>$this->event
         ];
     }
 }

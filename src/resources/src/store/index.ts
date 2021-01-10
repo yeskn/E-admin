@@ -1,4 +1,4 @@
-import { reactive ,readonly} from "vue";
+import { reactive } from "vue";
 export const store = Symbol()
 // 使用 reactive 函数完成响应式转换
 const states = reactive({

@@ -20,9 +20,7 @@ class BaseAdmin extends Controller
      */
     public function index()
     {
-        $content = new Content();
-        $view = $content->title($this->grid()->title())->body($this->grid())->view();
-        Component::view($view);
+       return $this->grid();
     }
     /**
      * 显示创建资源表单页.
@@ -116,6 +114,7 @@ class BaseAdmin extends Controller
      */
     public function delete($id)
     {
+        return json(['code'=>200]);
         $grid = $this->request->delete('eadmin_grid');
         if($grid == 'index'){
             $grid = 'grid';

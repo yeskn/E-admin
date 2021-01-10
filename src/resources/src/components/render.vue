@@ -1,5 +1,5 @@
 <script>
-    import {defineComponent, computed, toRaw, h, resolveComponent, inject, withCtx, createVNode} from 'vue'
+    import {defineComponent, computed, toRaw, h, resolveComponent, inject} from 'vue'
     import {store} from '/@/store'
     import dayjs from 'dayjs'
     export default defineComponent({
@@ -68,6 +68,16 @@
                                 }
                             }
                             expression = 'modelValue.' + field + ' = value'
+                            eval(expression)
+                        }
+                    }
+                }
+                //事件绑定
+                for (let event in data.event) {
+                    let eventBind = data.event[event]
+                    data.attribute['on'+event] = (e)=>{
+                        for (let field in eventBind) {
+                            expression = 'modelValue.' + field + ' = eventBind[field]'
                             eval(expression)
                         }
                     }
@@ -197,7 +207,9 @@
             //赋值方法
             function setProxyData(data){
                 for(let field in data.bind){
-                    modelValue[field] = data.bind[field]
+                    if(!modelValue.hasOwnProperty(field)){
+                        modelValue[field] = data.bind[field]
+                    }
                 }
                 for(let slot in data.content){
                     data.content[slot].forEach(item=>{

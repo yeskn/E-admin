@@ -8,44 +8,97 @@
 
 namespace Eadmin\grid;
 
+use Eadmin\component\basic\Button;
+use Eadmin\component\Component;
+use Eadmin\component\grid\Column;
 
-use Eadmin\service\AdminService;
-
-class Actions extends Column
+/**
+ * Class Actions
+ * @package Eadmin\grid
+ * @property Grid $grid
+ */
+class Actions extends Component
 {
+    protected $name = 'html';
     //隐藏详情按钮
     protected $hideDetailButton = false;
     //隐藏编辑按钮
     protected $hideEditButton = false;
     //隐藏删除按钮
     protected $hideDelButton = false;
-
     protected $closure = null;
-    protected $detailButton = '<el-button class="hidden-md-and-down" size="small" icon="el-icon-info" @click="handleDetail(data,index)" data-title="详情">详情</el-button><el-button circle size="mini" class="hidden-md-and-up" icon="el-icon-info" @click="handleDetail(data,index)" data-title="详情"></el-button>';
-    protected $editButton = '<el-button class="hidden-md-and-down" type="primary" size="small" icon="el-icon-edit" @click="handleEdit(data,index)" data-title="编辑" >编辑</el-button><el-button circle class="hidden-md-and-up" type="primary" size="mini" icon="el-icon-edit" @click="handleEdit(data,index)" data-title="编辑"></el-button>';
-    protected $delButton = '<el-button  class="hidden-md-and-down" type="danger" size="small" icon="el-icon-delete" @click="handleDelete(data,index)" >删除</el-button><el-button  circle class="hidden-md-and-up" type="danger" size="mini" icon="el-icon-delete" @click="handleDelete(data,index)"></el-button>';
-
-
     protected $prependArr = [];
-
     protected $appendArr = [];
-    protected $mode = 'button';
-    public $row = [];
-
-    public function __construct(string $field = '', string $label = '')
+    protected $row = [];
+    protected $column;
+    protected $id;
+    protected $grid;
+    public function __construct($grid)
     {
-        parent::__construct($field, $label);
-        $this->setAttr(':fixed', 'actionFixed');
-        $this->setAttr(':width','actionWidth');
+        $this->grid = $grid;
+        $this->column = new Column('EadminAction','');
+    }
+    public function row($data)
+    {
+        $this->row = $data;
+        //如果有id设置id标示
+        if (isset($data['id'])) {
+            $this->id = $data['id'];
+        }
+        //自定义内容显示处理
+        if (!is_null($this->closure)) {
+            call_user_func_array($this->closure, [$this, $data]);
+        }
+        //前面追加
+        foreach ($this->prependArr as $content) {
+            $this->content($content);
+        }
+        //是否隐藏详情
+        if (!$this->hideDetailButton) {
+            $this->content(
+                Button::create('详情')
+                    ->size('small')
+                    ->icon('el-icon-info')
+            );
+        }
+        //是否隐藏编辑
+        if (!$this->hideEditButton) {
+            $this->content(
+                Button::create('编辑')
+                    ->type('primary')
+                    ->size('small')
+                    ->icon('el-icon-edit')
+            );
+        }
+        //是否隐藏删除
+        if (!$this->hideDelButton) {
+            $url = $this->grid->getRequestUrl().'/' . $this->id.'.rest';
+            $field = $this->grid->bindAttr('loading');
+            $this->content(
+                Button::create('删除')
+                ->type('danger')
+                ->size('small')
+                ->icon('el-icon-delete')
+                ->confirm('确认删除？', $url)
+                    ->eventConfirm([$field=>true])
+                    ->type('error')
+                    ->method('DELETE')
+            );
+        }
+        //追加尾部
+        foreach ($this->appendArr as $content) {
+            $this->content($content);
+        }
     }
 
-    //下拉菜单模式
-    public function dropdown()
+    public function column()
     {
-        $this->mode = 'dropdown';
-        $this->detailButton = '<el-dropdown-item icon="el-icon-info" @click.native="handleDetail(data,index)">详情</el-dropdown-item>';
-        $this->editButton = '<el-dropdown-item icon="el-icon-edit" @click.native="handleEdit(data,index)">编辑</el-dropdown-item>';
-        $this->delButton = '<el-dropdown-item icon="el-icon-delete" @click.native="handleDelete(data,index)">删除</el-dropdown-item>';
+        return $this->column;
+    }
+
+    public function __get($name)
+    {
+        return $this->row[$name];
     }
 
     public function setClosure(\Closure $closure)
@@ -70,80 +123,23 @@ class Actions extends Column
     {
         $this->hideDelButton = true;
     }
-
     /**
      * 前面追加
-     * @param $val
+     * @param mixed $val
      */
     public function prepend($val)
     {
         $this->prependArr[] = $val;
+        return $this;
     }
-
     /**
      * 追加尾部
-     * @param $val
+     * @param mixed $val
      */
     public function append($val)
     {
         $this->appendArr[] = $val;
+        return $this;
     }
 
-    /**
-     * 设置数据
-     * @param $data 行数据
-     */
-    public function setData($data)
-    {
-        $this->row = $data;
-        if (!is_null($this->closure)) {
-            if (!empty($data)) {
-                call_user_func_array($this->closure, [$this, $data]);
-            }
-        }
-        $html = '';
-
-        $node = $this->getRequestUrl();
-        if (!$this->hideDetailButton && AdminService::instance()->check($node . '/:id.rest', 'get')) {
-            $html .= $this->detailButton;
-        }
-        if (!$this->hideEditButton && AdminService::instance()->check($node . '/:id.rest', 'put')) {
-            $html .= $this->editButton;
-        }
-        if (!$this->hideDelButton && AdminService::instance()->check($node . '/:id.rest', 'delete')) {
-            $html .= $this->delButton;
-        }
-        foreach ($this->prependArr as $val) {
-            $html = $val . $html;
-        }
-        foreach ($this->appendArr as $val) {
-            $html .= $val;
-        }
-
-        $this->appendArr = [];
-        $this->prependArr = [];
-        if ($this->mode == 'button') {
-            $this->display(function () use ($html) {
-                return "<span ref='cellAction' style='white-space: nowrap;'>{$html}</span>";
-            });
-        } elseif ($this->mode == 'dropdown') {
-            $this->display(function () use ($html) {
-                return '
-<span ref="cellAction" style="white-space: nowrap;"><el-dropdown trigger="click">
-  <span class="el-dropdown-link">
-  <el-button size="mini">
-    操作<i class="el-icon-arrow-down el-icon--right"></i>
-  </el-button>    
-  </span>
-  <el-dropdown-menu slot="dropdown">' . $html . '
-  </el-dropdown-menu>
-</el-dropdown></span>';
-            });
-        }
-        parent::setData($data);
-        $this->mode = 'button';
-        $this->hideDetailButton = false;
-        $this->hideEditButton = false;
-        $this->hideDelButton = false;
-    }
 }

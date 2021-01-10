@@ -8,6 +8,7 @@ use Eadmin\component\Component;
 use Eadmin\component\form\Field;
 use Eadmin\component\form\field\Input;
 use Eadmin\component\layout\Content;
+use Eadmin\form\Form;
 use think\helper\Str;
 
 /**
@@ -33,12 +34,22 @@ class Drawer extends Field
 
     public static function create($content = null, $field = '')
     {
-
         $self = new self($field, false);
+        $self->closeOnClickModal(false);
         $self->content($content, 'reference');
         return $self;
     }
 
+    /**
+     * 打开form 表单
+     * @param $form form表单
+     * @return $this
+     */
+    public function form(Form $form){
+        $this->content($form);
+        $form->attr('eadminDrawerVisible',$this->bindAttr('modelValue'));
+        return $this;
+    }
     /**
      * 标题
      * @param string $content
