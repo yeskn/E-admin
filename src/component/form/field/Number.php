@@ -28,6 +28,7 @@ class Number extends Field
         if(empty($value)){
             $value = 0;
         }
+        $this->min(0);
         parent::__construct($field, $value);
     }
     protected $name = 'ElInputNumber';

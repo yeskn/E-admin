@@ -20,23 +20,40 @@
                 </el-dropdown>
                 <!--筛选-->
                 <render v-if="filter" :data="filter"></render>
-                <!--刷新-->
+
                 <div style="float: right;margin-right: 15px">
+                    <!--刷新-->
                     <el-button icon="el-icon-refresh" size="mini" circle style="margin-right: 10px"  @click="loading=true"></el-button>
+                    <!--列过滤器-->
+                    <el-dropdown trigger="click" :hide-on-click="false">
+                        <el-button icon="el-icon-s-grid" size="mini"></el-button>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-checkbox-group v-model="checkboxColumn">
+                                    <el-dropdown-item v-for="item in columns">
+                                        <el-checkbox  :label="item.prop" v-if="item.label">{{item.label}}</el-checkbox>
+                                    </el-dropdown-item>
+                                </el-checkbox-group>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
                 </div>
+
             </el-col>
         </el-row>
     </div>
     <!--表格-->
     <el-table @selection-change="handleSelect" v-loading="loading" :data="tableData" v-bind="$attrs">
-        <el-table-column v-for="column in columns" v-bind="column">
-                <template #header>
-                    <render :data="column.header"></render>
-                </template>
-                <template v-if="!column.type" #default="scope">
-                    <render :data="scope.row[column.prop]"></render>
-                </template>
-        </el-table-column>
+        <template v-for="column in columns">
+            <el-table-column v-if="checkboxColumn.indexOf(column.prop) > -1" v-bind="column">
+                    <template #header>
+                        <render :data="column.header"></render>
+                    </template>
+                    <template v-if="!column.type" #default="scope">
+                        <render :data="scope.row[column.prop]"></render>
+                    </template>
+            </el-table-column>
+        </template>
     </el-table>
     <!--分页-->
     <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" v-if="pagination" class="pagination" v-bind="pagination" :total="total"></el-pagination>
@@ -69,6 +86,10 @@
             const loading = ref(false)
             const quickSearch = ref('')
             const selectionData = ref([])
+            let checkboxColumn = ref([])
+            props.columns.forEach(item=>{
+                checkboxColumn.value.push(item.prop)
+            })
             let tableData = ref(props.data)
             let page = 1
             let size = props.pagination.pageSize
@@ -119,6 +140,7 @@
 
             return {
                 total,
+                checkboxColumn,
                 handleSizeChange,
                 handleCurrentChange,
                 loading,

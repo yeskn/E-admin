@@ -128,6 +128,7 @@ class Column extends Component
      */
     public function label(string $label)
     {
+        $this->attr('label',$label);
         $this->attr('header', Html::create()->content($label));
         return $this;
     }
