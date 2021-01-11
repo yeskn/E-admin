@@ -88,10 +88,11 @@ class BaseAdmin extends Controller
     public function update(Request $request, $id)
     {
         $url = '';
-        $grid = $this->request->put('eadmin_grid');
+        $grid = $this->request->param('eadmin_grid','grid');
+
         if ($id == 'batch') {
             $ids = $request->put('ids');
-            if($grid == 'index'){
+            if($grid == 'index' || empty($grid)){
                 $grid = 'grid';
             }
             $res = $this->$grid()->update($ids, $request->put());
@@ -116,8 +117,8 @@ class BaseAdmin extends Controller
      */
     public function delete($id)
     {
-        $grid = $this->request->delete('eadmin_grid');
-        if($grid == 'index'){
+        $grid = $this->request->delete('eadmin_grid','grid');
+        if($grid == 'index' || empty($grid)){
             $grid = 'grid';
         }
         $res = $this->$grid()->destroy($id);
