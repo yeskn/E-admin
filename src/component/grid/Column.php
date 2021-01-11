@@ -68,7 +68,12 @@ class Column extends Component
         $this->tag = Tag::create()->type($color)->size($size)->effect($theme);
         return $this;
     }
-
+    public function getField(){
+        return $this->prop;
+    }
+    public function getUsing(){
+        return $this->usings;
+    }
     /**
      * 获取当前列字段数据
      * @param $data 行数据

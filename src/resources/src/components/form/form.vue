@@ -11,11 +11,11 @@
 </template>
 
 <script>
-    import {defineComponent, inject, ref} from 'vue'
-    import request from '/@/utils/axios'
+    import {defineComponent, inject,ref} from 'vue'
     import render from "/@/components/render.vue"
     import manyItem from "./manyItem.vue"
     import { store } from '/@/store'
+    import { useHttp } from '/@/hooks'
     export default defineComponent({
         components:{
             render,manyItem
@@ -29,28 +29,24 @@
         },
         emits: ['success'],
         setup(props,ctx){
+            const loading = ref(false)
+            const {http} = useHttp
             const state = inject(store)
             const proxyData = state.proxyData
-            let loading = ref(false)
             //提交
             function sumbitForm(formName) {
-                loading.value = true
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        loading.value = true
                         if(props.submitUrl){
-                            request({
+                            http({
                                 url:props.submitUrl,
                                 method:'POST',
                                 data: ctx.attrs.model
-                            }).then(res=>{
+                            },loading).then(res=>{
                                 ctx.emit('success')
-                            }).finally(res=>{
-                                loading.value = false
                             })
                         }else{
                             ctx.emit('success')
-                            loading.value = false
                         }
                     } else {
                         return false;

@@ -143,7 +143,13 @@ class Grid extends Component
     {
         $this->hidePage = $bool;
     }
-
+    /**
+     * 快捷搜索
+     */
+    public function quickSearch(bool $bool = true)
+    {
+        $this->attr('quickSearch', $bool);
+    }
     /**
      * 设置分页每页限制
      * @Author: rocky
@@ -207,15 +213,17 @@ class Grid extends Component
         }
         return $requestUrl;
     }
-
     public function jsonSerialize()
     {
+        //快捷搜索
+        $this->quickFilter();
         //查询视图
         if (!is_null($this->filter)) {
             $form = $this->filter->render();
             $form->eventSuccess([$this->bindAttr('modelValue') => true]);
             $this->bindAttr('filterForm', $form->bindAttr('model'));
             $this->attr('filter', $form);
+            $this->attr('filterField', $form->bindAttr('model'));
         }
         //总条数
         $this->pagination->total($this->getCount());

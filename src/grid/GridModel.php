@@ -30,6 +30,8 @@ trait GridModel
     protected $db;
     //关联
     protected $relations = [];
+    //表字段
+    protected $tableFields = [];
 
     //预关联加载
     protected function withRelations()
@@ -101,6 +103,95 @@ trait GridModel
             $this->relations[] = $relation;
         }
     }
+    //快捷搜索
+    protected function quickFilter()
+    {
+        $keyword = Request::get('quickSearch', '', ['trim']);
+        if ($keyword) {
+            $whereFields = [];
+            $whereOr = [];
+            $relationWhereFields = [];
+            $relationWhereOr = [];
+            foreach ($this->column as $column) {
+                $field = $column->getField();
+                $fields = explode('.', $field);
+                $field = end($fields);
+                $usings = $column->getUsing();
+                if (count($fields) > 1) {
+                    array_pop($fields);
+                    $relation = array_pop($fields);;
+                    if (empty($usings)) {
+                        $relationWhereFields[$relation][] = $field;
+                    } else {
+                        foreach ($usings as $key => $value) {
+                            if (strpos($value, $keyword) !== false) {
+                                $relationWhereOr[$relation][$field] = $key;
+                            }
+                        }
+                    }
+                } else {
+                    if (in_array($column->getField(), $this->tableFields)) {
+                        if (empty($usings)) {
+                            $whereFields[] = $field;
+                        } else {
+                            foreach ($usings as $key => $value) {
+                                if (stripos($value, $keyword) !== false) {
+                                    $whereOr[$field] = $key;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //快捷搜索
+            $relationWhereSqls = [];
+            foreach ($this->relations as $relationName) {
+                $relations = explode('.', $relationName);
+                $Tmprelations = $relations;
+                $relation = array_pop($Tmprelations);
+                $relationFilter = implode('.', $relations);
+                $model = get_class($this->model);
+                $filter = new Filter(new $model);
+                $filter->setIfWhere(false);
+                $db = $this->model;
+                foreach ($relations as $relation) {
+                    $db = $db->getModel()->$relation();
+                }
+                $filter->relationLastDb($db,$relation);
+                $relationName = $relation;
+                $relationTableFields = $db->getTableFields();
+                if (isset($relationWhereFields[$relationName])) {
+                    $relationWhereFields[$relationName] = array_intersect($relationWhereFields[$relationName], $relationTableFields);
+                    $fields = implode('|', $relationWhereFields[$relationName]);
+                    $relationWhereCondtion = $relationWhereOr[$relationName] ?? [];
+                    $db->where(function ($q) use ($fields, $keyword, $relationWhereCondtion) {
+                        foreach ($relationWhereCondtion as $field => $value) {
+                            $q->whereOr($field, $value);
+                        }
+                        $q->whereLike($fields, "%{$keyword}%", 'OR');
+                    });
+                    $filter->paseFilter(null, $relationFilter . '.');
+                    $wheres = $filter->db()->getOptions('where');
+                    foreach ($wheres['AND'] as $where){
+                        if($where[1] == 'EXISTS'){
+                            $relationWhereSqls[]  = $where[2];
+                            break;
+                        }
+                    }
+                }
+            }
+            $fields = implode('|', $whereFields);
+            $this->db->where(function ($q) use ($relationWhereSqls, $fields, $keyword, $whereOr) {
+                $q->whereLike($fields, "%{$keyword}%", 'OR');
+                foreach ($whereOr as $field => $value) {
+                    $q->whereOr($field, $value);
+                }
+                foreach ($relationWhereSqls as $sql) {
+                    $q->whereExists($sql, 'OR');
+                }
+            });
+        }
+    }
     /**
      * 获取当前模型的数据库查询对象
      * @return Model
@@ -112,6 +203,7 @@ trait GridModel
     public function setModel(Model $model){
         $this->model = $model;
         $this->db = $this->model->db();
+        $this->tableFields = $this->model->getTableFields();
         $this->pkField = $this->model->getPk();
     }
 }
