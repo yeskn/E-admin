@@ -92,7 +92,7 @@ class BaseAdmin extends Controller
 
         if ($id == 'batch') {
             $ids = $request->put('ids');
-            if($grid == 'index' || empty($grid)){
+            if($grid == 'index'){
                 $grid = 'grid';
             }
             $res = $this->$grid()->update($ids, $request->put());

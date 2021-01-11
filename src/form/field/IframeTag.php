@@ -31,10 +31,10 @@ class IframeTag extends Field
     }
     /**
      * 设置数据源
-     * @param $table 表名或模型
-     * @param $tagField 显示标签字段
-     * @param $url url
-     * @param $text 按钮文本
+     * @param string $table 表名或模型
+     * @param string $tagField 显示标签字段
+     * @param string $url url
+     * @param string $text 按钮文本
      * @return $this
      */
     public function data($table,$tagField,$url,$text='请选择'){

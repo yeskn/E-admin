@@ -58,7 +58,7 @@ class Filter extends View
     /**
      * 筛选模式
      * @param string $mode
-     * @return Model|null
+     * @return mixed
      */
     public function mode(string $mode = '')
     {
@@ -77,9 +77,8 @@ class Filter extends View
     }
     /**
      * 模糊查询
-     * @param $field 字段
-     * @param $node json属性字段
-     * @param $label 标签
+     * @param string $field 字段
+     * @param string $label 标签
      * @return $this
      */
     public function like($field, $label = '')
@@ -90,9 +89,9 @@ class Filter extends View
     }
     /**
      * json查询
-     * @param $field 字段
-     * @param $node json属性字段
-     * @param $label 标签
+     * @param string $field 字段
+     * @param string $node json属性字段
+     * @param string $label 标签
      * @return $this
      */
     public function json($field,$node, $label = '')
@@ -104,9 +103,9 @@ class Filter extends View
     }
     /**
      * json模糊查询
-     * @param $field 字段
-     * @param $node json属性字段
-     * @param $label 标签
+     * @param string $field 字段
+     * @param string $node json属性字段
+     * @param string $label 标签
      * @return $this
      */
     public function jsonLike($field, $node,$label = '')
@@ -118,9 +117,9 @@ class Filter extends View
     }
     /**
      * json数组模糊查询
-     * @param $field 字段
-     * @param $node json属性字段
-     * @param $label 标签
+     * @param string $field 字段
+     * @param string $node json属性字段
+     * @param string $label 标签
      * @return $this
      */
     public function jsonArrLike($field, $node,$label = ''){
@@ -131,8 +130,8 @@ class Filter extends View
     }
     /**
      * in查询
-     * @param $field 字段
-     * @param $label 标签
+     * @param string $field 字段
+     * @param string $label 标签
      * @return $this
      */
     public function in($field, $label = '')
@@ -144,8 +143,8 @@ class Filter extends View
 
     /**
      * not in查询
-     * @param $field 字段
-     * @param $label 标签
+     * @param string $field 字段
+     * @param string $label 标签
      * @return $this
      */
     public function notIn($field, $label = '')
@@ -157,8 +156,8 @@ class Filter extends View
 
     /**
      * 等于查询
-     * @param $field 字段
-     * @param $label 标签
+     * @param string $field 字段
+     * @param string $label 标签
      * @return $this
      */
     public function eq($field, $label = '')
@@ -170,8 +169,8 @@ class Filter extends View
 
     /**
      * findIn查询
-     * @param $field 字段
-     * @param $label 标签
+     * @param string $field 字段
+     * @param string $label 标签
      * @return $this
      */
     public function findIn($field, $label = '')
@@ -183,8 +182,8 @@ class Filter extends View
 
     /**
      * 不等于查询
-     * @param $field 字段
-     * @param $label 标签
+     * @param string $field 字段
+     * @param string $label 标签
      * @return $this
      */
     public function neq($field, $label = '')
@@ -196,8 +195,8 @@ class Filter extends View
 
     /**
      * 大于等于
-     * @param $field 字段
-     * @param $label 标签
+     * @param string $field 字段
+     * @param string $label 标签
      * @return $this
      */
     public function egt($field, $label = '')
@@ -209,8 +208,8 @@ class Filter extends View
 
     /**
      * 大于
-     * @param $field 字段
-     * @param $label 标签
+     * @param string $field 字段
+     * @param string $label 标签
      * @return $this
      */
     public function gt($field, $label = '')
@@ -222,8 +221,8 @@ class Filter extends View
 
     /**
      * 小于等于
-     * @param $field 字段
-     * @param $label 标签
+     * @param string $field 字段
+     * @param string $label 标签
      * @return $this
      */
     public function elt($field, $label = '')
@@ -235,8 +234,8 @@ class Filter extends View
 
     /**
      * 大于
-     * @param $field 字段
-     * @param $label 标签
+     * @param string $field 字段
+     * @param string $label 标签
      * @return $this
      */
     public function lt($field, $label = '')
@@ -248,8 +247,8 @@ class Filter extends View
 
     /**
      * 区间查询
-     * @param $field 字段
-     * @param $label 标签
+     * @param string $field 字段
+     * @param string $label 标签
      * @return $this
      */
     public function between($field, $label = '')
@@ -262,9 +261,9 @@ class Filter extends View
 
     /**
      * 日期筛选
-     * @param $field 字段
-     * @param $label 标签
-     * @return \Eadmin\form\field\DateTime
+     * @param string $field 字段
+     * @param string $label 标签
+     * @return \Eadmin\form\field\DateTime|mixed
      */
     public function date($field, $label = '')
     {
@@ -275,9 +274,9 @@ class Filter extends View
 
     /**
      * 时间筛选
-     * @param $field 字段
-     * @param $label 标签
-     * @return \Eadmin\form\field\DateTime
+     * @param string $field 字段
+     * @param string $label 标签
+     * @return \Eadmin\form\field\DateTime|mixed
      */
     public function time($field, $label = '')
     {
@@ -289,9 +288,9 @@ class Filter extends View
 
     /**
      * 日期时间筛选
-     * @param $field 字段
-     * @param $label 标签
-     * @return \Eadmin\form\field\DateTime
+     * @param string $field 字段
+     * @param string $label 标签
+     * @return \Eadmin\form\field\DateTime|mixed
      */
     public function datetime($field, $label = '')
     {
@@ -303,9 +302,9 @@ class Filter extends View
 
     /**
      * 日期时间范围筛选
-     * @param $field 字段
-     * @param $label 标签
-     * @return \Eadmin\form\field\DateTime
+     * @param string $field 字段
+     * @param string $label 标签
+     * @return \Eadmin\form\field\DateTime|mixed
      */
     public function datetimeRange($field, $label = '')
     {
@@ -319,7 +318,7 @@ class Filter extends View
      * 级联筛选
      * @param ...$field 字段1,字段2,字段3...
      * @param $label 标签
-     * @return \Eadmin\form\field\Cascader
+     * @return \Eadmin\form\field\Cascader|mixed
      */
     public function cascader(...$field)
     {
@@ -331,9 +330,9 @@ class Filter extends View
 
     /**
      * 日期范围筛选
-     * @param $field 字段
-     * @param $label 标签
-     * @return \Eadmin\form\field\DateTime
+     * @param string $field 字段
+     * @param string $label 标签
+     * @return \Eadmin\form\field\DateTime|mixed
      */
     public function dateRange($field, $label = '')
     {
@@ -345,9 +344,9 @@ class Filter extends View
 
     /**
      * 时间范围筛选
-     * @param $field 字段
-     * @param $label 标签
-     * @return \Eadmin\form\field\DateTime
+     * @param string $field 字段
+     * @param string $label 标签
+     * @return \Eadmin\form\field\DateTime|mixed
      */
     public function timeRange($field, $label = '')
     {
@@ -359,9 +358,9 @@ class Filter extends View
 
     /**
      * 年日期筛选
-     * @param $field 字段
-     * @param $label 标签
-     * @return \Eadmin\form\field\DateTime
+     * @param string $field 字段
+     * @param string $label 标签
+     * @return \Eadmin\form\field\DateTime|mixed
      */
     public function year($field, $label = '')
     {
@@ -373,9 +372,9 @@ class Filter extends View
 
     /**
      * 月日期筛选
-     * @param $field 字段
-     * @param $label 标签
-     * @return \Eadmin\form\field\DateTime
+     * @param string $field 字段
+     * @param string $label 标签
+     * @return \Eadmin\form\field\DateTime|mixed
      */
     public function month($field, $label = '')
     {
@@ -387,8 +386,8 @@ class Filter extends View
 
     /**
      * NOT区间查询
-     * @param $field 字段
-     * @param $label 标签
+     * @param string $field 字段
+     * @param string $label 标签
      * @return $this
      */
     public function notBetween($field, $label = '')
@@ -401,8 +400,8 @@ class Filter extends View
 
     /**
      * 单选框
-     * @param $options 选项值
-     * @return \Eadmin\form\field\Radio
+     * @param array $options 选项值
+     * @return \Eadmin\form\field\Radio|mixed
      */
     public function radio(array $options)
     {
@@ -418,8 +417,8 @@ class Filter extends View
 
     /**
      * 多选框
-     * @param $options 选项值
-     * @return \Eadmin\form\field\Checkbox
+     * @param array $options 选项值
+     * @return \Eadmin\form\field\Checkbox|mixed
      */
     public function checkbox(array $options)
     {
@@ -435,8 +434,8 @@ class Filter extends View
 
     /**
      * 分组下拉框
-     * @param $options 选项值
-     * @return \Eadmin\form\field\Select
+     * @param array $options 选项值
+     * @return \Eadmin\form\field\Select|mixed
      */
     public function selectGroup(array $options)
     {
@@ -449,8 +448,8 @@ class Filter extends View
 
     /**
      * 下拉框
-     * @param $options 选项值
-     * @return \Eadmin\form\field\Select
+     * @param array $options 选项值
+     * @return \Eadmin\form\field\Select|mixed
      */
     public function select(array $options)
     {
@@ -467,9 +466,10 @@ class Filter extends View
 
     /**
      * 添加表单元素
-     * @param $class 组件类
-     * @param $field 字段
-     * @param $label 标签
+     * @param string $name 组件类
+     * @param string $field 字段
+     * @param string $label 标签
+     * @param array $arguments
      * @return \Eadmin\form\field\Input
      */
     protected function formItem($field, $label, $name = 'input', $arguments = [])
@@ -501,8 +501,8 @@ class Filter extends View
 
     /**
      * 解析查询过滤
-     * @param $method 方法
-     * @param $field 字段
+     * @param string $method 方法
+     * @param string $field 字段
      * @return mixed
      */
     public function paseFilter($method, $field)
@@ -535,9 +535,9 @@ class Filter extends View
 
     /**
      * 查询过滤
-     * @param $method 方法
-     * @param $dbField 数据库字段
-     * @param $field 请求数据字段
+     * @param string $method 方法
+     * @param string $dbField 数据库字段
+     * @param string $field 请求数据字段
      * @param string $request 请求方式
      * @return $this
      */
@@ -595,9 +595,9 @@ class Filter extends View
     }
 
     /**
-     * @param $method
-     * @param $dbField
-     * @param $field
+     * @param string $method
+     * @param string $dbField
+     * @param string $field
      * @param $data
      */
     private function parseRule($method, $dbField, $field, $data): void

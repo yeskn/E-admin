@@ -157,7 +157,7 @@ class Form extends View
 
     /**
      * 设置保存修改成功后跳转的url
-     * @param $url
+     * @param string $url
      */
     public function redirectUrl($url)
     {
@@ -214,7 +214,7 @@ class Form extends View
 
     /**
      * 设置主键字段
-     * @param $field
+     * @param string $field
      */
     public function setPkField($field)
     {
@@ -233,8 +233,8 @@ class Form extends View
 
     /**
      * 一对多
-     * @param $label 标签
-     * @param $relationMethod 关联方法
+     * @param string $label 标签
+     * @param string $relationMethod 关联方法
      * @param \Closure $closure
      */
     public function hasMany($label, $relationMethod, \Closure $closure)
@@ -252,7 +252,7 @@ class Form extends View
 
     /**
      * 表单选项卡标签页
-     * @param $label 标签
+     * @param string $label 标签
      * @param \Closure $closure 回调
      * @param string $position 选项卡所在位置 top/right/bottom/left
      * @param string $type 风格类型 ''/card/border-card
@@ -267,8 +267,8 @@ class Form extends View
     /**
      * 布局行
      * @param \Closure $closure
-     * @param $title 标题
-     * @param $gutter 栅格间隔
+     * @param string $title 标题
+     * @param int $gutter 栅格间隔
      * @return $this
      */
     public function row(\Closure $closure, $title = '',$gutter = 0)
@@ -279,7 +279,7 @@ class Form extends View
 
     /**
      * 对齐方式
-     * @param $position top,left,right
+     * @param string $position top,left,right
      * @param int $width 宽度
      */
     public function labelPosition($position, $width = 120)
@@ -291,8 +291,8 @@ class Form extends View
 
     /**
      * 更新数据
-     * @param $id  主键id
-     * @param $data 更新数据
+     * @param int $id  主键id
+     * @param array $data 更新数据
      * @return bool
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
@@ -448,7 +448,7 @@ class Form extends View
 
     /**
      * 数据编辑
-     * @param $id 主键id
+     * @param int $id 主键id
      * @return $this
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException

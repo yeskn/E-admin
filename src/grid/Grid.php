@@ -149,7 +149,7 @@ class Grid extends View
 
     /**
      * 拖拽排序列
-     * @param $field 排序字段
+     * @param string $field 排序字段
      * @param string $label 显示标签
      */
     public function sortDrag($field = 'sort', $label = '排序')
@@ -186,7 +186,7 @@ EOF;
 
     /**
      * 是否显示回收站
-     * @param $bool true显示，false隐藏
+     * @param bool $bool true显示，false隐藏
      */
     public function trashed($bool)
     {
@@ -216,7 +216,7 @@ EOF;
      * 设置添加按钮参数
      * @Author: rocky
      * 2019/11/27 16:50
-     * @param $params 格式：['id'=>1,'a'=>2]
+     * @param array $params 格式：['id'=>1,'a'=>2]
      */
     public function setAddButtonParam(array $params)
     {
@@ -225,7 +225,8 @@ EOF;
 
     /**
      * 对话框表单
-     * @param $fullscreen 是否全屏
+     * @param bool $fullscreen 是否全屏
+     * @param string  $width 宽度
      */
     public function setFormDialog($fullscreen = false, $width = '40%')
     {
@@ -244,7 +245,8 @@ EOF;
 
     /**
      * 对话框表单
-     * @param $fullscreen 是否全屏
+     * @param string $direction 打开方向
+     * @param string $size 宽度
      */
     public function setFormDrawer($direction = 'rtl', $size = '30%')
     {
@@ -253,7 +255,7 @@ EOF;
 
     /**
      * 开启树形表格
-     * @param string $pid 父级字段
+     * @param string $pidField 父级字段
      * @param array $appendData 追加数据
      * @param bool $expand 是否展开
      */
@@ -463,9 +465,9 @@ EOF;
 
     /**
      * 更新数据
-     * @param $ids 更新条件id
-     * @param $data 更新数据
-     * @return Model
+     * @param string $ids 更新条件id
+     * @param array $data 更新数据
+     * @return mixed
      */
     public function update($ids, $data)
     {

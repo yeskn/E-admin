@@ -50,8 +50,8 @@ class Field extends View
     public $changeJs = '';
     /**
      * Input constructor.
-     * @param $field 字段
-     * @param $label 标签
+     * @param string $field 字段
+     * @param string $label 标签
      */
     public function __construct($field, $label, $arguments = [])
     {
@@ -88,7 +88,7 @@ class Field extends View
 
     /**
      * 提示帮助文本
-     * @param $text
+     * @param string $text
      * @return $this
      */
     public function help($text)
@@ -99,7 +99,7 @@ class Field extends View
 
     /**
      * 缺省默认值
-     * @param $value 值
+     * @param string $value 值
      * @return $this
      */
     public function default($value)
@@ -110,7 +110,7 @@ class Field extends View
 
     /**
      * 设置值
-     * @param $value 值
+     * @param string $value 值
      * @return $this
      */
     public function value($value)
@@ -136,8 +136,8 @@ class Field extends View
 
     /**
      * 条件必填
-     * @param $field 字段
-     * @param $val 条件值
+     * @param string $field 字段
+     * @param string $val 条件值
      * @return $this
      */
     public function requiredIf($field,$val)
@@ -166,7 +166,7 @@ class Field extends View
 
     /**
      * 占位栅格数，24栏占满
-     * @param $num 数量
+     * @param int $num 数量
      * @return $this
      */
     public function md($num = 3)
@@ -179,7 +179,7 @@ class Field extends View
      * 表单新增更新验证规则
      * @Author: rocky
      * 2019/8/9 10:50
-     * @param $rule 验证规则
+     * @param array $rule 验证规则
      */
     public function rule(array $rule)
     {
@@ -192,7 +192,7 @@ class Field extends View
      * 表单新增验证规则
      * @Author: rocky
      * 2019/8/9 10:50
-     * @param $rule 验证规则
+     * @param array $rule 验证规则
      */
     public function createRule(array $rule)
     {
@@ -204,7 +204,7 @@ class Field extends View
      * 表单更新验证规则
      * @Author: rocky
      * 2019/8/9 10:50
-     * @param $rule 验证规则
+     * @param array $rule 验证规则
      */
     public function updateRule(array $rule)
     {
@@ -214,7 +214,7 @@ class Field extends View
 
     /**
      * 生成验证规则
-     * @param $rules
+     * @param array $rules
      * @return array
      */
     public function paseRule($rules)

@@ -55,7 +55,7 @@ class Cascader extends Field
     }
     /**
      * 联动加载
-     * @param $url 请求url
+     * @param string $url 请求url
      * @return $this
      */
     public function load($url){
@@ -78,8 +78,8 @@ class Cascader extends Field
 
     /**
      * 配置选项
-     * @param $attribute 属性
-     * @param $value 值
+     * @param string $attribute 属性
+     * @param string $value 值
      */
     public function props($attribute,$value){
         $this->props[$attribute] = $value;
@@ -90,7 +90,7 @@ class Cascader extends Field
     }
     /**
      * 多选
-     * @param $relationMethod 一对多关联方法
+     * @param string $relationMethod 一对多关联方法
      * @return $this
      */
     public function multiple($relationMethod=''){

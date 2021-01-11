@@ -24,8 +24,8 @@ class Tabs extends View
 
     /**
      * 添加标签页
-     * @param $label 标签
-     * @param $contentHtml 内容
+     * @param string $label 标签
+     * @param string $contentHtml 内容
      */
     public function push($label,$contentHtml){
         $this->tabPane[] = "<el-tab-pane label='{$label}'>{$contentHtml}</el-tab-pane>";
