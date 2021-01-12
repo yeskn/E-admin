@@ -1,0 +1,45 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: rocky
+ * Date: 2021-01-12
+ * Time: 23:43
+ */
+namespace Eadmin\grid\drive;
+use Eadmin\grid\GridInterface;
+
+class Arrays implements GridInterface
+{
+    protected $data = [];
+    public function __construct($data)
+    {
+        $this->data = $data;
+    }
+
+    public function getData(bool $hidePage, int $page, int $size)
+    {
+        if($hidePage){
+            return $this->data;
+        }else{
+            $page = ($page-1) * $size;
+            $data = array_slice($this->data,$page,$size);
+            return $data;
+        }
+    }
+    public function getTotal(): int
+    {
+        return count($this->data);
+    }
+    public function db()
+    {
+       return null;
+    }
+    public function model()
+    {
+        return null;
+    }
+    public function quickFilter($keyword, $columns)
+    {
+        
+    }
+}

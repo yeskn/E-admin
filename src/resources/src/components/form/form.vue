@@ -15,7 +15,7 @@
     import render from "/@/components/render.vue"
     import manyItem from "./manyItem.vue"
     import { store } from '/@/store'
-    import { useHttp } from '/@/hooks'
+    import { http } from '/@/hooks'
     export default defineComponent({
         components:{
             render,manyItem
@@ -25,12 +25,11 @@
         props:{
             action:Object,
             //提交url
-            submitUrl: String,
+            setAction: String,
         },
         emits: ['success'],
         setup(props,ctx){
             const loading = ref(false)
-            const {http} = useHttp
             const state = inject(store)
             const proxyData = state.proxyData
             //提交
@@ -39,7 +38,7 @@
                     if (valid) {
                         if(props.submitUrl){
                             http({
-                                url:props.submitUrl,
+                                url:props.setAction,
                                 method:'POST',
                                 data: ctx.attrs.model
                             },loading).then(res=>{

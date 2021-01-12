@@ -41,10 +41,10 @@ class Filter
         } elseif ($model instanceof Query) {
             $this->db = $model;
             $this->model = $model->getModel();
-        } else {
-            $this->db = Db::name($model);
         }
-        $this->tableFields = $this->db->getTableFields();
+        if($this->db){
+            $this->tableFields = $this->db->getTableFields();
+        }
         $this->form = Form::create()
             ->inline()
             ->removeAttr('labelWidth')
@@ -432,30 +432,32 @@ class Filter
      */
     public function paseFilter($method, $field)
     {
-        if (is_string($field)) {
-            $field = str_replace('.', '__', $field);
-            $fields = explode('__', $field);
-            $dbField = array_pop($fields);
-            if (count($fields) > 0) {
+        if($this->db){
+            if (is_string($field)) {
+                $field = str_replace('.', '__', $field);
+                $fields = explode('__', $field);
+                $dbField = array_pop($fields);
+                if (count($fields) > 0) {
 
-                $func = function (Filter $filter) use ($dbField, $field, $method) {
-                    $filter->filterField($method, $dbField, $field);
-                };
-                while (count($fields) > 1) {
-                    $relation = array_pop($fields);
-                    $func = function (Filter $filter) use ($relation, $func, $dbField) {
-                        $filter->relationWhere($relation, $func);
+                    $func = function (Filter $filter) use ($dbField, $field, $method) {
+                        $filter->filterField($method, $dbField, $field);
                     };
+                    while (count($fields) > 1) {
+                        $relation = array_pop($fields);
+                        $func = function (Filter $filter) use ($relation, $func, $dbField) {
+                            $filter->relationWhere($relation, $func);
+                        };
+                    }
+                    $relation = array_pop($fields);
+                    return $this->relationWhere($relation, $func);
                 }
-                $relation = array_pop($fields);
-                return $this->relationWhere($relation, $func);
+                $requestField = $field;
+            } elseif (is_array($field)) {
+                $dbField = $field;
+                $requestField = array_shift($field);
             }
-            $requestField = $field;
-        } elseif (is_array($field)) {
-            $dbField = $field;
-            $requestField = array_shift($field);
+            $this->filterField($method, $dbField, $requestField);
         }
-        $this->filterField($method, $dbField, $requestField);
     }
 
     /**

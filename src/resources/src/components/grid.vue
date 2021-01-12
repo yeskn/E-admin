@@ -74,7 +74,7 @@
 <script>
     import {defineComponent, ref, watch, inject} from "vue";
     import render from "/@/components/render.vue"
-    import {useHttp} from '/@/hooks'
+    import {http} from '/@/hooks'
     import {store} from '/@/store'
     export default defineComponent({
         name: "EadminGrid",
@@ -99,7 +99,6 @@
             const state = inject(store)
             const proxyData = state.proxyData
             const loading = ref(false)
-            const {http} = useHttp
             const quickSearch = ref('')
             const selectionData = ref([])
             const quickSearchOn = ctx.attrs.quickSearch

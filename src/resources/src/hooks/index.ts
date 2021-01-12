@@ -1,3 +1,3 @@
-import { loading,http } from "./use-http"
-const useHttp = { loading,http }
-export { useHttp }
+import http from "./use-http"
+import useVisible from "./use-visible"
+export { http ,useVisible}

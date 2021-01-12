@@ -89,7 +89,6 @@ class Form extends Field
         $this->actions = new FormAction($this);
         $this->labelWidth('100px');
     }
-
     /**
      * 表单验证规则
      * @param array $value
@@ -182,7 +181,7 @@ class Form extends Field
      * @param string $sumbitUrl 提交url
      * @return $this
      */
-    public function submitUrl(string $sumbitUrl)
+    public function setAction(string $sumbitUrl)
     {
         $this->attr(__FUNCTION__, $sumbitUrl);
         return $this;

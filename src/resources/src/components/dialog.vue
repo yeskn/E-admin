@@ -7,14 +7,15 @@
         </template>
         <slot></slot>
     </el-dialog>
-    <span @click="opend">
+    <span @click="show">
         <slot name="reference"></slot>
     </span>
 </template>
 
 <script>
-    import {defineComponent, ref,watch} from "vue";
+    import {defineComponent} from "vue";
     import render from '/@/components/render.vue'
+    import {useVisible} from '/@/hooks'
     export default defineComponent({
         name: "EadminDialog",
         components: {
@@ -29,19 +30,10 @@
         },
         emits:['update:modelValue'],
         setup(props,ctx){
-            const visible = ref(props.modelValue)
-            watch(()=>props.modelValue,(value)=>{
-                visible.value = value
-            })
-            watch(visible,(value)=>{
-                ctx.emit('update:modelValue',value)
-            })
-            function opend(){
-                visible.value = true
-            }
+            const {visible,show} = useVisible(props,ctx)
             return {
                 visible,
-                opend
+                show
             }
         }
     })
