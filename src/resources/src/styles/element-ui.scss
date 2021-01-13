@@ -5,3 +5,6 @@
 span + .el-button{
   margin-left: 10px;
 }
+span + span > .el-button{
+  margin-left: 10px;
+}

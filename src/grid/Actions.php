@@ -42,8 +42,9 @@ class Actions extends Component
     {
         $this->row = $data;
         //如果有id设置id标示
-        if (isset($data['id'])) {
-            $this->id = $data['id'];
+        $pk = $this->grid->drive()->getPk();
+        if (isset($data[$pk])) {
+            $this->id = $data[$pk];
         }
         //自定义内容显示处理
         if (!is_null($this->closure)) {
@@ -63,25 +64,30 @@ class Actions extends Component
         }
         //是否隐藏编辑
         if (!$this->hideEditButton) {
+            $form = $this->grid->form()->renderable();
+            $form->edit($this->id);
+            $this->setAction('/eadmin/'.$this->id.'.rest','PUT');
+            $form->eventSuccess([$this->grid->bindAttr('modelValue') => true]);
             $this->content(
                 Button::create('编辑')
                     ->type('primary')
                     ->size('small')
                     ->icon('el-icon-edit')
+                    ->dialog()->form($form)
             );
         }
         //是否隐藏删除
         if (!$this->hideDelButton) {
-            $url = $this->grid->getRequestUrl().'/' . $this->id.'.rest';
-            $field = $this->grid->bindAttr('modelValue');
+            $url = '/eadmin/' . $this->id.'.rest';
             $this->content(
                 Button::create('删除')
                 ->type('danger')
                 ->size('small')
                 ->icon('el-icon-delete')
                 ->confirm('确认删除？', $url)
-                    ->eventConfirm([$field=>true])
+                    ->eventConfirm([$this->grid->bindAttr('modelValue')=>true])
                     ->type('error')
+                    ->params($this->grid->getCallMethod())
                     ->method('DELETE')
             );
         }

@@ -8,9 +8,9 @@
 
 namespace Eadmin\service;
 
+use Eadmin\traits\ApiJson;
 use think\facade\Cache;
 use think\facade\Request;
-use Eadmin\ApiJson;
 use Eadmin\model\AdminModel;
 use Eadmin\Service;
 

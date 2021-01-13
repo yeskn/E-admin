@@ -4,6 +4,7 @@ declare (strict_types = 1);
 namespace Eadmin;
 
 
+use Eadmin\traits\ApiJson;
 use think\App;
 use think\exception\ValidateException;
 use think\Validate;

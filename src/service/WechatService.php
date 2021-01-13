@@ -73,6 +73,6 @@ class WechatService
             ]
         ];
         $config = array_merge($config, $options);
-        return Factory::miniProgram($config);
+        return Factory::miniProgram($config)->auth;
     }
 }

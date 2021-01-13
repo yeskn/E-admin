@@ -7,7 +7,7 @@
  */
 
 
-namespace Eadmin;
+namespace Eadmin\traits;
 
 
 use app\common\service\ApiCode;

@@ -9,6 +9,7 @@
 namespace Eadmin;
 
 
+use Eadmin\controller\ResourceController;
 use Eadmin\middleware\Response;
 use think\facade\Db;
 use think\route\Resource;
@@ -30,8 +31,7 @@ class ServiceProvider extends Service
 
         //注册上传路由
         FileService::instance()->registerRoute();
-        //注册表格视图路由
-        TableViewService::instance()->registerRoute();
+
         //注册插件
         PlugService::instance()->register();
         $this->registerView();
@@ -45,6 +45,8 @@ class ServiceProvider extends Service
             $view =  str_replace('E-Admin',sysconf('web_name'),$view);
             return $view;
         });
+        Admin::registerRoute();;
+
         //菜单管理
         $this->app->route->resource('menu',Menu::class);
         //日志调试

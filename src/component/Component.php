@@ -7,7 +7,8 @@ use think\helper\Str;
 
 abstract class Component implements \JsonSerializable
 {
-    use Where,ForMap;
+    use Where, ForMap;
+
     //组件名称
     protected $name;
     //属性
@@ -20,6 +21,7 @@ abstract class Component implements \JsonSerializable
     protected $bindAttribute = [];
     //事件
     protected $event = [];
+
     /**
      * 设置属性
      * @param string $name 属性名
@@ -28,46 +30,56 @@ abstract class Component implements \JsonSerializable
      */
     public function attr(string $name, $value = null)
     {
-        if(is_null($value)) {
+        if (is_null($value)) {
             return $this->attribute[$name] ?? null;
-        }else{
+        } else {
             $this->attribute[$name] = $value;
             return $this;
         }
     }
-    public function removeAttr($name){
+
+    public function removeAttr($name)
+    {
         unset($this->attribute[$name]);
         return $this;
     }
-    public function removeBind($name){
+
+    public function removeBind($name)
+    {
         unset($this->bind[$name]);
     }
-    public function removeAttrBind($name){
+
+    public function removeAttrBind($name)
+    {
         unset($this->bindAttribute[$name]);
     }
+
     /**
      * 绑定属性对应绑定字段
      * @param string $name 属性名称
      * @param string $field 绑定字段名称
      */
-    public function bindAttr(string $name,$field= null){
-        if(is_null($field)) {
+    public function bindAttr(string $name, $field = null)
+    {
+        if (is_null($field)) {
             return $this->bindAttribute[$name] ?? null;
-        }else{
+        } else {
             $this->bindAttribute[$name] = $field;
             return $this;
         }
     }
+
     /**
      * 绑定值
      * @param string $name 字段名称
      * @param mixed $value 值
      * @return $this
      */
-    public function bind(string $name,$value= null){
-        if(is_null($value)) {
+    public function bind(string $name, $value = null)
+    {
+        if (is_null($value)) {
             return $this->bind[$name];
-        }else{
+        } else {
             $this->bind[$name] = $value;
             return $this;
         }
@@ -79,26 +91,35 @@ abstract class Component implements \JsonSerializable
      * @param $value
      * @return string
      */
-    protected function bindAttValue($name,$value){
+    protected function bindAttValue($name, $value)
+    {
         $field = Str::random(15, 3);
-        $this->bind($field,$value);
-        $this->bindAttr($name,$field);
+        $this->bind($field, $value);
+        $this->bindAttr($name, $field);
         return $field;
     }
+
     public function __call($name, $arguments)
     {
-        if(empty($arguments)){
+        if (empty($arguments)) {
             return $this->attr($name, true);
-        }else{
+        } else {
             return $this->attr($name, ...$arguments);
         }
 
     }
-    public function event($name,array $value){
+
+    public function event($name, array $value)
+    {
         $name = ucfirst($name);
-        $this->event[$name]= $value;
+        if (isset($this->event[$name])) {
+            $this->event[$name] = array_merge($this->event[$name], $value);
+        } else {
+            $this->event[$name] = $value;
+        }
         return $this;
     }
+
     /**
      * 插槽内容
      * @param mixed $content 内容
@@ -110,17 +131,18 @@ abstract class Component implements \JsonSerializable
         $this->content[$name][] = $content;
         return $this;
     }
+
     public function jsonSerialize()
     {
         return [
             'name' => $this->name,
             'where' => $this->where,
             'map' => $this->map,
-            'bind'=>$this->bind,
+            'bind' => $this->bind,
             'attribute' => $this->attribute,
             'bindAttribute' => $this->bindAttribute,
             'content' => $this->content,
-            'event'=>$this->event
+            'event' => $this->event
         ];
     }
 }

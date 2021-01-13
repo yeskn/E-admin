@@ -12,13 +12,15 @@ namespace Eadmin\grid;
 interface GridInterface
 {
     public function __construct($data);
-
+    public function getPk();
     //数据总条数
     public function getTotal(): int;
     //快捷搜索
     public function quickFilter($keyword,$columns);
     public function db();
     public function model();
+    //删除
+    public function destroy($id);
     /**
      * 获取数据
      * @param bool $hidePage 是否分页

@@ -22,7 +22,7 @@ const router = createRouter({
 export default router
 router.beforeEach( (to, from) => {
     request({
-        url:'/admin/index/dashboard'
+        url:'/admin/index'
     }).then(res=>{
         action.component(res)
     })

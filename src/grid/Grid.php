@@ -4,10 +4,13 @@
 namespace Eadmin\grid;
 
 
+use Eadmin\component\basic\Button;
 use Eadmin\component\Component;
 use Eadmin\component\grid\Column;
 use Eadmin\component\grid\Pagination;
 use Eadmin\component\layout\Content;
+use Eadmin\form\Form;
+use Eadmin\traits\CallProvide;
 use think\facade\Request;
 use think\helper\Str;
 use think\Model;
@@ -34,6 +37,7 @@ use think\Model;
  */
 class Grid extends Component
 {
+    use CallProvide;
     protected $name = 'EadminGrid';
 
     protected $column = [];
@@ -45,10 +49,15 @@ class Grid extends Component
     protected $actionColumn;
     //是否隐藏操作列
     protected $hideAction = false;
+    //是否隐藏添加按钮
+    protected $hideAddButton = false;
     //查询过滤
     protected $filter = null;
 
     protected $drive;
+
+    protected $form = null;
+
     public function __construct($data)
     {
         if ($data instanceof Model) {
@@ -67,10 +76,47 @@ class Grid extends Component
         $this->pagination->pageSize(20)->background()->layout('total, sizes, prev, pager, next, jumper');
         //操作列
         $this->actionColumn = new Actions($this);
-        $this->bindAttValue('modelValue', false);
-        $this->loadDataUrl($this->getRequestUrl());
+        $gridField = Request::get('eadmin_grid');
+        if($gridField){
+
+            $this->bindAttr('modelValue',$gridField);
+        }else{
+            $this->bindAttValue('modelValue',false);
+            $this->attr('eadmin_grid',$this->bindAttr('modelValue'));
+        }
+        $this->loadDataUrl(request()->baseUrl());
+        $this->getCallMethod();
     }
 
+    /**
+     * 获取from表单
+     * @return Form $form
+     */
+    public function form(){
+        return $this->form;
+    }
+    /**
+     * 设置from表单
+     * @param Form $form
+     */
+    public function setForm(Form $form)
+    {
+
+        if (is_null($this->form)) {
+            $this->form = $form;
+        }
+        return $this;
+    }
+    public function drive(){
+        return $this->drive;
+    }
+    /**
+     * 获取当前模型
+     * @return drive\Model|null
+     */
+    public function model(){
+        return $this->drive->model();
+    }
     /**
      * 查询过滤
      * @param $callback
@@ -91,6 +137,14 @@ class Grid extends Component
     }
 
     /**
+     * 删除
+     * @param $id 删除的id
+     * @return bool|int
+     */
+    public function destroy($id){
+        return $this->drive->destroy($id);
+    }
+    /**
      * 设置索引列
      * @param string $type 列类型：selection 多选框 ， index 索引 ， expand 可展开的
      * @return Column
@@ -110,7 +164,14 @@ class Grid extends Component
     {
         $this->actionColumn->setClosure($closure);
     }
-
+    /**
+     * 隐藏添加按钮
+     * @param bool $bool
+     */
+    public function hideAddButton(bool $bool = true)
+    {
+        $this->hideAddButton = $bool;
+    }
     /**
      * 隐藏操作列
      * @param bool $bool
@@ -136,6 +197,7 @@ class Grid extends Component
     {
         $this->hidePage = $bool;
     }
+
     /**
      * 快捷搜索
      */
@@ -148,9 +210,11 @@ class Grid extends Component
      * 分页组件
      * @return Pagination
      */
-    public function pagination(){
+    public function pagination()
+    {
         return $this->pagination;
     }
+
     /**
      * 设置分页每页限制
      * @Author: rocky
@@ -208,21 +272,24 @@ class Grid extends Component
         return $tableData;
     }
 
-    public function getRequestUrl()
-    {
-        $requestUrl = substr(request()->baseUrl(), 1);
-        $requestUrl = preg_replace("/(\/[\d]*\/edit\.rest)$/U", '', $requestUrl);
-        $requestUrl = str_replace(['/create.rest', '.rest',], ['', '', ''], $requestUrl);
-        if (!empty(request()->action())) {
-            $requestUrl = str_replace('/' . request()->action(), '', $requestUrl);
-        }
-        return $requestUrl;
-    }
+
+
     public function jsonSerialize()
     {
+        //添加按钮
+        if(!$this->hideAddButton){
+            $form = $this->form()->renderable();
+            $form->eventSuccess([$this->bindAttr('modelValue') => true]);
+            $button = Button::create('添加')
+                ->type('primary')
+                ->size('small')
+                ->icon('el-icon-add')
+                ->dialog()->form($form);
+            $this->attr('addButton', $button);
+        }
         //快捷搜索
         $keyword = Request::get('quickSearch', '', ['trim']);
-        $this->drive->quickFilter($keyword,$this->column);
+        $this->drive->quickFilter($keyword, $this->column);
         //查询视图
         if (!is_null($this->filter)) {
             $form = $this->filter->render();
@@ -238,11 +305,11 @@ class Grid extends Component
         if (!$this->hidePage) {
             $this->attr('pagination', $this->pagination->attribute);
         }
-        $data = $this->drive->getData($this->hidePage,$page,$size);
+        $data = $this->drive->getData($this->hidePage, $page, $size);
         //解析列
         $data = $this->parseColumn($data);
-        if (request()->has('build_request_type')) {
-            return ['code' => 200, 'data' => $data,'total'=>$this->pagination->attr('total')];
+        if (request()->has('ajax_request_data')) {
+            return ['code' => 200, 'data' => $data, 'total' => $this->pagination->attr('total')];
         } else {
             $this->attr('columns', array_column($this->column, 'attribute'));
             return parent::jsonSerialize(); // TODO: Change the autogenerated stub

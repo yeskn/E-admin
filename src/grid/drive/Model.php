@@ -8,9 +8,10 @@
 namespace Eadmin\grid\drive;
 
 use Eadmin\grid\GridInterface;
-use think\Db;
+use think\facade\Db;
 use think\facade\Request;
 use think\model\relation\BelongsTo;
+use think\model\relation\BelongsToMany;
 use think\model\relation\HasMany;
 use think\model\relation\HasOne;
 use think\model\relation\MorphMany;
@@ -29,7 +30,14 @@ class Model implements GridInterface
     protected $relations = [];
     //表字段
     protected $tableFields = [];
-    
+    //软删除字段
+    protected $softDeleteField = 'delete_time';
+
+    //是否开启软删除
+    protected $isSotfDelete = false;
+
+    //删除前回调
+    protected $beforeDel = null;
     public function __construct($model){
         $this->model = $model;
         $this->db = $this->model->db();
@@ -72,9 +80,12 @@ class Model implements GridInterface
             return $this->db->select();;
         }else{
             return $this->db->page($page, $size)->select();
-        } 
+        }
     }
-    
+    public function getPk()
+    {
+        return $this->pkField;
+    }
     //获取数据总条数
     public function getTotal(): int
     {
@@ -193,6 +204,103 @@ class Model implements GridInterface
         }
     }
     /**
+     * 删除数据
+     */
+    public function destroy($id)
+    {
+        $trueDelete = Request::delete('trueDelete');
+        if ($id == 'delete') {
+            $ids = Request::delete('ids');
+        } else {
+            $ids = explode(',', $id);
+        }
+        if ($ids == 'true') {
+            $ids = true;
+        }
+        if (!is_null($this->beforeDel)) {
+            call_user_func($this->beforeDel, $ids, $trueDelete);
+        }
+        $res = false;
+        Db::startTrans();
+        try {
+            $this->db->removeWhereField($this->softDeleteField);
+            if ($ids === true) {
+                if ($this->isSotfDelete && !$trueDelete) {
+                    $res = $this->db->where('1=1')->update([$this->softDeleteField => date('Y-m-d H:i:s')]);
+                } else {
+                    if (in_array($this->softDeleteField, $this->tableFields)) {
+                        $deleteDatas = $this->db->whereNotNull($this->softDeleteField)->select();
+                        $this->deleteRelationData($deleteDatas);
+                        $res = $this->db->whereNotNull($this->softDeleteField)->delete();
+                    } else {
+                        $deleteDatas = $this->model->select();
+                        $this->deleteRelationData($deleteDatas);
+                        $res = $this->db->where('1=1')->delete();
+                    }
+                }
+            } else {
+                if ($this->isSotfDelete && !$trueDelete) {
+                    $res = Db::name($this->model->getTable())->whereIn($this->model->getPk(), $ids)->update([$this->softDeleteField => date('Y-m-d H:i:s')]);
+                } else {
+                    if ($ids === true) {
+                        $this->deleteRelationData(true);
+                    } else {
+                        $deleteDatas = $this->model->removeOption('where')->whereIn($this->model->getPk(), $ids)->select();
+                        $this->deleteRelationData($deleteDatas);
+                    }
+                    $res = Db::name($this->model->getTable())->delete($ids);
+                }
+            }
+            Db::commit();
+        } catch (\Exception $e) {
+            Db::rollback();
+            $res = false;
+        }
+        return $res;
+    }
+
+    /**
+     * 删除关联数据
+     * @param $deleteDatas
+     * @throws \ReflectionException
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    protected function deleteRelationData($deleteDatas)
+    {
+        $reflection = new \ReflectionClass($this->model);
+        $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
+        $className = $reflection->getName();
+        $relatonMethod = [];
+
+        foreach ($methods as $method) {
+            if ($method->class == $className) {
+                $relation = $method->name;
+                $p = new \ReflectionMethod($method->class, $relation);
+                if ($p->getNumberOfParameters() == 0) {
+                    if ($this->model->$relation() instanceof BelongsToMany) {
+                        if ($deleteDatas === true) {
+                            $deleteDatas = $this->model->select();
+                        }
+                        foreach ($deleteDatas as $deleteData) {
+                            $deleteData->$relation()->detach();
+                        }
+                    } elseif ($this->model->$relation() instanceof HasOne) {
+                        if ($deleteDatas === true) {
+                            $deleteDatas = $this->model->select();
+                        }
+                        foreach ($deleteDatas as $deleteData) {
+                            if (!is_null($deleteData->$relation)) {
+                                $deleteData->$relation->delete();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    /**
      * 获取当前模型的数据库查询对象
      * @return Model
      */
@@ -208,5 +316,5 @@ class Model implements GridInterface
     {
         return $this->db;
     }
-    
+
 }

@@ -9,6 +9,7 @@
 namespace Eadmin\form;
 
 
+use Eadmin\Admin;
 use Eadmin\component\basic\TabPane;
 use Eadmin\component\basic\Tabs;
 use Eadmin\component\form\Field;
@@ -20,6 +21,8 @@ use Eadmin\component\form\FormAction;
 use Eadmin\component\form\FormItem;
 use Eadmin\component\form\FormMany;
 use Eadmin\component\layout\Row;
+use Eadmin\traits\CallProvide;
+use Eadmin\traits\FormModel;
 use think\helper\Str;
 use think\Model;
 
@@ -62,7 +65,7 @@ use think\Model;
  */
 class Form extends Field
 {
-    use FormModel;
+    use FormModel,CallProvide;
 
     protected $name = 'EadminForm';
     protected $actions;
@@ -88,6 +91,8 @@ class Form extends Field
         $this->bindAttr('model', $field);
         $this->actions = new FormAction($this);
         $this->labelWidth('100px');
+        $this->getCallMethod();
+        $this->setAction('/eadmin.rest');
     }
     /**
      * 表单验证规则
@@ -179,11 +184,13 @@ class Form extends Field
     /**
      * 设置提交url
      * @param string $sumbitUrl 提交url
+     * @param string $method 提交method
      * @return $this
      */
-    public function setAction(string $sumbitUrl)
+    public function setAction(string $sumbitUrl,string $method = 'POST')
     {
         $this->attr(__FUNCTION__, $sumbitUrl);
+        $this->attr('setActionMethod', $method);
         return $this;
     }
 
@@ -519,6 +526,7 @@ class Form extends Field
         $item =  array_pop($this->content['default']);
         return $item;
     }
+
     /**
      * 解析组件
      */
@@ -529,10 +537,10 @@ class Form extends Field
             $this->valueModel($component);
         }
         $field = $this->bindAttr('model');
+        $this->editData = array_merge($this->editData,$this->callMethod);
         //将值绑定到form
         $this->bind($field, $this->editData);
     }
-
     public function jsonSerialize()
     {
         $this->parseComponent();

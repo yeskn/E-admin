@@ -38,8 +38,15 @@ class Arrays implements GridInterface
     {
         return null;
     }
+    public function getPk()
+    {
+        return 'id';
+    }
+    public function destroy($id){
+        return true;
+    }
     public function quickFilter($keyword, $columns)
     {
-        
+
     }
 }

@@ -26,6 +26,10 @@
             action:Object,
             //提交url
             setAction: String,
+            setActionMethod:{
+                type:String,
+                default:'post'
+            }
         },
         emits: ['success'],
         setup(props,ctx){
@@ -39,8 +43,8 @@
                     if (valid) {
                         if(props.setAction){
                             http({
-                                url:props.setAction,
-                                method:'POST',
+                                url: props.setAction,
+                                method: props.setActionMethod,
                                 data: ctx.attrs.model
                             }).then(res=>{
                                 ctx.emit('success')

@@ -1,10 +1,10 @@
 <?php
 
 
-namespace Eadmin\form;
+namespace Eadmin\traits;
 
 
-use Eadmin\model\SystemConfig;
+
 use think\exception\HttpResponseException;
 use think\facade\Db;
 use think\facade\Log;

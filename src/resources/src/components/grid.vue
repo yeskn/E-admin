@@ -7,6 +7,8 @@
                 <el-input class="hidden-md-and-down" v-model="quickSearch" clearable prefix-icon="el-icon-search"
                           size="small" style="margin-right: 10px;width: 200px;" placeholder="请输入关键字" @change="handleFilter" v-if="quickSearchOn"></el-input>
                 <el-button class="hidden-md-and-down" type="primary" size="small" icon="el-icon-search" @click="handleFilter" v-if="quickSearchOn">搜索</el-button>
+                <!--添加-->
+                <render v-if="addButton" :data="addButton"></render>
                 <!--导出-->
                 <el-dropdown trigger="click" style="margin-left: 10px;">
                     <el-button type="primary" size="small" icon="el-icon-download">
@@ -89,6 +91,7 @@
             loadDataUrl: String,
             hideTools: Boolean,
             filter: [Object, Boolean],
+            addButton: [Object, Boolean],
             filterField:String,
         },
         inheritAttrs: false,
@@ -143,7 +146,8 @@
             //请求获取数据
             function loadData() {
                 let requestParams = {
-                    build_request_type: 'page',
+                    eadmin_grid:ctx.attrs.eadmin_grid,
+                    ajax_request_data: 'page',
                     page: page,
                     size: size,
                 }
