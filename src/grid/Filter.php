@@ -48,7 +48,7 @@ class Filter
         $this->form = Form::create()
             ->inline()
             ->removeAttr('labelWidth')
-            ->removeAttr('submitUrl')
+            ->removeAttr('setAction')
             ->size('small');
         $this->form->actions(function (FormAction $action) {
             $action->submitButton()->content('筛选');

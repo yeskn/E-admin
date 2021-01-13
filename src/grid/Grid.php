@@ -227,7 +227,6 @@ class Grid extends Component
         if (!is_null($this->filter)) {
             $form = $this->filter->render();
             $form->eventSuccess([$this->bindAttr('modelValue') => true]);
-            $this->bindAttr('filterForm', $form->bindAttr('model'));
             $this->attr('filter', $form);
             $this->attr('filterField', $form->bindAttr('model'));
         }

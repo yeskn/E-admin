@@ -74,7 +74,7 @@
 <script>
     import {defineComponent, ref, watch, inject} from "vue";
     import render from "/@/components/render.vue"
-    import {http} from '/@/hooks'
+    import {useHttp} from '/@/hooks'
     import {store} from '/@/store'
     export default defineComponent({
         name: "EadminGrid",
@@ -88,17 +88,15 @@
             modelValue: Boolean,
             loadDataUrl: String,
             hideTools: Boolean,
-            selection: Boolean,
             filter: [Object, Boolean],
             filterField:String,
-            filterForm: [Array, Object]
         },
         inheritAttrs: false,
         emits: ['update:modelValue'],
         setup(props, ctx) {
             const state = inject(store)
             const proxyData = state.proxyData
-            const loading = ref(false)
+            const {loading,http} = useHttp()
             const quickSearch = ref('')
             const selectionData = ref([])
             const quickSearchOn = ctx.attrs.quickSearch
@@ -119,15 +117,12 @@
                     loadData()
                 }
             })
-
             //分页大小改变
             function handleSizeChange(val) {
                 page = 1
                 size = val
                 loading.value = true
-
             }
-
             //分页改变
             function handleCurrentChange(val) {
                 page = val
@@ -156,7 +151,7 @@
                 http({
                     url: props.loadDataUrl,
                     params: requestParams
-                }, loading).then((res) => {
+                }).then((res) => {
                     tableData.value = res.data
                     total.value = res.total
                 }).finally(() => {

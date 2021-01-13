@@ -15,7 +15,7 @@
     import render from "/@/components/render.vue"
     import manyItem from "./manyItem.vue"
     import { store } from '/@/store'
-    import { http } from '/@/hooks'
+    import { useHttp } from '/@/hooks'
     export default defineComponent({
         components:{
             render,manyItem
@@ -29,19 +29,20 @@
         },
         emits: ['success'],
         setup(props,ctx){
-            const loading = ref(false)
+            const {loading,http} = useHttp()
             const state = inject(store)
             const proxyData = state.proxyData
             //提交
             function sumbitForm(formName) {
+
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        if(props.submitUrl){
+                        if(props.setAction){
                             http({
                                 url:props.setAction,
                                 method:'POST',
                                 data: ctx.attrs.model
-                            },loading).then(res=>{
+                            }).then(res=>{
                                 ctx.emit('success')
                             })
                         }else{
