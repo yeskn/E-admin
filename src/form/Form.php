@@ -914,7 +914,7 @@ EOF;
                 $val = SystemConfig::where('name', $field)->value('value');
                 if (is_null($val)) {
                     $val = '';
-                } else if (is_numeric($val)) {
+                } else if (is_numeric($val) && strpos($val, '.') === false) {
                     $val = (int)$val;
                 }
                 $this->formData[$field] = $val;
