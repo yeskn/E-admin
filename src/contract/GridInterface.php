@@ -6,7 +6,7 @@
  * Time: 23:44
  */
 
-namespace Eadmin\grid;
+namespace Eadmin\contract;
 
 
 interface GridInterface

@@ -7,7 +7,7 @@ use Eadmin\service\TokenService;
 if (!function_exists('sysconf')) {
     function sysconf($name, $value = null)
     {
-        return \Eadmin\tools\Data::sysconf($name,$value);
+       
     }
 }
 if (!function_exists('eadmin_log')) {

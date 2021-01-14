@@ -1,4 +1,5 @@
 import { reactive } from "vue";
+import request from '/@/utils/axios'
 export const store = Symbol()
 // 使用 reactive 函数完成响应式转换
 const states = reactive({
@@ -16,7 +17,14 @@ const states = reactive({
     errorPage:{
         visable:false,
         data:null,
-    }
+    },
+    //个人信息
+    info:{
+        id:0,
+    },
+    //菜单
+    menus:[],
+    menuModule:0
 });
 export const state = states
 //操作方法
@@ -37,6 +45,26 @@ const action = {
     errorPageOpen(data){
         states.errorPage.data = data
         states.errorPage.visable = true
+    },
+    //选择头部菜单模块
+    selectMenuModule(id){
+       states.menuModule = id
+    },
+    getInfo(){
+        return new Promise((resolve, reject) =>{
+            request({
+                url:'/admin/admin/info'
+            }).then(res=>{
+                const info = res.data.info
+                states.menus = res.data.menus
+                if(info){
+                    states.info.id = info.id
+                }
+                resolve(res)
+            }).catch(res=>{
+                reject(res)
+            })
+        })
     }
 }
 export {action}

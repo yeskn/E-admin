@@ -11,6 +11,7 @@ namespace Eadmin;
 
 use Eadmin\controller\ResourceController;
 use Eadmin\middleware\Response;
+use Eadmin\service\MenuService;
 use think\facade\Db;
 use think\route\Resource;
 use think\Service;
@@ -36,8 +37,13 @@ class ServiceProvider extends Service
         PlugService::instance()->register();
         $this->registerView();
         //$this->app->middleware->route( \Eadmin\middleware\Permission::class);
+        $this->registerService();
     }
-
+    public function registerService(){
+        $this->app->bind([
+           'admin.menu'=> MenuService::class,
+        ]);
+    }
     protected function registerView(){
         //入口加载
         $this->app->route->get('/',function (){

@@ -6,7 +6,9 @@
  * Time: 23:43
  */
 namespace Eadmin\grid\drive;
-use Eadmin\grid\GridInterface;
+
+
+use Eadmin\contract\GridInterface;
 
 class Arrays implements GridInterface
 {

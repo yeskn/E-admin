@@ -1,18 +1,13 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory ,RouteLocationNormalized} from 'vue-router'
 import request from '/@/utils/axios'
-import { action } from '/@/store'
+import { action,state } from '/@/store'
+import {inject} from 'vue'
 import Layout from '/@/layout/index.vue'
 
 const routes = [
     {
-        path: '/',
-        name: 'layout',
-        component: Layout
-    },
-    {
-        path: '/test',
-        name: 'test',
-        component: Layout
+        path: '/:pathMatch(.*)',
+        component: Layout,
     },
 ]
 const router = createRouter({
@@ -20,9 +15,12 @@ const router = createRouter({
     routes
 })
 export default router
-router.beforeEach( (to, from) => {
+router.beforeEach( async(to:RouteLocationNormalized, from:RouteLocationNormalized) => {
+    if(!state.info.id){
+        await action.getInfo()
+    }
     request({
-        url:'/admin/index'
+        url:to.fullPath
     }).then(res=>{
         action.component(res)
     })

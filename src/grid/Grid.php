@@ -9,6 +9,7 @@ use Eadmin\component\Component;
 use Eadmin\component\grid\Column;
 use Eadmin\component\grid\Pagination;
 use Eadmin\component\layout\Content;
+use Eadmin\contract\GridInterface;
 use Eadmin\form\Form;
 use Eadmin\traits\CallProvide;
 use think\facade\Request;
@@ -38,6 +39,7 @@ use think\Model;
 class Grid extends Component
 {
     use CallProvide;
+
     protected $name = 'EadminGrid';
 
     protected $column = [];
@@ -62,6 +64,8 @@ class Grid extends Component
     {
         if ($data instanceof Model) {
             $this->drive = new \Eadmin\grid\drive\Model($data);
+        } elseif ($data instanceof GridInterface) {
+            $this->drive = $data;
         } else {
             $this->drive = new \Eadmin\grid\drive\Arrays($data);
         }
@@ -77,12 +81,12 @@ class Grid extends Component
         //操作列
         $this->actionColumn = new Actions($this);
         $gridField = Request::get('eadmin_grid');
-        if($gridField){
+        if ($gridField) {
 
-            $this->bindAttr('modelValue',$gridField);
-        }else{
-            $this->bindAttValue('modelValue',false);
-            $this->attr('eadmin_grid',$this->bindAttr('modelValue'));
+            $this->bindAttr('modelValue', $gridField);
+        } else {
+            $this->bindAttValue('modelValue', false);
+            $this->attr('eadmin_grid', $this->bindAttr('modelValue'));
         }
         $this->loadDataUrl(request()->baseUrl());
         $this->getCallMethod();
@@ -92,9 +96,11 @@ class Grid extends Component
      * 获取from表单
      * @return Form $form
      */
-    public function form(){
+    public function form()
+    {
         return $this->form;
     }
+
     /**
      * 设置from表单
      * @param Form $form
@@ -107,16 +113,21 @@ class Grid extends Component
         }
         return $this;
     }
-    public function drive(){
+
+    public function drive()
+    {
         return $this->drive;
     }
+
     /**
      * 获取当前模型
      * @return drive\Model|null
      */
-    public function model(){
+    public function model()
+    {
         return $this->drive->model();
     }
+
     /**
      * 查询过滤
      * @param $callback
@@ -141,9 +152,11 @@ class Grid extends Component
      * @param $id 删除的id
      * @return bool|int
      */
-    public function destroy($id){
+    public function destroy($id)
+    {
         return $this->drive->destroy($id);
     }
+
     /**
      * 设置索引列
      * @param string $type 列类型：selection 多选框 ， index 索引 ， expand 可展开的
@@ -164,6 +177,7 @@ class Grid extends Component
     {
         $this->actionColumn->setClosure($closure);
     }
+
     /**
      * 隐藏添加按钮
      * @param bool $bool
@@ -172,6 +186,7 @@ class Grid extends Component
     {
         $this->hideAddButton = $bool;
     }
+
     /**
      * 隐藏操作列
      * @param bool $bool
@@ -273,11 +288,10 @@ class Grid extends Component
     }
 
 
-
     public function jsonSerialize()
     {
         //添加按钮
-        if(!$this->hideAddButton){
+        if (!$this->hideAddButton) {
             $form = $this->form()->renderable();
             $form->eventSuccess([$this->bindAttr('modelValue') => true]);
             $button = Button::create('添加')

@@ -7,7 +7,8 @@
  */
 namespace Eadmin\grid\drive;
 
-use Eadmin\grid\GridInterface;
+
+use Eadmin\contract\GridInterface;
 use think\facade\Db;
 use think\facade\Request;
 use think\model\relation\BelongsTo;
@@ -316,5 +317,5 @@ class Model implements GridInterface
     {
         return $this->db;
     }
-
+    
 }

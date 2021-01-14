@@ -21,6 +21,7 @@ use Eadmin\component\form\FormAction;
 use Eadmin\component\form\FormItem;
 use Eadmin\component\form\FormMany;
 use Eadmin\component\layout\Row;
+use Eadmin\contract\FormInterface;
 use Eadmin\traits\CallProvide;
 use Eadmin\traits\FormModel;
 use think\helper\Str;
@@ -65,7 +66,7 @@ use think\Model;
  */
 class Form extends Field
 {
-    use FormModel,CallProvide;
+    use CallProvide;
 
     protected $name = 'EadminForm';
     protected $actions;
@@ -80,12 +81,20 @@ class Form extends Field
     //是否编辑表单
     protected $isEdit = false;
 
+    protected $drive;
+    protected $data = [];
+    //保存前回调
+    protected $beforeSave = null;
+    //保存后回调
+    protected $afterSave = null;
     public function __construct($data)
     {
         if ($data instanceof Model) {
-            $this->setModel($data);
+            $this->drive = new \Eadmin\form\drive\Model($data);
+        }elseif ($data instanceof FormInterface) {
+            $this->drive = $data;
         } else {
-            $this->data = $data;
+            $this->drive = new \Eadmin\form\drive\Arrays($data);
         }
         $field = Str::random(15, 3);
         $this->bindAttr('model', $field);
@@ -216,13 +225,13 @@ class Form extends Field
     private function valueModel($component, $data = null)
     {
         foreach ($component->bindAttribute as $attr => $field) {
-            $value = $this->getData($field, $data);
+            $value = $this->drive->getData($field, $data);
             if (!empty($value)) {
                 $component->bind($field, $value);
             }
         }
         foreach ($component->bindAttribute as $attr => $field) {
-            $value = $this->getData($field, $data);
+            $value = $this->drive->getData($field, $data);
             if(is_null($value) && ($component instanceof DatePicker || $component instanceof TimePicker) && $startField = $component->bindAttr('startField')){
                 $value = [];
             }
@@ -357,11 +366,11 @@ class Form extends Field
      */
     public function edit($id)
     {
-        if ($this->model) {
-            $this->data = $this->model->where($this->pkField, $id)->find();
-            $this->editData[$this->pkField] = $this->data[$this->pkField];
-        }
+        $this->drive->edit($id);
+        $pk = $this->drive->getPk();
+        $this->data[$pk] = $this->drive->getData($pk);
         $this->isEdit = true;
+        $this->setAction('/eadmin/'.$id.'.rest','PUT');
     }
 
     /**
@@ -380,7 +389,7 @@ class Form extends Field
         call_user_func_array($closure, [$this]);
         $this->itemBool = true;
         $itemComponent = $this->itemComponent;
-        $datas = $this->getData($realtion);
+        $datas = $this->drive->getData($realtion);
         $manyData = [];
         foreach ($itemComponent as $component) {
             $componentClone = clone $component;
@@ -388,10 +397,10 @@ class Form extends Field
         }
         if (!$this->isEdit && empty($datas)) {
             //添加模式默认添加一条
-            $datas[] = $this->editData;
+            $datas[] = $this->data;
         }
-        $this->editData = [];
-        $manyItem->attr('manyData', $this->editData);
+        $this->data = [];
+        $manyItem->attr('manyData', $this->data);
         $manyItem->attr('field', $realtion);
         $manyItem->attr('title', $title);
         foreach ($datas as $key => $data) {
@@ -403,8 +412,8 @@ class Form extends Field
                 }
                 $this->valueModel($componentClone, $data);
             }
-            $manyData[] = $this->editData;
-            $this->editData = [];
+            $manyData[] = $this->data;
+            $this->data = [];
         }
         $manyItem->value($manyData);
         $this->itemComponent = $originItemComponent;
@@ -492,7 +501,37 @@ class Form extends Field
         }
         return $component;
     }
+    /**
+     * 保存后回调
+     * @param \Closure $closure
+     */
+    public function saved(\Closure $closure)
+    {
+        $this->afterSave = $closure;
+    }
 
+    /**
+     * 保存前回调
+     * @param \Closure $closure
+     */
+    public function saving(\Closure $closure)
+    {
+        $this->beforeSave = $closure;
+    }
+
+    /**
+     * 设置字段值
+     * @param $field 字段
+     * @param $value 值
+     */
+    public function setData(string $field,$value){
+        if (strpos($field, '.')) {
+            list($relation, $field) = explode('.', $field);
+            $this->data[$relation][$field] = $value;
+        }else{
+            $this->data[$field] = $value;
+        }
+    }
     /**
      * 表单操作定义
      * @param \Closure $closure
@@ -506,7 +545,27 @@ class Form extends Field
     {
         $this->itemComponent[] = $component;
     }
-
+    /**
+     * 保存数据
+     * @param array $data 数据
+     * @return bool
+     * @throws \Exception
+     */
+    public function save(array $data){
+        //保存前回调
+        if (!is_null($this->beforeSave)) {
+            $beforeData = call_user_func($this->beforeSave, $data);
+            if (is_array($beforeData)) {
+                $data = array_merge($data, $beforeData);
+            }
+        }
+        $result = $this->drive->save($data);
+        //保存回后调
+        if (!is_null($this->afterSave)) {
+            call_user_func_array($this->afterSave, [$data, $this->drive->getData()]);
+        }
+        return $result;
+    }
     /**
      * 提交成功事件
      * @param array $value
@@ -537,12 +596,13 @@ class Form extends Field
             $this->valueModel($component);
         }
         $field = $this->bindAttr('model');
-        $this->editData = array_merge($this->editData,$this->callMethod);
+        $this->data = array_merge($this->data,$this->callMethod);
         //将值绑定到form
-        $this->bind($field, $this->editData);
+        $this->bind($field, $this->data);
     }
     public function jsonSerialize()
     {
+
         $this->parseComponent();
         $this->actions->render();
         return parent::jsonSerialize(); // TODO: Change the autogenerated stub

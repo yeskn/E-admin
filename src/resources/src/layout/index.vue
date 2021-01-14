@@ -4,7 +4,9 @@
         <div class="main-container">
             <header-top></header-top>
             <div class="main-content">
-                <render :data="mainComponent"></render>
+                <transition name="el-fade-in">
+                    <render :data="mainComponent"></render>
+                </transition>
             </div>
         </div>
     </div>

@@ -20,7 +20,7 @@ class BaseAdmin extends Controller
      */
     public function index()
     {
-       return $this->grid()->setForm($this->form());
+       return $this->grid();
     }
     /**
      * 显示创建资源表单页.

@@ -66,7 +66,6 @@ class Actions extends Component
         if (!$this->hideEditButton) {
             $form = $this->grid->form()->renderable();
             $form->edit($this->id);
-            $this->setAction('/eadmin/'.$this->id.'.rest','PUT');
             $form->eventSuccess([$this->grid->bindAttr('modelValue') => true]);
             $this->content(
                 Button::create('编辑')

@@ -9,36 +9,36 @@
                  mode="vertical"
                  background-color="#000000"
                  >
-            <el-menu-item index="1"><i class="el-icon-location"></i><span>我的工作台</span></el-menu-item>
-            <el-submenu index="2">
-                <template #title><i class="el-icon-location"></i><span>我的工作台</span></template>
-                <el-menu-item index="2-1"><i class="el-icon-location"></i><span>我的工作台</span></el-menu-item>
-                <el-menu-item index="2-2">选项2</el-menu-item>
-                <el-menu-item index="2-3">选项3</el-menu-item>
-                <el-submenu index="2-4">
-                    <template #title>选项4</template>
-                    <el-menu-item index="2-4-1">选项1</el-menu-item>
-                    <el-menu-item index="2-4-2">选项2</el-menu-item>
-                    <el-menu-item index="2-4-3">选项3</el-menu-item>
-                </el-submenu>
-            </el-submenu>
+            <menu-item v-for="item in menus" :menu="item"></menu-item>
         </el-menu>
     </div>
 </template>
 
-<script lang="ts">
+<script>
     import Logo from './logo.vue'
-    import { defineComponent,inject, ref } from 'vue'
+    import menuItem from './menuItem.vue'
+    import { defineComponent,inject, ref ,computed } from 'vue'
     import { store } from '/@/store'
     export default defineComponent ({
         name: "sidebar",
         components: {
-            Logo
+            Logo,
+            menuItem,
         },
         setup() {
             const state = inject(store)
             const sidebar = state.sidebar
+            const menus = computed(()=>{
+                let menus = []
+                state.menus.forEach(res=>{
+                    if(res.id == state.menuModule && res.children){
+                        menus = res.children
+                    }
+                })
+                return menus
+            })
             return {
+                menus,
                 sidebar,
                 activeIndex: ref('')
             }
