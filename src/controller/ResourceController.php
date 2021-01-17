@@ -3,9 +3,10 @@ declare (strict_types = 1);
 
 namespace Eadmin\controller;
 
+use Eadmin\Controller;
 use think\Request;
 
-class ResourceController
+class ResourceController extends Controller
 {
     /**
      * 显示资源列表
@@ -14,7 +15,7 @@ class ResourceController
      */
     public function index()
     {
-        halt(1);
+        return $this->call();
     }
 
     /**
@@ -33,7 +34,16 @@ class ResourceController
             eadmin_msg_error('数据保存失败');
         }
     }
-
+    /**
+     * 显示编辑资源表单页.
+     *
+     * @param int $id
+     * @return \think\Response
+     */
+    public function edit($id)
+    {
+        return $this->call()->edit($id);
+    }
     /**
      * 显示指定的资源
      *
@@ -81,7 +91,10 @@ class ResourceController
     }
     protected function call(){
         $class = request()->param('eadmin_class');
-        $function = request()->param('eadmin_function');
-        return app($class)->$function();
+        $action = request()->param('eadmin_function');
+        $instance = app($class);
+        $reflect = new \ReflectionMethod($instance, $action);
+        $data =  app()->invokeReflectMethod($instance, $reflect, $this->request->param());
+        return $data;
     }
 }

@@ -65,14 +65,12 @@ class Actions extends Component
         //是否隐藏编辑
         if (!$this->hideEditButton) {
             $form = $this->grid->form()->renderable();
-            $form->edit($this->id);
-            $form->eventSuccess([$this->grid->bindAttr('modelValue') => true]);
             $this->content(
                 Button::create('编辑')
                     ->type('primary')
                     ->size('small')
                     ->icon('el-icon-edit')
-                    ->dialog()->form($form)
+                    ->dialog()->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod())
             );
         }
         //是否隐藏删除
@@ -84,7 +82,6 @@ class Actions extends Component
                 ->size('small')
                 ->icon('el-icon-delete')
                 ->confirm('确认删除？', $url)
-                    ->eventConfirm([$this->grid->bindAttr('modelValue')=>true])
                     ->type('error')
                     ->params($this->grid->getCallMethod())
                     ->method('DELETE')

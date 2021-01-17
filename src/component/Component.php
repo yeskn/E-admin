@@ -2,7 +2,11 @@
 
 namespace Eadmin\component;
 
+use Eadmin\Admin;
+use Eadmin\component\basic\Dialog;
+use Eadmin\component\basic\Drawer;
 use Eadmin\component\layout\Column;
+use Eadmin\form\Form;
 use think\helper\Str;
 
 abstract class Component implements \JsonSerializable
@@ -119,7 +123,6 @@ abstract class Component implements \JsonSerializable
         }
         return $this;
     }
-
     /**
      * 插槽内容
      * @param mixed $content 内容
@@ -128,6 +131,13 @@ abstract class Component implements \JsonSerializable
      */
     public function content($content, $name = 'default')
     {
+        if(!($content instanceof Component)){
+            $content = Admin::dispatch($content);
+        }
+        if($content instanceof Form && ($this instanceof Dialog || $this instanceof Drawer)){
+            $field = $this->bindAttr('modelValue');
+            $content->eventSuccess([$field=>false]);
+        }
         $this->content[$name][] = $content;
         return $this;
     }

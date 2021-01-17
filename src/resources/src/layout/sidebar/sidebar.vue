@@ -4,10 +4,10 @@
         <el-menu :default-active="activeIndex"
                  text-color="#FFFFFF"
                  :collapse="!sidebar.opend"
-                 :unique-opened="true"
                  :collapse-transition="true"
                  mode="vertical"
                  background-color="#000000"
+                 @select="link"
                  >
             <menu-item v-for="item in menus" :menu="item"></menu-item>
         </el-menu>
@@ -15,7 +15,8 @@
 </template>
 
 <script>
-    import Logo from './logo.vue'
+    import { link } from '/@/utils/validate'
+    import Logo from '../logo.vue'
     import menuItem from './menuItem.vue'
     import { defineComponent,inject, ref ,computed } from 'vue'
     import { store } from '/@/store'
@@ -38,6 +39,7 @@
                 return menus
             })
             return {
+                link,
                 menus,
                 sidebar,
                 activeIndex: ref('')

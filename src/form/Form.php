@@ -102,6 +102,7 @@ class Form extends Field
         $this->labelWidth('100px');
         $this->getCallMethod();
         $this->setAction('/eadmin.rest');
+        $this->event('gridRefresh',[]);
     }
     /**
      * 表单验证规则
@@ -359,10 +360,10 @@ class Form extends Field
         $this->content($row);
         return $this;
     }
-
     /**
      * 编辑
-     * @param $id 主键id数据
+     * @param string|int $id 主键id数据
+     * @return $this
      */
     public function edit($id)
     {
@@ -370,7 +371,9 @@ class Form extends Field
         $pk = $this->drive->getPk();
         $this->data[$pk] = $this->drive->getData($pk);
         $this->isEdit = true;
+        $this->attr('editId',$id);
         $this->setAction('/eadmin/'.$id.'.rest','PUT');
+        return $this;
     }
 
     /**
@@ -532,6 +535,10 @@ class Form extends Field
             $this->data[$field] = $value;
         }
     }
+    public function getData(){
+        $this->parseComponent();
+        return $this->data;
+    }
     /**
      * 表单操作定义
      * @param \Closure $closure
@@ -585,7 +592,7 @@ class Form extends Field
         $item =  array_pop($this->content['default']);
         return $item;
     }
-
+    
     /**
      * 解析组件
      */

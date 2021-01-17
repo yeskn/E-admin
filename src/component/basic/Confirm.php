@@ -44,6 +44,7 @@ class Confirm extends Component
             ->confirmButtonText('确定')
             ->cancelButtonText('取消')
             ->content($content);
+        $self->event('gridRefresh',[]);
         return $self;
     }
 

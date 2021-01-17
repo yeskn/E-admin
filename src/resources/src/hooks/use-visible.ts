@@ -7,11 +7,17 @@ const useVisible = function(props,ctx){
     watch(visible,(value)=>{
         ctx.emit('update:modelValue',value)
     })
-    function show(){
+    function show(callback){
         visible.value = true
+        if(callback){
+            callback()
+        }
     }
-    function hide(){
+    function hide(callback){
         visible.value = true
+        if(callback){
+            callback()
+        }
     }
     return {visible,show,hide}
 }

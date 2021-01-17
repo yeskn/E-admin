@@ -33,6 +33,10 @@ const action = {
     sidebarOpen:function(bool) {
         states.sidebar.opend = bool
     },
+    //显示隐藏侧边栏
+    sidebarVisible:function(bool) {
+        states.sidebar.visible = bool
+    },
     //设置主内容组件
     component:function(data){
         states.mainComponent = data

@@ -1,7 +1,6 @@
 import { createRouter, createWebHashHistory ,RouteLocationNormalized} from 'vue-router'
 import request from '/@/utils/axios'
 import { action,state } from '/@/store'
-import {inject} from 'vue'
 import Layout from '/@/layout/index.vue'
 
 const routes = [

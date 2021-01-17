@@ -4,11 +4,14 @@
 namespace Eadmin\component\basic;
 
 
+use Eadmin\Admin;
 use Eadmin\component\Component;
 use Eadmin\component\form\Field;
 use Eadmin\component\form\field\Input;
 use Eadmin\component\layout\Content;
 use Eadmin\form\Form;
+use think\app\Url;
+use think\facade\Route;
 use think\helper\Str;
 
 /**
@@ -28,6 +31,8 @@ use think\helper\Str;
  * @method $this showClose(bool $bool) 是否显示关闭按钮
  * @method $this center(bool $bool) 是否对头部和底部采用居中布局
  * @method $this destroyOnClose(bool $bool) 关闭时销毁 Dialog 中的元素
+ * @method $this url(string $value) 异步加载数据url
+ * @method $this params(array $value)  异步附加请求数据
  */
 class Dialog extends Field
 {
@@ -42,18 +47,6 @@ class Dialog extends Field
         $self->width('35%');
         $self->content($content, 'reference');
         return $self;
-    }
-
-    /**
-     * 打开form 表单
-     * @param $form form表单
-     * @return $this
-     */
-    public function form(Form $form){
-        $field = $this->bindAttr('modelValue');
-        $form->eventSuccess([$field=>false]);
-        $this->content($form);
-        return $this;
     }
     /**
      * 标题

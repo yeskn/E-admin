@@ -6,10 +6,17 @@
  * @param {string} path
  * @returns {Boolean}
  */
+import router from '/@/router'
 export function isExternal(path) {
   return /^(https?:|mailto:|tel:)/.test(path)
 }
-
+export function link(url){
+  if (isExternal(url)) {
+    window.open(url)
+  }else{
+    router.push(url)
+  }
+}
 export function isJSON(str) {
   if (typeof str == 'string') {
     try {

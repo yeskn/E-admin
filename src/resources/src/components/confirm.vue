@@ -37,9 +37,11 @@
                                 method: props.method,
                                 data: params
                             }).then((res)=>{
+                                ctx.emit('gridRefresh')
                                 ctx.emit('confirm')
                             })
                         }else{
+                            ctx.emit('gridRefresh')
                             ctx.emit('confirm')
                         }
                     }).catch((action) => {

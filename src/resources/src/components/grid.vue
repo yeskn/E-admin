@@ -53,10 +53,10 @@
         <template v-for="column in columns">
             <el-table-column v-if="checkboxColumn.indexOf(column.prop) > -1" v-bind="column">
                 <template #header>
-                    <render :data="column.header"></render>
+                    <render :data="column.header" :slot-props="{grid:grid}"></render>
                 </template>
                 <template v-if="!column.type" #default="scope">
-                    <render :data="scope.row[column.prop]"></render>
+                    <render :data="scope.row[column.prop]" :slot-props="{grid:grid}"></render>
                 </template>
             </el-table-column>
         </template>
@@ -93,12 +93,14 @@
             filter: [Object, Boolean],
             addButton: [Object, Boolean],
             filterField:String,
+            params:Object,
         },
         inheritAttrs: false,
         emits: ['update:modelValue'],
         setup(props, ctx) {
             const state = inject(store)
             const proxyData = state.proxyData
+            const grid = ctx.attrs.eadmin_grid
             const {loading,http} = useHttp()
             const quickSearch = ref('')
             const selectionData = ref([])
@@ -146,12 +148,11 @@
             //请求获取数据
             function loadData() {
                 let requestParams = {
-                    eadmin_grid:ctx.attrs.eadmin_grid,
                     ajax_request_data: 'page',
                     page: page,
                     size: size,
                 }
-                requestParams = Object.assign(requestParams, proxyData[props.filterField],{quickSearch:quickSearch.value})
+                requestParams = Object.assign(requestParams, proxyData[props.filterField],{quickSearch:quickSearch.value},props.params)
                 http({
                     url: props.loadDataUrl,
                     params: requestParams
@@ -164,6 +165,7 @@
             }
 
             return {
+                grid,
                 quickSearchOn,
                 page,
                 size,

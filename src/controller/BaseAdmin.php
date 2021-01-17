@@ -50,19 +50,7 @@ class BaseAdmin extends Controller
             eadmin_msg_error('数据保存失败');
         }
     }
-    /**
-     * 显示指定的资源
-     *
-     * @param int $id
-     * @return \think\Response
-     */
-    public function read($id)
-    {
-        $content = new Content();
-        $view = $content->title($this->detail()->title())->body($this->detail()->detailData($id))->view();
-        Component::view($view);
-
-    }
+   
 
     /**
      * 显示编辑资源表单页.

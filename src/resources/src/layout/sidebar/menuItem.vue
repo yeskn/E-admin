@@ -1,27 +1,34 @@
 <template>
-    <el-submenu v-if="menu.children" index="2">
-        <template #title> <i :class="menu.icon" v-if="menu.icon"></i><span slot="title">{{menu.name}}</span></template>
+    <el-submenu v-if="menu.children" :index="menu.id+''">
+        <template #title>
+            <i :class="menu.icon" v-if="menu.icon"></i><span>{{menu.name}}</span>
+        </template>
         <template v-for="item in menu.children">
             <menu-item v-if="item.children" :menu="item"></menu-item>
-            <el-menu-item :index="item.id" v-else>
+            <el-menu-item :index="item.url" v-else>
                 <i :class="item.icon" v-if="item.icon"></i>
-                <span slot="title">{{item.name}}</span>
+                <span>{{item.name}}</span>
             </el-menu-item>
         </template>
     </el-submenu>
-    <el-menu-item :index="menu.id" v-else>
+    <el-menu-item :index="menu.url" v-else>
         <i :class="menu.icon" v-if="menu.icon"></i>
-        <span slot="title">{{menu.name}}</span>
+        <span>{{menu.name}}</span>
     </el-menu-item>
 </template>
 <script>
+    import ItemLink from './link.vue'
     import {defineComponent} from 'vue'
+
     export default defineComponent({
         name: "menuItem",
-        props:{
-            menu:[Object,Array]
+        components: {
+            ItemLink
         },
-        setup(props){
+        props: {
+            menu: [Object, Array]
+        },
+        setup(props) {
             const menu = props.menu
             return {
                 menu

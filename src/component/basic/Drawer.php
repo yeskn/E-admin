@@ -26,6 +26,8 @@ use think\helper\Str;
  * @method $this showClose(bool $bool) 是否显示关闭按钮
  * @method $this withHeader(bool $bool) 控制是否显示 header 栏, 默认为 true
  * @method $this destroyOnClose(bool $bool) 关闭时销毁 Dialog 中的元素
+ * @method $this url(string $value) 异步加载数据url
+ * @method $this params(array $value)  异步附加请求数据
  */
 class Drawer extends Field
 {
@@ -38,18 +40,6 @@ class Drawer extends Field
         $self->closeOnClickModal(false);
         $self->content($content, 'reference');
         return $self;
-    }
-
-    /**
-     * 打开form 表单
-     * @param $form form表单
-     * @return $this
-     */
-    public function form(Form $form){
-        $field = $this->bindAttr('modelValue');
-        $form->eventSuccess([$field=>false]);
-        $this->content($form);
-        return $this;
     }
     /**
      * 标题

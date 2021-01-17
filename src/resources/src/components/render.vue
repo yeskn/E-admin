@@ -8,12 +8,13 @@
             data: {
                 type: [String, Number, Array, Object],
                 default: '',
-            }
+            },
+            slotProps:Object
         },
         render() {
             return this.render
         },
-        setup(props) {
+        setup(props,ctx) {
             const state = inject(store)
             const modelValue = state.proxyData
             const renderComponent = (data, slotProps) => {
@@ -75,17 +76,27 @@
                 //事件绑定
                 for (let event in data.event) {
                     let eventBind = data.event[event]
-                    data.attribute['on'+event] = (e)=>{
-                        for (let field in eventBind) {
-                            expression = 'modelValue.' + field + ' = eventBind[field]'
-                            eval(expression)
+                    if(event === 'GridRefresh' && slotProps && slotProps.grid){
+                        //grid刷新事件绑定
+                        data.attribute.onGridRefresh = (e)=>{
+                            modelValue[slotProps.grid] = true
+                        }
+                    }else{
+                        data.attribute['on'+event] = (e)=>{
+                            for (let field in eventBind) {
+                                expression = 'modelValue.' + field + ' = eventBind[field]'
+                                eval(expression)
+                            }
                         }
                     }
+                }
+                if(!data.attribute.slotProps && slotProps){
+                    data.attribute.slotProps = slotProps
                 }
                 //插槽名称对应内容
                 for (let slot in data.content) {
                     children[slot] = (scope) => {
-                        if (JSON.stringify(scope) === '{}') {
+                        if (JSON.stringify(scope) === '{}' || scope === undefined) {
                             scope = slotProps
                         }
                         return userRender(data.content[slot], scope)
@@ -223,7 +234,7 @@
                 if (props.data) {
                     setProxyData(props.data)
                     const jsonRender = toRaw(props.data)
-                    return renderComponent(jsonRender)
+                    return renderComponent(jsonRender,props.slotProps)
                 } else {
                     return null
                 }
