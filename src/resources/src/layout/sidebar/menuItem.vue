@@ -5,13 +5,13 @@
         </template>
         <template v-for="item in menu.children">
             <menu-item v-if="item.children" :menu="item"></menu-item>
-            <el-menu-item :index="item.url" v-else>
+            <el-menu-item :index="item.id+''" v-else>
                 <i :class="item.icon" v-if="item.icon"></i>
                 <span>{{item.name}}</span>
             </el-menu-item>
         </template>
     </el-submenu>
-    <el-menu-item :index="menu.url" v-else>
+    <el-menu-item :index="menu.id+''" v-else>
         <i :class="menu.icon" v-if="menu.icon"></i>
         <span>{{menu.name}}</span>
     </el-menu-item>

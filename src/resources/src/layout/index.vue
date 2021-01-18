@@ -3,7 +3,13 @@
         <sidebar v-if="sidebar.visible"></sidebar>
         <div class="main-container">
             <header-top></header-top>
+
             <div class="main-content">
+                <el-backtop target=".main-content"></el-backtop>
+                <div class="header-title" >
+                    <div class="title">菜单管理</div>
+                    <breadcrumb></breadcrumb>
+                </div>
                 <transition name="el-fade-in">
                     <render :data="mainComponent"></render>
                 </transition>
@@ -17,6 +23,7 @@
     import headerTop from './headerTop.vue'
     import Sidebar from './sidebar/sidebar.vue'
     import render from '/@/components/render.vue'
+    import breadcrumb from '/@/components/breadcrumb.vue'
     import { store } from '/@/store'
     export default defineComponent({
         name: "index",
@@ -24,6 +31,7 @@
             Sidebar,
             headerTop,
             render,
+            breadcrumb,
         },
         setup(){
             const state = inject(store)
@@ -41,6 +49,7 @@
                 }
             })
             return {
+                state,
                 sidebar,
                 mainComponent,
                 proxyData
@@ -50,5 +59,17 @@
 </script>
 
 <style scoped>
+.header-title .title{
+    font-size: 16px;
+}
+.header-title{
+    display: flex;
+    justify-content: space-between;
+    height: 40px;
+    padding:0 15px;
+    align-items: center;
+    background: #ffffff;
+    border-bottom: 1px solid #ededed;
 
+}
 </style>

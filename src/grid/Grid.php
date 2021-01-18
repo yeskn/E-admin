@@ -289,7 +289,7 @@ class Grid extends Component
         //添加按钮
         if (!$this->hideAddButton) {
             $form = $this->form()->renderable();
-            $form->eventSuccess([$this->bindAttr('modelValue') => true,$form->bindAttr('model')=>[]]);
+            $form->eventSuccess([$this->bindAttr('modelValue') => true,$form->bindAttr('model')=>$form->getCallMethod()]);
             $button = Button::create('添加')
                 ->type('primary')
                 ->size('small')

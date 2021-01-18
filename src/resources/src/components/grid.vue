@@ -4,6 +4,8 @@
         <div class="tools" v-if="!hideTools">
             <el-row style="padding-top: 10px">
                 <el-col :span="24">
+
+
                     <!--快捷搜索-->
                     <el-input class="hidden-md-and-down" v-model="quickSearch" clearable prefix-icon="el-icon-search"
                               size="small" style="margin-right: 10px;width: 200px;" placeholder="请输入关键字" @change="handleFilter" v-if="quickSearchOn"></el-input>
@@ -24,8 +26,6 @@
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
-                    <!--筛选-->
-                    <render v-if="filter" :data="filter"></render>
 
                     <div style="float: right;margin-right: 15px">
                         <!--刷新-->
@@ -45,9 +45,13 @@
                             </template>
                         </el-dropdown>
                     </div>
-
+                    <el-button v-if="filter" style="margin-left: 10px" type="primary" size="small" icon="el-icon-zoom-in" @click="visibleFilter">筛选</el-button>
                 </el-col>
             </el-row>
+        </div>
+        <!--筛选-->
+        <div class="filter" v-if="filter && filterShow">
+            <render :data="filter" ></render>
         </div>
         <!--表格-->
         <el-table @selection-change="handleSelect" v-loading="loading" :data="tableData" v-bind="$attrs">
@@ -104,6 +108,7 @@
             const proxyData = state.proxyData
             const grid = ctx.attrs.eadmin_grid
             const {loading,http} = useHttp()
+            const filterShow = ref(false)
             const quickSearch = ref('')
             const selectionData = ref([])
             const quickSearchOn = ctx.attrs.quickSearch
@@ -166,11 +171,10 @@
                     ctx.emit('update:modelValue', false)
                 })
             }
-            function success() {
-console.log(23)
+            function visibleFilter() {
+                filterShow.value = !filterShow.value
             }
             return {
-                success,
                 grid,
                 quickSearchOn,
                 page,
@@ -184,7 +188,9 @@ console.log(23)
                 tableData,
                 quickSearch,
                 selectionData,
-                handleSelect
+                handleSelect,
+                visibleFilter,
+                filterShow,
             }
         }
     })
@@ -203,5 +209,12 @@ console.log(23)
         border-radius: 4px;
         padding-left: 10px;
         padding-bottom: 10px;
+    }
+    .filter{
+        padding-left: 10px;
+        padding-top: 10px;
+        padding-right: 10px;
+        border-top: 1px solid #ededed;
+        background: #fff;
     }
 </style>

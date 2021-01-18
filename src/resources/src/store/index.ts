@@ -24,11 +24,16 @@ const states = reactive({
     },
     //菜单
     menus:[],
-    menuModule:0
+    menuModule:0,
+    breadcrumb:[]
 });
 export const state = states
 //操作方法
 const action = {
+    //设置面包屑
+    setBreadcrumb(data){
+        states.breadcrumb = data
+    },
     //侧边栏打开关闭
     sidebarOpen:function(bool) {
         states.sidebar.opend = bool

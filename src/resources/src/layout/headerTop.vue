@@ -11,7 +11,7 @@
 </template>
 
 <script>
-    import { link } from '/@/utils/validate'
+    import { link } from '/@/utils'
     import {defineComponent, ref ,inject} from 'vue'
     import { store, action} from '/@/store'
     export default defineComponent({
