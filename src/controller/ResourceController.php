@@ -33,6 +33,10 @@ class ResourceController extends Controller
             admin_error_message('数据保存失败');
         }
     }
+    public function create()
+    {
+        return $this->call();
+    }
     /**
      * 显示编辑资源表单页.
      *

@@ -84,7 +84,7 @@ class Grid extends Component
         $this->bindAttValue('modelValue', false);
         $this->attr('eadmin_grid', $this->bindAttr('modelValue'));
         $this->loadDataUrl('eadmin.rest');
-       
+
         $this->getCallMethod();
     }
 
@@ -289,7 +289,7 @@ class Grid extends Component
         //添加按钮
         if (!$this->hideAddButton) {
             $form = $this->form()->renderable();
-            $form->eventSuccess([$this->bindAttr('modelValue') => true]);
+            $form->eventSuccess([$this->bindAttr('modelValue') => true,$form->bindAttr('model')=>[]]);
             $button = Button::create('添加')
                 ->type('primary')
                 ->size('small')
@@ -318,7 +318,7 @@ class Grid extends Component
         $data = $this->drive->getData($this->hidePage, $page, $size);
         //解析列
         $data = $this->parseColumn($data);
-      
+
         if (request()->has('ajax_request_data')) {
 
             return ['code' => 200, 'data' => $data, 'total' => $this->pagination->attr('total')];
