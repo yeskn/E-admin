@@ -28,10 +28,9 @@ class ResourceController extends Controller
     {
         $res = $this->call()->save($request->post());
         if ($res !== false) {
-            return json(['code'=>200]);
-            eadmin_success('操作完成','数据保存成功');
+            admin_success('操作完成','数据保存成功');
         } else {
-            eadmin_msg_error('数据保存失败');
+            admin_error_message('数据保存失败');
         }
     }
     /**
@@ -66,10 +65,9 @@ class ResourceController extends Controller
     {
         $res = $this->call()->save($request->post());
         if ($res !== false) {
-            return json(['code'=>200]);
-            eadmin_success('操作完成','数据保存成功');
+            admin_success('操作完成','数据保存成功');
         } else {
-            eadmin_msg_error('数据保存失败');
+            admin_error_message('数据保存失败');
         }
     }
 
@@ -83,10 +81,9 @@ class ResourceController extends Controller
     {
         $res = $this->call()->destroy($id);
         if ($res !== false) {
-            return json(['code'=>200]);
-            eadmin_success('操作完成','删除成功');
+            admin_success('操作完成','删除成功');
         } else {
-            eadmin_msg_error('数据保存失败');
+            admin_error_message('数据保存失败');
         }
     }
     protected function call(){

@@ -14,7 +14,7 @@ const useVisible = function(props,ctx){
         }
     }
     function hide(callback){
-        visible.value = true
+        visible.value = false
         if(callback){
             callback()
         }

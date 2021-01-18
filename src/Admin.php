@@ -4,6 +4,8 @@
 namespace Eadmin;
 
 
+use Eadmin\component\basic\Message;
+use Eadmin\component\basic\Notification;
 use Eadmin\controller\ResourceController;
 use Eadmin\service\MenuService;
 use think\app\Url;
@@ -14,6 +16,12 @@ use think\route\dispatch\Controller;
 
 class Admin
 {
+    public static function notification(){
+        return new Notification();
+    }
+    public static function message(){
+        return new Message();
+    }
     /**
      * 菜单服务
      * @return MenuService
@@ -25,7 +33,7 @@ class Admin
     /**
      * 树形
      * @param array $data 数据
-     * @param string $id 
+     * @param string $id
      * @param string $pid
      * @param string $children
      * @return array
@@ -49,7 +57,7 @@ class Admin
 
     /**
      * 解析url并执行返回
-     * @param string $url 
+     * @param string $url
      * @return mixed
      */
     public static function dispatch(string $url){

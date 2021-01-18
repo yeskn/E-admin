@@ -9,6 +9,8 @@
 namespace Eadmin;
 
 
+use Eadmin\component\basic\Message;
+use Eadmin\component\basic\Notification;
 use Eadmin\controller\ResourceController;
 use Eadmin\middleware\Response;
 use Eadmin\service\MenuService;
@@ -42,6 +44,8 @@ class ServiceProvider extends Service
     public function registerService(){
         $this->app->bind([
            'admin.menu'=> MenuService::class,
+           'admin.message'=> Message::class,
+           'admin.notification'=> Notification::class,
         ]);
     }
     protected function registerView(){

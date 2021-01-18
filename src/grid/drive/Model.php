@@ -279,7 +279,7 @@ class Model implements GridInterface
             if ($method->class == $className) {
                 $relation = $method->name;
                 $p = new \ReflectionMethod($method->class, $relation);
-                if ($p->getNumberOfParameters() == 0) {
+                if ($p->getNumberOfParameters() == 0 && !$p->isStatic()) {
                     if ($this->model->$relation() instanceof BelongsToMany) {
                         if ($deleteDatas === true) {
                             $deleteDatas = $this->model->select();
@@ -317,5 +317,5 @@ class Model implements GridInterface
     {
         return $this->db;
     }
-    
+
 }

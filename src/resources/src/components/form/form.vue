@@ -1,5 +1,5 @@
 <template>
-    <el-form ref="EadminForm" v-bind="$attrs" :model="modelValue" @submit.native.prevent>
+    <el-form ref="EadminForm" v-bind="$attrs" @submit.native.prevent>
         <slot></slot>
         <el-form-item>
             <slot name="leftAction"></slot>
@@ -24,32 +24,20 @@
         inheritAttrs: false,
         name: "EadminForm",
         props:{
-            model:Object,
             action:Object,
             //提交url
             setAction: String,
             setActionMethod:{
                 type:String,
                 default:'post'
-            }
+            },
+            slotProps:Object
         },
         emits: ['success','gridRefresh'],
         setup(props,ctx){
             const {loading,http} = useHttp()
             const state = inject(store)
             const proxyData = state.proxyData
-            const modelValue = reactive(props.model)
-            // if(ctx.attrs.editId){
-            //     const editId = ctx.attrs.editId
-            //     request({
-            //         url:'eadmin/'+editId+'/edit.rest',
-            //         params: modelValue
-            //     }).then(res=>{
-            //         for(let field in res.data){
-            //             modelValue[field] = res.data[field]
-            //         }
-            //     })
-            // }
             //提交
             function sumbitForm(formName) {
                 this.$refs[formName].validate((valid) => {
@@ -58,14 +46,14 @@
                             http({
                                 url: props.setAction,
                                 method: props.setActionMethod,
-                                data: modelValue
+                                data: ctx.attrs.model
                             }).then(res=>{
-                                ctx.emit('gridRefresh')
                                 ctx.emit('success')
+                                ctx.emit('gridRefresh')
                             })
                         }else{
-                            ctx.emit('gridRefresh')
                             ctx.emit('success')
+                            ctx.emit('gridRefresh')
                         }
                     } else {
                         return false;
@@ -77,7 +65,6 @@
                 this.$refs[formName].resetFields();
             }
             return {
-                modelValue,
                 proxyData,
                 loading,
                 resetForm,

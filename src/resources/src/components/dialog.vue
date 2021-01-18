@@ -6,7 +6,7 @@
              </span>
         </template>
         <slot></slot>
-        <render :data="content" :slot-props="$attrs.slotProps"></render>
+        <render :data="content" :slot-props="slotProps" @success="hide"></render>
     </el-dialog>
     <span @click="open">
         <slot name="reference"></slot>
@@ -31,17 +31,17 @@
             },
             url: String,
             params:Object,
+            slotProps:Object
         },
         emits: ['update:modelValue'],
         setup(props, ctx) {
-            const {visible, show} = useVisible(props, ctx)
+            const {visible,hide} = useVisible(props, ctx)
             let content = ref(null)
-            const url = props.url
             function open(){
-                if (url) {
+                if (props.url) {
                     const {http} = useHttp()
                     http({
-                        url: url,
+                        url:  props.url,
                         params:props.params
                     }).then(res => {
                         content.value = res
@@ -52,9 +52,10 @@
                 }
             }
             return {
+                hide,
                 content,
                 visible,
-                open
+                open,
             }
         }
     })

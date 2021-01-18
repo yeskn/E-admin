@@ -1,17 +1,16 @@
 <?php
 
 use rockySysLog\model\SystemLog;
-use Eadmin\service\TokenService;
-
-
+use admin\service\TokenService;
+use Eadmin\Admin;
 if (!function_exists('sysconf')) {
     function sysconf($name, $value = null)
     {
-       
+
     }
 }
-if (!function_exists('eadmin_log')) {
-    function eadmin_log($action, $content)
+if (!function_exists('admin_log')) {
+    function admin_log($action, $content)
     {
         SystemLog::create([
             'username' => TokenService::instance()->user()->nickname ?? 'cli',
@@ -22,54 +21,55 @@ if (!function_exists('eadmin_log')) {
         ]);
     }
 }
-if (!function_exists('eadmin_success')) {
-    function eadmin_success($title, $message)
+
+if (!function_exists('admin_success')) {
+    function admin_success($title, $message)
     {
-        return \Eadmin\facade\Component::notification()->success($title, $message);
+        return Admin::notification()->success($title, $message);
     }
 }
 
-if (!function_exists('eadmin_error')) {
-    function eadmin_error($title, $message)
+if (!function_exists('admin_error')) {
+    function admin_error($title, $message)
     {
-        return \Eadmin\facade\Component::notification()->error($title, $message);
+        return Admin::notification()->error($title, $message);
     }
 }
-if (!function_exists('eadmin_info')) {
-    function eadmin_info($title, $message)
+if (!function_exists('admin_info')) {
+    function admin_info($title, $message)
     {
-        return \Eadmin\facade\Component::notification()->info($title, $message);
+        return Admin::notification()->info($title, $message);
     }
 }
-if (!function_exists('eadmin_warn')) {
-    function eadmin_warn($title, $message)
+if (!function_exists('admin_warn')) {
+    function admin_warn($title, $message)
     {
-        return  \Eadmin\facade\Component::notification()->warning($title, $message);
+        return Admin::notification()->warning($title, $message);
     }
 }
 
-if (!function_exists('eadmin_msg_warn')) {
-    function eadmin_msg_warn($message)
+if (!function_exists('admin_msg_warn')) {
+    function admin_warn_message($message)
     {
-        return \Eadmin\facade\Component::message()->warning($message);
+        return Admin::message()->warning($message);
     }
 }
-if (!function_exists('eadmin_msg_success')) {
-    function eadmin_msg_success($message)
+if (!function_exists('admin_msg_success')) {
+    function admin_success_message($message)
     {
-        return \Eadmin\facade\Component::message()->success($message);
+        return Admin::message()->success($message);
     }
 }
-if (!function_exists('eadmin_msg_error')) {
-    function eadmin_msg_error($message)
+if (!function_exists('admin_msg_error')) {
+    function admin_error_message($message)
     {
-        return \Eadmin\facade\Component::message()->error($message);
+        return Admin::message()->error($message);
     }
 }
-if (!function_exists('eadmin_msg_info')) {
-    function eadmin_msg_info($message)
+if (!function_exists('admin_msg_info')) {
+    function admin_info_message($message)
     {
-        return \Eadmin\facade\Component::message()->info($message);
+        return Admin::message()->info($message);
     }
 }
 

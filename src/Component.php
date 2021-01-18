@@ -2,6 +2,7 @@
 
 namespace Eadmin;
 
+use Eadmin\component\basic\Notification;
 use think\exception\HttpResponseException;
 use think\facade\View;
 
@@ -9,8 +10,8 @@ use think\facade\View;
  * 前端组件类
  * Class Component
  * @package Eadmin\component
- * @method \Eadmin\component\Message message() 消息提示
- * @method \Eadmin\component\Notification notification() 通知
+ * @method \Eadmin\component\basic\Message message() 消息提示
+ * @method \Eadmin\component\basic\Notification notification() 通知
  */
 class Component
 {
@@ -82,10 +83,6 @@ class Component
         $componentProps = implode(' ',$componentProps);
         return "<eadmin-component data='" . rawurlencode($view) . "' $componentProps></eadmin-component>";
     }
-    public function __call($name, $arguments)
-    {
-        $name = ucfirst($name);
-        $class = "Eadmin\\component\\$name";
-        return new $class;
-    }
+    
+    
 }
