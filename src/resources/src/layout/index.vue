@@ -3,15 +3,16 @@
         <sidebar v-if="sidebar.visible"></sidebar>
         <div class="main-container">
             <header-top></header-top>
-
             <div class="main-content">
                 <el-backtop target=".main-content"></el-backtop>
-                <div class="header-title" >
-                    <div class="title">菜单管理</div>
-                    <breadcrumb></breadcrumb>
-                </div>
                 <transition name="el-fade-in">
-                    <render :data="mainComponent"></render>
+                    <div v-show="!state.mainLoading">
+                        <div class="header-title" v-if="proxyData.eadmin_title">
+                            <div class="title" >{{proxyData.eadmin_title}}</div>
+                            <breadcrumb></breadcrumb>
+                        </div>
+                        <render :data="mainComponent"></render>
+                    </div>
                 </transition>
             </div>
         </div>

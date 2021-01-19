@@ -89,6 +89,14 @@ class Grid extends Component
     }
 
     /**
+     * 设置标题
+     * @param string $title
+     * @return string
+     */
+    public function title(string $title){
+        return $this->bind('eadmin_title',$title);
+    }
+    /**
      * 获取from表单
      * @return Form $form
      */

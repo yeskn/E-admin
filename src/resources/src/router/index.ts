@@ -18,10 +18,13 @@ router.beforeEach( async(to:RouteLocationNormalized, from:RouteLocationNormalize
     if(!state.info.id){
         await action.getInfo()
     }
+    action.loading(true)
     request({
         url:to.fullPath
     }).then(res=>{
         action.component(res)
+    }).finally(()=>{
+        action.loading(false)
     })
     return true
 })

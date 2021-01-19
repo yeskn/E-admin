@@ -105,6 +105,14 @@ class Form extends Field
         $this->event('gridRefresh',[]);
     }
     /**
+     * 设置标题
+     * @param string $title
+     * @return string
+     */
+    public function title(string $title){
+        return $this->bind('eadmin_title',$title);
+    }
+    /**
      * 表单验证规则
      * @param array $value
      * @return $this
@@ -592,7 +600,7 @@ class Form extends Field
         $item =  array_pop($this->content['default']);
         return $item;
     }
-    
+
     /**
      * 解析组件
      */

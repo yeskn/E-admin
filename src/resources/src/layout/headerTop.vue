@@ -1,7 +1,7 @@
 <template>
     <div class="header-container">
         <i v-if="sidebar.visible" :class="[sidebar.opend?'el-icon-s-unfold hamburger':'el-icon-s-fold hamburger']" style="font-size: 18px" @click="collapse"/>
-        <el-menu :default-active="activeIndex" @select="selectMenu" class="el-menu-demo" mode="horizontal" >
+        <el-menu :default-active="state.menuModule" @select="selectMenu" class="el-menu-demo" mode="horizontal" >
             <el-menu-item v-for="item in menus" :index="item.id+''">
                 <i :class="item.icon" v-if="item.icon"></i>
                 <span slot="title">{{item.name}}</span>
@@ -12,7 +12,7 @@
 
 <script>
     import { link } from '/@/utils'
-    import {defineComponent, ref ,inject} from 'vue'
+    import {defineComponent, ref, inject, computed} from 'vue'
     import { store, action} from '/@/store'
     export default defineComponent({
         name: "headerTop",
@@ -20,9 +20,12 @@
             const state = inject(store)
             const sidebar = state.sidebar
             const menus = state.menus
+
+            //侧边栏展开收缩
             function collapse(){
                 action.sidebarOpen(!sidebar.opend)
             }
+            //选择菜单
             function selectMenu(index,indexPath) {
                 let target = true
                 let menu = null
@@ -43,11 +46,11 @@
                 }
             }
             return {
+                state,
                 selectMenu,
                 collapse,
                 sidebar,
                 menus,
-                activeIndex: ref('')
             }
         }
     })

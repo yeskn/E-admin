@@ -11,6 +11,7 @@ const states = reactive({
         visible:true,
     },
     //主内容组件渲染
+    mainLoading:false,
     mainComponent:null,
     proxyData:{},
     //错误信息
@@ -24,7 +25,7 @@ const states = reactive({
     },
     //菜单
     menus:[],
-    menuModule:0,
+    menuModule:'',
     breadcrumb:[]
 });
 export const state = states
@@ -41,6 +42,10 @@ const action = {
     //显示隐藏侧边栏
     sidebarVisible:function(bool) {
         states.sidebar.visible = bool
+    },
+    //设置加载状态
+    loading:function(bool){
+        states.mainLoading = bool
     },
     //设置主内容组件
     component:function(data){

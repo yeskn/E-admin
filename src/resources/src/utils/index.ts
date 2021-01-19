@@ -4,7 +4,6 @@ export function findParent(datas, pid) {
     let list = [],find
     do{
         find = findTree(datas,pid,'id')
-        console.log(datas)
         if(find){
             list.unshift(find)
             pid = find.pid
@@ -30,9 +29,6 @@ export function link(url){
     if (isExternal(url)) {
         window.open(url)
     }else{
-        if(url.indexOf('/') !== 0){
-            url='/'+url
-        }
         router.push(url)
     }
 }

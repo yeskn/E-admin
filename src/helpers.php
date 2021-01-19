@@ -48,25 +48,25 @@ if (!function_exists('admin_warn')) {
     }
 }
 
-if (!function_exists('admin_msg_warn')) {
+if (!function_exists('admin_warn_message')) {
     function admin_warn_message($message)
     {
         return Admin::message()->warning($message);
     }
 }
-if (!function_exists('admin_msg_success')) {
+if (!function_exists('admin_success_message')) {
     function admin_success_message($message)
     {
         return Admin::message()->success($message);
     }
 }
-if (!function_exists('admin_msg_error')) {
+if (!function_exists('admin_error_message')) {
     function admin_error_message($message)
     {
         return Admin::message()->error($message);
     }
 }
-if (!function_exists('admin_msg_info')) {
+if (!function_exists('admin_info_message')) {
     function admin_info_message($message)
     {
         return Admin::message()->info($message);
