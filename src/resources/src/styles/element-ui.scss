@@ -8,3 +8,16 @@ span + .el-button{
 span + span > .el-button{
   margin-left: 10px;
 }
+span + a > .el-button{
+  margin-left: 10px;
+}
+.el-button + a > .el-button{
+  margin-left: 10px;
+}
+a + a > .el-button{
+  margin-left: 10px;
+}
+a + span > .el-button{
+  margin-left: 10px;
+}
+

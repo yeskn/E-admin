@@ -55,7 +55,7 @@ class ResourceController extends Controller
      */
     public function read($id)
     {
-        halt(2);
+        return $this->call();
     }
 
     /**

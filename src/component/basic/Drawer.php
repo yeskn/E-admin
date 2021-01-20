@@ -38,8 +38,13 @@ class Drawer extends Field
     {
         $self = new self($field, false);
         $self->closeOnClickModal(false);
-        $self->content($content, 'reference');
+        if(!is_null($content)){
+            $self->content($content, 'reference');
+        }
         return $self;
+    }
+    public function reference($content){
+        return $this->content($content,'reference');
     }
     /**
      * 标题

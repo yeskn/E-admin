@@ -9,6 +9,7 @@
 namespace Eadmin\grid;
 
 use Eadmin\component\basic\Button;
+use Eadmin\component\basic\Router;
 use Eadmin\component\Component;
 use Eadmin\component\grid\Column;
 
@@ -56,22 +57,32 @@ class Actions extends Component
         }
         //是否隐藏详情
         if (!$this->hideDetailButton) {
-            $this->content(
-                Button::create('详情')
-                    ->size('small')
-                    ->icon('el-icon-info')
-            );
+            $button = Button::create('详情')
+                ->size('small')
+                ->icon('el-icon-info');
+            $detail = $this->grid->detailAction()->detail()->renderable();
+            $action = clone $this->grid->detailAction()->component();
+            if($action instanceof Router){
+                $button = $action->content($button)->to("/eadmin/{$this->id}.rest",$detail->getCallMethod());
+            }else{
+                $button = $action->bindValue(null,false)->reference($button)->url("/eadmin/{$this->id}.rest")->params($detail->getCallMethod());
+            }
+            $this->content($button);
         }
         //是否隐藏编辑
         if (!$this->hideEditButton) {
-            $form = $this->grid->form()->renderable();
-            $this->content(
-                Button::create('编辑')
-                    ->type('primary')
-                    ->size('small')
-                    ->icon('el-icon-edit')
-                    ->dialog()->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod())
-            );
+            $button = Button::create('编辑')
+                ->type('primary')
+                ->size('small')
+                ->icon('el-icon-edit');
+            $form = $this->grid->formAction()->form()->renderable();
+            $action = clone $this->grid->formAction()->component();
+            if($action instanceof Router){
+                $button = $action->content($button)->to("/eadmin/{$this->id}/edit.rest",$form->getCallMethod());
+            }else{
+                $button = $action->bindValue(null,false)->title($form->bind('eadmin_title'))->reference($button)->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod());
+            }
+            $this->content($button);
         }
         //是否隐藏删除
         if (!$this->hideDelButton) {

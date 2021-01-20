@@ -45,8 +45,13 @@ class Dialog extends Field
         $self->closeOnClickModal(false);
         $self->appendToBody();
         $self->width('35%');
-        $self->content($content, 'reference');
+        if(!is_null($content)){
+            $self->content($content, 'reference');
+        }
         return $self;
+    }
+    public function reference($content){
+        return $this->content($content,'reference');
     }
     /**
      * 标题

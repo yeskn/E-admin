@@ -1,5 +1,5 @@
 <script>
-    import {defineComponent, computed, toRaw, h, resolveComponent, inject,Fragment} from 'vue'
+    import {defineComponent, computed, toRaw, h, resolveComponent, inject,isProxy} from 'vue'
     import {store} from '/@/store'
     import dayjs from 'dayjs'
     export default defineComponent({
@@ -96,7 +96,7 @@
                 //插槽名称对应内容
                 for (let slot in data.content) {
                     children[slot] = (scope) => {
-                        if (JSON.stringify(scope) === '{}' || scope === undefined) {
+                        if (!isProxy(scope) && (JSON.stringify(scope) === '{}' || scope === undefined)) {
                             scope = slotProps
                         }
                         return userRender(data.content[slot], scope)

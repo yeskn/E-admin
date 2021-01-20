@@ -16,7 +16,7 @@
 
 <script>
     import {useRoute} from 'vue-router'
-    import { link,findParent,findTree } from '/@/utils'
+    import { link,findTree } from '/@/utils'
     import Logo from '../logo.vue'
     import menuItem from './menuItem.vue'
     import { defineComponent,inject, computed} from 'vue'
@@ -35,10 +35,6 @@
             const activeIndex = computed(()=>{
                 let menu = findTree(state.menus,route.path,'url')
                 if(menu){
-                    let menuLevels = findParent(state.menus,menu.pid)
-                    menuLevels.push(menu)
-                    action.setBreadcrumb(menuLevels)
-                    action.selectMenuModule(menuLevels[0].id)
                     return menu.id+''
                 }else{
                     return ''
@@ -50,28 +46,11 @@
                 state.menus.forEach(res=>{
                     if(res.id == state.menuModule && res.children){
                         menus = res.children
-                        let url = defaultMenu(menus)
-                        if(url){
-                            link(url)
-                        }
                     }
                 })
                 return menus
             })
-            //查找当前第一个菜单
-            function defaultMenu(menus) {
-                for(let key in menus){
-                    if(menus[key].children){
-                        let item = defaultMenu(menus[key].children)
-                        if(item){
-                            return item
-                        }
-                    }else{
-                        return menus[key].url
-                    }
-                }
-                return null
-            }
+
             //选择菜单
             function select(id,index) {
                 let menu = findTree(state.menus,id,'id')

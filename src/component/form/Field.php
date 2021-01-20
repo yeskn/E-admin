@@ -69,7 +69,7 @@ abstract class Field extends Component
      * @param string $field 字段
      * @param mixed $value 值
      */
-    protected function bindValue($field = null, $value = '')
+    public function bindValue($field = null, $value = '')
     {
         empty($field) ? $field = Str::random(15, 3) : $field;
         $this->bind($field, $value);

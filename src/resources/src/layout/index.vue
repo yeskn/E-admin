@@ -6,13 +6,7 @@
             <div class="main-content">
                 <el-backtop target=".main-content"></el-backtop>
                 <transition name="el-fade-in">
-                    <div v-show="!state.mainLoading">
-                        <div class="header-title" v-if="proxyData.eadmin_title">
-                            <div class="title" >{{proxyData.eadmin_title}}</div>
-                            <breadcrumb></breadcrumb>
-                        </div>
-                        <render :data="mainComponent"></render>
-                    </div>
+                    <render :data="mainComponent"></render>
                 </transition>
             </div>
         </div>
@@ -24,7 +18,7 @@
     import headerTop from './headerTop.vue'
     import Sidebar from './sidebar/sidebar.vue'
     import render from '/@/components/render.vue'
-    import breadcrumb from '/@/components/breadcrumb.vue'
+
     import { store } from '/@/store'
     export default defineComponent({
         name: "index",
@@ -32,7 +26,7 @@
             Sidebar,
             headerTop,
             render,
-            breadcrumb,
+
         },
         setup(){
             const state = inject(store)
@@ -60,17 +54,5 @@
 </script>
 
 <style scoped>
-.header-title .title{
-    font-size: 16px;
-}
-.header-title{
-    display: flex;
-    justify-content: space-between;
-    height: 40px;
-    padding:0 15px;
-    align-items: center;
-    background: #ffffff;
-    border-bottom: 1px solid #ededed;
 
-}
 </style>

@@ -5,6 +5,7 @@ namespace Eadmin\grid;
 
 
 use Eadmin\component\basic\Button;
+use Eadmin\component\basic\Router;
 use Eadmin\component\Component;
 use Eadmin\component\grid\Column;
 use Eadmin\component\grid\Pagination;
@@ -59,7 +60,10 @@ class Grid extends Component
 
     protected $drive;
 
-    protected $form = null;
+    protected $formAction = null;
+
+    protected $detailAction = null;
+
 
     public function __construct($data)
     {
@@ -96,26 +100,34 @@ class Grid extends Component
     public function title(string $title){
         return $this->bind('eadmin_title',$title);
     }
-    /**
-     * 获取from表单
-     * @return Form $form
-     */
-    public function form()
-    {
-        return $this->form;
-    }
 
+    public function formAction()
+    {
+        return $this->formAction;
+    }
+    public function detailAction()
+    {
+        return $this->detailAction;
+    }
     /**
      * 设置from表单
      * @param Form $form
      */
     public function setForm(Form $form)
     {
-
-        if (is_null($this->form)) {
-            $this->form = $form;
-        }
-        return $this;
+        $this->formAction = new ActionMode();
+        $this->formAction->form($form);
+        return $this->formAction;
+    }
+    /**
+     * 设置detail详情
+     * @param Detail $detail
+     */
+    public function setDetail( $detail)
+    {
+        $this->detailAction = new ActionMode();
+        $this->detailAction->detail($detail);
+        return $this->detailAction;
     }
 
     public function drive()
@@ -296,13 +308,18 @@ class Grid extends Component
     {
         //添加按钮
         if (!$this->hideAddButton) {
-            $form = $this->form()->renderable();
+            $form = $this->formAction->form();
             $form->eventSuccess([$this->bindAttr('modelValue') => true,$form->bindAttr('model')=>$form->getCallMethod()]);
             $button = Button::create('添加')
                 ->type('primary')
                 ->size('small')
-                ->icon('el-icon-add')
-                ->dialog()->content($form);
+                ->icon('el-icon-add');
+            $action = clone $this->formAction->component();
+            if($action instanceof Router){
+                $button = $action->content($button)->to("/eadmin/create.rest",$form->getCallMethod());
+            }else{
+                $button = $action->bindValue(null,false)->reference($button)->title($form->bind('eadmin_title'))->content($form);
+            }
             $this->attr('addButton', $button);
         }
         //快捷搜索

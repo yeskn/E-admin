@@ -41,7 +41,7 @@
                 if (props.url) {
                     const {http} = useHttp()
                     http({
-                        url:  props.url,
+                        url: props.url,
                         params:props.params
                     }).then(res => {
                         content.value = res
