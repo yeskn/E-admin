@@ -8,29 +8,20 @@
             </el-menu-item>
         </el-menu>
     </div>
-    <div class="header-title" v-if="state.proxyData.eadmin_title">
-        <div class="title" >{{state.proxyData.eadmin_title}}</div>
-        <div class="breadcrumb">
-            <breadcrumb></breadcrumb>
-            <i class="el-icon-back back" @click="back"></i>
-        </div>
-    </div>
+
 </template>
 
 <script>
-    import breadcrumb from '/@/components/breadcrumb.vue'
-    import {useRoute,useRouter} from 'vue-router'
+
+    import {useRoute} from 'vue-router'
     import { link,findParent,findTree } from '/@/utils'
     import {defineComponent, watch, inject, computed} from 'vue'
     import { store, action} from '/@/store'
     export default defineComponent({
         name: "headerTop",
-        components:{
-            breadcrumb,
-        },
         setup() {
             const route = useRoute()
-            const router = useRouter()
+
             const state = inject(store)
             const sidebar = state.sidebar
             const menus = state.menus
@@ -92,9 +83,7 @@
                 }
                 return null
             }
-            function back() {
-                router.back()
-            }
+
             return {
                 activeIndex,
                 state,
@@ -102,7 +91,6 @@
                 collapse,
                 sidebar,
                 menus,
-                back
             }
         }
     })
@@ -115,40 +103,11 @@
         background: #FFFFFF;
         height: 60px;
         width: 100%;
-        border-bottom:1px solid #f6f6f6;
-    }
-    .header-title .title{
-        font-size: 16px;
-    }
-    .header-title{
-        display: flex;
-        justify-content: space-between;
-        height: 35px;
-        padding-left:15px;
-        align-items: center;
-        background: #ffffff;
-        border-bottom: 1px solid #ededed;
         box-shadow: 0 1px 4px rgba(0,21,41,.08);
     }
     .hamburger {
         padding: 0 10px;
         cursor: pointer;
     }
-    .breadcrumb{
-        display: flex;
-        align-items: center;
-    }
-    .back{
-        margin-left: 10px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-left: 1px solid #ededed;
-        height: 35px;
-        width: 40px;
-        cursor: pointer
-    }
-    .back:hover{
-        background: #EFEFEF;
-    }
+
 </style>

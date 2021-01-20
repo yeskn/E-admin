@@ -1,5 +1,6 @@
 <template>
-    <el-form ref="EadminForm" v-bind="$attrs" @submit.native.prevent>
+    <el-main class='form'>
+    <el-form  ref="EadminForm" v-bind="$attrs" @submit.native.prevent>
         <slot></slot>
         <el-form-item>
             <slot name="leftAction"></slot>
@@ -8,6 +9,7 @@
             <slot name="rightAction"></slot>
         </el-form-item>
     </el-form>
+    </el-main>
 </template>
 
 <script>
@@ -75,5 +77,8 @@
 </script>
 
 <style scoped>
-
+.form{
+    background: rgb(255, 255, 255);
+    border-radius: 4px;
+}
 </style>

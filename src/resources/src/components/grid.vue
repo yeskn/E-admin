@@ -211,9 +211,6 @@
         padding-bottom: 10px;
     }
     .filter{
-        padding-left: 10px;
-        padding-top: 10px;
-        padding-right: 10px;
         border-top: 1px solid #ededed;
         background: #fff;
     }
