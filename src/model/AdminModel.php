@@ -27,17 +27,17 @@ class AdminModel extends BaseModel
     }
     //权限
     public function permissions(){
-        $roleIds = SystemUserAuth::where('user_id',$this->id)->column('role_id');
+        $roleIds = SystemUserAuth::where('user_id',$this->id)->column('auth_id');
         return SystemAuthNode::whereIn('auth_id',$roleIds)->select()->toArray();
     }
     //菜单
     public function menus(){
-        $roleIds = SystemUserAuth::where('user_id',$this->id)->column('role_id');
+        $roleIds = SystemUserAuth::where('user_id',$this->id)->column('auth_id');
         $menuIds = SystemAuthMenu::whereIn('auth_id',$roleIds)->column('menu_id');
         return Db::name('system_menu')->where('status', 1)->whereIn('id',$menuIds)->order('sort asc,id desc')->select();
     }
     //角色组
     public function roles(){
-        return $this->belongsToMany('system_auth',SystemUserAuth::class,'role_id','user_id');
+        return $this->belongsToMany('system_auth',SystemUserAuth::class,'auth_id','user_id');
     }
 }

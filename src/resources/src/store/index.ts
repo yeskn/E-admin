@@ -31,6 +31,9 @@ const states = reactive({
 export const state = states
 //操作方法
 const action = {
+    setProxyData(data){
+        states.proxyData = data
+    },
     //设置面包屑
     setBreadcrumb(data){
         states.breadcrumb = data

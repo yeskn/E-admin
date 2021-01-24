@@ -4,6 +4,7 @@
 namespace Eadmin;
 
 
+use Eadmin\component\basic\Component;
 use Eadmin\component\basic\Message;
 use Eadmin\component\basic\Notification;
 use Eadmin\controller\ResourceController;
@@ -14,11 +15,22 @@ use think\app\Url;
 use think\facade\Cache;
 use think\facade\Request;
 use think\facade\Route;
+use think\facade\View;
 use think\route\dispatch\Callback;
 use think\route\dispatch\Controller;
 
 class Admin
 {
+    /**
+     * 渲染组件
+     * @param $template 模板文件名
+     * @param array $vars 模板变量
+     * @return Component
+     */
+    public static function view($template,$vars=[]){
+        $content =  View::fetch($template,$vars);
+        return Component::create($content);
+    }
     public static function notification(){
         return new Notification();
     }
@@ -161,8 +173,9 @@ class Admin
      */
     public static function dispatch(string $url){
         $data = $url;
-        if(strpos($url,'/') !== false){
+        if(strpos($url,'/') === false){
             $parse = parse_url($url);
+            
             $path = $parse['path'];
             $vars = [];
             $request = app()->request;

@@ -5,7 +5,7 @@
             <header-top></header-top>
             <div class="main-content">
                 <el-backtop target=".main-content"></el-backtop>
-                <div class="header-title" v-if="proxyData.eadmin_title">
+                <div class="header-title" v-if="proxyData.eadmin_title && mainComponent">
                     <div class="title" >{{proxyData.eadmin_title}}</div>
                     <div class="breadcrumb">
                         <breadcrumb></breadcrumb>
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-    import {useRouter} from 'vue-router'
+    import {useRouter,useRoute} from 'vue-router'
     import {defineComponent, inject, computed, reactive, watch} from 'vue'
     import headerTop from './headerTop.vue'
     import Sidebar from './sidebar/sidebar.vue'
@@ -50,7 +50,10 @@
                    for(let i in proxyData){
                        delete proxyData[i]
                    }
-                }
+                }else{
+
+
+               }
             })
             function back() {
                 router.back()

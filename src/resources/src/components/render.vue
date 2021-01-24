@@ -1,6 +1,7 @@
 <script>
     import {defineComponent, computed, toRaw, h, resolveComponent, inject,isProxy} from 'vue'
     import {store} from '/@/store'
+    import {splitCode} from '/@/utils/splitCode'
     import dayjs from 'dayjs'
     export default defineComponent({
         name: "EadminRender",
@@ -106,6 +107,8 @@
                 attribute = {...data.attribute}
                 if(data.name == 'html'){
                     return h('span', attribute, children)
+                }else if(data.name == 'component'){
+                    return h(splitCode(data.content.default[0]))
                 }
                 name = resolveComponent(data.name)
                 //for 遍历中的 ElFormItem prop处理
