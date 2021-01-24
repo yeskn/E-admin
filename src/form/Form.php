@@ -25,6 +25,7 @@ use Eadmin\component\layout\Row;
 use Eadmin\contract\FormInterface;
 use Eadmin\traits\CallProvide;
 use Eadmin\traits\FormModel;
+use think\facade\Request;
 use think\helper\Str;
 use think\Model;
 
@@ -33,37 +34,37 @@ use think\Model;
  * Class Form
  * @link https://element-plus.gitee.io/#/zh-CN/component/form
  * @package Eadmin\component\form\field
- * @method \Eadmin\component\form\field\Input text($field, $label) 文本输入框
+ * @method \Eadmin\component\form\field\Input text($field, $label='') 文本输入框
  * @method \Eadmin\component\form\field\Input hidden($field) 隐藏输入框
- * @method \Eadmin\component\form\field\Input textarea($field, $label) 多行文本输入框
- * @method \Eadmin\component\form\field\Input password($field, $label) 密码输入框
- * @method \Eadmin\component\form\field\Number number($field, $label) 数字输入框
- * @method \Eadmin\component\form\field\Select select($field, $label) 下拉选择器
- * @method \Eadmin\component\form\field\RadioGroup radio($field, $label) 单选框
- * @method \Eadmin\component\form\field\CheckboxGroup checkbox($field, $label) 多选框
- * @method \Eadmin\component\form\field\Switchs switch ($field, $label) switch开关
- * @method \Eadmin\component\form\field\DatePicker datetime($field, $label) 日期时间
- * @method \Eadmin\component\form\field\DatePicker datetimeRange($startFiled, $endField, $label) 日期时间范围时间
- * @method \Eadmin\component\form\field\DatePicker dateRange($startFiled, $endField, $label) 日期范围时间
- * @method \Eadmin\component\form\field\DatePicker date($field, $label) 日期
- * @method \Eadmin\component\form\field\DatePicker dates($field, $label) 多选日期
- * @method \Eadmin\component\form\field\DatePicker year($field, $label) 年
- * @method \Eadmin\component\form\field\DatePicker month($field, $label) 月
- * @method \Eadmin\component\form\field\TimePicker timeRange($startFiled, $endField, $label) 日期范围时间
- * @method \Eadmin\component\form\field\TimePicker time($field, $label) 时间
- * @method \Eadmin\component\form\field\Slider slider($field, $label) 滑块
- * @method \Eadmin\component\form\field\Color color($field, $label) 颜色选择器
- * @method \Eadmin\component\form\field\Rate rate($field, $label) 评分组件
- * @method \Eadmin\component\form\field\Upload file($field, $label) 文件上传
- * @method \Eadmin\component\form\field\Upload image($field, $label) 图片上传
- * @method \Eadmin\component\form\field\Editor editor($field, $label) 富文本编辑器
- * @method \Eadmin\component\form\field\Tree tree($field, $label) 树形
- * @method \Eadmin\component\form\field\Cascader cascader(...$field, $label) 级联选择器
- * @method \Eadmin\component\form\field\Transfer transfer($field, $label) 穿梭框
- * @method \Eadmin\component\form\field\Icon icon($field, $label) 图标选择器
- * @method \Eadmin\component\form\field\IframeTag iframeTag($field, $label) 弹窗选择框
- * @method \Eadmin\component\form\field\Map map($lng, $lat, $address, $label) 高德地图
- * @method \Eadmin\component\form\field\TableText tableText($field, $label) 表格编辑
+ * @method \Eadmin\component\form\field\Input textarea($field, $label='') 多行文本输入框
+ * @method \Eadmin\component\form\field\Input password($field, $label='') 密码输入框
+ * @method \Eadmin\component\form\field\Number number($field, $label='') 数字输入框
+ * @method \Eadmin\component\form\field\Select select($field, $label='') 下拉选择器
+ * @method \Eadmin\component\form\field\RadioGroup radio($field, $label='') 单选框
+ * @method \Eadmin\component\form\field\CheckboxGroup checkbox($field, $label='') 多选框
+ * @method \Eadmin\component\form\field\Switchs switch ($field, $label='') switch开关
+ * @method \Eadmin\component\form\field\DatePicker datetime($field, $label='') 日期时间
+ * @method \Eadmin\component\form\field\DatePicker datetimeRange($startFiled, $endField, $label='') 日期时间范围时间
+ * @method \Eadmin\component\form\field\DatePicker dateRange($startFiled, $endField, $label='') 日期范围时间
+ * @method \Eadmin\component\form\field\DatePicker date($field, $label='') 日期
+ * @method \Eadmin\component\form\field\DatePicker dates($field, $label='') 多选日期
+ * @method \Eadmin\component\form\field\DatePicker year($field, $label='') 年
+ * @method \Eadmin\component\form\field\DatePicker month($field, $label='') 月
+ * @method \Eadmin\component\form\field\TimePicker timeRange($startFiled, $endField, $label='') 日期范围时间
+ * @method \Eadmin\component\form\field\TimePicker time($field, $label='') 时间
+ * @method \Eadmin\component\form\field\Slider slider($field, $label='') 滑块
+ * @method \Eadmin\component\form\field\Color color($field, $label='') 颜色选择器
+ * @method \Eadmin\component\form\field\Rate rate($field, $label='') 评分组件
+ * @method \Eadmin\component\form\field\Upload file($field, $label='') 文件上传
+ * @method \Eadmin\component\form\field\Upload image($field, $label='') 图片上传
+ * @method \Eadmin\component\form\field\Editor editor($field, $label='') 富文本编辑器
+ * @method \Eadmin\component\form\field\Tree tree($field, $label='') 树形
+ * @method \Eadmin\component\form\field\Cascader cascader(...$field, $label='') 级联选择器
+ * @method \Eadmin\component\form\field\Transfer transfer($field, $label='') 穿梭框
+ * @method \Eadmin\component\form\field\Icon icon($field, $label='') 图标选择器
+ * @method \Eadmin\component\form\field\IframeTag iframeTag($field, $label='') 弹窗选择框
+ * @method \Eadmin\component\form\field\Map map($lng, $lat, $address, $label='') 高德地图
+ * @method \Eadmin\component\form\field\TableText tableText($field, $label='') 表格编辑
  */
 class Form extends Field
 {
@@ -104,6 +105,7 @@ class Form extends Field
         $this->getCallMethod();
         $this->setAction('/eadmin.rest');
         $this->event('gridRefresh',[]);
+        $pkValue = Request::get($this->drive->getPk());
     }
     /**
      * 设置标题
@@ -180,10 +182,11 @@ class Form extends Field
     }
 
     /**
-     * 表单域标签的宽度
-     * @return $this right/left/top
+     * 表单域标签的位置
+     * @param string $value right/left/top
+     * @return $this
      */
-    public function labelPosition()
+    public function labelPosition(string $value)
     {
         $this->attr(__FUNCTION__, $value);
         return $this;

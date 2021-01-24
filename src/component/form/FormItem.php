@@ -22,8 +22,8 @@ use Eadmin\component\form\Field;
  * @method $this labelWidth(string $value) 表单域标签的的宽度，例如 '50px'。支持 auto
  * @method $this rules(array $value) 表单验证规则
  * @method $this error(string $value) 表单域验证错误信息, 设置该值会使表单验证状态变为error，并显示该错误信息
- * @method $this showMessage(bool $value) 是否显示校验错误信息
- * @method $this inlineMessage(bool $value) 以行内形式展示校验信息
+ * @method $this showMessage(bool $value=true) 是否显示校验错误信息
+ * @method $this inlineMessage(bool $value=true) 以行内形式展示校验信息
  * @property Form $form
  */
 class FormItem extends Field

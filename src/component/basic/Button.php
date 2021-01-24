@@ -14,11 +14,11 @@ use Eadmin\component\Component;
 /**
  * Class Button
  * @package Eadmin\component\basic
- * @method $this disabled(bool $value) 是否禁用状态
- * @method $this loading(bool $value) 是否加载中状态
- * @method $this circle(bool $value) 是否圆形按钮
- * @method $this round(bool $value) 是否圆角按钮
- * @method $this plain(bool $value) 是否朴素按钮
+ * @method $this disabled(bool $value=true) 是否禁用状态
+ * @method $this loading(bool $value=true) 是否加载中状态
+ * @method $this circle(bool $value=true) 是否圆形按钮
+ * @method $this round(bool $value=true) 是否圆角按钮
+ * @method $this plain(bool $value=true) 是否朴素按钮
  * @method $this type(string $value) 类型 primary / success / warning / danger / info / text
  * @method $this nativeType(string $value) 原生type属性 button / submit / reset
  * @method $this size(string $value) 尺寸 medium / small / mini
@@ -50,6 +50,17 @@ class Button extends Component
     public function dialog(){
         $dialog = Dialog::create($this);
         return $dialog;
+    }
+
+    /**
+     * 跳转
+     * @param string $url  跳转url
+     * @param array $params 参数
+     * @return Router|mixed|null
+     */
+    public function to(string $url,array $params){
+        $router = Router::create()->content($this)->to($url,$params);
+        return $router;
     }
     /**
      * 抽屉

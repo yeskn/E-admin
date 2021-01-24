@@ -11,7 +11,7 @@ use Eadmin\component\Component;
  * Class TimeLine
  * @link https://element-plus.gitee.io/#/zh-CN/component/timeline
  * @method $this timestamp(string $time) 	时间戳
- * @method $this hideTimestamp(bool $bool) 是否隐藏时间戳
+ * @method $this hideTimestamp(bool $value=true) 是否隐藏时间戳
  * @method $this placement(string $placement) 时间戳位置  top / bottom
  * @method $this type(string $type) 节点类型 primary / success / warning / danger / info
  * @method $this color(string $color) 节点颜色 hsl / hsv / hex / rgb

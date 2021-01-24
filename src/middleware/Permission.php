@@ -9,6 +9,7 @@
 namespace Eadmin\middleware;
 
 
+use Eadmin\Admin;
 use think\facade\App;
 use think\Request;
 use Eadmin\service\AdminService;
@@ -19,26 +20,15 @@ class Permission
 {
     public function handle(Request $request, \Closure $next)
     {
-
-        $pathinfo = '';
-        $url = request()->url();
-        $url = parse_url($url);
-        $node = substr($url['path'],1);
-        if($request->has('submitFromMethod')) {
-            $method = $request->param('submitFromMethod');
-            if($method != 'form'){
-                $node = preg_replace("/(\/(\d+)\.rest)$/U",'',$node);
-                $pathinfo = '/' . $method;
-            }
-        }
-        $node = $node.$pathinfo;
-        if (empty($node) || $request->method() == 'options') {
-            return $next($request);
-        }
         $moudel = app('http')->getName();
+        $eadmin_class = $request->param('eadmin_class');
+        $eadmin_function = $request->param('eadmin_function');
+        if(empty($eadmin_class)|| empty($eadmin_function)){
+            list($eadmin_class,$eadmin_function) = app()->route->check()->getDispatch();
+        }
         //验证权限
         $authNodules = array_keys(config('admin.authModule'));
-        if (in_array($moudel,$authNodules) && !AdminService::instance()->check($node, $request->method())) {
+        if (in_array($moudel,$authNodules) && !Admin::check($eadmin_class,$eadmin_function, $request->method())) {
             return json(['code'=>44000,'message'=>'没有访问该操作的权限']);
         }
         return $next($request);

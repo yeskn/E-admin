@@ -11,9 +11,9 @@ use Eadmin\component\Component;
  * Class Tag
  * @link https://element-plus.gitee.io/#/zh-CN/component/tag
  * @method $this type(string $type) 类型 success / info / warning / danger
- * @method $this closable(bool $bool) 是否可关闭
- * @method $this disableTransitions(bool $bool) 是否禁用渐变动画
- * @method $this hit(bool $bool) 是否有边框描边
+ * @method $this closable(bool $value=true) 是否可关闭
+ * @method $this disableTransitions(bool $value=true) 是否禁用渐变动画
+ * @method $this hit(bool $value=true) 是否有边框描边
  * @method $this color(string $color) 背景色
  * @method $this size(string $color) 尺寸	medium / small / mini
  * @method $this effect(string $color) 主题  dark / light / plain

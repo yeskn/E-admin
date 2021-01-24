@@ -10,14 +10,14 @@ namespace Eadmin\service;
 
 use think\route\Resource;
 use Eadmin\Service;
-use function GuzzleHttp\Psr7\str;
+
 
 /**
  * 系统节点服务
  * Class NodeService
  * @package Eadmin\service
  */
-class NodeService extends Service
+class NodeService
 {
     //节点缓存key
     protected $cacheKey = 'eadmin_node_list';
@@ -26,13 +26,13 @@ class NodeService extends Service
     public function all()
     {
 
-        if ($this->app->cache->has($this->cacheKey) && !env('APP_DEBUG')) {
+        if (app()->cache->has($this->cacheKey) && !env('APP_DEBUG')) {
 
-            return $this->app->cache->get($this->cacheKey);
+            return app()->cache->get($this->cacheKey);
         } else {
             $files = $this->getControllerFiles();
             $data = $this->parse($files);
-            $this->app->cache->set($this->cacheKey, $data);
+            app()->cache->set($this->cacheKey, $data);
             return $data;
         }
     }
@@ -72,22 +72,18 @@ class NodeService extends Service
             $auth = false;
             $login = false;
             $title = array_shift($commentsLine);
-            $method = 'any';
             foreach ($commentsLine as $line) {
                 $line = trim($line);
                 if (preg_match('/@auth\s*true/i', $line) && $auth == false) {
                     $auth = true;
                 } elseif (preg_match('/@login\s*true/i', $line) && $login == false) {
                     $login = true;
-                } elseif (preg_match('/@method\s(.*)/i', $line, $methods) && $method == 'any') {
-                    $method = $methods[1];
                 }
-
             }
         } else {
             return false;
         }
-        return [trim($title), $auth, $login, $method];
+        return [trim($title), $auth, $login];
 
     }
 
@@ -99,7 +95,7 @@ class NodeService extends Service
     protected function parse($files)
     {
         $data = [];
-        $rules = $this->app->route->getRuleList();
+        $rules = app()->route->getRuleList();
         foreach ($files as $key => $item) {
             $file = $item['file'];
             $controller = str_replace('.php', '', basename($file));
@@ -116,48 +112,62 @@ class NodeService extends Service
             }
             $this->treeArr[$moduleName]['children'][$key] = [
                 'label' => $title,
+                'id' => md5($namespace),
                 'children' => []
             ];
+            $methodNode = [];
             foreach ($class->getMethods() as $method) {
                 $doc = $method->getDocComment();
                 $res = $this->parseDocComment($doc);
                 if ($method->class == $namespace && $method->isPublic()) {
                     $action = $method->getName();
-                    dump($method);
-                    if ($res === false) {
-                        $nodeData = [
-                            'label' => $action,
-                            'class' => $namespace,
-                            'action' => $action,
-                            'is_auth' => false,
-                            'is_login' => $login,
-                            'method' => 'any',
-                            'mark' => md5($action . 'any'),
-                        ];
-                    } else {
-                        list($title, $auth, $login, $method) = $res;
+                    $reflectionNamedType = $method->getReturnType();
+                    if ($res !== false) {
+                        list($title, $auth, $login) = $res;
                         $nodeData = [
                             'label' => $title,
-                            'class' =>$namespace,
+                            'class' => $namespace,
                             'action' => $action,
                             'is_auth' => $auth,
                             'is_login' => $login,
-                            'method' => $method,
-                            'mark' => md5($action . $method),
+                            'method' => 'get',
+                            'id' => md5($namespace . $action . 'get'),
                         ];
-                    }
-                    $data[] = $nodeData;
-                    if ($auth) {
-                        $this->treeArr[$moduleName]['children'][$key]['children'][] = $nodeData;
+                        if ($auth) {
+                            if ($reflectionNamedType && $reflectionNamedType->getName() == 'Eadmin\form\Form') {
+                                $label = $nodeData['label'];
+                                $nodeData['label'] = $label . '添加';
+                                $nodeData['method'] = 'post';
+                                $nodeData['id'] = md5($namespace . $action . $nodeData['method']);
+                                $data[] = $nodeData;
+                                $methodNode[] = $nodeData;
+                                $nodeData['label'] = $label . '修改';
+                                $nodeData['method'] = 'put';
+                                $nodeData['id'] = md5($namespace . $action . $nodeData['method']);
+                                $data[] = $nodeData;
+                                $methodNode[] = $nodeData;
+                            } else {
+                                $data[] = $nodeData;
+                                $methodNode[] = $nodeData;
+                                if ($reflectionNamedType && $reflectionNamedType->getName() == 'Eadmin\grid\Grid') {
+                                    $nodeData['label'] = '删除权限';
+                                    $nodeData['method'] = 'delete';
+                                    $nodeData['id'] = md5($namespace . $action . $nodeData['method']);
+                                    $data[] = $nodeData;
+                                    $methodNode[] = $nodeData;
+                                }
+
+                            }
+                        }
                     }
                 }
             }
+            $this->treeArr[$moduleName]['children'][$key]['children'] = $methodNode;
             if (count($this->treeArr[$moduleName]['children'][$key]['children']) == 0) {
                 unset($this->treeArr[$moduleName]['children'][$key]);
             }
             $this->treeArr[$moduleName]['children'] = array_values($this->treeArr[$moduleName]['children']);
         }
-
         return $data;
     }
 
@@ -167,7 +177,7 @@ class NodeService extends Service
      */
     protected function getControllerFiles()
     {
-        $appPath = $this->app->getBasePath();
+        $appPath = app()->getBasePath();
         $controllerFiles = [];
         //扫描所有模块
         $modules = [];
@@ -197,6 +207,7 @@ class NodeService extends Service
                 $authModuleTitle = $authModuleName[$moduleName];
                 $this->treeArr[$moduleName] = [
                     'label' => $authModuleTitle,
+                    'id' => md5($moduleName),
                 ];
                 foreach (glob($module . '/controller/' . '*.php') as $file) {
                     if (is_file($file)) {
@@ -212,7 +223,7 @@ class NodeService extends Service
             }
         }
 
-        $rules = $this->app->route->getGroup()->getRules();
+        $rules = app()->route->getGroup()->getRules();
         $loader = PlugService::instance()->loader();
         $psr = $loader->getPrefixesPsr4();
         foreach ($rules as $key => $rule) {

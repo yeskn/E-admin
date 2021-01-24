@@ -15,7 +15,7 @@ use Eadmin\component\form\Field;
  * @method $this border(bool $border) 是否显示边框
  * @method $this size(string $size) Checkbox 的尺寸，仅在 border 为真时有效 medium / small / mini
  * @method $this checked(bool $check) 当前是否勾选
- * @method $this indeterminate(bool $value) 设置 indeterminate 状态，只负责样式控制
+ * @method $this indeterminate(bool $value=true) 设置 indeterminate 状态，只负责样式控制
  * @package Eadmin\component\form\field
  */
 class Checkbox extends Field

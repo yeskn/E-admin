@@ -13,9 +13,9 @@ use think\facade\Filesystem;
  * 上传
  * Class Upload
  * @link https://element-plus.gitee.io/#/zh-CN/component/upload
- * @method $this isUniqidmd5(bool $bool) 唯一文件名
+ * @method $this isUniqidmd5(bool $value=true) 唯一文件名
  * @method $this displayType(string $value) 上传显示方式 image图片,file文件
- * @method $this drag(bool $bool) 是否启用拖拽上传
+ * @method $this drag(bool $value=true) 是否启用拖拽上传
  * @package Eadmin\component\form\field
  */
 class Upload extends Field

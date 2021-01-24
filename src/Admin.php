@@ -8,7 +8,10 @@ use Eadmin\component\basic\Message;
 use Eadmin\component\basic\Notification;
 use Eadmin\controller\ResourceController;
 use Eadmin\service\MenuService;
+use Eadmin\service\NodeService;
+use Eadmin\service\TokenService;
 use think\app\Url;
+use think\facade\Cache;
 use think\facade\Request;
 use think\facade\Route;
 use think\route\dispatch\Callback;
@@ -23,6 +26,95 @@ class Admin
         return new Message();
     }
     /**
+     * 获取用户角色组
+     */
+    public static function roles()
+    {
+        return self::user()->roles;
+    }
+    /**
+     * 获取当前登陆用户id
+     * @return string
+     */
+    public static function id()
+    {
+        return self::token()->id();
+    }
+    public static function menus(){
+        if (self::id() == config('admin.admin_auth_id')) {
+            self::user()->menus();
+        }else{
+            self::user()->menus();
+        }
+       
+    }
+    /**
+     * 验证权限节点
+     * @param $class 完整类名
+     * @param $function 方法
+     * @param string $method 请求方法
+     * @return bool
+     */
+    public static function check($class,$function,$method='get')
+    {
+        $nodeId = md5($class.$function.strtolower($method));
+        $permissions = self::permissions();
+        foreach ($permissions as $permission){
+            if($permission['id'] == $nodeId){
+
+                if($permission['is_auth']){
+                    self::token()->auth();
+                }
+                if(!$permission['is_auth']){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 获取权限节点
+     * @return mixed
+     */
+    public static function permissions()
+    {
+
+        $permissionsKey = 'eadmin_permissions'.self::id();
+        $nodes = Cache::get($permissionsKey);
+        if($nodes){
+            return $nodes;
+        }
+        $nodes = self::node()->all();
+        if(self::id()){
+            $permissions = self::user()->permissions();
+            $nodeIds = array_column($permissions,'node_id');
+        }else{
+            $nodeIds = [];
+        }
+        if (self::id() != config('admin.admin_auth_id')) {
+            foreach ($nodes as $key => &$node) {
+                if(!in_array($node['id'],$nodeIds)){
+                    $node['is_auth'] = false;
+                }
+            }
+        }
+
+        Cache::tag('eadmin_permissions')->set($permissionsKey,$nodes);
+        return $nodes;
+    }
+    /**
+     * 获取当前用户
+     * @return mixed
+     */
+    public static function user()
+    {
+        return self::token()->user();
+    }
+    public static function token(){
+        return new TokenService();
+    }
+    /**
      * 菜单服务
      * @return MenuService
      */
@@ -30,6 +122,13 @@ class Admin
         return app('admin.menu');
     }
 
+    /**
+     * 权限节点
+     * @return NodeService
+     */
+    public static function node(){
+        return new NodeService();
+    }
     /**
      * 树形
      * @param array $data 数据

@@ -17,7 +17,7 @@ use Eadmin\component\Component;
  * @method $this style($style) 额外样式 string / Array<Object | String> / Object
  * @method $this spacer($spacer) 间隔符 	string / number / VNode	-
  * @method $this size($size) 间隔大小 	string / number / [number, number]
- * @method $this wrap(bool $bool) 设置是否自动折行
+ * @method $this wrap(bool $value=true) 设置是否自动折行
  * @package Eadmin\component\basic
  */
 class Space extends Component

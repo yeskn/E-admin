@@ -15,7 +15,7 @@ use Eadmin\model\AdminModel;
 use Eadmin\Service;
 
 
-class TokenService extends Service
+class TokenService 
 {
 
     use ApiJson;

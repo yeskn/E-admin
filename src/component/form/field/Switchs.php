@@ -10,7 +10,7 @@ use Eadmin\component\form\Field;
  * 开关
  * Class Switchs
  * @link https://element-plus.gitee.io/#/zh-CN/component/switch
- * @method $this loading(bool $bool) 是否显示加载中
+ * @method $this loading(bool $value=true) 是否显示加载中
  * @method $this width(int $num) switch 的宽度（像素）
  * @method $this activeIconClass(string $class) switch 打开时所显示图标的类名，设置此项会忽略 active-text
  * @method $this inactiveIconClass(string $class) switch 关闭时所显示图标的类名，设置此项会忽略 inactive-text
@@ -20,7 +20,7 @@ use Eadmin\component\form\Field;
  * @method $this inactiveValue($value) switch 关闭时的值
  * @method $this activeColor(string $value) switch 打开时的背景色
  * @method $this inactiveColor(string $value) switch 关闭时的背景色
- * @method $this validateEvent(bool $bool) 改变 switch 状态时是否触发表单的校验
+ * @method $this validateEvent(bool $value=true) 改变 switch 状态时是否触发表单的校验
  * @package Eadmin\component\form\field
  */
 class Switchs extends Field

@@ -36,9 +36,14 @@ class MenuService
      * 生成树形菜单
      * @return array
      */
-    public function treeData()
+    public function tree()
     {
-        return Admin::tree($this->all());
+        if (Admin::id() == config('admin.admin_auth_id')) {
+            $menus = $this->all();
+        }else{
+            $menus = Admin::user()->menus();
+        }
+        return Admin::tree($menus);
     }
 
     /**

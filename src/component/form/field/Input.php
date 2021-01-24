@@ -16,10 +16,10 @@ use Eadmin\component\form\Field;
  * @link https://element-plus.gitee.io/#/zh-CN/component/input
  * @method $this size(string $value) 输入框尺寸，只在 type!="textarea" 时有效 medium / small / mini
  * @method $this type(string $value) 输入框类型  text / textarea / hidden / password / number
- * @method $this showWordLimit(bool $bool) 是否显示输入字数统计，只在 type = "text" 或 type = "textarea" 时有效
+ * @method $this showWordLimit(bool $value=true) 是否显示输入字数统计，只在 type = "text" 或 type = "textarea" 时有效
  * @method $this placeholder(string $text) 输入框占位文本
- * @method $this clearable(bool $bool) 是否可清空
- * @method $this showPassword(bool $bool) 是否显示切换密码图标
+ * @method $this clearable(bool $value=true) 是否可清空
+ * @method $this showPassword(bool $value=true) 是否显示切换密码图标
  * @method $this prefixIcon(string $icon) 输入框头部图标
  * @method $this suffixIcon(string $icon) 输入框尾部图标
  * @method $this rows(int $row) 输入框行数，只对 type="textarea" 有效

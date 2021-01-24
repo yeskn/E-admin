@@ -16,16 +16,16 @@ use think\helper\Str;
  * Class Drawer
  * @package Eadmin\component\basic
  * @method $this size(string $width) 宽度
- * @method $this fullscreen(bool $bool) 是否为全屏 Dialog
+ * @method $this fullscreen(bool $value=true) 是否为全屏 Dialog
  * @method $this top(string $top) margin-top 值 15vh
  * @method $this direction(string $direction) Drawer 打开的方向 rtl / ltr / ttb / btt
- * @method $this modal(bool $bool) 是否需要遮罩层
- * @method $this closeOnClickModal(bool $bool) 是否可以通过点击 modal 关闭 Dialog
- * @method $this appendToBody(bool $bool) Dialog 自身是否插入至 body 元素上
- * @method $this closeOnPressEscape(bool $bool) 是否可以通过按下 ESC 关闭 Dialog
- * @method $this showClose(bool $bool) 是否显示关闭按钮
- * @method $this withHeader(bool $bool) 控制是否显示 header 栏, 默认为 true
- * @method $this destroyOnClose(bool $bool) 关闭时销毁 Dialog 中的元素
+ * @method $this modal(bool $value=true) 是否需要遮罩层
+ * @method $this closeOnClickModal(bool $value=true) 是否可以通过点击 modal 关闭 Dialog
+ * @method $this appendToBody(bool $value=true) Dialog 自身是否插入至 body 元素上
+ * @method $this closeOnPressEscape(bool $value=true) 是否可以通过按下 ESC 关闭 Dialog
+ * @method $this showClose(bool $value=true) 是否显示关闭按钮
+ * @method $this withHeader(bool $value=true) 控制是否显示 header 栏, 默认为 true
+ * @method $this destroyOnClose(bool $value=true) 关闭时销毁 Dialog 中的元素
  * @method $this url(string $value) 异步加载数据url
  * @method $this params(array $value)  异步附加请求数据
  */
@@ -42,6 +42,17 @@ class Drawer extends Field
             $self->content($content, 'reference');
         }
         return $self;
+    }
+    /**
+     * 表单异步加载
+     * @param Form $form
+     * @return Dialog
+     */
+    public function form(Form $form){
+        $this->url('/eadmin.rest');
+        $oarams = array_merge($form->getCallMethod(),$form->getCallParams());
+        $this->params($oarams);
+        return $this;
     }
     public function reference($content){
         return $this->content($content,'reference');
