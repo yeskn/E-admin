@@ -6,7 +6,7 @@ import { action } from '/@/store'
 // create an axios instance
 const service = axios.create({
   // baseURL: window.global_config.VUE_APP_BASE_API, // url = base url + request url
-  baseURL: 'http://e-admin.test', // url = base url + request url
+  baseURL: 'http://eadmin.com', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 30000 // request timeout
 })
@@ -17,7 +17,7 @@ service.interceptors.request.use(
       // let each request carry token
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
-    //  config.headers['Authorization'] = getToken()
+    config.headers['Authorization'] = localStorage.getItem('eadmin_token')
     return config
   },
   error => {
@@ -41,22 +41,21 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-    let timeNow
-    let refreshTime
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 200) {
       // 登陆验证token判断
       if (res.code === 40000 || res.code === 40001 || res.code === 40002 || res.code === 40003) {
-        //store.dispatch('user/resetToken')
-        ElMessage({
-          message: res.message,
-          type: 'error',
-          duration: 3 * 1000,
-          onClose: function() {
-            //if (!store.getters.token) {
-              location.reload()
-            //}
-          }
+        action.refreshToken().catch(result=>{
+          ElMessage({
+            message: res.message,
+            type: 'error',
+            duration: 3 * 1000,
+            onClose: function() {
+              if (!localStorage.getItem('eadmin_token') && location.href.indexOf('/#/login') === -1) {
+                  location.reload()
+              }
+            }
+          })
         })
       }else if (res.code == 80020) {
         ElMessage({

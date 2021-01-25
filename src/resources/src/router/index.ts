@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory ,RouteLocationNormalized} from 'vue-router'
+import { createRouter, createWebHashHistory ,RouteLocationNormalized,NavigationGuardNext} from 'vue-router'
 import request from '/@/utils/axios'
 import { action,state } from '/@/store'
 import md5 from 'js-md5'
@@ -19,22 +19,37 @@ const router = createRouter({
     history: createWebHashHistory(),
     routes
 })
-router.beforeEach( async(to:RouteLocationNormalized, from:RouteLocationNormalized) => {
-    const styleDoms = document.querySelectorAll('[data-key=eadmin_style_' + md5(from.path)+']')
+var formRoute
+router.beforeEach( async(to:RouteLocationNormalized, from:RouteLocationNormalized,next:NavigationGuardNext) => {
+    formRoute = from
+    if(!localStorage.getItem('eadmin_token') && to.path !== '/login'){
+        return next('/login?redirect='+to.fullPath)
+    }
+    if(!state.info.id && localStorage.getItem('eadmin_token')){
+        await action.getInfo()
+    }
+    action.loading(true)
+    if(to.path === '/refresh'){
+        await loadComponent(from.fullPath)
+        return next(from.fullPath)
+    }
+    if(to.fullPath !== '/'){
+        await loadComponent(to.fullPath)
+    }
+
+    return next()
+})
+router.afterEach((to:RouteLocationNormalized)=>{
+    const styleDoms = document.querySelectorAll('[data-key=eadmin_style_' + md5(formRoute.path)+']')
     if(styleDoms){
         styleDoms.forEach(item=>{
             item.remove()
         })
     }
-    action.loading(true)
-    if(!state.info.id){
-        await action.getInfo()
-    }
-    await loadComponent(to.fullPath)
-    return true
-})
-router.afterEach((to:RouteLocationNormalized)=>{
-    action.component(asyncCmponent)
+    action.component('')
+    setTimeout(()=>{
+        action.component(asyncCmponent)
+    },1)
 })
 function loadComponent(url){
     return new Promise((resolve, reject) =>{

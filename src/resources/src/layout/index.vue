@@ -3,25 +3,25 @@
         <sidebar v-if="sidebar.visible"></sidebar>
         <div class="main-container">
             <header-top></header-top>
-            <div class="main-content">
-                <el-backtop target=".main-content"></el-backtop>
-                <div class="header-title" v-if="proxyData.eadmin_title && mainComponent">
-                    <div class="title" >{{proxyData.eadmin_title}}</div>
-                    <div class="breadcrumb">
-                        <breadcrumb></breadcrumb>
-                        <i class="el-icon-back back" @click="back"></i>
+            <transition name="el-fade-in">
+                <div class="main-content" v-if="mainComponent">
+                    <el-backtop target=".main-content"></el-backtop>
+                    <div class="header-title" v-if="proxyData.eadmin_title">
+                        <div class="title" >{{proxyData.eadmin_title}}</div>
+                        <div class="breadcrumb">
+                            <breadcrumb></breadcrumb>
+                            <i class="el-icon-back back" @click="back"></i>
+                        </div>
                     </div>
-                </div>
-                <transition name="el-fade-in">
                     <render :data="mainComponent"></render>
-                </transition>
-            </div>
+                </div>
+            </transition>
         </div>
     </div>
 </template>
 
 <script>
-    import {useRouter,useRoute} from 'vue-router'
+    import {useRouter} from 'vue-router'
     import {defineComponent, inject, computed, reactive, watch} from 'vue'
     import headerTop from './headerTop.vue'
     import Sidebar from './sidebar/sidebar.vue'
@@ -50,9 +50,6 @@
                    for(let i in proxyData){
                        delete proxyData[i]
                    }
-                }else{
-
-
                }
             })
             function back() {

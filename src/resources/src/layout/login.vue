@@ -1,5 +1,5 @@
 <template>
-    <render :data="mainComponent"></render>
+    <render :data="state.mainComponent"></render>
 </template>
 
 <script>
@@ -13,9 +13,8 @@
         },
         setup(){
             const state = inject(store)
-            const mainComponent = state.mainComponent
             return {
-                mainComponent
+                state
             }
         }
     })

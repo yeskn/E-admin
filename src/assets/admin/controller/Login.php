@@ -9,17 +9,15 @@
 namespace app\admin\controller;
 
 
+use Eadmin\model\SystemConfig;
 use EasyWeChat\Factory;
 use think\facade\Cache;
 use think\facade\Validate;
-use think\facade\View;
 use Eadmin\controller\BaseAdmin;
 use Eadmin\model\AdminModel;
 use Eadmin\service\CaptchaService;
 use Eadmin\service\TokenService;
-use Eadmin\service\WechatService;
-use Eadmin\tools\Data;
-
+use Eadmin\Admin;
 
 /**
  * 登陆
@@ -42,11 +40,10 @@ class Login extends BaseAdmin
                 $this->wxQrcodeLogin($data['wx_code']);
             }
             $validate = Validate::rule([
-                'username' => 'require|min:4',
+                'username' => 'require',
                 'password' => 'require|min:5'
             ])->message([
                 'username.require' => '登录账号不能为空!',
-                'username.min' => '登录账号长度不能少于4位有效字符！',
                 'password.require' => '登录密码不能为空！',
                 'password.min' => '登录密码长度不能少于4位有效字符！',
             ]);
@@ -78,19 +75,18 @@ class Login extends BaseAdmin
                     $user->openid = $data['openid'];
                     $user->save();
                 }
-                $tokens = TokenService::instance()->encode($user);
+                $tokens = Admin::token()->encode($user);
                 event('UserLogin', $user);
                 $this->successCode($tokens);
             } else {
                 $this->errorCode(999, $validate->getError());
             }
         }else{
-            $content = View::fetch('/login');
-            $this->successCode($content);
+           $where= ['web_logo','web_name','web_miitbeian','web_copyright'];
+           $data = SystemConfig::whereIn('name',$where)->column('value','name');
+           return Admin::view('/login',$data);
         }
     }
-
-
     /**
      * 微信二维码登录
      */
@@ -127,11 +123,10 @@ class Login extends BaseAdmin
      * 退出登陆
      * @auth false
      * @login false
-     * @method delete
      */
     public function logout()
     {
-        TokenService::instance()->logout();
+        Admin::token()->logout();
         $this->successCode();
     }
 }

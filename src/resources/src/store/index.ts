@@ -1,8 +1,10 @@
 import { reactive } from "vue";
 import request from '/@/utils/axios'
+import router from "../router";
 export const store = Symbol()
 // 使用 reactive 函数完成响应式转换
 const states = reactive({
+    routerStatus:true,
     //侧边栏
     sidebar: {
         //打开关闭
@@ -67,6 +69,23 @@ const action = {
     selectMenuModule(id){
        states.menuModule = id
     },
+    refreshToken(){
+        return new Promise((resolve, reject) =>{
+            request({
+                url:'/admin/admin/refreshToken'
+            }).then(res=>{
+                if(res.data.token){
+                    localStorage.setItem('eadmin_token',res.data.token)
+                    resolve(res)
+                }else{
+                    localStorage.removeItem('eadmin_token')
+                    reject(res)
+                }
+            }).catch(res=>{
+                reject(res)
+            })
+        })
+    },
     getInfo(){
         return new Promise((resolve, reject) =>{
             request({
@@ -75,7 +94,7 @@ const action = {
                 const info = res.data.info
                 states.menus = res.data.menus
                 if(info){
-                    states.info.id = info.id
+                    states.info = info
                 }
                 resolve(res)
             }).catch(res=>{

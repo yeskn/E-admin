@@ -13,6 +13,7 @@ use Eadmin\service\NodeService;
 use Eadmin\service\TokenService;
 use think\app\Url;
 use think\facade\Cache;
+use think\facade\Db;
 use think\facade\Request;
 use think\facade\Route;
 use think\facade\View;
@@ -21,6 +22,35 @@ use think\route\dispatch\Controller;
 
 class Admin
 {
+    /**
+     * 配置系统参数
+     * @param string $name 参数名称
+     * @param boolean $value 无值为获取
+     * @return string|boolean
+     * @throws \think\Exception
+     * @throws \think\exception\PDOException
+     */
+    public static function sysconf($name, $value = null)
+    {
+        if (is_null($value)) {
+            $value = Db::name('SystemConfig')->where('name', $name)->value('value');
+            if (is_null($value)) {
+                return '';
+            } else {
+                return $value;
+            }
+        } else {
+            $sysconfig = Db::name('SystemConfig')->where('name', $name)->find();
+            if ($sysconfig) {
+                return Db::name('SystemConfig')->where('name', $name)->update(['value' => $value]);
+            } else {
+                return Db::name('SystemConfig')->insert([
+                    'name' => $name,
+                    'value' => $value,
+                ]);
+            }
+        }
+    }
     /**
      * 渲染组件
      * @param $template 模板文件名
@@ -58,7 +88,7 @@ class Admin
         }else{
             self::user()->menus();
         }
-       
+
     }
     /**
      * 验证权限节点
@@ -71,10 +101,10 @@ class Admin
     {
         $nodeId = md5($class.$function.strtolower($method));
         $permissions = self::permissions();
+
         foreach ($permissions as $permission){
             if($permission['id'] == $nodeId){
-
-                if($permission['is_auth']){
+                if($permission['is_login']){
                     self::token()->auth();
                 }
                 if(!$permission['is_auth']){
@@ -175,7 +205,7 @@ class Admin
         $data = $url;
         if(strpos($url,'/') === false){
             $parse = parse_url($url);
-            
+
             $path = $parse['path'];
             $vars = [];
             $request = app()->request;

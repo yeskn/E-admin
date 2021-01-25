@@ -6,7 +6,7 @@ use Eadmin\Admin;
 if (!function_exists('sysconf')) {
     function sysconf($name, $value = null)
     {
-
+        return Admin::sysconf($name,$value);
     }
 }
 if (!function_exists('admin_log')) {
