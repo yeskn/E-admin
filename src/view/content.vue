@@ -24,7 +24,9 @@
             linkComponent(url,name){
                 this.$request({
                     url: url,
-                    eadmin_component:true,
+                    params:{
+                        eadmin_component:true
+                    },
                 }).then(res=>{
                     this[name] = () => new Promise(resolve => {
                         resolve(this.$splitCode(res.data))
