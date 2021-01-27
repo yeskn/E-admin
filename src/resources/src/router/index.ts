@@ -36,7 +36,6 @@ router.beforeEach( async(to:RouteLocationNormalized, from:RouteLocationNormalize
     if(to.fullPath !== '/'){
         await loadComponent(to.fullPath)
     }
-
     return next()
 })
 router.afterEach((to:RouteLocationNormalized)=>{

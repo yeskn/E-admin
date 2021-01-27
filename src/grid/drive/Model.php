@@ -205,6 +205,36 @@ class Model implements GridInterface
         }
     }
     /**
+     * 更新数据
+     * @param array $ids 更新条件id
+     * @param array $data 更新数据
+     * @return Model
+     */
+    public function update(array $ids,array $data)
+    {
+        $action = isset($data['action']) ? $data['action'] : '';
+        if ($action == 'buldview_drag_sort') {
+            $sortable_data = $data['sortable_data'];
+            $field = "id,(@rownum := @rownum+1),case when @rownum = {$sortable_data['sort']} then @rownum := @rownum+1 else @rownum := @rownum end AS rownum";
+            $sortSql = $this->db->table("(SELECT @rownum := -1) r," . $this->model->getTable())
+                ->fieldRaw($field)
+                ->removeOption('order')
+                ->order($this->sortField)
+                ->where('id', '<>', $sortable_data['id'])
+                ->buildSql();
+            $this->model->where($this->model->getPk(), $sortable_data['id'])->update([$this->sortField => $sortable_data['sort']]);
+            $res = Db::execute("update {$this->model->getTable()} inner join {$sortSql} a on a.id={$this->model->getTable()}.id set {$this->sortField}=a.rownum");
+            
+        } else {
+            $res = $this->model->removeWhereField($this->softDeleteField)->strict(false)->whereIn($this->model->getPk(), $ids)->update($data);
+            if ($res) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+    /**
      * 删除数据
      */
     public function destroy($id)
@@ -217,9 +247,6 @@ class Model implements GridInterface
         }
         if ($ids == 'true') {
             $ids = true;
-        }
-        if (!is_null($this->beforeDel)) {
-            call_user_func($this->beforeDel, $ids, $trueDelete);
         }
         $res = false;
         Db::startTrans();

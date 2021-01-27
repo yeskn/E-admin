@@ -47,6 +47,12 @@ class Arrays implements GridInterface
     public function destroy($id){
         return true;
     }
+    public function update(array $ids, array $data)
+    {
+        // TODO: Implement update() method.
+        return true;
+    }
+
     public function quickFilter($keyword, $columns)
     {
 

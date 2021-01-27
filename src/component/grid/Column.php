@@ -8,6 +8,7 @@ use Eadmin\component\basic\Html;
 use Eadmin\component\basic\Tag;
 use Eadmin\component\Component;
 use Eadmin\component\form\field\Rate;
+use Eadmin\component\form\field\Switchs;
 use Eadmin\component\layout\Content;
 
 /**
@@ -34,8 +35,8 @@ class Column extends Component
     //映射标签颜色主题
     protected $tagTheme = 'light';
     protected $tag = null;
-
-    public function __construct($prop, $label)
+    protected $grid;
+    public function __construct($prop, $label,$grid)
     {
         if (!empty($prop)) {
             $this->prop = $prop;
@@ -44,6 +45,7 @@ class Column extends Component
         if (!empty($label)) {
             $this->label($label);
         }
+        $this->grid = $grid;
     }
     /**
      * 评分显示
@@ -159,6 +161,26 @@ class Column extends Component
         $this->tagColor = $tagColor;
         $this->tagTheme = $tagTheme;
         $this->usings = $usings;
+        return $this;
+    }
+    /**
+     * switch开关
+     * @param array $active 开启状态 [1=>'开启']
+     * @param array $inactive 关闭状态 [0=>'关闭']
+     */
+    public function switch(array $active = [], array $inactive = [])
+    {
+        $this->display(function ($val, $data) use ($active, $inactive) {
+            $params = $this->grid->getCallMethod();
+            $params['eadmin_ids'] = [$data[$this->grid->drive()->getPk()]];
+            $switch =  Switchs::create(null,$val)
+                ->state($active, $inactive)
+                ->url('/eadmin/batch.rest')
+                ->field($this->prop)
+                ->params($params);
+            return $switch;
+            
+        });
         return $this;
     }
 

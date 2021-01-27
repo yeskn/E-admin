@@ -67,7 +67,11 @@ class ResourceController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $res = $this->call()->save($request->post());
+        if ($id == 'batch') {
+            $res = $this->call()->update($this->request->put('eadmin_ids'),$request->put());
+        }else{
+            $res = $this->call()->save($request->put());
+        }
         if ($res !== false) {
             admin_success('操作完成','数据保存成功');
         } else {

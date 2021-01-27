@@ -63,7 +63,10 @@ class Grid extends Component
     protected $formAction = null;
 
     protected $detailAction = null;
-
+    //删除前回调
+    protected $beforeDel = null;
+    //更新前回调
+    protected $beforeUpdate = null;
 
     public function __construct($data)
     {
@@ -162,7 +165,17 @@ class Grid extends Component
         }
         return $this->filter;
     }
+    //更新前回调
+    public function updateing(\Closure $closure)
+    {
+        $this->beforeUpdate = $closure;
+    }
 
+    //删除前回调
+    public function deling(\Closure $closure)
+    {
+        $this->beforeDel = $closure;
+    }
     /**
      * 删除
      * @param $id 删除的id
@@ -170,9 +183,24 @@ class Grid extends Component
      */
     public function destroy($id)
     {
+        if (!is_null($this->beforeDel)) {
+            call_user_func($this->beforeDel, $ids);
+        }
         return $this->drive->destroy($id);
     }
 
+    /**
+     * 更新
+     * @param $ids
+     * @param $data
+     * @return mixed
+     */
+    public function update($ids,$data){
+        if (!is_null($this->beforeUpdate)) {
+            call_user_func($this->beforeUpdate, $ids, $data);
+        }
+        return $this->drive->update($ids,$data);
+    }
     /**
      * 设置索引列
      * @param string $type 列类型：selection 多选框 ， index 索引 ， expand 可展开的
@@ -265,7 +293,7 @@ class Grid extends Component
      */
     public function column(string $field = '', string $label = '')
     {
-        $column = new Column($field, $label);
+        $column = new Column($field, $label,$this);
         $this->column[] = $column;
         $this->realiton($field);
         return $column;

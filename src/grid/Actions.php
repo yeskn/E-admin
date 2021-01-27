@@ -37,7 +37,7 @@ class Actions extends Component
     public function __construct($grid)
     {
         $this->grid = $grid;
-        $this->column = new Column('EadminAction','');
+        $this->column = new Column('EadminAction','',$grid);
     }
     public function row($data)
     {

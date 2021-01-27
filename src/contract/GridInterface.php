@@ -19,6 +19,8 @@ interface GridInterface
     public function quickFilter($keyword,$columns);
     public function db();
     public function model();
+    //更新
+    public function update(array $ids,array $data);
     //删除
     public function destroy($id);
     /**

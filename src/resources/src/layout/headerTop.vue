@@ -9,6 +9,9 @@
             </el-menu-item>
         </el-menu>
         <div class="right-menu">
+            <el-tooltip effect="dark" content="全屏" placement="bottom">
+                <screenfull id="screenfull" class="right-menu-item hover-effect" />
+            </el-tooltip>
             <el-tooltip effect="dark" content="刷新" placement="bottom">
                 <div class="right-menu-item hover-effect" @click="refresh">
                     <i class="el-icon-refresh-right refresh"/>
@@ -48,9 +51,13 @@
     import {defineComponent, watch, inject, computed} from 'vue'
     import {store, action} from '/@/store'
     import router from "../router";
+    import screenfull from "/@/components/screenfull.vue";
 
     export default defineComponent({
         name: "headerTop",
+        components:{
+            screenfull
+        },
         setup() {
             const route = useRoute()
 
@@ -59,7 +66,10 @@
             const menus = state.menus
             const activeIndex = computed(() => {
                 let menu = findTree(state.menus, route.path, 'url'), menuLevels = []
-                if (menu) {
+                if(route.path === '/' && menus.length > 0){
+                    selectMenu(menus[0].id)
+                    return state.menuModule + ''
+                } else if (menu) {
                     menuLevels = findParent(state.menus, menu.pid)
                     let menuId
                     if (menuLevels.length > 0) {
@@ -72,7 +82,7 @@
                     }
                     action.setBreadcrumb(menuLevels)
                     return menuLevels[0].id + ''
-                } else {
+                }else {
                     return state.menuModule + ''
                 }
             })
