@@ -33,6 +33,7 @@
                     }).then(res=>{
                         ctx.emit('update:modelValue',val)
                     }).catch(res=>{
+                        value.value = failValue
                         ctx.emit('update:modelValue',failValue)
                     })
                 }else{

@@ -105,7 +105,6 @@ class Form extends Field
         $this->getCallMethod();
         $this->setAction('/eadmin.rest');
         $this->event('gridRefresh',[]);
-        $pkValue = Request::get($this->drive->getPk());
     }
     /**
      * 设置标题
@@ -372,6 +371,18 @@ class Form extends Field
         $this->content($row);
         return $this;
     }
+
+    /**
+     * 是否编辑
+     * @return bool
+     */
+    public function isEdit(){
+        $pkValue = Request::has($this->drive->getPk());
+        if($pkValue && !$this->isEdit){
+            $this->edit($pkValue);
+        }
+        return $this->isEdit;
+    }
     /**
      * 编辑
      * @param string|int $id 主键id数据
@@ -511,8 +522,8 @@ class Form extends Field
             } elseif ($component instanceof Select) {
                 $component->placeholder('请选择' . $label);
             }
-
-            $this->item($prop, $label)->content($component);
+            $item = $this->item($prop, $label)->content($component);
+            $component->setFormItem($item);
         }
         return $component;
     }
@@ -547,9 +558,9 @@ class Form extends Field
             $this->data[$field] = $value;
         }
     }
-    public function getData(){
-        $this->parseComponent();
-        return $this->data;
+    public function getData($field = null){
+        $this->isEdit();
+        return $this->drive->getData($field);
     }
     /**
      * 表单操作定义

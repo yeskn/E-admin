@@ -5,6 +5,8 @@ namespace Eadmin\grid;
 
 
 use Eadmin\component\basic\Button;
+use Eadmin\component\basic\Html;
+use Eadmin\component\basic\Image;
 use Eadmin\component\basic\Router;
 use Eadmin\component\Component;
 use Eadmin\component\grid\Column;
@@ -102,6 +104,20 @@ class Grid extends Component
      */
     public function title(string $title){
         return $this->bind('eadmin_title',$title);
+    }
+    //头像昵称列
+    public function userInfo($headimg = 'headimg', $nickname = 'nickname', $label = '会员信息')
+    {
+        $column = $this->column($nickname, $label);
+        return $column->display(function ($val, $data) use ($column, $headimg) {
+            $headimgValue = $data[$headimg];
+            $image = Image::create()
+                ->src($headimgValue)
+                ->fit('cover')
+                ->attr('style',['width'=>'80px','height'=>'80px',"borderRadius"=>'50%'])
+                ->previewSrcList([$headimgValue]);
+            return Html::create()->content($image)->content("<br>{$val}");
+        })->align('center');
     }
 
     public function formAction()
@@ -341,7 +357,7 @@ class Grid extends Component
             $button = Button::create('添加')
                 ->type('primary')
                 ->size('small')
-                ->icon('el-icon-add');
+                ->icon('el-icon-plus');
             $action = clone $this->formAction->component();
             if($action instanceof Router){
                 $button = $action->content($button)->to("/eadmin/create.rest",$form->getCallMethod());

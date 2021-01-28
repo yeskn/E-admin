@@ -16,11 +16,23 @@ abstract class Field extends Component
 {
     protected $default = null;
     protected $value = null;
+    protected $formItem;
     public function __construct($field = null, $value = '')
     {
         $this->bindValue($field, $value);
     }
 
+    /**
+     * 是否必填
+     * @return $this
+     */
+    public function required(){
+        $this->formItem->required();
+        return $this;
+    }
+    public function setFormItem(FormItem $formItem){
+        $this->formItem = $formItem;
+    }
     /**
      * 设置缺省默认值
      * @param mixed $value

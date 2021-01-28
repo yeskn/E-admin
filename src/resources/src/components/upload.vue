@@ -327,7 +327,7 @@ export default {
           }
         })
       })
-      this.$emit('input', this.files.join(','))
+      this.$emit('update:modelValue', this.files.join(','))
     },
     valueModel(val) {
       if (typeof val === 'string') {

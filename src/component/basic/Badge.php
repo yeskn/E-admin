@@ -19,4 +19,12 @@ use Eadmin\component\Component;
 class Badge extends Component
 {
     protected $name = 'ElBadge';
+    /**
+     * 创建一个标记
+     * @return Badge
+     */
+    public static function create()
+    {
+        return new self();
+    }
 }

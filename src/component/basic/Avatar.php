@@ -22,4 +22,8 @@ use Eadmin\component\Component;
 class Avatar extends Component
 {
     protected $name = 'ElAvatar';
+    public static function create()
+    {
+        return new self();
+    }
 }

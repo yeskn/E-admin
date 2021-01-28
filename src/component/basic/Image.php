@@ -23,4 +23,8 @@ use Eadmin\component\Component;
 class Image extends Component
 {
     protected $name = 'ElImage';
+    public static function create()
+    {
+        return new self();
+    }
 }
