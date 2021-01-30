@@ -10,6 +10,8 @@ namespace Eadmin\component\form;
 
 
 use Eadmin\component\form\Field;
+use Eadmin\form\Form;
+use Eadmin\form\ValidatorForm;
 
 /**
  * form表单
@@ -20,7 +22,6 @@ use Eadmin\component\form\Field;
  * @method $this prop(string $value) 表单域 model 字段
  * @method $this label(string $value) 标签文本
  * @method $this labelWidth(string $value) 表单域标签的的宽度，例如 '50px'。支持 auto
- * @method $this rules(array $value) 表单验证规则
  * @method $this error(string $value) 表单域验证错误信息, 设置该值会使表单验证状态变为error，并显示该错误信息
  * @method $this showMessage(bool $value=true) 是否显示校验错误信息
  * @method $this inlineMessage(bool $value=true) 以行内形式展示校验信息
@@ -30,7 +31,7 @@ class FormItem extends Field
 {
     protected $name = 'ElFormItem';
     protected $form;
-
+    
     public function __construct($prop, $label, $form = null)
     {
         $this->prop($prop);
@@ -39,18 +40,38 @@ class FormItem extends Field
     }
 
     /**
+     * 设置验证规则
+     * @param array $rule
+     * @param int $mode 模式：0新增更新，1新增，2更新
+     * @return void
+     */
+    public function rules(array $rule,int $mode=0){
+        $this->form->manyRelation();
+        $prop = $this->attr('prop');
+        $prop = $this->form->manyRelation() ? $this->form->manyRelation().'.'.$prop :$prop;
+        $field = $this->form->bindAttr('model') . 'Error.' . $prop;
+        $this->bindAttr('error',$field);
+        if($mode == 1){
+            $this->form->validator()->createRule($prop,$rule);
+        }elseif ($mode == 2){
+            $this->form->validator()->updateRule($prop,$rule);
+        }else{
+            $this->form->validator()->rule($prop,$rule);
+        }
+    }
+    /**
      * 是否必填
      * @return $this
      */
     public function required()
     {
-        $this->rules([
-            [
+        $this->attr('rules',[
                 'required' => true,
                 'trigger' => 'blur',
                 'message' => '请输入' . $this->attr('label'),
             ]
-        ]);
+        );
+        $this->rules(['require'=>'请输入' . $this->attr('label')]);
         return $this;
     }
 

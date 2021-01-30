@@ -10,7 +10,8 @@ use think\helper\Str;
 /**
  * Class Field
  * @package Eadmin\component\form
- * @method $this disabled(bool $vlaue) 禁用
+ * @method $this disabled(bool $vlaue=true) 禁用
+ * @property FormItem $formItem
  */
 abstract class Field extends Component
 {
@@ -21,7 +22,41 @@ abstract class Field extends Component
     {
         $this->bindValue($field, $value);
     }
+    /**
+     * 表单新增更新验证规则
+     * @Author: rocky
+     * 2019/8/9 10:50
+     * @param array $rule 验证规则
+     */
+    public function rule(array $rule)
+    {
+        $this->formItem->rules($rule);
+        return $this;
+    }
 
+    /**
+     * 表单新增验证规则
+     * @Author: rocky
+     * 2019/8/9 10:50
+     * @param array $rule 验证规则
+     */
+    public function createRule(array $rule)
+    {
+        $this->formItem->rules($rule,1);
+        return $this;
+    }
+
+    /**
+     * 表单更新验证规则
+     * @Author: rocky
+     * 2019/8/9 10:50
+     * @param array $rule 验证规则
+     */
+    public function updateRule(array $rule)
+    {
+        $this->formItem->rules($rule,2);
+        return $this;
+    }
     /**
      * 是否必填
      * @return $this

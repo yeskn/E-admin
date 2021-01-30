@@ -1,7 +1,7 @@
 <template>
     <el-divider content-position='left'>{{title}}</el-divider>
     <div v-for="(item,index) in value">
-        <slot :row="item" :$index="index" :prop-field="field"></slot>
+        <slot :row="item" :$index="index" :prop-field="field" :validator="$attrs.validator"></slot>
         <el-form-item>
             <el-button size="mini" v-if="value.length - 1 == index" type='primary' plain @click="add">新增</el-button>
             <el-button size="mini" type='danger' v-show='value.length > 0' @click="remove(index)">移除</el-button>
@@ -38,7 +38,7 @@
             }
             //添加元素
             function add(){
-                value.push(props.manyData)
+                value.push({...props.manyData})
             }
             //移除元素
             function remove(index){

@@ -111,10 +111,15 @@
                     return h(splitCode(data.content.default[0]))
                 }
                 name = resolveComponent(data.name)
-                //for 遍历中的 ElFormItem prop处理
+                //for 遍历中的 ElFormItem 验证prop error处理
                 if(data.name == 'ElFormItem'){
                     if(slotProps && slotProps.propField){
-                        attribute.prop = slotProps.propField + '.' + slotProps.$index+ '.' + attribute.prop
+                        if(!modelValue[slotProps.validator][slotProps.propField][slotProps.$index]){
+                            modelValue[slotProps.validator][slotProps.propField][slotProps.$index] = {}
+                        }
+                        let propField = attribute.prop
+                        attribute.prop = slotProps.propField + '.' + slotProps.$index+ '.' + propField
+                        attribute.error = modelValue[slotProps.validator][slotProps.propField][slotProps.$index][propField]
                     }
                 }
                 if (data.map.bindName) {

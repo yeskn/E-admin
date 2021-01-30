@@ -6,14 +6,13 @@
  * Time: 10:35
  */
 
-namespace Eadmin\form\traits;
+namespace Eadmin\form;
 
 
 use think\exception\HttpResponseException;
 use think\facade\Validate;
-use think\model\relation\HasMany;
 
-trait ValidatorForm
+class ValidatorForm
 {
     
     //创建验证规则
@@ -30,12 +29,13 @@ trait ValidatorForm
      * 表单新增更新验证规则
      * @Author: rocky
      * 2019/8/9 10:50
-     * @param $rule 验证规则
+     * @param string $field 字段
+     * @param array $rule 验证规则
      */
-    public function rule(array $rule)
+    public function rule(string $field,array $rule)
     {
-        $this->createRules = array_merge($this->createRules, $rule);
-        $this->updateRules = array_merge($this->updateRules, $rule);
+        $this->paseRule($field,$rule,1);
+        $this->paseRule($field,$rule,2);
         return $this;
     }
 
@@ -43,11 +43,12 @@ trait ValidatorForm
      * 表单新增验证规则
      * @Author: rocky
      * 2019/8/9 10:50
-     * @param $rule 验证规则
+     * @param string $field 字段
+     * @param array $rule 验证规则
      */
-    public function createRule(array $rule)
+    public function createRule(string $field,array $rule)
     {
-        $this->createRules = array_merge($this->createRules, $rule);
+        $this->paseRule($field,$rule,1);
         return $this;
     }
 
@@ -55,75 +56,81 @@ trait ValidatorForm
      * 表单更新验证规则
      * @Author: rocky
      * 2019/8/9 10:50
-     * @param $rule 验证规则
+     * @param string $field 字段
+     * @param array $rule 验证规则
      */
-    public function updateRule(array $rule)
+    public function updateRule(string $field,array $rule)
     {
-        $this->updateRules = array_merge($this->updateRules, $rule);
+        $this->paseRule($field,$rule,2);
         return $this;
     }
     /**
      * 设置表单验证规则
      * @Author: rocky
      * 2019/8/9 10:45
-     * @param $rule 验证规则
-     * @param $msg 验证提示
+     * @param array $rule 验证规则
+     * @param string $msg 验证提示
      * @param int $type 1新增，2更新
      */
     public function setRules($rule, $msg, $type)
     {
         switch ($type) {
             case 1:
-                $this->createRules['rule'] = array_merge($this->createRules['rule'], $rule);
-                $this->createRules['msg'] = array_merge($this->createRules['msg'], $msg);
+                $this->createRules['rule'] = array_merge_recursive($this->createRules['rule'], $rule);
+                $this->createRules['msg'] = array_merge_recursive($this->createRules['msg'], $msg);
                 break;
             case 2:
-                $this->updateRules['rule'] = array_merge($this->updateRules['rule'], $rule);
-                $this->updateRules['msg'] = array_merge($this->updateRules['msg'], $msg);
+                $this->updateRules['rule'] = array_merge_recursive($this->updateRules['rule'], $rule);
+                $this->updateRules['msg'] = array_merge_recursive($this->updateRules['msg'], $msg);
                 break;
         }
+
+
+
     }
     /**
      * 生成验证规则
-     * @param $rules
-     * @return array
+     * @param string $field 字段
+     * @param array $rules
+     * @param int $type 1新增，2更新
      */
-    public function paseRule($rules)
+    public function paseRule($field,$rules,$type)
     {
         $ruleMsg = [];
         $rule = [];
         foreach ($rules as $key => $value) {
             if (strpos($key, ':') !== false) {
-                $msgKey = $this->field . '.' . substr($key, 0, strpos($key, ':'));
+                $msgKey = $field . '.' . substr($key, 0, strpos($key, ':'));
             } else {
-                $msgKey = $this->field . '.' . $key;
+                $msgKey = $field . '.' . $key;
 
             }
             $ruleMsg[$msgKey] = $value;
             $rule[] = $key;
         }
         $resRule = [
-            $this->field => $rule
+            $field => $rule
         ];
-        return [$resRule, $ruleMsg];
+        $this->setRules($resRule,$ruleMsg,$type);
     }
     /**
      * 验证表单规则
-     * @param $datas
+     * @param array $datas
+     * @param int $mode 1新增，2更新
      */
-    public function checkRule($datas)
+    public function check($datas,$mode)
     {
-        if ($this->isEdit) {
-            //更新
-            $validate = Validate::rule($this->updateRules['rule'])->message($this->updateRules['msg']);
-            $rules = $this->updateRules['rule'];
-        } else {
+        if ($mode == 1) {
             //新增
             $validate = Validate::rule($this->createRules['rule'])->message($this->createRules['msg']);
             $rules = $this->createRules['rule'];
+        } else {
+            //更新
+            $validate = Validate::rule($this->updateRules['rule'])->message($this->updateRules['msg']);
+            $rules = $this->updateRules['rule'];
         }
         foreach ($datas as $field => $data) {
-            if (method_exists($this->model, $field) && $this->model->$field() instanceof HasMany) {
+            if (is_array($data) && count($data) != count($data, 1)) {
                 $validateFields = [];
                 $removeFields = [];
                 $manyValidate = clone $validate;

@@ -76,7 +76,7 @@ class Form extends Field
 
     //用于控制回调布局是否追加到from元素
     protected $itemBool = true;
-
+    protected $manyRelation = '';
     protected $itemComponent = [];
     protected $formItem = [];
 
@@ -84,6 +84,9 @@ class Form extends Field
     protected $isEdit = false;
 
     protected $drive;
+
+    protected $validator;
+
     protected $data = [];
     //保存前回调
     protected $beforeSave = null;
@@ -105,7 +108,10 @@ class Form extends Field
         $this->getCallMethod();
         $this->setAction('/eadmin.rest');
         $this->event('gridRefresh',[]);
+        $this->validator = new ValidatorForm();
+        $this->validatorBind();
     }
+    
     /**
      * 设置标题
      * @param string $title
@@ -114,15 +120,12 @@ class Form extends Field
     public function title(string $title){
         return $this->bind('eadmin_title',$title);
     }
+
     /**
-     * 表单验证规则
-     * @param array $value
-     * @return $this
+     * @return ValidatorForm
      */
-    public function rules(array $value)
-    {
-        $this->attr(__FUNCTION__, $bool);
-        return $this;
+    public function validator(){
+        return $this->validator;
     }
 
     /**
@@ -259,7 +262,7 @@ class Form extends Field
                 $value = $componentValue;
                 $value = $this->getPickerValue($component, $field, $value);
             }
-            $this->setData($field, $value);
+            $this->setData($field, $value ?? '');
             if (is_null($data)) {
                 $component->bindAttr($attr, $this->bindAttr('model') . '.' . $field);
             }
@@ -398,7 +401,9 @@ class Form extends Field
         $this->setAction('/eadmin/'.$id.'.rest','PUT');
         return $this;
     }
-
+    public function manyRelation(){
+        return $this->manyRelation;
+    }
     /**
      * 一对多添加
      * @param $realtion 关联方法|字段
@@ -407,26 +412,31 @@ class Form extends Field
      */
     public function hasMany($realtion, $title, \Closure $closure)
     {
+        $this->validatorBind($realtion);
         $this->formItem = [];
         $manyItem = FormMany::create($realtion, []);
+        $validatorField = $this->bindAttr('model').'Error';
+        $manyItem->attr('validator',$validatorField);
         $originItemComponent = $this->itemComponent;
         $this->itemComponent = [];
         $this->itemBool = false;
+        $this->manyRelation = $realtion;
         call_user_func_array($closure, [$this]);
+        $this->manyRelation = '';
         $this->itemBool = true;
         $itemComponent = $this->itemComponent;
-        $datas = $this->drive->getData($realtion);
+        $datas = $this->drive->getData($realtion) ?? [];
         $manyData = [];
         foreach ($itemComponent as $component) {
             $componentClone = clone $component;
             $this->valueModel($componentClone, []);
         }
+        $manyItem->attr('manyData', $this->data);
         if (!$this->isEdit && empty($datas)) {
             //添加模式默认添加一条
             $datas[] = $this->data;
         }
         $this->data = [];
-        $manyItem->attr('manyData', $this->data);
         $manyItem->attr('field', $realtion);
         $manyItem->attr('title', $title);
         foreach ($datas as $key => $data) {
@@ -522,7 +532,9 @@ class Form extends Field
             } elseif ($component instanceof Select) {
                 $component->placeholder('请选择' . $label);
             }
-            $item = $this->item($prop, $label)->content($component);
+            $item = $this->item($prop, $label);
+           
+            $item->content($component);
             $component->setFormItem($item);
         }
         return $component;
@@ -582,6 +594,9 @@ class Form extends Field
      * @throws \Exception
      */
     public function save(array $data){
+        //验证数据
+        $validatorMode = $this->isEdit() ? 2 : 1;
+        $this->validator->check($data,$validatorMode);
         //保存前回调
         if (!is_null($this->beforeSave)) {
             $beforeData = call_user_func($this->beforeSave, $data);
@@ -629,6 +644,24 @@ class Form extends Field
         $this->data = array_merge($this->data,$this->callMethod);
         //将值绑定到form
         $this->bind($field, $this->data);
+
+    }
+
+    /**
+     * 验证错误字段初始化绑定
+     * @param $field
+     */
+    protected function validatorBind($field = null){
+        //验证器属性绑定
+        $validatorField = $this->bindAttr('model').'Error';
+        $this->attr('validator',$validatorField);
+        if(is_null($field)){
+            $data = [];
+        }else{
+            $data = $this->bind($validatorField);
+            $data[$field] = [];
+        }
+        $this->bind($validatorField,$data);
     }
     public function jsonSerialize()
     {

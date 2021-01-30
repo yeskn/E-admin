@@ -1,11 +1,11 @@
 <template>
     <el-main class='form'>
-    <el-form  ref="EadminForm" v-bind="$attrs" @submit.native.prevent>
+    <el-form ref="eadminForm" v-bind="$attrs" @submit.native.prevent>
         <slot></slot>
         <el-form-item>
             <slot name="leftAction"></slot>
-            <render v-if="action.submit" native-type="submit" :loading="loading" :data="action.submit" @click="sumbitForm('EadminForm')"></render>
-            <render v-if="action.reset" :data="action.reset" @click="resetForm('EadminForm')"></render>
+            <render v-if="action.submit" native-type="submit" :loading="loading" :data="action.submit" @click="sumbitForm"></render>
+            <render v-if="action.reset" :data="action.reset" @click="resetForm"></render>
             <slot name="rightAction"></slot>
         </el-form-item>
     </el-form>
@@ -13,7 +13,7 @@
 </template>
 
 <script>
-    import {defineComponent, inject,reactive,triggerRef} from 'vue'
+    import {defineComponent, inject,reactive,ref} from 'vue'
     import render from "/@/components/render.vue"
     import manyItem from "./manyItem.vue"
     import { store } from '/@/store'
@@ -37,37 +37,72 @@
         },
         emits: ['success','gridRefresh'],
         setup(props,ctx){
+            const eadminForm = ref(null)
             const {loading,http} = useHttp()
             const state = inject(store)
             const proxyData = state.proxyData
             //提交
-            function sumbitForm(formName) {
-                this.$refs[formName].validate((valid) => {
-                    if (valid) {
-                        if(props.setAction){
+            function sumbitForm() {
+                if(props.setAction){
+                    clearValidator()
+                    eadminForm.value.validate(bool=>{
+                        if(bool){
                             http({
                                 url: props.setAction,
                                 method: props.setActionMethod,
                                 data: ctx.attrs.model
                             }).then(res=>{
-                                ctx.emit('success')
-                                ctx.emit('gridRefresh')
+                                if(res.code === 422){
+                                    for (let field in res.data){
+                                        if(res.index){
+                                            let fields = field.split('.')
+                                            let name = fields.shift()
+                                            let f = fields.shift()
+                                            if(!proxyData[ctx.attrs.validator][name]){
+                                                proxyData[ctx.attrs.validator][name] = []
+                                            }
+                                            if(!proxyData[ctx.attrs.validator][name][res.index]){
+                                                proxyData[ctx.attrs.validator][name][res.index] = {}
+                                            }
+                                            proxyData[ctx.attrs.validator][name][res.index][f] = res.data[field]
+                                        }else{
+                                            proxyData[ctx.attrs.validator][field] = res.data[field]
+                                        }
+
+                                    }
+                                }else{
+                                    ctx.emit('success')
+                                    ctx.emit('gridRefresh')
+                                }
                             })
                         }else{
-                            ctx.emit('success')
-                            ctx.emit('gridRefresh')
+                            return false
                         }
-                    } else {
-                        return false;
+                    })
+                }else{
+                    ctx.emit('success')
+                    ctx.emit('gridRefresh')
+                }
+            }
+            //清除校验结果
+            function clearValidator() {
+                for (let field in proxyData[ctx.attrs.validator]){
+                    let value = proxyData[ctx.attrs.validator][field]
+                    if(Array.isArray(value)){
+                        proxyData[ctx.attrs.validator][field] = []
+                    }else{
+                        proxyData[ctx.attrs.validator][field] = ''
                     }
-                })
+                }
+                eadminForm.value.clearValidate()
             }
             //重置
-            function resetForm(formName) {
-                this.$refs[formName].resetFields();
+            function resetForm() {
+                clearValidator()
+                eadminForm.value.resetFields();
             }
             return {
-                proxyData,
+                eadminForm,
                 loading,
                 resetForm,
                 sumbitForm,
