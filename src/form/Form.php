@@ -563,6 +563,17 @@ class Form extends Field
      * @param $value 值
      */
     public function setData(string $field,$value){
+        //数字类型转换处理
+        if(is_array($value) && count($value) == count($value,1)){
+            foreach ($value as &$v){
+                if(preg_match('/^\d+$/',$v)){
+                    $v = intval($v);
+                }
+            }
+        }elseif(!is_array($value) && preg_match('/^\d+$/',$value)){
+            $value = intval($value);
+        }
+
         if (strpos($field, '.')) {
             list($relation, $field) = explode('.', $field);
             $this->data[$relation][$field] = $value;
