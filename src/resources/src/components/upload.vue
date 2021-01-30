@@ -113,7 +113,6 @@
       </div>
     </el-dialog>
   </div>
-
 </template>
 <script>
 import Uploader from 'simple-uploader.js'
@@ -328,6 +327,7 @@ export default {
         })
       })
       this.$emit('update:modelValue', this.files.join(','))
+
     },
     valueModel(val) {
       if (typeof val === 'string') {

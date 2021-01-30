@@ -13,7 +13,7 @@
 </template>
 
 <script>
-    import {defineComponent, inject,reactive,ref} from 'vue'
+    import {defineComponent, inject,nextTick,ref,watch} from 'vue'
     import render from "/@/components/render.vue"
     import manyItem from "./manyItem.vue"
     import { store } from '/@/store'
@@ -68,14 +68,15 @@
                                         }else{
                                             proxyData[ctx.attrs.validator][field] = res.data[field]
                                         }
-
                                     }
+                                    scrollIntoView()
                                 }else{
                                     ctx.emit('success')
                                     ctx.emit('gridRefresh')
                                 }
                             })
                         }else{
+                            scrollIntoView()
                             return false
                         }
                     })
@@ -83,6 +84,18 @@
                     ctx.emit('success')
                     ctx.emit('gridRefresh')
                 }
+            }
+            //滚动到校验错误处
+            function scrollIntoView() {
+                nextTick(()=>{
+                    let isError  = document.getElementsByClassName('is-error')
+                    if(isError){
+                        isError[0].scrollIntoView({
+                            block: 'center',
+                            behavior: 'smooth'
+                        })
+                    }
+                })
             }
             //清除校验结果
             function clearValidator() {
@@ -96,6 +109,9 @@
                 }
                 eadminForm.value.clearValidate()
             }
+            watch(ctx.attrs.model,(val)=>{
+                eadminForm.value.validate((bool)=>{})
+            })
             //重置
             function resetForm() {
                 clearValidator()
