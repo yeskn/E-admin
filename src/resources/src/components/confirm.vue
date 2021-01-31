@@ -22,7 +22,7 @@
             //请求参数
             params: Object,
         },
-        emits: ['confirm', 'cancel'],
+        emits: ['confirm', 'cancel','gridRefresh'],
         setup(props, ctx) {
             function opend() {
                 ElMessageBox.confirm(props.message, props.title, ctx.attrs)

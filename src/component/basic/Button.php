@@ -14,19 +14,22 @@ use Eadmin\component\Component;
 /**
  * Class Button
  * @package Eadmin\component\basic
- * @method $this disabled(bool $value=true) 是否禁用状态
- * @method $this loading(bool $value=true) 是否加载中状态
- * @method $this circle(bool $value=true) 是否圆形按钮
- * @method $this round(bool $value=true) 是否圆角按钮
- * @method $this plain(bool $value=true) 是否朴素按钮
+ * @method $this disabled(bool $value = true) 是否禁用状态
+ * @method $this loading(bool $value = true) 是否加载中状态
+ * @method $this circle(bool $value = true) 是否圆形按钮
+ * @method $this round(bool $value = true) 是否圆角按钮
+ * @method $this plain(bool $value = true) 是否朴素按钮
  * @method $this type(string $value) 类型 primary / success / warning / danger / info / text
  * @method $this nativeType(string $value) 原生type属性 button / submit / reset
  * @method $this size(string $value) 尺寸 medium / small / mini
  * @method $this icon(string $value) 图标
+ * @method $this url(string $value) ajax请求url
+ * @method $this method(string $value) ajax请求method get / post /put / delete
+ * @method $this params(array $value) 提交ajax参数
  */
 class Button extends Component
 {
-    protected $name = 'ElButton';
+    protected $name = 'EadminButton';
 
     public function __construct($content)
     {
@@ -47,30 +50,34 @@ class Button extends Component
      * 模态对话框
      * @return Dialog
      */
-    public function dialog(){
+    public function dialog()
+    {
         $dialog = Dialog::create($this);
         return $dialog;
     }
 
     /**
      * 跳转
-     * @param string $url  跳转url
+     * @param string $url 跳转url
      * @param array $params 参数
      * @return Router|mixed|null
      */
-    public function to(string $url,array $params){
-        $router = Router::create()->content($this)->to($url,$params);
+    public function to(string $url, array $params)
+    {
+        $router = Router::create()->content($this)->to($url, $params);
         return $router;
     }
+
     /**
      * 抽屉
      * @return Drawer
      */
-    public function drawer(){
+    public function drawer()
+    {
         $drawer = Drawer::create($this);
         return $drawer;
     }
-    
+
     /**
      * 确认消息框
      * @param string $message 确认内容
@@ -83,6 +90,24 @@ class Button extends Component
         $confirm = Confirm::create($this)
             ->message($message)->url($url)->params($params);
         return $confirm;
+    }
+
+    /**
+     * 保存数据
+     * @param $id 
+     * @param array $data
+     * @param $url
+     * @param string $confirm
+     * @return $this|Confirm
+     */
+    public function save($id, array $data, $url, $confirm = '')
+    {
+        if (empty($confirm)) {
+            $this->url($url)->params($data);
+        } else {
+            return $this->confirm($confirm, $url, $data);
+        }
+        return $this;
     }
 
     /**

@@ -4,8 +4,6 @@
         <div class="tools" v-if="!hideTools">
             <el-row style="padding-top: 10px">
                 <el-col :span="24">
-
-
                     <!--快捷搜索-->
                     <el-input class="hidden-md-and-down" v-model="quickSearch" clearable prefix-icon="el-icon-search"
                               size="small" style="margin-right: 10px;width: 200px;" placeholder="请输入关键字" @change="handleFilter" v-if="quickSearchOn"></el-input>
@@ -13,7 +11,7 @@
                     <!--添加-->
                     <render v-if="addButton" :data="addButton" :slot-props="{grid:grid}"></render>
                     <!--导出-->
-                    <el-dropdown trigger="click" style="margin-left: 10px;">
+                    <el-dropdown trigger="click">
                         <el-button type="primary" size="small" icon="el-icon-download">
                             导出<i class="el-icon-arrow-down el-icon--right"></i>
                         </el-button>
@@ -26,7 +24,8 @@
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
-
+                    <el-button plain size="small" icon="el-icon-delete" v-if="!hideDeleteSelection && selectionData.length > 0" @click="deleteSelect">删除选中</el-button>
+                    <el-button type="danger" size="small" icon="el-icon-delete" v-if="!hideDeleteButton" @click="deleteAll()">清空数据</el-button>
                     <div style="float: right;margin-right: 15px">
                         <!--刷新-->
                         <el-button icon="el-icon-refresh" size="mini" circle style="margin-right: 10px"
@@ -45,7 +44,7 @@
                             </template>
                         </el-dropdown>
                     </div>
-                    <el-button v-if="filter" style="margin-left: 10px" type="primary" size="small" icon="el-icon-zoom-in" @click="visibleFilter">筛选</el-button>
+                    <el-button v-if="filter" type="primary" size="small" icon="el-icon-zoom-in" @click="visibleFilter">筛选</el-button>
                 </el-col>
             </el-row>
         </div>
@@ -56,7 +55,7 @@
         <!--表格-->
         <el-table @selection-change="handleSelect" v-loading="loading" :data="tableData" v-bind="$attrs">
             <template v-for="column in columns">
-                <el-table-column v-if="checkboxColumn.indexOf(column.prop) > -1" v-bind="column">
+                <el-table-column v-if="checkboxColumn.indexOf(column.prop) > -1" :width="column.prop == 'EadminAction' ? eadminActionWidth:''" v-bind="column">
                     <template #header>
                         <render :data="column.header" :slot-props="{grid:grid}"></render>
                     </template>
@@ -80,10 +79,12 @@
 </template>
 
 <script>
-    import {defineComponent, ref, watch, inject,reactive,triggerRef} from "vue";
+    import {defineComponent, ref, watch, inject,nextTick,triggerRef} from "vue";
     import render from "/@/components/render.vue"
     import {useHttp} from '/@/hooks'
+    import request from '/@/utils/axios'
     import {store} from '/@/store'
+    import {ElMessageBox} from 'element-plus';
     export default defineComponent({
         name: "EadminGrid",
         components: {
@@ -96,10 +97,13 @@
             modelValue: Boolean,
             loadDataUrl: String,
             hideTools: Boolean,
+            hideDeleteButton: Boolean,
+            hideDeleteSelection: Boolean,
             filter: [Object, Boolean],
             addButton: [Object, Boolean],
             filterField:String,
             params:Object,
+
         },
         inheritAttrs: false,
         emits: ['update:modelValue'],
@@ -111,6 +115,7 @@
             const filterShow = ref(false)
             const quickSearch = ref('')
             const selectionData = ref([])
+            const eadminActionWidth = ref(0)
             const quickSearchOn = ctx.attrs.quickSearch
             let checkboxColumn = ref([])
             props.columns.forEach(item => {
@@ -128,6 +133,15 @@
                 if (value) {
                     loadData()
                 }
+            })
+            nextTick(()=>{
+                //操作列宽度自适应
+                document.getElementsByClassName('EadminAction').forEach(item=>{
+                    if(eadminActionWidth.value < item.offsetWidth){
+                        eadminActionWidth.value = item.offsetWidth
+                    }
+                })
+                eadminActionWidth.value += 30
             })
             //分页大小改变
             function handleSizeChange(val) {
@@ -171,10 +185,35 @@
                     ctx.emit('update:modelValue', false)
                 })
             }
+            //删除全部
+            function deleteAll(){
+                deleteRequest('此操作将删除清空所有数据, 是否继续?',true)
+            }
+            //删除选中
+            function deleteSelect() {
+                let ids = []
+                selectionData.value.forEach(item=>{
+                    ids.push(item.id)
+                })
+                deleteRequest('此操作将删除选中数据, 是否继续?',ids)
+            }
+            //删除请求
+            function deleteRequest(message,ids) {
+                ElMessageBox.confirm(message,'提示',{type: 'warning'}).then(()=>{
+                    request({
+                        url: props.loadDataUrl.replace('.rest','/delete.rest'),
+                        data: Object.assign({ids: ids},props.params),
+                        method:'delete',
+                    }).then(res=>{
+                        loadData()
+                    })
+                })
+            }
             function visibleFilter() {
                 filterShow.value = !filterShow.value
             }
             return {
+                eadminActionWidth,
                 grid,
                 quickSearchOn,
                 page,
@@ -191,6 +230,8 @@
                 handleSelect,
                 visibleFilter,
                 filterShow,
+                deleteSelect,
+                deleteAll
             }
         }
     })

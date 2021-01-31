@@ -237,17 +237,10 @@ class Model implements GridInterface
     /**
      * 删除数据
      */
-    public function destroy($id)
+    public function destroy($ids)
     {
         $trueDelete = Request::delete('trueDelete');
-        if ($id == 'delete') {
-            $ids = Request::delete('ids');
-        } else {
-            $ids = explode(',', $id);
-        }
-        if ($ids == 'true') {
-            $ids = true;
-        }
+        
         $res = false;
         Db::startTrans();
         try {

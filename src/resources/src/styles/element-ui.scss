@@ -1,23 +1,11 @@
 @import './element-variables.scss';
-.el-button + span{
-  margin-left: 10px;
+.el-table__fixed::before, .el-table__fixed-right::before {
+  z-index: 3;
 }
-span + .el-button{
-  margin-left: 10px;
+.el-button{
+  margin-right: 10px;
 }
-span + span > .el-button{
-  margin-left: 10px;
-}
-span + a > .el-button{
-  margin-left: 10px;
-}
-.el-button + a > .el-button{
-  margin-left: 10px;
-}
-a + a > .el-button{
-  margin-left: 10px;
-}
-a + span > .el-button{
-  margin-left: 10px;
+.el-button + .el-button {
+  margin-left: auto;
 }
 

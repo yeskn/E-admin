@@ -26,12 +26,14 @@ use think\Model;
  * @method $this size(string $size) Radio的尺寸，仅在border为真时有效 medium / small / mini
  * @method $this height(int $height) 高度
  * @method $this maxHeight(int $height) 最大高度
- * @method $this stripe(bool $bool) 是否为斑马纹
- * @method $this border(bool $bool) 是否带有纵向边框
+ * @method $this stripe(bool $bool = true) 是否为斑马纹
+ * @method $this border(bool $bool = true) 是否带有纵向边框
  * @method $this fit(bool $bool) 列的宽度是否自撑开
+ * @method $this hideDeleteButton(bool $bool = true) 隐藏删除按钮
+ * @method $this hideDeleteSelection(bool $bool = true) 隐藏删除选中按钮
  * @method $this defaultExpandAll(bool $bool) 是否默认展开所有行
- * @method $this showHeader(bool $bool) 是否显示表头
- * @method $this highlightCurrentRow(bool $bool) 是否要高亮当前行
+ * @method $this showHeader(bool $bool = true) 是否显示表头
+ * @method $this highlightCurrentRow(bool $bool = true) 是否要高亮当前行
  * @method $this headerRowStyle(array $value) 表头行样式
  * @method $this rowStyle(array $value) 行样式
  * @method $this cellStyle(array $value) 单元格样式
@@ -200,7 +202,7 @@ class Grid extends Component
     public function destroy($id)
     {
         if (!is_null($this->beforeDel)) {
-            call_user_func($this->beforeDel, $ids);
+            call_user_func($this->beforeDel, $id);
         }
         return $this->drive->destroy($id);
     }
@@ -246,7 +248,6 @@ class Grid extends Component
     {
         $this->hideAddButton = $bool;
     }
-
     /**
      * 隐藏操作列
      * @param bool $bool
@@ -322,6 +323,7 @@ class Grid extends Component
      */
     protected function parseColumn($datas)
     {
+        
         //添加操作列
         if (!$this->hideAction) {
             $this->column[] = $this->actionColumn->column();
@@ -329,7 +331,7 @@ class Grid extends Component
         $tableData = [];
         //解析行数据
         foreach ($datas as $data) {
-            $row = [];
+            $row = ['id'=>$data[$this->drive->getPk()]];
             foreach ($this->column as $column) {
                 $field = $column->attr('prop');
                 $row[$field] = $column->row($data);

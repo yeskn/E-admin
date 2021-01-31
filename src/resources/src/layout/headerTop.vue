@@ -87,17 +87,19 @@
                 }
             })
             watch(() => state.menuModule, (val, oldVal) => {
-                menus.forEach(item => {
-                    if (item.id == val && item.children) {
-                        action.sidebarVisible(true)
-                        let url = defaultMenu(item.children)
-                        if (url) {
-                            link(url)
+                if(oldVal){
+                    menus.forEach(item => {
+                        if (item.id == val && item.children) {
+                            action.sidebarVisible(true)
+                            let url = defaultMenu(item.children)
+                            if (url) {
+                                link(url)
+                            }
+                        } else {
+                            action.sidebarVisible(false)
                         }
-                    } else {
-                        action.sidebarVisible(false)
-                    }
-                })
+                    })
+                }
             })
 
             //侧边栏展开收缩

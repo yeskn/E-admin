@@ -22,7 +22,7 @@ interface GridInterface
     //更新
     public function update(array $ids,array $data);
     //删除
-    public function destroy($id);
+    public function destroy($ids);
     /**
      * 获取数据
      * @param bool $hidePage 是否分页

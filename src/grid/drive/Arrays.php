@@ -44,7 +44,7 @@ class Arrays implements GridInterface
     {
         return 'id';
     }
-    public function destroy($id){
+    public function destroy($ids){
         return true;
     }
     public function update(array $ids, array $data)

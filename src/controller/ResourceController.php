@@ -87,7 +87,12 @@ class ResourceController extends Controller
      */
     public function delete($id)
     {
-        $res = $this->call()->destroy($id);
+        if ($id == 'delete') {
+            $ids = request()->delete('ids');
+        } else {
+            $ids = explode(',', $id);
+        }
+        $res = $this->call()->destroy($ids);
         if ($res !== false) {
             admin_success('操作完成','删除成功');
         } else {
