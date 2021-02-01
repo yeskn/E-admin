@@ -96,7 +96,7 @@ class Button extends Component
      * 保存数据
      * @param $id 
      * @param array $data
-     * @param $url
+     * @param mixed $url
      * @param string $confirm
      * @return $this|Confirm
      */

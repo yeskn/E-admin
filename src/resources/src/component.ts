@@ -8,7 +8,8 @@ import drawer from './components/drawer.vue'
 import switchs from './components/switchs.vue'
 import tree from './components/tree.vue'
 import button from './components/button.vue'
-import grid from './components/grid.vue'
+import grid from './components/grid/grid.vue'
+import batchAction from './components/grid/batchAction.vue'
 import confirm from './components/confirm.vue'
 import eadminErrorPage from './components/EadminErrorPage.vue'
 app.component(form.name,form)
@@ -22,4 +23,5 @@ app.component(button.name,button)
 app.component(confirm.name,confirm)
 app.component(upload.name,upload)
 app.component(tinymce.name,tinymce)
+app.component(batchAction.name,batchAction)
 app.component(eadminErrorPage.name,eadminErrorPage)

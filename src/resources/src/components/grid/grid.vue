@@ -45,6 +45,7 @@
                         </el-dropdown>
                     </div>
                     <el-button v-if="filter" type="primary" size="small" icon="el-icon-zoom-in" @click="visibleFilter">筛选</el-button>
+                    <render v-for="tool in tools" :data="tool" :ids="selectIds" :grid-params="params"></render>
                 </el-col>
             </el-row>
         </div>
@@ -79,7 +80,7 @@
 </template>
 
 <script>
-    import {defineComponent, ref, watch, inject,nextTick,triggerRef} from "vue";
+    import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed} from "vue";
     import render from "/@/components/render.vue"
     import {useHttp} from '/@/hooks'
     import request from '/@/utils/axios'
@@ -97,6 +98,7 @@
             modelValue: Boolean,
             loadDataUrl: String,
             hideTools: Boolean,
+            tools:[Object,Array],
             hideDeleteButton: Boolean,
             hideDeleteSelection: Boolean,
             filter: [Object, Boolean],
@@ -159,6 +161,14 @@
             function handleSelect(selection) {
                 selectionData.value = selection
             }
+            //选中ids
+            const selectIds = computed(()=>{
+                let ids = []
+                selectionData.value.forEach(item=>{
+                    ids.push(item.id)
+                })
+                return ids
+            })
             //快捷搜索
             function handleFilter() {
                 page = 1
@@ -191,11 +201,7 @@
             }
             //删除选中
             function deleteSelect() {
-                let ids = []
-                selectionData.value.forEach(item=>{
-                    ids.push(item.id)
-                })
-                deleteRequest('此操作将删除选中数据, 是否继续?',ids)
+                deleteRequest('此操作将删除选中数据, 是否继续?',selectIds)
             }
             //删除请求
             function deleteRequest(message,ids) {
@@ -231,7 +237,8 @@
                 visibleFilter,
                 filterShow,
                 deleteSelect,
-                deleteAll
+                deleteAll,
+                selectIds
             }
         }
     })

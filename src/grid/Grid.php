@@ -29,7 +29,9 @@ use think\Model;
  * @method $this stripe(bool $bool = true) 是否为斑马纹
  * @method $this border(bool $bool = true) 是否带有纵向边框
  * @method $this fit(bool $bool) 列的宽度是否自撑开
+ * @method $this quickSearch(bool $bool = true) 快捷搜索
  * @method $this hideDeleteButton(bool $bool = true) 隐藏删除按钮
+ * @method $this hideTools(bool $bool = true) 隐藏工具栏
  * @method $this hideDeleteSelection(bool $bool = true) 隐藏删除选中按钮
  * @method $this defaultExpandAll(bool $bool) 是否默认展开所有行
  * @method $this showHeader(bool $bool = true) 是否显示表头
@@ -71,6 +73,8 @@ class Grid extends Component
     protected $beforeDel = null;
     //更新前回调
     protected $beforeUpdate = null;
+    //工具栏
+    protected $tools = [];
 
     public function __construct($data)
     {
@@ -104,9 +108,11 @@ class Grid extends Component
      * @param string $title
      * @return string
      */
-    public function title(string $title){
-        return $this->bind('eadmin_title',$title);
+    public function title(string $title)
+    {
+        return $this->bind('eadmin_title', $title);
     }
+
     //头像昵称列
     public function userInfo($headimg = 'headimg', $nickname = 'nickname', $label = '会员信息')
     {
@@ -116,7 +122,7 @@ class Grid extends Component
             $image = Image::create()
                 ->src($headimgValue)
                 ->fit('cover')
-                ->attr('style',['width'=>'80px','height'=>'80px',"borderRadius"=>'50%'])
+                ->attr('style', ['width' => '80px', 'height' => '80px', "borderRadius" => '50%'])
                 ->previewSrcList([$headimgValue]);
             return Html::create()->content($image)->content("<br>{$val}");
         })->align('center');
@@ -126,10 +132,12 @@ class Grid extends Component
     {
         return $this->formAction;
     }
+
     public function detailAction()
     {
         return $this->detailAction;
     }
+
     /**
      * 设置from表单
      * @param Form $form
@@ -140,11 +148,12 @@ class Grid extends Component
         $this->formAction->form($form);
         return $this->formAction;
     }
+
     /**
      * 设置detail详情
      * @param Detail $detail
      */
-    public function setDetail( $detail)
+    public function setDetail($detail)
     {
         $this->detailAction = new ActionMode();
         $this->detailAction->detail($detail);
@@ -183,6 +192,7 @@ class Grid extends Component
         }
         return $this->filter;
     }
+
     //更新前回调
     public function updateing(\Closure $closure)
     {
@@ -194,6 +204,7 @@ class Grid extends Component
     {
         $this->beforeDel = $closure;
     }
+
     /**
      * 删除
      * @param $id 删除的id
@@ -213,12 +224,14 @@ class Grid extends Component
      * @param $data
      * @return mixed
      */
-    public function update($ids,$data){
+    public function update($ids, $data)
+    {
         if (!is_null($this->beforeUpdate)) {
             call_user_func($this->beforeUpdate, $ids, $data);
         }
-        return $this->drive->update($ids,$data);
+        return $this->drive->update($ids, $data);
     }
+
     /**
      * 设置索引列
      * @param string $type 列类型：selection 多选框 ， index 索引 ， expand 可展开的
@@ -248,6 +261,7 @@ class Grid extends Component
     {
         $this->hideAddButton = $bool;
     }
+
     /**
      * 隐藏操作列
      * @param bool $bool
@@ -256,14 +270,18 @@ class Grid extends Component
     {
         $this->hideAction = $bool;
     }
-
-    /**
-     * 隐藏工具栏
-     * @param bool $bool
-     */
-    public function hideTools(bool $bool = true)
+    public function tools($tools)
     {
-        $this->attr('hideTools', $bool);
+        if (is_string($tools)) {
+            $this->tools[] = Html::create()->content($tools);
+        } elseif (is_array($tools)) {
+            foreach ($tools as $tool){
+                $this->tools($tool);   
+            }
+        }elseif($tools instanceof Component){
+            $this->tools[] = $tools;
+        }
+        return $this;
     }
 
     /**
@@ -272,14 +290,6 @@ class Grid extends Component
     public function hidePage(bool $bool = true)
     {
         $this->hidePage = $bool;
-    }
-
-    /**
-     * 快捷搜索
-     */
-    public function quickSearch(bool $bool = true)
-    {
-        $this->attr('quickSearch', $bool);
     }
 
     /**
@@ -310,7 +320,7 @@ class Grid extends Component
      */
     public function column(string $field = '', string $label = '')
     {
-        $column = new Column($field, $label,$this);
+        $column = new Column($field, $label, $this);
         $this->column[] = $column;
         $this->realiton($field);
         return $column;
@@ -323,7 +333,7 @@ class Grid extends Component
      */
     protected function parseColumn($datas)
     {
-        
+
         //添加操作列
         if (!$this->hideAction) {
             $this->column[] = $this->actionColumn->column();
@@ -331,7 +341,7 @@ class Grid extends Component
         $tableData = [];
         //解析行数据
         foreach ($datas as $data) {
-            $row = ['id'=>$data[$this->drive->getPk()]];
+            $row = ['id' => $data[$this->drive->getPk()]];
             foreach ($this->column as $column) {
                 $field = $column->attr('prop');
                 $row[$field] = $column->row($data);
@@ -355,19 +365,21 @@ class Grid extends Component
         //添加按钮
         if (!$this->hideAddButton) {
             $form = $this->formAction->form();
-            $form->eventSuccess([$this->bindAttr('modelValue') => true,$form->bindAttr('model')=>$form->getCallMethod()]);
+            $form->eventSuccess([$this->bindAttr('modelValue') => true, $form->bindAttr('model') => $form->getCallMethod()]);
             $button = Button::create('添加')
                 ->type('primary')
                 ->size('small')
                 ->icon('el-icon-plus');
             $action = clone $this->formAction->component();
-            if($action instanceof Router){
-                $button = $action->content($button)->to("/eadmin/create.rest",$form->getCallMethod());
-            }else{
-                $button = $action->bindValue(null,false)->reference($button)->title($form->bind('eadmin_title'))->content($form);
+            if ($action instanceof Router) {
+                $button = $action->content($button)->to("/eadmin/create.rest", $form->getCallMethod());
+            } else {
+                $button = $action->bindValue(null, false)->reference($button)->title($form->bind('eadmin_title'))->content($form);
             }
             $this->attr('addButton', $button);
         }
+        //工具栏
+        $this->attr('tools',$this->tools);
         //快捷搜索
         $keyword = Request::get('quickSearch', '', ['trim']);
         $this->drive->quickFilter($keyword, $this->column);
@@ -395,7 +407,7 @@ class Grid extends Component
             return ['code' => 200, 'data' => $data, 'total' => $this->pagination->attr('total')];
         } else {
             $params = (array)$this->attr('params');
-            $this->params(array_merge($params,$this->getCallMethod()));
+            $this->params(array_merge($params, $this->getCallMethod()));
             $this->attr('columns', array_column($this->column, 'attribute'));
             return parent::jsonSerialize(); // TODO: Change the autogenerated stub
         }
