@@ -23,6 +23,9 @@ interface GridInterface
     public function update(array $ids,array $data);
     //删除
     public function destroy($ids);
+    //设置排序字段
+    public function sortField(string $field);
+
     /**
      * 获取数据
      * @param bool $hidePage 是否分页

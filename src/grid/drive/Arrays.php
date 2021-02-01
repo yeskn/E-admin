@@ -47,6 +47,13 @@ class Arrays implements GridInterface
     public function destroy($ids){
         return true;
     }
+    /**
+     * @param string $sortField
+     */
+    public function sortField(string $sortField): void
+    {
+        
+    }
     public function update(array $ids, array $data)
     {
         // TODO: Implement update() method.

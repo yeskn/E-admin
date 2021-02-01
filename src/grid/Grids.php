@@ -158,11 +158,7 @@ class Grids extends View
         $this->model()->order($field);
         $this->column($field, $label)->display(function ($val, $data) {
             $html = <<<EOF
-<div style="text-align:center;">
-<el-tooltip  effect="dark" content="置顶" placement="right-start"><i @click="sortTop(index,data)" class="el-icon-caret-top" style="cursor: pointer"></i></el-tooltip>
-<el-tooltip effect="dark" content="拖动排序" placement="right-start"><i class="el-icon-rank sortHandel" style="font-weight:bold;cursor: grab"></i></el-tooltip>
-<el-tooltip  effect="dark" content="置底" placement="right-start"><i @click="sortBottom(index,data)" class="el-icon-caret-bottom" style="cursor: pointer"></i></el-tooltip>
-</div>
+a
 EOF;
             return $html;
         })->width(50)->align('center');

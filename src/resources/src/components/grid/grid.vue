@@ -54,7 +54,16 @@
             <render :data="filter" ></render>
         </div>
         <!--表格-->
-        <el-table @selection-change="handleSelect" v-loading="loading" :data="tableData" v-bind="$attrs">
+        <el-table @selection-change="handleSelect" row-key='id' v-loading="loading" ref='dragTable' :data="tableData" v-bind="$attrs">
+            <el-table-column width="50" align="center" label="排序" v-if="sortDrag">
+                <template #default="scope">
+                    <div style="display: flex;flex-direction: column">
+                        <el-tooltip  effect="dark" content="置顶" placement="right-start"><i @click="sortTop(scope.$index,scope.row)" class="el-icon-caret-top" style="cursor: pointer"></i></el-tooltip>
+                        <el-tooltip effect="dark" content="拖动排序" placement="right-start"><i class="el-icon-rank sortHandel" style="font-weight:bold;cursor: grab"></i></el-tooltip>
+                        <el-tooltip  effect="dark" content="置底" placement="right-start"><i @click="sortBottom(scope.$index,scope.row)" class="el-icon-caret-bottom" style="cursor: pointer"></i></el-tooltip>
+                    </div>
+                </template>
+            </el-table-column>
             <template v-for="column in columns">
                 <el-table-column v-if="checkboxColumn.indexOf(column.prop) > -1" :width="column.prop == 'EadminAction' ? eadminActionWidth:''" v-bind="column">
                     <template #header>
@@ -80,12 +89,14 @@
 </template>
 
 <script>
-    import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed} from "vue";
+    import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed} from "vue"
     import render from "/@/components/render.vue"
     import {useHttp} from '/@/hooks'
     import request from '/@/utils/axios'
     import {store} from '/@/store'
-    import {ElMessageBox} from 'element-plus';
+    import {ElMessageBox,ElMessage} from 'element-plus'
+    import Sortable from 'sortablejs'
+    import {useRoute} from 'vue-router'
     export default defineComponent({
         name: "EadminGrid",
         components: {
@@ -98,6 +109,8 @@
             modelValue: Boolean,
             loadDataUrl: String,
             hideTools: Boolean,
+            sortDrag: Boolean,
+            sortInput: Boolean,
             tools:[Object,Array],
             hideDeleteButton: Boolean,
             hideDeleteSelection: Boolean,
@@ -110,8 +123,10 @@
         inheritAttrs: false,
         emits: ['update:modelValue'],
         setup(props, ctx) {
+            const route = useRoute()
             const state = inject(store)
             const proxyData = state.proxyData
+            const dragTable = ref('')
             const grid = ctx.attrs.eadmin_grid
             const {loading,http} = useHttp()
             const filterShow = ref(false)
@@ -144,7 +159,75 @@
                     }
                 })
                 eadminActionWidth.value += 30
+                dragSort()
             })
+            //拖拽排序
+            function dragSort(){
+                const el = dragTable.value.$el.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
+                Sortable.create(el, {
+                    handle:'.sortHandel',
+                    ghostClass: 'sortable-ghost', // Class name for the drop placeholder,
+                    onEnd: evt => {
+                        var newIndex = evt.newIndex;
+                        var oldIndex = evt.oldIndex;
+                        var oldItem = tableData.value[oldIndex]
+                        var startPage = (page-1) * size
+                        const targetRow = tableData.value.splice(evt.oldIndex, 1)[0]
+                        tableData.value.splice(evt.newIndex, 0, targetRow)
+                        if(evt.newIndex != evt.oldIndex){
+                            sortRequest(oldItem.id,startPage +newIndex).catch(()=>{
+                                const targetRow = tableData.value.splice(evt.newIndex, 1)[0]
+                                tableData.value.splice(evt.oldIndex, 0, targetRow)
+                            })
+                        }
+                    }
+                })
+            }
+            function sortRequest(id,sort) {
+                return new Promise((resolve, reject) =>{
+                    request({
+                        url: 'eadmin/batch.rest',
+                        params:Object.assign(props.params,route.query),
+                        method: 'put',
+                        data:{
+                            action:'eadmin_sort',
+                            id:id,
+                            sort: sort,
+                            eadmin_ids:[]
+                        }
+                    }).then(res=>{
+                        resolve(res)
+                    }).catch(res=>{
+                        reject(res)
+                    })
+                })
+
+            }
+            //排序置顶
+            function sortTop(index,data){
+                sortRequest(data.id,0).then(res=>{
+                    if(page === 1){
+                        const targetRow = tableData.value.splice(index, 1)[0]
+                        tableData.value.unshift(targetRow)
+                    }else{
+                        tableData.value.splice(index,1)
+
+                    }
+                })
+
+            }
+            //排序置底
+            function sortBottom(index,data){
+                sortRequest(data.id,total.value-1).then(res=>{
+                    if(page === 1){
+                        const targetRow = tableData.value.splice(index, 1)[0]
+                        tableData.value.push(targetRow)
+                    }else{
+                        tableData.value.splice(index,1)
+                    }
+
+                })
+            }
             //分页大小改变
             function handleSizeChange(val) {
                 page = 1
@@ -183,7 +266,7 @@
                     page: page,
                     size: size,
                 }
-                requestParams = Object.assign(requestParams, proxyData[props.filterField],{quickSearch:quickSearch.value},props.params)
+                requestParams = Object.assign(requestParams, proxyData[props.filterField],{quickSearch:quickSearch.value},props.params,route.query)
                 http({
                     url: props.loadDataUrl,
                     params: requestParams
@@ -238,13 +321,25 @@
                 filterShow,
                 deleteSelect,
                 deleteAll,
-                selectIds
+                selectIds,
+                dragTable,
+                sortTop,
+                sortBottom
             }
         }
     })
 </script>
 
 <style scoped>
+    .sortable-selecte{
+        background-color: #EBEEF5 !important;
+
+    }
+    .sortable-ghost{
+        opacity: .8;
+        color: #fff!important;
+        background: #2d8cf0!important;
+    }
     .pagination {
         background: #fff;
         padding: 10px 16px;

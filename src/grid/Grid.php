@@ -245,6 +245,18 @@ class Grid extends Component
     }
 
     /**
+     * 拖拽排序
+     * @param $field 排序字段
+     */
+    public function sortDrag($field = 'sort'){
+        $this->drive->sortField($field);
+        $this->attr('sortDrag',true);
+    }
+    public function sortInput($field = 'sort'){
+        $this->drive->sortField($field);
+        $this->attr('sortInput',true);
+    }
+    /**
      * 操作列定义
      * @param \Closure $closure
      */
