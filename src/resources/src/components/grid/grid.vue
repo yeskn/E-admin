@@ -72,6 +72,9 @@
                     <template v-if="!column.type" #default="scope">
                         <render :data="scope.row[column.prop]" :slot-props="{grid:grid}"></render>
                     </template>
+                    <template v-if="column.type === 'sortInput'" #default="scope">
+                        <el-input v-model="scope.row[column.prop].content.default[0]" @change="sortInput(scope.row.id,scope.row[column.prop].content.default[0])"></el-input>
+                    </template>
                 </el-table-column>
             </template>
         </el-table>
@@ -228,6 +231,10 @@
 
                 })
             }
+            //输入框排序
+            function sortInput(id,sort){
+                sortRequest(id,sort)
+            }
             //分页大小改变
             function handleSizeChange(val) {
                 page = 1
@@ -324,7 +331,8 @@
                 selectIds,
                 dragTable,
                 sortTop,
-                sortBottom
+                sortBottom,
+                sortInput
             }
         }
     })

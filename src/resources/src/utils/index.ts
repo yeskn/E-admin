@@ -29,6 +29,6 @@ export function link(url){
     if (isExternal(url)) {
         window.open(url)
     }else{
-        router.push(url)
+        router.push('/'+url)
     }
 }

@@ -4,6 +4,7 @@
 namespace Eadmin\grid;
 
 
+use Eadmin\Admin;
 use Eadmin\component\basic\Button;
 use Eadmin\component\basic\Html;
 use Eadmin\component\basic\Image;
@@ -63,6 +64,12 @@ class Grid extends Component
     protected $hideAddButton = false;
     //查询过滤
     protected $filter = null;
+
+    //是否开启树形表格
+    protected $isTree = false;
+
+    //树形上级id
+    protected $treeParent = 'pid';
 
     protected $drive;
 
@@ -252,9 +259,28 @@ class Grid extends Component
         $this->drive->sortField($field);
         $this->attr('sortDrag',true);
     }
+
+    /**
+     * 输入框排序
+     * @param string $field 排序字段
+     */
     public function sortInput($field = 'sort'){
         $this->drive->sortField($field);
-        $this->attr('sortInput',true);
+        $column = $this->column($field,'排序')->width(80)->align('center');
+        $column->attr('type', 'sortInput');
+        return $column;
+    }
+    /**
+     * 开启树形表格
+     * @param string $pid 父级字段
+     * @param bool $expand 是否展开
+     */
+    public function treeTable($pidField = 'pid',$expand = true)
+    {
+        $this->treeParent = $pidField;
+        $this->isTree = true;
+        $this->hidePage();
+        $this->defaultExpandAll($expand);
     }
     /**
      * 操作列定义
@@ -353,7 +379,12 @@ class Grid extends Component
         $tableData = [];
         //解析行数据
         foreach ($datas as $data) {
+            //主键
             $row = ['id' => $data[$this->drive->getPk()]];
+            //树形父级pid
+            if($this->isTree){
+                $row[$this->treeParent] = $data[$this->treeParent];
+            }
             foreach ($this->column as $column) {
                 $field = $column->attr('prop');
                 $row[$field] = $column->row($data);
@@ -365,9 +396,7 @@ class Grid extends Component
             }
             $tableData[] = $row;
         }
-        $field = Str::random(15, 3);
-        $this->bind($field, $tableData);
-        $this->bindAttr('data', $field);
+
         return $tableData;
     }
 
@@ -413,9 +442,12 @@ class Grid extends Component
         $data = $this->drive->getData($this->hidePage, $page, $size);
         //解析列
         $data = $this->parseColumn($data);
-
+        //树形
+        if($this->isTree){
+            $data = Admin::tree($data,$this->drive->getPk(),$this->treeParent);
+        }
+        $this->bindAttValue('data', $data);
         if (request()->has('ajax_request_data')) {
-
             return ['code' => 200, 'data' => $data, 'total' => $this->pagination->attr('total')];
         } else {
             $params = (array)$this->attr('params');

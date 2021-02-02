@@ -205,8 +205,7 @@ class Admin
         $data = $url;
         if(strpos($url,'/') === false){
             $parse = parse_url($url);
-
-            $path = $parse['path'];
+            $path = $parse['path'] ?? '';
             $vars = [];
             $request = app()->request;
             if (isset($parse['query'])){
