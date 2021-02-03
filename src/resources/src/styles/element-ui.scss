@@ -1,4 +1,18 @@
 @import './element-variables.scss';
+.el-submenu [class^="fa fa-"] {
+  vertical-align: middle;
+  margin-right: 5px;
+  width: 24px;
+  text-align: center;
+  font-size: 18px;
+}
+.el-menu-item [class^="fa fa-"] {
+  vertical-align: middle;
+  margin-right: 5px;
+  width: 24px;
+  text-align: center;
+  font-size: 18px;
+}
 .el-table__fixed::before, .el-table__fixed-right::before {
   z-index: 3;
 }
