@@ -74,8 +74,7 @@ class Form extends Field
     protected $actions;
     protected $tab;
 
-    //用于控制回调布局是否追加到from元素
-    protected $itemBool = true;
+   
     protected $manyRelation = '';
     protected $itemComponent = [];
     protected $formItem = [];
@@ -303,21 +302,30 @@ class Form extends Field
     {
         if (!$this->tab) {
             $this->tab = Tabs::create();
-            $this->content($this->tab);
+            $this->push($this->tab);
         }
-        $this->formItem = [];
-        $this->itemBool = false;
-        call_user_func_array($closure, [$this, $this->tab]);
-        $this->itemBool = true;
+        $formItems = $this->collectFields($closure);
         $tabPane = new TabPane();
         $tabPane->label($title);
-        foreach ($this->formItem as $item) {
+        foreach ($formItems as $item) {
             $tabPane->content($item);
         }
         $this->tab->content($tabPane);
         return $this;
     }
-
+    protected function collectFields(\Closure $closure){
+        $offset = count($this->formItem);
+        $form = clone $this;
+        call_user_func($closure, $form);
+        $formItems = array_slice($form->fields(),$offset);
+        return $formItems;
+    }
+    public function fields(){
+        return $this->formItem;
+    }
+    protected function push($item){
+        $this->formItem[] = $item;
+    }
     /**
      * 添加item
      * @param string $prop 字段
@@ -327,10 +335,7 @@ class Form extends Field
     public function item($prop = '', $label = '')
     {
         $item = FormItem::create($prop, $label, $this);
-        if ($this->itemBool) {
-            $this->content($item);
-        }
-        $this->formItem[] = $item;
+        $this->push($item);
         return $item;
     }
 
@@ -342,15 +347,11 @@ class Form extends Field
      */
     public function column(int $span, \Closure $closure)
     {
-        $this->formItem = [];
-        $row = new Row();
-        $this->itemBool = false;
-        call_user_func($closure, $this);
-        $this->itemBool = true;
-        foreach ($this->formItem as $item) {
+        $formItems = $this->collectFields($closure);
+        foreach ($formItems as $item) {
             $row->column($item, $span);
         }
-        $this->content($row);
+        $this->push($row);
         return $this;
     }
 
@@ -362,19 +363,17 @@ class Form extends Field
      */
     public function row(string $title, \Closure $closure)
     {
-        $this->formItem = [];
+       
         $row = new Row();
-        $this->itemBool = false;
-        call_user_func($closure, $this);
-        $this->itemBool = true;
+        $formItems = $this->collectFields($closure);
         $row->content("<h4 style='font-size:16px;color: #666666'>{$title}</h4>");
-        foreach ($this->formItem as $item) {
+        foreach ($formItems as $item) {
             $row->column($item);
         }
-        $this->content($row);
+        $this->push($row);
         return $this;
     }
-
+    
     /**
      * 是否编辑
      * @return bool
@@ -413,17 +412,15 @@ class Form extends Field
     public function hasMany($realtion, $title, \Closure $closure)
     {
         $this->validatorBind($realtion);
-        $this->formItem = [];
+        
         $manyItem = FormMany::create($realtion, []);
         $validatorField = $this->bindAttr('model').'Error';
         $manyItem->attr('validator',$validatorField);
         $originItemComponent = $this->itemComponent;
         $this->itemComponent = [];
-        $this->itemBool = false;
         $this->manyRelation = $realtion;
-        call_user_func_array($closure, [$this]);
+        $formItems = $this->collectFields($closure);
         $this->manyRelation = '';
-        $this->itemBool = true;
         $itemComponent = $this->itemComponent;
         $datas = $this->drive->getData($realtion) ?? [];
         $manyData = [];
@@ -453,10 +450,10 @@ class Form extends Field
         }
         $manyItem->value($manyData);
         $this->itemComponent = $originItemComponent;
-        foreach ($this->formItem as $item) {
+        foreach ($formItems as $item) {
             $manyItem->content($item);
         }
-        $this->content($manyItem);
+        $this->push($manyItem);
         return $manyItem;
     }
 
@@ -525,7 +522,7 @@ class Form extends Field
         }
         if ($name == 'hidden') {
             //隐藏域
-            $this->content($component);
+            $this->push($component);
         } else {
             if ($component instanceof Input) {
                 $component->placeholder('请输入' . $label);
@@ -533,7 +530,6 @@ class Form extends Field
                 $component->placeholder('请选择' . $label);
             }
             $item = $this->item($prop, $label);
-           
             $item->content($component);
             $component->setFormItem($item);
         }
@@ -566,7 +562,7 @@ class Form extends Field
         //数字类型转换处理
         if(is_array($value) && count($value) == count($value,1)){
             foreach ($value as &$v){
-                if(preg_match('/^\d+$/',$v)){
+                if(!is_array($v) && preg_match('/^\d+$/',$v)){
                     $v = intval($v);
                 }
             }
@@ -647,6 +643,9 @@ class Form extends Field
      */
     protected function parseComponent()
     {
+        foreach ($this->formItem as $item){
+            $this->content($item);
+        }
         foreach ($this->itemComponent as $component) {
             //各个组件绑定值赋值
             $this->valueModel($component);
@@ -655,7 +654,6 @@ class Form extends Field
         $this->data = array_merge($this->data,$this->callMethod);
         //将值绑定到form
         $this->bind($field, $this->data);
-
     }
 
     /**

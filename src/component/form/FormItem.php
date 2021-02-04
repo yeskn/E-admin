@@ -46,7 +46,6 @@ class FormItem extends Field
      * @return void
      */
     public function rules(array $rule,int $mode=0){
-        $this->form->manyRelation();
         $prop = $this->attr('prop');
         $prop = $this->form->manyRelation() ? $this->form->manyRelation().'.'.$prop :$prop;
         $field = $this->form->bindAttr('model') . 'Error.' . $prop;

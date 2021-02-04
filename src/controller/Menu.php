@@ -37,7 +37,9 @@ class Menu extends Controller
         $grid->title('系统菜单管理');
         $grid->treeTable();
         $grid->indexColumn();
-        $grid->column('name', '菜单名称');
+        $grid->column('name', '菜单名称')->display(function ($val,$data){
+            return "<i class='{$data['icon']}'></i> ".$val;
+        });
         $grid->column('url', '菜单链接');
         $grid->column('status', '状态')->switch();
         $grid->actions(function (Actions $action, $data) {
@@ -58,13 +60,14 @@ class Menu extends Controller
     {
         $menus = Admin::menu()->listOptions();
         $form = new Form(new SystemMenu());
+
         $form->select('pid', '上级菜单')
             ->options([0=>'顶级菜单']+array_column($menus,'label','id'))
             ->required();
         $form->text('name', '菜单名称')->required();
         $form->text('url', '菜单链接')->default('#')->required();
         $form->text('params', '链接参数');
-      //  $form->icon('icon', '菜单图标');
+        $form->icon('icon', '菜单图标');
         return $form;
     }
 }

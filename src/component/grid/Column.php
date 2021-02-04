@@ -168,7 +168,7 @@ class Column extends Component
      * @param array $active 开启状态 [1=>'开启']
      * @param array $inactive 关闭状态 [0=>'关闭']
      */
-    public function switch(array $active = [], array $inactive = [])
+    public function switch(array $active = [1 => ''] , array $inactive = [0 => ''])
     {
         $this->display(function ($val, $data) use ($active, $inactive) {
             $params = $this->grid->getCallMethod();
@@ -183,7 +183,26 @@ class Column extends Component
         });
         return $this;
     }
-
+    /**
+     * 追加前面
+     * @param $append
+     * @return Column
+     */
+    public function prepend($prepend){
+        return $this->display(function ($val) use($prepend){
+            return $prepend.$val;
+        });
+    }
+    /**
+     * 追加末尾
+     * @param $append
+     * @return Column
+     */
+    public function append($append){
+        return $this->display(function ($val) use($append){
+           return $val.$append;
+        });
+    }
     /**
      * 自定义显示
      * @param \Closure $closure
