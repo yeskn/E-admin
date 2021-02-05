@@ -54,9 +54,13 @@
             <render :data="filter" ></render>
         </div>
         <!--表格-->
-        <a-table :columns="columns" :data-source="tableData" :pagination="false">
+        <a-table :columns="columns" :data-source="tableData" :pagination="false" row-key='id' ref='dragTable' v-loading="loading" v-bind="$attrs">
+
+            <template v-for="column in columns" v-slot:[column.dataIndex]>
+                <render :data="column.header" :slot-props="{grid:grid}"></render>
+            </template>
             <template  #default="{ text }">
-                      <render :data="text" :slot-props="{grid:grid}"></render>
+                 <render :data="text" :slot-props="{grid:grid}"></render>
             </template>
         </a-table>
 <!--        <el-table @selection-change="handleSelect" row-key='id' v-loading="loading" ref='dragTable' :data="tableData" v-bind="$attrs">-->
@@ -131,7 +135,6 @@
         inheritAttrs: false,
         emits: ['update:modelValue'],
         setup(props, ctx) {
-            console.log(props.columns)
             const route = useRoute()
             const state = inject(store)
             const proxyData = state.proxyData

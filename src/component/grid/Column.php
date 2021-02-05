@@ -38,9 +38,11 @@ class Column extends Component
     protected $grid;
     public function __construct($prop, $label,$grid)
     {
+        $this->attr('slots',['title'=>$prop,'customRender'=>'default']);
         if (!empty($prop)) {
             $this->prop = $prop;
             $this->prop($prop);
+            $this->dataIndex($prop);
         }
         if (!empty($label)) {
             $this->label($label);
@@ -135,7 +137,6 @@ class Column extends Component
      */
     public function label(string $label)
     {
-        $this->attr('label',$label);
         $this->attr('header', Html::create()->content($label));
         return $this;
     }
