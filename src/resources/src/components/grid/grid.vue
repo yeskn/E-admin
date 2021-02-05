@@ -54,30 +54,35 @@
             <render :data="filter" ></render>
         </div>
         <!--表格-->
-        <el-table @selection-change="handleSelect" row-key='id' v-loading="loading" ref='dragTable' :data="tableData" v-bind="$attrs">
-            <el-table-column width="50" align="center" label="排序" v-if="sortDrag">
-                <template #default="scope">
-                    <div style="display: flex;flex-direction: column">
-                        <el-tooltip  effect="dark" content="置顶" placement="right-start"><i @click="sortTop(scope.$index,scope.row)" class="el-icon-caret-top" style="cursor: pointer"></i></el-tooltip>
-                        <el-tooltip effect="dark" content="拖动排序" placement="right-start"><i class="el-icon-rank sortHandel" style="font-weight:bold;cursor: grab"></i></el-tooltip>
-                        <el-tooltip  effect="dark" content="置底" placement="right-start"><i @click="sortBottom(scope.$index,scope.row)" class="el-icon-caret-bottom" style="cursor: pointer"></i></el-tooltip>
-                    </div>
-                </template>
-            </el-table-column>
-            <template v-for="column in columns">
-                <el-table-column v-for="column in columns" v-if="checkboxColumn.indexOf(column.prop) > -1" :width="column.prop == 'EadminAction' ? eadminActionWidth:''" v-bind="column">
-                    <template #header>
-                        <render :data="column.header" :slot-props="{grid:grid}"></render>
-                    </template>
-                    <template v-if="!column.type" #default="scope">
-                        <render :data="scope.row[column.prop]" :slot-props="{grid:grid}"></render>
-                    </template>
-                    <template v-if="column.type === 'sortInput'" #default="scope">
-                        <el-input v-model="scope.row[column.prop].content.default[0]" @change="sortInput(scope.row.id,scope.row[column.prop].content.default[0])"></el-input>
-                    </template>
-                </el-table-column>
+        <a-table :columns="columns" :data-source="tableData" :pagination="false">
+            <template  #default="{ text }">
+                      <render :data="text" :slot-props="{grid:grid}"></render>
             </template>
-        </el-table>
+        </a-table>
+<!--        <el-table @selection-change="handleSelect" row-key='id' v-loading="loading" ref='dragTable' :data="tableData" v-bind="$attrs">-->
+<!--            <el-table-column width="50" align="center" label="排序" v-if="sortDrag">-->
+<!--                <template #default="scope">-->
+<!--                    <div style="display: flex;flex-direction: column">-->
+<!--                        <el-tooltip  effect="dark" content="置顶" placement="right-start"><i @click="sortTop(scope.$index,scope.row)" class="el-icon-caret-top" style="cursor: pointer"></i></el-tooltip>-->
+<!--                        <el-tooltip effect="dark" content="拖动排序" placement="right-start"><i class="el-icon-rank sortHandel" style="font-weight:bold;cursor: grab"></i></el-tooltip>-->
+<!--                        <el-tooltip  effect="dark" content="置底" placement="right-start"><i @click="sortBottom(scope.$index,scope.row)" class="el-icon-caret-bottom" style="cursor: pointer"></i></el-tooltip>-->
+<!--                    </div>-->
+<!--                </template>-->
+<!--            </el-table-column>-->
+<!--            <template v-for="column in columns">-->
+<!--                <el-table-column v-if="checkboxColumn.indexOf(column.prop) > -1" :width="column.prop == 'EadminAction' ? eadminActionWidth:''" v-bind="column">-->
+<!--                    <template #header>-->
+<!--                        <render :data="column.header" :slot-props="{grid:grid}"></render>-->
+<!--                    </template>-->
+<!--                    <template v-if="!column.type" #default="scope">-->
+<!--                        <render :data="scope.row[column.prop]" :slot-props="{grid:grid}"></render>-->
+<!--                    </template>-->
+<!--                    <template v-if="column.type === 'sortInput'" #default="scope">-->
+<!--                        <el-input v-model="scope.row[column.prop].content.default[0]" @change="sortInput(scope.row.id,scope.row[column.prop].content.default[0])"></el-input>-->
+<!--                    </template>-->
+<!--                </el-table-column>-->
+<!--            </template>-->
+<!--        </el-table>-->
         <!--分页-->
         <el-pagination class="pagination"
                        @size-change="handleSizeChange"

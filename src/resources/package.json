@@ -8,9 +8,10 @@
   "dependencies": {
     "@tinymce/tinymce-vue": "^4.0.0",
     "ali-oss": "^6.13.1",
+    "ant-design-vue": "^2.0.0-rc.9",
     "axios": "^0.20.0-0",
     "dayjs": "^1.10.2",
-    "element-plus": "^1.0.1-beta.23",
+    "element-plus": "^1.0.2-beta.31",
     "font-awesome": "^4.7.0",
     "hls.js": "^0.14.17",
     "install": "^0.13.0",
