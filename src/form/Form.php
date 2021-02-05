@@ -74,7 +74,7 @@ class Form extends Field
     protected $actions;
     protected $tab;
 
-   
+
     protected $manyRelation = '';
     protected $itemComponent = [];
     protected $formItem = [];
@@ -110,7 +110,7 @@ class Form extends Field
         $this->validator = new ValidatorForm();
         $this->validatorBind();
     }
-    
+
     /**
      * 设置标题
      * @param string $title
@@ -313,17 +313,14 @@ class Form extends Field
         $this->tab->content($tabPane);
         return $this;
     }
-    protected function collectFields(\Closure $closure){
+    public function collectFields(\Closure $closure){
         $offset = count($this->formItem);
-        $form = clone $this;
-        call_user_func($closure, $form);
-        $formItems = array_slice($form->fields(),$offset);
+        call_user_func($closure, $this);
+        $formItems = array_slice($this->formItem,$offset);
+        $this->formItem =  array_slice($this->formItem,0,$offset);
         return $formItems;
     }
-    public function fields(){
-        return $this->formItem;
-    }
-    protected function push($item){
+    public function push($item){
         $this->formItem[] = $item;
     }
     /**
@@ -363,7 +360,7 @@ class Form extends Field
      */
     public function row(string $title, \Closure $closure)
     {
-       
+
         $row = new Row();
         $formItems = $this->collectFields($closure);
         $row->content("<h4 style='font-size:16px;color: #666666'>{$title}</h4>");
@@ -373,7 +370,7 @@ class Form extends Field
         $this->push($row);
         return $this;
     }
-    
+
     /**
      * 是否编辑
      * @return bool
@@ -412,7 +409,7 @@ class Form extends Field
     public function hasMany($realtion, $title, \Closure $closure)
     {
         $this->validatorBind($realtion);
-        
+
         $manyItem = FormMany::create($realtion, []);
         $validatorField = $this->bindAttr('model').'Error';
         $manyItem->attr('validator',$validatorField);
@@ -653,6 +650,7 @@ class Form extends Field
         $field = $this->bindAttr('model');
         $this->data = array_merge($this->data,$this->callMethod);
         //将值绑定到form
+
         $this->bind($field, $this->data);
     }
 

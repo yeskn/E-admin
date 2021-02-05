@@ -16,6 +16,7 @@ use Eadmin\form\Form;
 use Eadmin\grid\Grid;
 use Eadmin\model\SystemMenu;
 use Eadmin\service\MenuService;
+use think\facade\Filesystem;
 
 
 /**
@@ -31,14 +32,14 @@ class Menu extends Controller
      * @login true
      * @return Grid
      */
-    public function index() : Grid
+    public function index(): Grid
     {
         $grid = new Grid(new SystemMenu());
         $grid->title('系统菜单管理');
         $grid->treeTable();
         $grid->indexColumn();
-        $grid->column('name', '菜单名称')->display(function ($val,$data){
-            return "<i class='{$data['icon']}'></i> ".$val;
+        $grid->column('name', '菜单名称')->display(function ($val, $data) {
+            return "<i class='{$data['icon']}'></i> " . $val;
         });
         $grid->column('url', '菜单链接');
         $grid->column('status', '状态')->switch();
@@ -56,13 +57,12 @@ class Menu extends Controller
      * @login true
      * @return Form
      */
-    public function form() : Form
+    public function form(): Form
     {
         $menus = Admin::menu()->listOptions();
         $form = new Form(new SystemMenu());
-
         $form->select('pid', '上级菜单')
-            ->options([0=>'顶级菜单']+array_column($menus,'label','id'))
+            ->options([0 => '顶级菜单'] + array_column($menus, 'label', 'id'))
             ->required();
         $form->text('name', '菜单名称')->required();
         $form->text('url', '菜单链接')->default('#')->required();

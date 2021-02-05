@@ -6,6 +6,7 @@ namespace Eadmin\component\form\field;
 
 use Eadmin\component\form\Field;
 
+
 /**
  * 单选框组
  * Class RadioGroup
@@ -17,6 +18,7 @@ use Eadmin\component\form\Field;
  */
 class RadioGroup extends Field
 {
+   
     protected $name = 'ElRadioGroup';
     //禁用数据
     protected $disabledData = [];

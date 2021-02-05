@@ -22,9 +22,10 @@ trait Where
      * @param mixed $field 查询字段
      * @param mixed $op 查询表达式
      * @param mixed $condition 查询条件
+     * @param mixed $logic AND OR
      * @return $this
      */
-    public function where($field, $op = null, $condition = null)
+    public function where($field, $op = null, $condition = null,$logic='AND')
     {
         if($field instanceof \Closure){
             $where = clone $this;
@@ -33,15 +34,18 @@ trait Where
                 'OR' => []
             ]);
             call_user_func_array($field,[$where]);
-            $this->where['AND'][] = [
+            $this->where[$logic][] = [
                 'where' => $where->getWhere()
             ];
         }else{
+            if($op == '='){
+                $op = '==';
+            }
             if (is_null($condition)) {
                 $condition = $op;
                 $op = '==';
             }
-            $this->where['AND'][] = [
+            $this->where[$logic][] = [
                 'field' => $field,
                 'op' => $op,
                 'condition' => $condition
@@ -58,17 +62,8 @@ trait Where
      * @param mixed $condition 查询条件
      * @return $this
      */
-    public function whereOr($field, $op = null, $condition = null)
+    public function whereOr(string $field, $op = null, $condition = null)
     {
-        if (is_null($condition)) {
-            $condition = $op;
-            $op = '==';
-        }
-        $this->where['OR'][] = [
-            'field' => $field,
-            'op' => $op,
-            'condition' => $condition
-        ];
-        return $this;
+        return $this->where($field,$op,$condition,'OR');
     }
 }

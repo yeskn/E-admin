@@ -35,6 +35,7 @@ use think\helper\Str;
  */
 class Select extends Field
 {
+   
     protected $name = 'ElSelect';
     //禁用数据
     protected $disabledData = [];

@@ -65,7 +65,7 @@
                 </template>
             </el-table-column>
             <template v-for="column in columns">
-                <el-table-column v-if="checkboxColumn.indexOf(column.prop) > -1" :width="column.prop == 'EadminAction' ? eadminActionWidth:''" v-bind="column">
+                <el-table-column v-for="column in columns" v-if="checkboxColumn.indexOf(column.prop) > -1" :width="column.prop == 'EadminAction' ? eadminActionWidth:''" v-bind="column">
                     <template #header>
                         <render :data="column.header" :slot-props="{grid:grid}"></render>
                     </template>
@@ -126,6 +126,7 @@
         inheritAttrs: false,
         emits: ['update:modelValue'],
         setup(props, ctx) {
+            console.log(props.columns)
             const route = useRoute()
             const state = inject(store)
             const proxyData = state.proxyData

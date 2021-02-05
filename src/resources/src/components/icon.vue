@@ -24,7 +24,7 @@
     export default defineComponent({
         name: "EadminIcon",
         props: {
-            modelValue: Boolean,
+            modelValue: [String,Number],
         },
         emits: ['update:modelValue'],
         setup(props,ctx){

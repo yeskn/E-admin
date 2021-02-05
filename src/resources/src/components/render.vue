@@ -19,6 +19,7 @@
             const state = inject(store)
             const modelValue = state.proxyData
             const renderComponent = (data, slotProps) => {
+                console.log(data)
                 let expression, children = {}, name, attribute
                 //属性绑定
                 for (let bindAttr in data.bindAttribute) {
@@ -211,8 +212,20 @@
                         let expressionStr = whereCompile(where.where.AND, where.where.OR)
                         evals.push("(" + expressionStr + ")")
                     } else {
-                        let val = eval('modelValue.' + where.field)
-                        evals.push("'" + val + "' " + where.op + ' ' + "'" + where.condition + "'")
+                        let  val = eval('modelValue.' + where.field)
+                        if(Array.isArray(val)){
+                            if(where.op == 'notIn'){
+                                evals.push('(modelValue.' + where.field+".indexOf('"+where.condition+"') == -1 && modelValue."+ where.field+".indexOf("+where.condition+") == -1)")
+                            }else{
+                                evals.push('(modelValue.' + where.field+".indexOf('"+where.condition+"') >= 0 || modelValue."+ where.field+".indexOf("+where.condition+") >= 0)")
+                            }
+                        }else{
+                            let operator = where.op
+                            if(where.op == 'notIn'){
+                                operator = '!='
+                            }
+                            evals.push("'" + val + "' " + operator + ' ' + "'" + where.condition + "'")
+                        }
                     }
                 })
                 if (op == 'AND') {

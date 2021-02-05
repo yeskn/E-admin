@@ -58,6 +58,13 @@ class FormItem extends Field
             $this->form->validator()->rule($prop,$rule);
         }
     }
+
+    /**
+     * @return Form
+     */
+    public function form(){
+        return $this->form;
+    }
     /**
      * 是否必填
      * @return $this

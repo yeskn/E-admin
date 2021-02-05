@@ -5,6 +5,7 @@ namespace Eadmin\component\form;
 
 
 use Eadmin\component\Component;
+use Eadmin\form\traits\WhenForm;
 use think\helper\Str;
 
 /**
@@ -15,6 +16,7 @@ use think\helper\Str;
  */
 abstract class Field extends Component
 {
+    use WhenForm;
     protected $default = null;
     protected $value = null;
     protected $formItem;

@@ -110,7 +110,7 @@
                 eadminForm.value.clearValidate()
             }
             watch(ctx.attrs.model,(val)=>{
-                eadminForm.value.validate((bool)=>{})
+
             })
             //重置
             function resetForm() {
