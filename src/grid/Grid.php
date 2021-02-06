@@ -32,6 +32,7 @@ use think\Model;
  * @method $this quickSearch(bool $bool = true) 快捷搜索
  * @method $this hideDeleteButton(bool $bool = true) 隐藏删除按钮
  * @method $this hideTools(bool $bool = true) 隐藏工具栏
+ * @method $this hideSelection(bool $bool = true) 隐藏选择框
  * @method $this hideDeleteSelection(bool $bool = true) 隐藏删除选中按钮
  * @method $this defaultExpandAllRows(bool $bool) 是否默认展开所有行
  * @method $this showHeader(bool $bool = true) 是否显示表头
@@ -228,17 +229,7 @@ class Grid extends Component
         return $this->drive->update($ids, $data);
     }
 
-//    /**
-//     * 设置索引列
-//     * @param string $type 列类型：selection 多选框 ， index 索引 ， expand 可展开的
-//     * @return Column
-//     */
-//    public function indexColumn($type = 'selection', $label = '')
-//    {
-//        $column = $this->column('eadminColumnIndex' . $type, $label);
-//        $column->attr('type', $type);
-//        return $column;
-//    }
+
 
     /**
      * 拖拽排序
@@ -262,7 +253,7 @@ class Grid extends Component
         $this->drive->sortField($field);
         $column = $this->column($field,$label)
             ->attr('slots',['title'=>$field,'customRender'=>'sortInput'])
-            ->width(80)->align('center');
+            ->width(100)->align('center');
         return $column;
     }
     /**

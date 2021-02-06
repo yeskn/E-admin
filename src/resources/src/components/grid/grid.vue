@@ -54,7 +54,7 @@
             <render :data="filter" ></render>
         </div>
         <!--表格-->
-        <a-table @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" v-loading="loading" v-bind="$attrs" ref='dragTable' row-key='id' >
+        <a-table :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" v-loading="loading" v-bind="$attrs" ref='dragTable' row-key='id' >
             <template v-for="column in columns" v-slot:[column.dataIndex]>
                 <render :data="column.header" :slot-props="{grid:grid}"></render>
             </template>
@@ -109,6 +109,7 @@
             sortDrag: Boolean,
             sortInput: Boolean,
             tools:[Object,Array],
+            hideSelection: Boolean,
             hideDeleteButton: Boolean,
             hideDeleteSelection: Boolean,
             filter: [Object, Boolean],
@@ -246,11 +247,19 @@
                 page = val
                 loading.value = true
             }
+            const rowSelection = computed(()=>{
+                if(props.hideSelection){
+                    return null
+                }else{
+                    return {
+                        //当用户手动勾选数据行的 Checkbox 时触发的事件
+                        onChange: (selectedRowKeys, selectedRows) => {
+                            selectionData.value = selectedRows
+                        }
+                    }
+                }
 
-            //当用户手动勾选数据行的 Checkbox 时触发的事件
-            function handleSelect(selection) {
-                selectionData.value = selection
-            }
+            })
             //选中ids
             const selectIds = computed(()=>{
                 let ids = []
@@ -343,7 +352,7 @@
                 tableData,
                 quickSearch,
                 selectionData,
-                handleSelect,
+                rowSelection,
                 visibleFilter,
                 filterShow,
                 deleteSelect,

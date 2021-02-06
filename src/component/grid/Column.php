@@ -150,7 +150,7 @@ class Column extends Component
         return $this;
     }
 
-    
+
 
     /**
      * 内容映射
@@ -170,7 +170,7 @@ class Column extends Component
      * @param array $active 开启状态 [1=>'开启']
      * @param array $inactive 关闭状态 [0=>'关闭']
      */
-    public function switch(array $active = [1 => ''] , array $inactive = [0 => ''])
+    public function switch(array $active = [1 => '开启'] , array $inactive = [0 => '关闭'])
     {
         $this->display(function ($val, $data) use ($active, $inactive) {
             $params = $this->grid->getCallMethod();

@@ -1,5 +1,5 @@
 <template>
-    <el-switch @change="changeHandel" v-model="value"></el-switch>
+    <a-switch @change="changeHandel" v-model:checked="value"></a-switch>
 </template>
 
 <script>
@@ -19,6 +19,11 @@
             function changeHandel(val) {
                 if(props.url){
                     let failValue
+                    if(val){
+                        val = ctx.attrs.activeValue
+                    }else{
+                        val = ctx.attrs.inactiveValue
+                    }
                     if (val == ctx.attrs.activeValue) {
                         failValue = ctx.attrs.inactiveValue
                     } else {

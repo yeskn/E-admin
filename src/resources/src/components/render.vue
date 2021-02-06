@@ -156,12 +156,13 @@
                 return value
             }
             function userRender(slot, scope) {
+
                 return slot.map(item => {
                     if (typeof (item.where) == 'object' && (item.where.AND.length > 0 || item.where.OR.length > 0)) {
                         // //条件if渲染实现
-                        let expression = whereCompile(item.where.AND, item.where.OR)
+                        let expression = whereCompile(item.where.AND, item.where.OR,scope)
                         if (typeof (item) == 'object') {
-                            expression = expression + ' ? renderComponent(item) : null'
+                            expression = expression + ' ? renderComponent(item,scope) : null'
                         } else {
                             expression = expression + ' ? h({setup(){return {...modelValue}},template:item}) : null'
                         }
@@ -190,9 +191,9 @@
              * @param whereOr
              * @returns {string}
              */
-            function whereCompile(whereAnd, whereOr) {
-                let expressionStr = parseWhere(whereAnd, 'AND')
-                let expressionOr = parseWhere(whereOr, 'OR')
+            function whereCompile(whereAnd, whereOr,scope) {
+                let expressionStr = parseWhere(whereAnd, 'AND',scope)
+                let expressionOr = parseWhere(whereOr, 'OR',scope)
                 if (expressionStr && expressionOr) {
                     expressionStr += ' || ' + expressionOr
                 } else if (expressionOr) {
@@ -207,21 +208,37 @@
              * @param op AND | OR
              * @returns {string}
              */
-            function parseWhere(wheres, op) {
+            function parseWhere(wheres, op,scope) {
                 let evals = []
                 let expression = ''
+
                 wheres.forEach((where, index) => {
                     if (where.where) {
-                        let expressionStr = whereCompile(where.where.AND, where.where.OR)
+                        let expressionStr = whereCompile(where.where.AND, where.where.OR,scope)
                         evals.push("(" + expressionStr + ")")
                     } else {
-                        let  val = eval('modelValue.' + where.field)
+
+                        let  val
+                        if(scope && scope.row){
+                            val = eval('scope.row.' + where.field)
+                        }else{
+                            val = eval('modelValue.' + where.field)
+                        }
                         if(Array.isArray(val)){
-                            if(where.op == 'notIn'){
-                                evals.push('(modelValue.' + where.field+".indexOf('"+where.condition+"') == -1 && modelValue."+ where.field+".indexOf("+where.condition+") == -1)")
+                            if(scope && scope.row){
+                                if(where.op == 'notIn'){
+                                    evals.push('(scope.row.' + where.field+".indexOf('"+where.condition+"') == -1 && scope.row."+ where.field+".indexOf("+where.condition+") == -1)")
+                                }else{
+                                    evals.push('(scope.row.' + where.field+".indexOf('"+where.condition+"') >= 0 || scope.row."+ where.field+".indexOf("+where.condition+") >= 0)")
+                                }
                             }else{
-                                evals.push('(modelValue.' + where.field+".indexOf('"+where.condition+"') >= 0 || modelValue."+ where.field+".indexOf("+where.condition+") >= 0)")
+                                if(where.op == 'notIn'){
+                                    evals.push('(modelValue.' + where.field+".indexOf('"+where.condition+"') == -1 && modelValue."+ where.field+".indexOf("+where.condition+") == -1)")
+                                }else{
+                                    evals.push('(modelValue.' + where.field+".indexOf('"+where.condition+"') >= 0 || modelValue."+ where.field+".indexOf("+where.condition+") >= 0)")
+                                }
                             }
+
                         }else{
                             let operator = where.op
                             if(where.op == 'notIn'){
@@ -237,6 +254,7 @@
                     op = '||'
                 }
                 expression += evals.join(' ' + op + ' ')
+                console.log(expression)
                 return expression
             }
             //赋值方法

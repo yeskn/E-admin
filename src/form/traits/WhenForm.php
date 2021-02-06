@@ -23,19 +23,23 @@ trait WhenForm
             $operator = '=';
         }
         $formItems = $this->formItem->form()->collectFields($closure);
-        $formField = $this->formItem->form()->bindAttr('model');
-        $field =  $this->bindAttr('modelValue');
+        if($this->formItem->form()->manyRelation()){
+            $formField = '';
+        }else{
+            $formField = $this->formItem->form()->bindAttr('model') .'.';
+        }
+        $field =  $formField.$this->bindAttr('modelValue');
         foreach ($formItems as $formItem) {
             if(is_array($value)){
                 foreach ($value as $val){
                     if($operator == 'notIn'){
-                        $formItem->where($formField.'.'.$field, $operator, $val);
+                        $formItem->where($field, $operator, $val);
                     }else{
-                        $formItem->whereOr($formField.'.'.$field, $operator, $val);
+                        $formItem->whereOr($field, $operator, $val);
                     }
                 }
             }else{
-                $formItem->where($formField.'.'.$field, $operator, $value);
+                $formItem->where($field, $operator, $value);
             }
             $this->formItem->form()->push($formItem);
         }

@@ -40,7 +40,7 @@ class Menu extends Controller
         $grid->column('name', '菜单名称')->display(function ($val, $data) {
             return "<i class='{$data['icon']}'></i> " . $val;
         });
-        $grid->column('url', '菜单链接')->sortable();
+        $grid->column('url', '菜单链接');
         $grid->column('status', '状态')->switch();
         $grid->actions(function (Actions $action, $data) {
             $action->hideDetail();
@@ -64,7 +64,7 @@ class Menu extends Controller
             ->options([0 => '顶级菜单'] + array_column($menus, 'label', 'id'))
             ->required();
         $form->text('name', '菜单名称')->required();
-        $form->text('url', '菜单链接')->default('#')->required();
+        $form->text('url', '菜单链接');
         $form->text('params', '链接参数');
         $form->icon('icon', '菜单图标');
         return $form;

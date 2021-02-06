@@ -28,6 +28,7 @@
         setup(props,ctx){
             const value = reactive(props.modelValue)
             watch(value,(val)=>{
+                console.log(val)
                 ctx.emit('update:modelValue',val)
             })
             // 上移

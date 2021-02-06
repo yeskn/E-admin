@@ -8,8 +8,9 @@ import app from  './app'
 import './component'
 import zhLocale from 'element-plus/lib/locale/lang/zh-cn'
 import request from '/@/utils/axios'
-import { Table } from 'ant-design-vue';
+import { Table , Switch } from 'ant-design-vue';
 app.use(Table)
+app.use(Switch)
 app.use(ElementPlus,{size: 'medium', locale :zhLocale})
 app.use(router)
 app.provide(store, state)
