@@ -24,7 +24,8 @@
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
-                    <el-button plain size="small" icon="el-icon-delete" v-if="!hideDeleteSelection && selectIds.length > 0" @click="deleteSelect">{{trashed?'恢复选中':'删除选中'}}</el-button>
+                    <el-button plain size="small" icon="el-icon-delete" v-if="!hideDeleteSelection && selectIds.length > 0" @click="deleteSelect">删除选中</el-button>
+                    <el-button plain size="small" icon="el-icon-help" v-if="trashed && selectIds.length > 0" @click="recoverySelect">恢复选中</el-button>
                     <el-button type="danger" size="small" icon="el-icon-delete" v-if="!hideDeleteButton" @click="deleteAll()">{{trashed && !hideTrashed?'清空回收站':'清空数据'}}</el-button>
                     <div style="float: right;margin-right: 15px">
                         <el-tooltip placement="top" :content="[trashed?'数据列表':'回收站']"  v-if="!hideTrashed">
@@ -136,7 +137,7 @@
             const selectionData = ref([])
             const selectIds = ref([])
             const eadminActionWidth = ref(0)
-            const trashed = ref(props.hideTrashed)
+            const trashed = ref(false)
             const quickSearchOn = ctx.attrs.quickSearch
             let columns = ref(props.columns)
             let tableData = ref(props.data)
@@ -309,27 +310,19 @@
             }
             //删除全部
             function deleteAll(){
-                let params = {}
-                if(trashed.value){
-                    params.trueDelete = true
-                }
-                deleteRequest('此操作将删除清空所有数据, 是否继续?',true,params)
+                deleteRequest('此操作将删除清空所有数据, 是否继续?',true)
 
             }
             //删除选中
             function deleteSelect() {
-                if(trashed.value){
-                    recoverySelect(selectIds.value)
-                }else{
-                    deleteRequest('此操作将删除选中数据, 是否继续?',selectIds.value)
-                }
+                deleteRequest('此操作将删除选中数据, 是否继续?',selectIds.value)
             }
             //恢复选中
-            function recoverySelect(ids) {
+            function recoverySelect() {
                 ElMessageBox.confirm('此操作将恢复选中数据','是否继续?',{type: 'warning'}).then(()=>{
                     request({
                         url: props.loadDataUrl.replace('.rest','/batch.rest'),
-                        data: Object.assign({eadmin_ids: ids},props.params,{delete_time:null}),
+                        data: Object.assign({eadmin_ids: selectIds.value},props.params,{delete_time:null}),
                         method:'put',
                     }).then(res=>{
                         loadData()
@@ -337,8 +330,13 @@
                 })
             }
             //删除请求
-            function deleteRequest(message,ids,params={}) {
+            function deleteRequest(message,ids) {
+
                 ElMessageBox.confirm(message,'是否继续?',{type: 'warning'}).then(()=>{
+                    let params = {}
+                    if(trashed.value){
+                        params.trueDelete = true
+                    }
                     request({
                         url: props.loadDataUrl.replace('.rest','/delete.rest'),
                         data: Object.assign({eadmin_ids: ids},props.params,params),
@@ -389,6 +387,7 @@
                 visibleFilter,
                 filterShow,
                 deleteSelect,
+                recoverySelect,
                 deleteAll,
                 selectIds,
                 dragTable,

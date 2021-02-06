@@ -79,7 +79,9 @@ class Grid extends Component
     protected $beforeUpdate = null;
     //工具栏
     protected $tools = [];
-
+    //初始化
+    protected static $init = null;
+    
     public function __construct($data)
     {
         if ($data instanceof Model) {
@@ -98,8 +100,10 @@ class Grid extends Component
         $this->bindAttValue('modelValue', false);
         $this->attr('eadmin_grid', $this->bindAttr('modelValue'));
         $this->loadDataUrl('eadmin.rest');
-
         $this->getCallMethod();
+        if (!is_null(self::$init)) {
+            call_user_func(self::$init, $this);
+        }
     }
 
     /**
@@ -338,7 +342,14 @@ class Grid extends Component
     {
         $this->pagination->pageSize($limit);
     }
-
+    /**
+     * 初始化
+     * @param \Closure $closure
+     */
+    public static function init(\Closure $closure)
+    {
+        self::$init = $closure;
+    }
     /**
      * 添加表格列
      * @param string $field 字段
