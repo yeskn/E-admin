@@ -25,22 +25,16 @@ use think\Model;
  * Class Grid
  * @package Eadmin\grid
  * @method $this size(string $size) Radio的尺寸，仅在border为真时有效 medium / small / mini
- * @method $this height(int $height) 高度
- * @method $this maxHeight(int $height) 最大高度
+ * @method $this scroll(array $height) { x: number | true, y: number }
  * @method $this stripe(bool $bool = true) 是否为斑马纹
- * @method $this border(bool $bool = true) 是否带有纵向边框
+ * @method $this bordered(bool $bool = true) 是否展示外边框和列边框
  * @method $this fit(bool $bool) 列的宽度是否自撑开
  * @method $this quickSearch(bool $bool = true) 快捷搜索
  * @method $this hideDeleteButton(bool $bool = true) 隐藏删除按钮
  * @method $this hideTools(bool $bool = true) 隐藏工具栏
  * @method $this hideDeleteSelection(bool $bool = true) 隐藏删除选中按钮
- * @method $this defaultExpandAll(bool $bool) 是否默认展开所有行
+ * @method $this defaultExpandAllRows(bool $bool) 是否默认展开所有行
  * @method $this showHeader(bool $bool = true) 是否显示表头
- * @method $this highlightCurrentRow(bool $bool = true) 是否要高亮当前行
- * @method $this headerRowStyle(array $value) 表头行样式
- * @method $this rowStyle(array $value) 行样式
- * @method $this cellStyle(array $value) 单元格样式
- * @method $this headerCellStyle(array $value) 表头单元格的 style样式
  * @method $this loadDataUrl(string $value) 设置加载数据url
  * @method $this params(array $value) 加载数据附加参数
  * @property Filter $filter
@@ -92,12 +86,7 @@ class Grid extends Component
         } else {
             $this->drive = new \Eadmin\grid\drive\Arrays($data);
         }
-        //表格表头颜色
-        $this->headerCellStyle([
-            'background' => 'linear-gradient(to top,#fafafa,#ffffff)',
-            'color' => '#606266',
-            'borderTop' => 'solid 1px #ededed'
-        ]);
+
         //分页初始化
         $this->pagination = new Pagination();
         $this->pagination->pageSize(20)->background()->layout('total, sizes, prev, pager, next, jumper');
@@ -239,35 +228,41 @@ class Grid extends Component
         return $this->drive->update($ids, $data);
     }
 
-    /**
-     * 设置索引列
-     * @param string $type 列类型：selection 多选框 ， index 索引 ， expand 可展开的
-     * @return Column
-     */
-    public function indexColumn($type = 'selection', $label = '')
-    {
-        $column = $this->column('eadminColumnIndex' . $type, $label);
-        $column->attr('type', $type);
-        return $column;
-    }
+//    /**
+//     * 设置索引列
+//     * @param string $type 列类型：selection 多选框 ， index 索引 ， expand 可展开的
+//     * @return Column
+//     */
+//    public function indexColumn($type = 'selection', $label = '')
+//    {
+//        $column = $this->column('eadminColumnIndex' . $type, $label);
+//        $column->attr('type', $type);
+//        return $column;
+//    }
 
     /**
      * 拖拽排序
-     * @param $field 排序字段
+     * @param string $field 排序字段
+     * @param string $label 标题
      */
-    public function sortDrag($field = 'sort'){
+    public function sortDrag($field = 'sort',$label='排序'){
         $this->drive->sortField($field);
-        $this->attr('sortDrag',true);
+        $column = $this->column($field,$label)
+            ->attr('slots',['title'=>$field,'customRender'=>'sortDrag'])
+            ->width(50)->align('center');
+        return $column;
     }
 
     /**
      * 输入框排序
      * @param string $field 排序字段
+     * @param string $label 标题
      */
-    public function sortInput($field = 'sort'){
+    public function sortInput($field = 'sort',$label='排序'){
         $this->drive->sortField($field);
-        $column = $this->column($field,'排序')->width(80)->align('center');
-        $column->attr('type', 'sortInput');
+        $column = $this->column($field,$label)
+            ->attr('slots',['title'=>$field,'customRender'=>'sortInput'])
+            ->width(80)->align('center');
         return $column;
     }
     /**
@@ -280,7 +275,7 @@ class Grid extends Component
         $this->treeParent = $pidField;
         $this->isTree = true;
         $this->hidePage();
-        $this->defaultExpandAll($expand);
+        $this->defaultExpandAllRows($expand);
     }
     /**
      * 操作列定义
@@ -314,7 +309,7 @@ class Grid extends Component
             $this->tools[] = Html::create()->content($tools);
         } elseif (is_array($tools)) {
             foreach ($tools as $tool){
-                $this->tools($tool);   
+                $this->tools($tool);
             }
         }elseif($tools instanceof Component){
             $this->tools[] = $tools;
@@ -438,6 +433,10 @@ class Grid extends Component
         $size = Request::get('size', $this->pagination->attr('pageSize'));
         if (!$this->hidePage) {
             $this->attr('pagination', $this->pagination->attribute);
+        }
+        //排序
+        if (Request::has('eadmin_sort_field')) {
+            $this->drive->db()->removeOption('order')->order(Request::get('eadmin_sort_field'),Request::get('eadmin_sort_by'));
         }
         $data = $this->drive->getData($this->hidePage, $page, $size);
         //解析列

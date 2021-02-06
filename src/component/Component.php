@@ -131,9 +131,11 @@ abstract class Component implements \JsonSerializable
      */
     public function content($content, $name = 'default')
     {
+
         if(is_null($content)){
             return $this;
         }
+
         if(!($content instanceof Component)){
             $content = Admin::dispatch($content);
         }

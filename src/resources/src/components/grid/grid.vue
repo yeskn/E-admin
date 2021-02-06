@@ -54,39 +54,24 @@
             <render :data="filter" ></render>
         </div>
         <!--表格-->
-        <a-table :columns="columns" :data-source="tableData" :pagination="false" row-key='id' ref='dragTable' v-loading="loading" v-bind="$attrs">
-
+        <a-table @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" v-loading="loading" v-bind="$attrs" ref='dragTable' row-key='id' >
             <template v-for="column in columns" v-slot:[column.dataIndex]>
                 <render :data="column.header" :slot-props="{grid:grid}"></render>
             </template>
-            <template  #default="{ text }">
+            <template  #default="{ text , record , index }">
                  <render :data="text" :slot-props="{grid:grid}"></render>
             </template>
+            <template #sortDrag="{ text , record , index }">
+                <div style="display: flex;flex-direction: column">
+                    <el-tooltip  effect="dark" content="置顶" placement="right-start"><i @click="sortTop(index,record)" class="el-icon-caret-top" style="cursor: pointer"></i></el-tooltip>
+                    <el-tooltip effect="dark" content="拖动排序" placement="right-start"><i class="el-icon-rank sortHandel" style="font-weight:bold;cursor: grab"></i></el-tooltip>
+                    <el-tooltip  effect="dark" content="置底" placement="right-start"><i @click="sortBottom(index,record)" class="el-icon-caret-bottom" style="cursor: pointer"></i></el-tooltip>
+                </div>
+            </template>
+             <template #sortInput="{ text , record , index }">
+                   <el-input v-model="text.content.default[0]" @change="sortInput(record.id,text.content.default[0])"></el-input>
+            </template>
         </a-table>
-<!--        <el-table @selection-change="handleSelect" row-key='id' v-loading="loading" ref='dragTable' :data="tableData" v-bind="$attrs">-->
-<!--            <el-table-column width="50" align="center" label="排序" v-if="sortDrag">-->
-<!--                <template #default="scope">-->
-<!--                    <div style="display: flex;flex-direction: column">-->
-<!--                        <el-tooltip  effect="dark" content="置顶" placement="right-start"><i @click="sortTop(scope.$index,scope.row)" class="el-icon-caret-top" style="cursor: pointer"></i></el-tooltip>-->
-<!--                        <el-tooltip effect="dark" content="拖动排序" placement="right-start"><i class="el-icon-rank sortHandel" style="font-weight:bold;cursor: grab"></i></el-tooltip>-->
-<!--                        <el-tooltip  effect="dark" content="置底" placement="right-start"><i @click="sortBottom(scope.$index,scope.row)" class="el-icon-caret-bottom" style="cursor: pointer"></i></el-tooltip>-->
-<!--                    </div>-->
-<!--                </template>-->
-<!--            </el-table-column>-->
-<!--            <template v-for="column in columns">-->
-<!--                <el-table-column v-if="checkboxColumn.indexOf(column.prop) > -1" :width="column.prop == 'EadminAction' ? eadminActionWidth:''" v-bind="column">-->
-<!--                    <template #header>-->
-<!--                        <render :data="column.header" :slot-props="{grid:grid}"></render>-->
-<!--                    </template>-->
-<!--                    <template v-if="!column.type" #default="scope">-->
-<!--                        <render :data="scope.row[column.prop]" :slot-props="{grid:grid}"></render>-->
-<!--                    </template>-->
-<!--                    <template v-if="column.type === 'sortInput'" #default="scope">-->
-<!--                        <el-input v-model="scope.row[column.prop].content.default[0]" @change="sortInput(scope.row.id,scope.row[column.prop].content.default[0])"></el-input>-->
-<!--                    </template>-->
-<!--                </el-table-column>-->
-<!--            </template>-->
-<!--        </el-table>-->
         <!--分页-->
         <el-pagination class="pagination"
                        @size-change="handleSizeChange"
@@ -101,7 +86,7 @@
 </template>
 
 <script>
-    import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed} from "vue"
+    import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed,toRaw} from "vue"
     import render from "/@/components/render.vue"
     import {useHttp} from '/@/hooks'
     import request from '/@/utils/axios'
@@ -130,7 +115,6 @@
             addButton: [Object, Boolean],
             filterField:String,
             params:Object,
-
         },
         inheritAttrs: false,
         emits: ['update:modelValue'],
@@ -140,20 +124,18 @@
             const proxyData = state.proxyData
             const dragTable = ref('')
             const grid = ctx.attrs.eadmin_grid
+
             const {loading,http} = useHttp()
             const filterShow = ref(false)
             const quickSearch = ref('')
             const selectionData = ref([])
             const eadminActionWidth = ref(0)
             const quickSearchOn = ctx.attrs.quickSearch
-            let checkboxColumn = ref([])
-            props.columns.forEach(item => {
-                checkboxColumn.value.push(item.prop)
-            })
             let tableData = ref(props.data)
             let page = 1
             let size = props.pagination.pageSize
             let total = ref(props.pagination.total || 0)
+            let sortableParams = {}
             watch(() => props.modelValue, (value) => {
                 quickSearch.value = ''
                 loading.value = value
@@ -162,6 +144,16 @@
                 if (value) {
                     loadData()
                 }
+            })
+            //动态控制列显示隐藏
+            let checkboxColumn = ref([])
+            checkboxColumn.value = props.columns.map(item => {
+                return item.prop
+            })
+            const tableColumns = computed(()=>{
+                return props.columns.filter(item=>{
+                    return checkboxColumn.value.indexOf(item.prop) >= 0
+                })
             })
             nextTick(()=>{
                 //操作列宽度自适应
@@ -175,7 +167,7 @@
             })
             //拖拽排序
             function dragSort(){
-                const el = dragTable.value.$el.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
+                const el = dragTable.value.$el.querySelectorAll('.ant-table-body > table > tbody')[0]
                 Sortable.create(el, {
                     handle:'.sortHandel',
                     ghostClass: 'sortable-ghost', // Class name for the drop placeholder,
@@ -213,7 +205,6 @@
                         reject(res)
                     })
                 })
-
             }
             //排序置顶
             function sortTop(index,data){
@@ -282,11 +273,12 @@
                     page: page,
                     size: size,
                 }
-                requestParams = Object.assign(requestParams, proxyData[props.filterField],{quickSearch:quickSearch.value},props.params,route.query)
+                requestParams = Object.assign(requestParams, proxyData[props.filterField],{quickSearch:quickSearch.value},props.params,route.query,sortableParams)
                 http({
                     url: props.loadDataUrl,
                     params: requestParams
-                }).then((res) => {
+                }).then(res => {
+
                     tableData.value = res.data
                     triggerRef(tableData)
                     total.value = res.total
@@ -314,6 +306,24 @@
                     })
                 })
             }
+            //表格分页、排序、筛选变化时触发事件
+            function tableChange(pagination, filters, sorter) {
+                if(sorter.order === 'descend'){
+                    sortableParams = {
+                        eadmin_sort_field:sorter.field,
+                        eadmin_sort_by:'desc'
+                    }
+
+                }else if(sorter.order === 'ascend'){
+                    sortableParams = {
+                        eadmin_sort_field:sorter.field,
+                        eadmin_sort_by:'asc'
+                    }
+                }else{
+                    sortableParams = {}
+                }
+                loading.value = true
+            }
             function visibleFilter() {
                 filterShow.value = !filterShow.value
             }
@@ -325,6 +335,7 @@
                 size,
                 total,
                 handleFilter,
+                tableColumns,
                 checkboxColumn,
                 handleSizeChange,
                 handleCurrentChange,
@@ -341,7 +352,8 @@
                 dragTable,
                 sortTop,
                 sortBottom,
-                sortInput
+                sortInput,
+                tableChange
             }
         }
     })

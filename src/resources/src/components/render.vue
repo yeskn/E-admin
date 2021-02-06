@@ -19,7 +19,9 @@
             const state = inject(store)
             const modelValue = state.proxyData
             const renderComponent = (data, slotProps) => {
-                console.log(data)
+                if(!data.attribute){
+                    return
+                }
                 let expression, children = {}, name, attribute
                 //属性绑定
                 for (let bindAttr in data.bindAttribute) {
@@ -92,6 +94,7 @@
                         }
                     }
                 }
+
                 if(!data.attribute.slotProps && slotProps){
                     data.attribute.slotProps = slotProps
                 }

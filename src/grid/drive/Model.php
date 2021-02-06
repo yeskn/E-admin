@@ -339,7 +339,7 @@ class Model implements GridInterface
     }
     /**
      * 获取当前模型的数据库查询对象
-     * @return Model
+     * @return \think\Db
      */
     public function db()
     {

@@ -15,13 +15,12 @@ use Eadmin\component\layout\Content;
  * Class Column
  * @link https://element-plus.gitee.io/#/zh-CN/component/table
  * @package Eadmin\component\grid
- * @method $this type(string $type) 对应列的类型  selection/index/expand
- * @method $this prop(string $value) 对应列内容的字段名
+ * @method $this dataIndex(string $value) 对应列内容的字段名
  * @method $this align(string $value)    left/center/right
  * @method $this headerAlign(string $value)    left/center/right
  * @method $this fixed(string $value) true, left, right
  * @method $this width(int $value) 对应列的宽度
- * @method $this minWidth(int $value) 对应列的最小宽度
+ * @method $this ellipsis(bool $bool=true) 超过宽度将自动省略
  */
 class Column extends Component
 {
@@ -59,6 +58,15 @@ class Column extends Component
         $this->display(function ($val) use ($max) {
             return Rate::create(null,$val)->max($max)->disabled();
         });
+        return $this;
+    }
+
+    /**
+     * 开启排序
+     * @return $this
+     */
+    public function sortable(){
+        $this->attr('sorter',true);
         return $this;
     }
     /**
@@ -137,19 +145,12 @@ class Column extends Component
      */
     public function label(string $label)
     {
+        $this->attr('label',$label);
         $this->attr('header', Html::create()->content($label));
         return $this;
     }
 
-    /**
-     * 排序
-     * @return $this
-     */
-    public function sortable()
-    {
-        $this->attr('sortable', 'custom');
-        return $this;
-    }
+    
 
     /**
      * 内容映射
@@ -180,7 +181,7 @@ class Column extends Component
                 ->field($this->prop)
                 ->params($params);
             return $switch;
-            
+
         });
         return $this;
     }

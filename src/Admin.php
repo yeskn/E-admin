@@ -198,11 +198,12 @@ class Admin
 
     /**
      * 解析url并执行返回
-     * @param string $url
+     * @param mixed $url
      * @return mixed
      */
-    public static function dispatch(string $url){
+    public static function dispatch($url){
         $data = $url;
+
         if(strpos($url,'/') === false){
             $parse = parse_url($url);
             $path = $parse['path'] ?? '';
@@ -229,6 +230,7 @@ class Admin
 
                 }
             }
+
             if($dispatch){
                 $dispatch->init(app());
                 try{
@@ -248,6 +250,7 @@ class Admin
                 }
             }
         }
+
         return $data;
     }
     public static function registerRoute(){
