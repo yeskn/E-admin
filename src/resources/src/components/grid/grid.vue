@@ -26,6 +26,8 @@
                     </el-dropdown>
                     <el-button plain size="small" icon="el-icon-delete" v-if="!hideDeleteSelection && selectionData.length > 0" @click="deleteSelect">删除选中</el-button>
                     <el-button type="danger" size="small" icon="el-icon-delete" v-if="!hideDeleteButton" @click="deleteAll()">清空数据</el-button>
+                    <el-button type="info" size="small" icon="el-icon-delete" v-if="!hideTrashed && !trashed" @click="trashedHandel">回收站</el-button>
+                    <el-button type="primary" size="small" icon="el-icon-s-grid" v-if="!hideTrashed && trashed" @click="trashedHandel">数据列表</el-button>
                     <div style="float: right;margin-right: 15px">
                         <!--刷新-->
                         <el-button icon="el-icon-refresh" size="mini" circle style="margin-right: 10px"
@@ -55,7 +57,7 @@
         </div>
         <!--表格-->
         <a-table :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" v-loading="loading" v-bind="$attrs" ref='dragTable' row-key='id' >
-            <template v-for="column in columns" v-slot:[column.dataIndex]>
+            <template v-for="column in tableColumns" v-slot:[column.dataIndex]>
                 <render :data="column.header" :slot-props="{grid:grid}"></render>
             </template>
             <template  #default="{ text , record , index }">
@@ -111,6 +113,7 @@
             tools:[Object,Array],
             hideSelection: Boolean,
             hideDeleteButton: Boolean,
+            hideTrashed: Boolean,
             hideDeleteSelection: Boolean,
             filter: [Object, Boolean],
             addButton: [Object, Boolean],
@@ -125,13 +128,14 @@
             const proxyData = state.proxyData
             const dragTable = ref('')
             const grid = ctx.attrs.eadmin_grid
-
             const {loading,http} = useHttp()
             const filterShow = ref(false)
             const quickSearch = ref('')
             const selectionData = ref([])
             const eadminActionWidth = ref(0)
+            const trashed = ref(props.hideTrashed)
             const quickSearchOn = ctx.attrs.quickSearch
+            let columns = ref(props.columns)
             let tableData = ref(props.data)
             let page = 1
             let size = props.pagination.pageSize
@@ -152,7 +156,7 @@
                 return item.prop
             })
             const tableColumns = computed(()=>{
-                return props.columns.filter(item=>{
+                return columns.value.filter(item=>{
                     return checkboxColumn.value.indexOf(item.prop) >= 0
                 })
             })
@@ -283,17 +287,26 @@
                     size: size,
                 }
                 requestParams = Object.assign(requestParams, proxyData[props.filterField],{quickSearch:quickSearch.value},props.params,route.query,sortableParams)
+                if(trashed.value){
+                    requestParams = Object.assign(requestParams ,{eadmin_deleted:true})
+                }
                 http({
                     url: props.loadDataUrl,
                     params: requestParams
                 }).then(res => {
-
+                    columns.value = res.columns
                     tableData.value = res.data
                     triggerRef(tableData)
                     total.value = res.total
                 }).finally(() => {
                     ctx.emit('update:modelValue', false)
                 })
+            }
+            //回收站
+            function trashedHandel() {
+                trashed.value = !trashed.value
+                console.log(trashed.value)
+                loading.value = true
             }
             //删除全部
             function deleteAll(){
@@ -362,7 +375,9 @@
                 sortTop,
                 sortBottom,
                 sortInput,
-                tableChange
+                tableChange,
+                trashedHandel,
+                trashed
             }
         }
     })

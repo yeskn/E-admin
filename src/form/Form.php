@@ -631,7 +631,7 @@ class Form extends Field
         return $this->formItem($name, $arguments[0], array_slice($arguments, 1));
     }
     public function popItem(){
-        $item =  array_pop($this->content['default']);
+        $item =  array_pop($this->formItem);
         return $item;
     }
 

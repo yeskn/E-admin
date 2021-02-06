@@ -32,6 +32,14 @@ class Arrays implements GridInterface
     {
         return count($this->data);
     }
+    /**
+     * 是否有回收站
+     * @return bool
+     */
+    public function trashed()
+    {
+        return false;
+    }
     public function db()
     {
        return null;

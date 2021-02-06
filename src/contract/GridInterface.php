@@ -25,7 +25,7 @@ interface GridInterface
     public function destroy($ids);
     //设置排序字段
     public function sortField(string $field);
-
+    public function trashed();
     /**
      * 获取数据
      * @param bool $hidePage 是否分页

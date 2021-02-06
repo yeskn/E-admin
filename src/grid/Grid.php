@@ -31,10 +31,12 @@ use think\Model;
  * @method $this fit(bool $bool) 列的宽度是否自撑开
  * @method $this quickSearch(bool $bool = true) 快捷搜索
  * @method $this hideDeleteButton(bool $bool = true) 隐藏删除按钮
+ * @method $this hideTrashed(bool $bool = true) 隐藏回收站
  * @method $this hideTools(bool $bool = true) 隐藏工具栏
  * @method $this hideSelection(bool $bool = true) 隐藏选择框
  * @method $this hideDeleteSelection(bool $bool = true) 隐藏删除选中按钮
  * @method $this defaultExpandAllRows(bool $bool) 是否默认展开所有行
+ * @method $this expandRowByClick(bool $bool) 通过点击行来展开子行
  * @method $this showHeader(bool $bool = true) 是否显示表头
  * @method $this loadDataUrl(string $value) 设置加载数据url
  * @method $this params(array $value) 加载数据附加参数
@@ -87,7 +89,7 @@ class Grid extends Component
         } else {
             $this->drive = new \Eadmin\grid\drive\Arrays($data);
         }
-
+        $this->hideTrashed(!$this->drive->trashed());
         //分页初始化
         $this->pagination = new Pagination();
         $this->pagination->pageSize(20)->background()->layout('total, sizes, prev, pager, next, jumper');
@@ -266,6 +268,7 @@ class Grid extends Component
         $this->treeParent = $pidField;
         $this->isTree = true;
         $this->hidePage();
+        $this->expandRowByClick();
         $this->defaultExpandAllRows($expand);
     }
     /**
@@ -390,7 +393,7 @@ class Grid extends Component
     public function jsonSerialize()
     {
         //添加按钮
-        if (!$this->hideAddButton) {
+        if (!$this->hideAddButton && !is_null($this->formAction)) {
             $form = $this->formAction->form();
             $form->eventSuccess([$this->bindAttr('modelValue') => true, $form->bindAttr('model') => $form->getCallMethod()]);
             $button = Button::create('添加')
@@ -438,7 +441,7 @@ class Grid extends Component
         }
         $this->bindAttValue('data', $data);
         if (request()->has('ajax_request_data')) {
-            return ['code' => 200, 'data' => $data, 'total' => $this->pagination->attr('total')];
+            return ['code' => 200, 'data' => $data, 'columns'=>array_column($this->column, 'attribute'), 'total' => $this->pagination->attr('total')];
         } else {
             $params = (array)$this->attr('params');
             $this->params(array_merge($params, $this->getCallMethod()));

@@ -59,7 +59,7 @@ class Actions extends Component
             $this->content($content);
         }
         //是否隐藏详情
-        if (!$this->hideDetailButton) {
+        if (!$this->hideDetailButton && !is_null($this->grid->detailAction())) {
             $button = Button::create('详情')
                 ->size('small')
                 ->icon('el-icon-info');
@@ -73,7 +73,7 @@ class Actions extends Component
             $this->content($button);
         }
         //是否隐藏编辑
-        if (!$this->hideEditButton) {
+        if (!$this->hideEditButton && !is_null($this->grid->formAction())) {
             $button = Button::create('编辑')
                 ->type('primary')
                 ->size('small')
