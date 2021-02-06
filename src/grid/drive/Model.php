@@ -41,14 +41,13 @@ class Model implements GridInterface
     //删除前回调
     protected $beforeDel = null;
 
-    protected $trashed = false;
     public function __construct($model){
         $this->model = $model;
         $this->db = $this->model->db();
         $this->tableFields = $this->model->getTableFields();
         $this->pkField = $this->model->getPk();
         if (in_array($this->softDeleteField, $this->tableFields)) {
-            $this->trashed = true;
+            $this->isSotfDelete = true;
             if (request()->has('eadmin_deleted')) {
                 $this->db->removeWhereField($this->softDeleteField);
                 $this->db->whereNotNull($this->softDeleteField);
@@ -64,7 +63,7 @@ class Model implements GridInterface
      */
     public function trashed()
     {
-        return $this->trashed;
+        return $this->isSotfDelete;
     }
     //预关联加载
     protected function withRelations()
@@ -268,7 +267,6 @@ class Model implements GridInterface
     public function destroy($ids)
     {
         $trueDelete = Request::delete('trueDelete');
-
         $res = false;
         Db::startTrans();
         try {

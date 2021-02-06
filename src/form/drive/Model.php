@@ -13,6 +13,11 @@ use think\model\relation\HasOne;
 use think\model\relation\MorphMany;
 use think\model\relation\MorphOne;
 
+/**
+ * Class Model
+ * @package Eadmin\form\drive
+ * @property \think\Model $model
+ */
 class Model implements FormInterface
 {
     //模型
@@ -167,6 +172,6 @@ class Model implements FormInterface
 
     public function edit($id)
     {
-        $this->data = $this->model->where($this->pkField, $id)->find();
+        $this->data = $this->model->db(null)->where($this->pkField, $id)->find();
     }
 }

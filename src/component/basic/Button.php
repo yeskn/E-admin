@@ -105,7 +105,7 @@ class Button extends Component
         if (empty($confirm)) {
             $this->url($url)->params($data);
         } else {
-            return $this->confirm($confirm, $url, $data);
+            return $this->confirm($confirm, $url, $data)->type('warning');
         }
         return $this;
     }

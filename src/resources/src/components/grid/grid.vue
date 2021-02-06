@@ -18,17 +18,18 @@
                         <template #dropdown>
                             <el-dropdown-menu>
                                 <el-dropdown-item @click.native="exportData(1)">导出当前页</el-dropdown-item>
-                                <el-dropdown-item @click.native="exportData(2)" v-show="selectionData.length > 0">导出选中行
+                                <el-dropdown-item @click.native="exportData(2)" v-show="selectIds.length > 0">导出选中行
                                 </el-dropdown-item>
                                 <el-dropdown-item @click.native="exportData(0)">导出全部</el-dropdown-item>
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
-                    <el-button plain size="small" icon="el-icon-delete" v-if="!hideDeleteSelection && selectionData.length > 0" @click="deleteSelect">删除选中</el-button>
-                    <el-button type="danger" size="small" icon="el-icon-delete" v-if="!hideDeleteButton" @click="deleteAll()">清空数据</el-button>
-                    <el-button type="info" size="small" icon="el-icon-delete" v-if="!hideTrashed && !trashed" @click="trashedHandel">回收站</el-button>
-                    <el-button type="primary" size="small" icon="el-icon-s-grid" v-if="!hideTrashed && trashed" @click="trashedHandel">数据列表</el-button>
+                    <el-button plain size="small" icon="el-icon-delete" v-if="!hideDeleteSelection && selectIds.length > 0" @click="deleteSelect">{{trashed?'恢复选中':'删除选中'}}</el-button>
+                    <el-button type="danger" size="small" icon="el-icon-delete" v-if="!hideDeleteButton" @click="deleteAll()">{{trashed && !hideTrashed?'清空回收站':'清空数据'}}</el-button>
                     <div style="float: right;margin-right: 15px">
+                        <el-tooltip placement="top" :content="[trashed?'数据列表':'回收站']"  v-if="!hideTrashed">
+                            <el-button :type="[trashed?'primary':'info']" size="mini" circle :icon="[trashed?'el-icon-s-grid':'el-icon-delete']" @click="trashedHandel"></el-button>
+                        </el-tooltip>
                         <!--刷新-->
                         <el-button icon="el-icon-refresh" size="mini" circle style="margin-right: 10px"
                                    @click="loading=true"></el-button>
@@ -47,6 +48,7 @@
                         </el-dropdown>
                     </div>
                     <el-button v-if="filter" type="primary" size="small" icon="el-icon-zoom-in" @click="visibleFilter">筛选</el-button>
+
                     <render v-for="tool in tools" :data="tool" :ids="selectIds" :grid-params="params"></render>
                 </el-col>
             </el-row>
@@ -132,6 +134,7 @@
             const filterShow = ref(false)
             const quickSearch = ref('')
             const selectionData = ref([])
+            const selectIds = ref([])
             const eadminActionWidth = ref(0)
             const trashed = ref(props.hideTrashed)
             const quickSearchOn = ctx.attrs.quickSearch
@@ -256,22 +259,19 @@
                     return null
                 }else{
                     return {
+                        selectedRowKeys:selectIds.value,
                         //当用户手动勾选数据行的 Checkbox 时触发的事件
                         onChange: (selectedRowKeys, selectedRows) => {
                             selectionData.value = selectedRows
+                            selectIds.value = selectionData.value.map(item=>{
+                                return item.id
+                            })
                         }
                     }
                 }
 
             })
-            //选中ids
-            const selectIds = computed(()=>{
-                let ids = []
-                selectionData.value.forEach(item=>{
-                    ids.push(item.id)
-                })
-                return ids
-            })
+
             //快捷搜索
             function handleFilter() {
                 page = 1
@@ -305,23 +305,43 @@
             //回收站
             function trashedHandel() {
                 trashed.value = !trashed.value
-                console.log(trashed.value)
                 loading.value = true
             }
             //删除全部
             function deleteAll(){
-                deleteRequest('此操作将删除清空所有数据, 是否继续?',true)
+                let params = {}
+                if(trashed.value){
+                    params.trueDelete = true
+                }
+                deleteRequest('此操作将删除清空所有数据, 是否继续?',true,params)
+
             }
             //删除选中
             function deleteSelect() {
-                deleteRequest('此操作将删除选中数据, 是否继续?',selectIds)
+                if(trashed.value){
+                    recoverySelect(selectIds.value)
+                }else{
+                    deleteRequest('此操作将删除选中数据, 是否继续?',selectIds.value)
+                }
+            }
+            //恢复选中
+            function recoverySelect(ids) {
+                ElMessageBox.confirm('此操作将恢复选中数据','是否继续?',{type: 'warning'}).then(()=>{
+                    request({
+                        url: props.loadDataUrl.replace('.rest','/batch.rest'),
+                        data: Object.assign({eadmin_ids: ids},props.params,{delete_time:null}),
+                        method:'put',
+                    }).then(res=>{
+                        loadData()
+                    })
+                })
             }
             //删除请求
-            function deleteRequest(message,ids) {
-                ElMessageBox.confirm(message,'提示',{type: 'warning'}).then(()=>{
+            function deleteRequest(message,ids,params={}) {
+                ElMessageBox.confirm(message,'是否继续?',{type: 'warning'}).then(()=>{
                     request({
                         url: props.loadDataUrl.replace('.rest','/delete.rest'),
-                        data: Object.assign({ids: ids},props.params),
+                        data: Object.assign({eadmin_ids: ids},props.params,params),
                         method:'delete',
                     }).then(res=>{
                         loadData()

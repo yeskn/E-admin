@@ -13,6 +13,9 @@
   text-align: center;
   font-size: 18px;
 }
+.el-button [class*="fa fa-"] + span {
+  margin-left: 5px;
+}
 .el-table__fixed::before, .el-table__fixed-right::before {
   z-index: 3;
 }

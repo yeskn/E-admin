@@ -89,15 +89,28 @@ class Actions extends Component
         }
         //是否隐藏删除
         if (!$this->hideDelButton) {
+            $text = '删除';
+            $params = $this->grid->getCallMethod();
+            if(request()->has('eadmin_deleted')){
+
+                $this->content(
+                    Button::create('恢复数据')
+                        ->size('small')
+                        ->icon('el-icon-s-help')
+                        ->save($this->id,$params+['delete_time'=>null,'eadmin_ids'=>[$this->id]],"/eadmin/batch.rest",'确认恢复?')->method('put')
+                );
+                $params['trueDelete'] = true;
+                $text = '彻底删除';
+            }
             $url = '/eadmin/' . $this->id.'.rest';
             $this->content(
-                Button::create('删除')
+                Button::create($text)
                 ->type('danger')
                 ->size('small')
                 ->icon('el-icon-delete')
                 ->confirm('确认删除？', $url)
                     ->type('error')
-                    ->params($this->grid->getCallMethod())
+                    ->params($params)
                     ->method('DELETE')
             );
         }

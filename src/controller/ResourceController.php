@@ -88,7 +88,7 @@ class ResourceController extends Controller
     public function delete($id)
     {
         if ($id == 'delete') {
-            $ids = request()->delete('ids');
+            $ids = request()->delete('eadmin_ids');
         } else {
             $ids = explode(',', $id);
         }

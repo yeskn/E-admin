@@ -376,7 +376,7 @@ class Form extends Field
      * @return bool
      */
     public function isEdit(){
-        $pkValue = Request::has($this->drive->getPk());
+        $pkValue = Request::param($this->drive->getPk());
         if($pkValue && !$this->isEdit){
             $this->edit($pkValue);
         }
