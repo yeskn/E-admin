@@ -81,7 +81,7 @@ class Grid extends Component
     protected $tools = [];
     //初始化
     protected static $init = null;
-    
+
     public function __construct($data)
     {
         if ($data instanceof Model) {

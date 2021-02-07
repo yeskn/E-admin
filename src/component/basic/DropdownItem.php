@@ -29,7 +29,6 @@ class DropdownItem extends Component
         if (empty($confirm)) {
             $this->url($url)->params($data);
         } else {
-
             $confirm = Confirm::create($this->content['default'][0])
                 ->message($confirm)->url($url)->params($data)->type('warning');
             $this->content = [];

@@ -116,7 +116,7 @@ class Actions extends Component
                     ->method('put');
                 $this->dropdown->item($confirm);
                 $params['trueDelete'] = true;
-                $text = '<i class="el-icon-help"> 彻底删除';
+                $text = '<i class="el-icon-delete"> 彻底删除';
             }
             $url = '/eadmin/' . $this->id.'.rest';
             $confirm = Confirm::create($text)->message('确认删除？')
@@ -134,7 +134,7 @@ class Actions extends Component
             $button = Button::create($this->delText)
                 ->size('small')
                 ->icon('el-icon-info');
-            $detail = $this->grid->detailAction()->detail()->renderable();
+            $detail = $this->grid->detailAction()->detail();
             $action = clone $this->grid->detailAction()->component();
             if($action instanceof Router){
                 $button = $action->content($button)->to("/eadmin/{$this->id}.rest",$detail->getCallMethod());
@@ -149,8 +149,8 @@ class Actions extends Component
                 ->type('primary')
                 ->size('small')
                 ->icon('el-icon-edit');
-            $form = $this->grid->formAction()->form()->renderable();
-            $action = clone $this->grid->formAction()->component();
+            $form = $this->grid->formAction()->form();
+            $action =  clone $this->grid->formAction()->component();
             if($action instanceof Router){
                 $button = $action->content($button)->to("/eadmin/{$this->id}/edit.rest",$form->getCallMethod());
             }else{

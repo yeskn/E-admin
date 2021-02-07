@@ -19,7 +19,6 @@
             const state = inject(store)
             const modelValue = state.proxyData
             const renderComponent = (data, slotProps) => {
-
                 if(!data.attribute){
                     return
                 }
@@ -117,7 +116,6 @@
                     return h(splitCode(data.content.default[0]))
                 }
                 name = resolveComponent(data.name)
-                console.log(name)
                 //for 遍历中的 ElFormItem 验证prop error处理
                 if(data.name == 'ElFormItem'){
                     if(slotProps && slotProps.propField){
