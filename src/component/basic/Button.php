@@ -94,13 +94,12 @@ class Button extends Component
 
     /**
      * 保存数据
-     * @param $id 
      * @param array $data
      * @param mixed $url
      * @param string $confirm
      * @return $this|Confirm
      */
-    public function save($id, array $data, $url, $confirm = '')
+    public function save(array $data, $url, $confirm = '')
     {
         if (empty($confirm)) {
             $this->url($url)->params($data);

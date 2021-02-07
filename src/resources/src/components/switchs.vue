@@ -15,7 +15,10 @@
         },
         emits: ['update:modelValue'],
         setup(props,ctx){
-            const value = ref(props.modelValue)
+            const value = ref(false)
+            if(props.modelValue == ctx.attrs.activeValue) {
+                value.value = true
+            }
             function changeHandel(val) {
                 if(props.url){
                     let failValue

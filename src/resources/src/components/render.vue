@@ -19,6 +19,7 @@
             const state = inject(store)
             const modelValue = state.proxyData
             const renderComponent = (data, slotProps) => {
+
                 if(!data.attribute){
                     return
                 }
@@ -83,6 +84,7 @@
                     if(event === 'GridRefresh' && slotProps && slotProps.grid){
                         //grid刷新事件绑定
                         data.attribute.onGridRefresh = (e)=>{
+
                             modelValue[slotProps.grid] = true
                         }
                     }else{
@@ -115,6 +117,7 @@
                     return h(splitCode(data.content.default[0]))
                 }
                 name = resolveComponent(data.name)
+                console.log(name)
                 //for 遍历中的 ElFormItem 验证prop error处理
                 if(data.name == 'ElFormItem'){
                     if(slotProps && slotProps.propField){
