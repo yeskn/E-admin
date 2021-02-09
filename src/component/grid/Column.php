@@ -35,6 +35,8 @@ class Column extends Component
     protected $tagTheme = 'light';
     protected $tag = null;
     protected $grid;
+    protected $exportClosure = null;
+    protected $exportData;
     public function __construct($prop, $label,$grid)
     {
         $this->attr('slots',['title'=>$prop,'customRender'=>'default']);
@@ -61,6 +63,22 @@ class Column extends Component
         return $this;
     }
 
+    /**
+     * 自定义导出
+     * @param \Closure $closure
+     */
+    public function export(\Closure $closure){
+        $this->exportClosure = $closure;
+        return $this;
+    }
+    /**
+     * 关闭当前列导出
+     * @return $this
+     */
+    public function closeExport(){
+        $this->attr('closeExport',true);
+        return $this;
+    }
     /**
      * 开启排序
      * @return $this
@@ -119,6 +137,7 @@ class Column extends Component
         }else{
             $value = $originValue;
         }
+        $this->exportData = $value;
         //映射内容颜色处理
         if (isset($this->tagColor[$value])) {
             $this->tag($this->tagColor[$value], $this->tagTheme);
@@ -126,6 +145,7 @@ class Column extends Component
         //映射内容处理
         if (count($this->usings) > 0 && isset($this->usings[$value])) {
             $value = $this->usings[$value];
+            $this->exportData = $value;
         }
         //是否显示标签
         if(!is_null($this->tag)){
@@ -134,10 +154,20 @@ class Column extends Component
         //自定义内容显示处理
         if (!is_null($this->closure)) {
             $value = call_user_func_array($this->closure, [$originValue, $data]);
+            if(is_string($value)){
+                $this->exportData = $value;
+            }
+        }
+        //自定义导出
+        if (!is_null($this->exportClosure)) {
+            $value = call_user_func_array($this->exportClosure, [$originValue, $data]);
+            $this->exportData = $value;
         }
         return Html::create()->content($value);
     }
-
+    public function getExportData(){
+        return $this->exportData;
+    }
     /**
      * 显示的标题
      * @param string $label

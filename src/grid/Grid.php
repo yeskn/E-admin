@@ -15,6 +15,8 @@ use Eadmin\component\grid\Pagination;
 use Eadmin\component\layout\Content;
 use Eadmin\contract\GridInterface;
 use Eadmin\form\Form;
+use Eadmin\grid\excel\Csv;
+use Eadmin\grid\excel\Excel;
 use Eadmin\traits\CallProvide;
 use think\facade\Request;
 use think\helper\Str;
@@ -70,6 +72,9 @@ class Grid extends Component
 
     protected $drive;
 
+    //导出文件名
+    protected $exportFileName = null;
+
     protected $formAction = null;
 
     protected $detailAction = null;
@@ -81,7 +86,7 @@ class Grid extends Component
     protected $tools = [];
     //初始化
     protected static $init = null;
-    
+
     public function __construct($data)
     {
         if ($data instanceof Model) {
@@ -234,8 +239,16 @@ class Grid extends Component
         }
         return $this->drive->update($ids, $data);
     }
-
-
+    /**
+     * 开启导出
+     * @param $fileName 导出文件名
+     */
+    public function export($fileName = '')
+    {
+        $this->attr('export',true);
+        $this->attr('Authorization',rawurlencode(Admin::token()->get()));
+        $this->exportFileName = empty($fileName) ? date('YmdHis') : $fileName;
+    }
 
     /**
      * 拖拽排序
@@ -249,11 +262,11 @@ class Grid extends Component
             ->width(50)->align('center');
         return $column;
     }
-
     /**
      * 输入框排序
      * @param string $field 排序字段
      * @param string $label 标题
+     * @return Column
      */
     public function sortInput($field = 'sort',$label='排序'){
         $this->drive->sortField($field);
@@ -369,9 +382,9 @@ class Grid extends Component
      * @param $datas 数据源
      * @return array
      */
-    protected function parseColumn($datas)
+    protected function parseColumn($datas,$export=false)
     {
-
+        
         //添加操作列
         if (!$this->hideAction) {
             $this->column[] = $this->actionColumn->column();
@@ -388,6 +401,9 @@ class Grid extends Component
             foreach ($this->column as $column) {
                 $field = $column->attr('prop');
                 $row[$field] = $column->row($data);
+                if($export){
+                    $row[$field] = $column->getExportData();
+                }
             }
             if (!$this->hideAction) {
                 $actionColumn = clone $this->actionColumn;
@@ -400,6 +416,52 @@ class Grid extends Component
         return $tableData;
     }
 
+    /**
+     * 导出数据
+     */
+    public function exportData()
+    {
+        foreach ($this->column as $column) {
+            $field = $column->attr('prop');
+            $label = $column->attr('label');
+            if (!$column->attr('closeExport')) {
+                $columnTitle[$field] = $label;
+            }
+        }
+        if (is_callable($this->exportFileName)) {
+            $excel = new Excel();
+            $excel->file(date('YmdHis'));
+            $excel->callback($this->exportFileName);
+        } else {
+            $excel = new Csv();
+            $excel->file($this->exportFileName);
+        }
+        $excel->columns($columnTitle);
+        if (Request::get('export_type') == 'all') {
+            set_time_limit(0);
+            if ($excel instanceof Excel) {
+                $data = $this->drive->db()->select()->toArray();
+                $exportData = $this->parseColumn($data,true);
+                $excel->rows($exportData)->export();
+            } else {
+                $this->drive->db()->chunk(500, function ($datas) use ($excel) {
+                    $exportData = $this->parseColumn($datas,true);
+                    $excel->rows($exportData)->export();
+                    $this->exportData = [];
+                });
+                exit;
+            }
+        } elseif (Request::get('export_type') == 'select') {
+            $data = $this->drive->model()->whereIn($this->drive->getPk(), Request::get('eadmin_ids'))->select();
+        }else{
+            $page = Request::get('page', 1);
+            $size = Request::get('size', (int)$this->pagination->attr('pageSize'));
+            $data = $this->drive->getData($this->hidePage, $page, $size);
+        }
+        $exportData = $this->parseColumn($data,true);
+        $excel->rows($exportData)->export();
+        exit;
+    }
 
     public function jsonSerialize()
     {
@@ -431,8 +493,6 @@ class Grid extends Component
             $this->attr('filter', $form);
             $this->attr('filterField', $form->bindAttr('model'));
         }
-        //总条数
-        $this->pagination->total($this->drive->getTotal());
         //是否分页
         $page = Request::get('page', 1);
         $size = Request::get('size', $this->pagination->attr('pageSize'));
@@ -443,6 +503,9 @@ class Grid extends Component
         if (Request::has('eadmin_sort_field')) {
             $this->drive->db()->removeOption('order')->order(Request::get('eadmin_sort_field'),Request::get('eadmin_sort_by'));
         }
+        //总条数
+        $this->pagination->total($this->drive->getTotal());
+
         $data = $this->drive->getData($this->hidePage, $page, $size);
         //解析列
         $data = $this->parseColumn($data);
@@ -453,7 +516,7 @@ class Grid extends Component
         $this->bindAttValue('data', $data);
         if (request()->has('ajax_request_data')) {
             return ['code' => 200, 'data' => $data, 'columns'=>array_column($this->column, 'attribute'), 'total' => $this->pagination->attr('total')];
-        } else {
+        }else {
             $params = (array)$this->attr('params');
             $this->params(array_merge($params, $this->getCallMethod()));
             $this->attr('columns', array_column($this->column, 'attribute'));

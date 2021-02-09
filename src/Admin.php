@@ -121,7 +121,7 @@ class Admin
      */
     public static function permissions()
     {
-
+        
         $permissionsKey = 'eadmin_permissions'.self::id();
         $nodes = Cache::get($permissionsKey);
         if($nodes){

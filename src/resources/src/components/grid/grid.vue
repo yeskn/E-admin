@@ -11,16 +11,16 @@
                     <!--添加-->
                     <render v-if="addButton" :data="addButton" :slot-props="{grid:grid}"></render>
                     <!--导出-->
-                    <el-dropdown trigger="click">
+                    <el-dropdown trigger="click" v-if="export">
                         <el-button type="primary" size="small" icon="el-icon-download">
                             导出<i class="el-icon-arrow-down el-icon--right"></i>
                         </el-button>
                         <template #dropdown>
                             <el-dropdown-menu>
-                                <el-dropdown-item @click.native="exportData(1)">导出当前页</el-dropdown-item>
-                                <el-dropdown-item @click.native="exportData(2)" v-show="selectIds.length > 0">导出选中行
+                                <el-dropdown-item @click.native="exportData('page')">导出当前页</el-dropdown-item>
+                                <el-dropdown-item @click.native="exportData('select')" v-show="selectIds.length > 0">导出选中行
                                 </el-dropdown-item>
-                                <el-dropdown-item @click.native="exportData(0)">导出全部</el-dropdown-item>
+                                <el-dropdown-item @click.native="exportData('all')">导出全部</el-dropdown-item>
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
@@ -111,6 +111,7 @@
             modelValue: Boolean,
             loadDataUrl: String,
             hideTools: Boolean,
+            export: Boolean,
             sortDrag: Boolean,
             sortInput: Boolean,
             tools:[Object,Array],
@@ -126,6 +127,7 @@
         inheritAttrs: false,
         emits: ['update:modelValue'],
         setup(props, ctx) {
+            console.log(ctx.attrs.Authorization)
             const route = useRoute()
             const state = inject(store)
             const proxyData = state.proxyData
@@ -364,6 +366,28 @@
                 }
                 loading.value = true
             }
+            //导出
+            function exportData(type){
+                if(tableData.value.length == 0){
+                    ElMessage.warning('暂无数据')
+                    return false
+                }
+                console.log(213)
+                let  requestParams = {
+                        eadmin_export:true,
+                        export_type:type,
+                        page:page,
+                        size:size,
+                        Authorization:ctx.attrs.Authorization,
+                        eadmin_ids:selectIds.value
+                }
+                requestParams = Object.assign(requestParams,props.params,route.query)
+                let querys = []
+                for(var params in requestParams){
+                    querys.push(params+'='+requestParams[params])
+                }
+                location.href = 'http://e-admin.test/eadmin.test?' +querys.join('&')
+            }
             function visibleFilter() {
                 filterShow.value = !filterShow.value
             }
@@ -396,7 +420,8 @@
                 sortInput,
                 tableChange,
                 trashedHandel,
-                trashed
+                trashed,
+                exportData
             }
         }
     })

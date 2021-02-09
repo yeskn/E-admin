@@ -15,7 +15,11 @@ class ResourceController extends Controller
      */
     public function index()
     {
-        return $this->call();
+        $call =  $this->call();
+        if(request()->has('eadmin_export')){
+            return $call->exportData();
+        }
+        return $call;
     }
 
     /**

@@ -48,6 +48,7 @@ class Menu extends Controller
         $grid->sortInput();
         $grid->setForm($this->form())->dialog();
         $grid->quickSearch();
+        $grid->export();
         return $grid;
     }
 

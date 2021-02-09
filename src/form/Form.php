@@ -38,6 +38,7 @@ use think\Model;
  * @method \Eadmin\component\form\field\Input hidden($field) 隐藏输入框
  * @method \Eadmin\component\form\field\Input textarea($field, $label='') 多行文本输入框
  * @method \Eadmin\component\form\field\Input password($field, $label='') 密码输入框
+ * @method \Eadmin\component\form\field\Mobile mobile($field, $label='') 手机号输入框
  * @method \Eadmin\component\form\field\Number number($field, $label='') 数字输入框
  * @method \Eadmin\component\form\field\Select select($field, $label='') 下拉选择器
  * @method \Eadmin\component\form\field\RadioGroup radio($field, $label='') 单选框

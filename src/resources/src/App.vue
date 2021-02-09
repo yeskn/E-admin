@@ -1,10 +1,18 @@
 <template>
-  <router-view></router-view>
-  <eadmin-error-page />
+  <a-config-provider :locale="locale">
+    <router-view></router-view>
+    <eadmin-error-page />
+  </a-config-provider>
 </template>
 
 <script>
+import zhCN from 'ant-design-vue/es/locale/zh_CN';
 export default {
   name: 'App',
+  data() {
+    return {
+      locale: zhCN,
+    };
+  },
 }
 </script>

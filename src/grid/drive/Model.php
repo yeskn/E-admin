@@ -17,6 +17,12 @@ use think\model\relation\HasMany;
 use think\model\relation\HasOne;
 use think\model\relation\MorphMany;
 use think\model\relation\MorphOne;
+
+/**
+ * Class Model
+ * @package Eadmin\grid\drive
+ * @property \think\Model $model
+ */
 class Model implements GridInterface
 {
     //模型
@@ -267,7 +273,7 @@ class Model implements GridInterface
     public function destroy($ids)
     {
         $trueDelete = Request::delete('trueDelete');
-        $res = false;
+        $res = true;
         Db::startTrans();
         try {
             $this->db->removeWhereField($this->softDeleteField);
@@ -276,26 +282,18 @@ class Model implements GridInterface
                     $res = $this->db->where('1=1')->update([$this->softDeleteField => date('Y-m-d H:i:s')]);
                 } else {
                     if (in_array($this->softDeleteField, $this->tableFields)) {
-                        $deleteDatas = $this->db->whereNotNull($this->softDeleteField)->select();
-                        $this->deleteRelationData($deleteDatas);
-                        $res = $this->db->whereNotNull($this->softDeleteField)->delete();
+                        $deleteDatas = $this->db->field($this->model()->getPk())->whereNotNull($this->softDeleteField)->select();
                     } else {
-                        $deleteDatas = $this->model->select();
-                        $this->deleteRelationData($deleteDatas);
-                        $res = $this->db->where('1=1')->delete();
+                        $deleteDatas = $this->db->field($this->model()->getPk())->select();
                     }
+                    $this->deleteRelationData($deleteDatas);
                 }
             } else {
                 if ($this->isSotfDelete && !$trueDelete) {
                     $res = Db::name($this->model->getTable())->whereIn($this->model->getPk(), $ids)->update([$this->softDeleteField => date('Y-m-d H:i:s')]);
                 } else {
-                    if ($ids === true) {
-                        $this->deleteRelationData(true);
-                    } else {
-                        $deleteDatas = $this->model->removeOption('where')->whereIn($this->model->getPk(), $ids)->select();
-                        $this->deleteRelationData($deleteDatas);
-                    }
-                    $res = Db::name($this->model->getTable())->delete($ids);
+                    $deleteDatas = $this->model->field($this->model()->getPk())->removeOption('where')->whereIn($this->model->getPk(), $ids)->select();
+                    $this->deleteRelationData($deleteDatas);
                 }
             }
             Db::commit();
@@ -316,27 +314,21 @@ class Model implements GridInterface
      */
     protected function deleteRelationData($deleteDatas)
     {
+
         $reflection = new \ReflectionClass($this->model);
         $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
         $className = $reflection->getName();
         $relatonMethod = [];
-
         foreach ($methods as $method) {
             if ($method->class == $className) {
                 $relation = $method->name;
                 $p = new \ReflectionMethod($method->class, $relation);
                 if ($p->getNumberOfParameters() == 0 && !$p->isStatic()) {
                     if ($this->model->$relation() instanceof BelongsToMany) {
-                        if ($deleteDatas === true) {
-                            $deleteDatas = $this->model->select();
-                        }
                         foreach ($deleteDatas as $deleteData) {
                             $deleteData->$relation()->detach();
                         }
                     } elseif ($this->model->$relation() instanceof HasOne) {
-                        if ($deleteDatas === true) {
-                            $deleteDatas = $this->model->select();
-                        }
                         foreach ($deleteDatas as $deleteData) {
                             if (!is_null($deleteData->$relation)) {
                                 $deleteData->$relation->delete();
@@ -346,6 +338,9 @@ class Model implements GridInterface
                 }
             }
         }
+        //模型全局查询影响，这里用db删除
+        $deleteIds = $deleteDatas->column($this->model->getPk());
+        Db::name($this->model->getTable())->delete($deleteIds);
     }
     /**
      * 获取当前模型的数据库查询对象
