@@ -10,6 +10,11 @@ namespace Eadmin\controller;
 
 
 use Eadmin\Admin;
+use Eadmin\component\basic\Button;
+use Eadmin\component\basic\Dropdown;
+use Eadmin\component\basic\DropdownItem;
+use Eadmin\component\basic\Html;
+use Eadmin\component\basic\Tip;
 use Eadmin\Controller;
 use Eadmin\grid\Actions;
 use Eadmin\form\Form;
@@ -32,14 +37,14 @@ class Menu extends Controller
      * @login true
      * @return Grid
      */
-    public function index(): Grid
+    public function index()
     {
         $grid = new Grid(new SystemMenu());
         $grid->treeTable();
         $grid->title('系统菜单管理');
         $grid->column('name', '菜单名称')->display(function ($val, $data) {
-            return "<i class='{$data['icon']}'></i> " . $val;
-        });
+            return "<i class='{$data['icon']}'></i> 菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称" . $val;
+        })->tip();
         $grid->column('url', '菜单链接');
         $grid->column('status', '状态')->switch();
         $grid->actions(function (Actions $action, $data) {
@@ -51,7 +56,6 @@ class Menu extends Controller
         $grid->export();
         return $grid;
     }
-
     /**
      * 系统菜单
      * @auth true

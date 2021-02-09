@@ -6,6 +6,8 @@ namespace Eadmin\component\grid;
 
 use Eadmin\component\basic\Html;
 use Eadmin\component\basic\Tag;
+use Eadmin\component\basic\Tip;
+use Eadmin\component\basic\Tooltip;
 use Eadmin\component\Component;
 use Eadmin\component\form\field\Rate;
 use Eadmin\component\form\field\Switchs;
@@ -20,7 +22,7 @@ use Eadmin\component\layout\Content;
  * @method $this headerAlign(string $value)    left/center/right
  * @method $this fixed(string $value) true, left, right
  * @method $this width(int $value) 对应列的宽度
- * @method $this ellipsis(bool $bool=true) 超过宽度将自动省略
+ * @method $this ellipsis(bool $bool = true) 超过宽度将自动省略
  */
 class Column extends Component
 {
@@ -35,11 +37,12 @@ class Column extends Component
     protected $tagTheme = 'light';
     protected $tag = null;
     protected $grid;
+    protected $tip = false;
     protected $exportClosure = null;
     protected $exportData;
     public function __construct($prop, $label,$grid)
     {
-        $this->attr('slots',['title'=>$prop,'customRender'=>'default']);
+        $this->attr('slots', ['title' => $prop, 'customRender' => 'default']);
         if (!empty($prop)) {
             $this->prop = $prop;
             $this->prop($prop);
@@ -50,6 +53,7 @@ class Column extends Component
         }
         $this->grid = $grid;
     }
+
     /**
      * 评分显示
      * @param int $max 最大长度
@@ -58,8 +62,19 @@ class Column extends Component
     public function rate($max = 5)
     {
         $this->display(function ($val) use ($max) {
-            return Rate::create(null,$val)->max($max)->disabled();
+            return Rate::create(null, $val)->max($max)->disabled();
         });
+        return $this;
+    }
+
+    /**
+     * 文字提示
+     * @return $this
+     */
+    public function tip()
+    {
+        $this->attr('ellipsis', true);
+        $this->tip = true;
         return $this;
     }
 
@@ -83,10 +98,12 @@ class Column extends Component
      * 开启排序
      * @return $this
      */
-    public function sortable(){
-        $this->attr('sorter',true);
+    public function sortable()
+    {
+        $this->attr('sorter', true);
         return $this;
     }
+
     /**
      * 标签显示
      * @param $color 标签颜色：success，info，warning，danger
@@ -98,21 +115,27 @@ class Column extends Component
         $this->tag = Tag::create()->type($color)->size($size)->effect($theme);
         return $this;
     }
-    public function getField(){
+
+    public function getField()
+    {
         return $this->prop;
     }
-    public function getUsing(){
+
+    public function getUsing()
+    {
         return $this->usings;
     }
+
     /**
      * 获取当前列字段数据
      * @param $data 行数据
      * @return string
      */
-    private function getData($data){
+    private function getData($data)
+    {
         $prop = $this->attr('prop');
-        $fields = explode('.',$prop);
-        foreach ($fields as $field){
+        $fields = explode('.', $prop);
+        foreach ($fields as $field) {
             if (isset($data[$field])) {
                 $data = $data[$field];
             } else {
@@ -122,6 +145,7 @@ class Column extends Component
 
         return $data;
     }
+
     /**
      * 解析每行数据
      * @param $data 数据
@@ -131,10 +155,10 @@ class Column extends Component
     {
         //获取当前列字段数据
         $originValue = $this->getData($data);
-        if(is_null($originValue)){
+        if (is_null($originValue)) {
             //空默认占位符
             $value = '--';
-        }else{
+        } else {
             $value = $originValue;
         }
         $this->exportData = $value;
@@ -148,7 +172,7 @@ class Column extends Component
             $this->exportData = $value;
         }
         //是否显示标签
-        if(!is_null($this->tag)){
+        if (!is_null($this->tag)) {
             $value = $this->tag->content($value);
         }
         //自定义内容显示处理
@@ -163,6 +187,9 @@ class Column extends Component
             $value = call_user_func_array($this->exportClosure, [$originValue, $data]);
             $this->exportData = $value;
         }
+        if($this->tip){
+            $value = Tip::create($value)->content($value)->placement('right')->offset(-800);
+        }
         return Html::create()->content($value);
     }
     public function getExportData(){
@@ -175,11 +202,10 @@ class Column extends Component
      */
     public function label(string $label)
     {
-        $this->attr('label',$label);
+        $this->attr('label', $label);
         $this->attr('header', Html::create()->content($label));
         return $this;
     }
-
 
 
     /**
@@ -195,17 +221,18 @@ class Column extends Component
         $this->usings = $usings;
         return $this;
     }
+
     /**
      * switch开关
      * @param array $active 开启状态 [1=>'开启']
      * @param array $inactive 关闭状态 [0=>'关闭']
      */
-    public function switch(array $active = [1 => '开启'] , array $inactive = [0 => '关闭'])
+    public function switch(array $active = [1 => '开启'], array $inactive = [0 => '关闭'])
     {
         $this->display(function ($val, $data) use ($active, $inactive) {
             $params = $this->grid->getCallMethod();
             $params['eadmin_ids'] = [$data[$this->grid->drive()->getPk()]];
-            $switch =  Switchs::create(null,$val)
+            $switch = Switchs::create(null, $val)
                 ->state($active, $inactive)
                 ->url('/eadmin/batch.rest')
                 ->field($this->prop)
@@ -215,26 +242,31 @@ class Column extends Component
         });
         return $this;
     }
+
     /**
      * 追加前面
      * @param $append
      * @return Column
      */
-    public function prepend($prepend){
-        return $this->display(function ($val) use($prepend){
-            return $prepend.$val;
+    public function prepend($prepend)
+    {
+        return $this->display(function ($val) use ($prepend) {
+            return $prepend . $val;
         });
     }
+
     /**
      * 追加末尾
      * @param $append
      * @return Column
      */
-    public function append($append){
-        return $this->display(function ($val) use($append){
-           return $val.$append;
+    public function append($append)
+    {
+        return $this->display(function ($val) use ($append) {
+            return $val . $append;
         });
     }
+
     /**
      * 自定义显示
      * @param \Closure $closure

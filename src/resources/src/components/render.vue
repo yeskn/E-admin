@@ -83,6 +83,7 @@
                     if(event === 'GridRefresh' && slotProps && slotProps.grid){
                         //grid刷新事件绑定
                         data.attribute.onGridRefresh = (e)=>{
+
                             modelValue[slotProps.grid] = true
                         }
                     }else{
