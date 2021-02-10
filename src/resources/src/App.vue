@@ -1,6 +1,6 @@
 <template>
   <a-config-provider :locale="locale">
-    <router-view></router-view>
+      <router-view/>
     <eadmin-error-page />
   </a-config-provider>
 </template>

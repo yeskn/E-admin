@@ -493,6 +493,8 @@ class Grid extends Component
             $this->attr('filter', $form);
             $this->attr('filterField', $form->bindAttr('model'));
         }
+        //总条数
+        $this->pagination->total($this->drive->getTotal());
         //是否分页
         $page = Request::get('page', 1);
         $size = Request::get('size', $this->pagination->attr('pageSize'));
@@ -503,8 +505,7 @@ class Grid extends Component
         if (Request::has('eadmin_sort_field')) {
             $this->drive->db()->removeOption('order')->order(Request::get('eadmin_sort_field'),Request::get('eadmin_sort_by'));
         }
-        //总条数
-        $this->pagination->total($this->drive->getTotal());
+
 
         $data = $this->drive->getData($this->hidePage, $page, $size);
         //解析列

@@ -20,6 +20,6 @@
 
 <style scoped>
     .breadcrumb{
-
+        white-space: nowrap;
     }
 </style>

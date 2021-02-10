@@ -3,30 +3,27 @@
         <sidebar v-if="sidebar.visible"></sidebar>
         <div class="main-container">
             <header-top></header-top>
-            <transition name="el-fade-in">
-                <div class="main-content" v-if="mainComponent">
-                    <el-backtop target=".main-content"></el-backtop>
-                    <div class="header-title" v-if="proxyData.eadmin_title">
-                        <div class="title" >{{proxyData.eadmin_title}}</div>
-                        <div class="breadcrumb">
-                            <breadcrumb></breadcrumb>
-                            <i class="el-icon-back back" @click="back"></i>
-                        </div>
-                    </div>
-                    <render :data="mainComponent"></render>
-                </div>
-            </transition>
+            <tags-view></tags-view>
+            <div class="main-content" v-loading="state.mainLoading">
+                <el-backtop target=".main-content"></el-backtop>
+                <template v-for="item in state.mainComponent">
+                        <keep-alive>
+                            <render v-if="route.fullPath == item.url" :data="item.component"></render>
+                        </keep-alive>
+                </template>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-    import {useRouter} from 'vue-router'
-    import {defineComponent, inject, computed, watch} from 'vue'
+    import {useRoute,useRouter} from 'vue-router'
+    import {defineComponent, inject} from 'vue'
     import headerTop from './headerTop.vue'
     import Sidebar from './sidebar/sidebar.vue'
     import render from '/@/components/render.vue'
     import breadcrumb from '/@/components/breadcrumb.vue'
+    import tagsView from './tagsView.vue'
     import { store } from '/@/store'
     export default defineComponent({
         name: "index",
@@ -34,33 +31,21 @@
             Sidebar,
             headerTop,
             render,
-            breadcrumb
+            breadcrumb,
+            tagsView
         },
         setup(){
+            const route = useRoute()
             const router = useRouter()
             const state = inject(store)
             let proxyData = state.proxyData
             let sidebar = state.sidebar
-            const mainComponent = computed(()=>{
-                return state.mainComponent
-            })
-            //重新加载赋值proxyData
-            watch(()=>state.mainComponent,(newValue)=>{
-               if(newValue){
-                   for(let i in proxyData){
-                       delete proxyData[i]
-                   }
-               }
-            })
-            function back() {
-                router.back()
-            }
+
             return {
+                route,
                 state,
                 sidebar,
-                mainComponent,
                 proxyData,
-                back
             }
         }
     })
@@ -81,21 +66,5 @@
 
     }
 
-    .breadcrumb{
-        display: flex;
-        align-items: center;
-    }
-    .back{
-        margin-left: 10px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-left: 1px solid #ededed;
-        height: 40px;
-        width: 40px;
-        cursor: pointer
-    }
-    .back:hover{
-        background: #EFEFEF;
-    }
+
 </style>

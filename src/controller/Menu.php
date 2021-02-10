@@ -43,9 +43,11 @@ class Menu extends Controller
         $grid->treeTable();
         $grid->title('系统菜单管理');
         $grid->column('name', '菜单名称')->display(function ($val, $data) {
-            return "<i class='{$data['icon']}'></i> 菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称菜单名称" . $val;
-        })->tip();
-        $grid->column('url', '菜单链接');
+            return "<i class='{$data['icon']}'></i>" . $val;
+        });
+        $grid->column('url', '菜单链接')->display(function ($val){
+            return ' '.$val;
+        });
         $grid->column('status', '状态')->switch();
         $grid->actions(function (Actions $action, $data) {
             $action->hideDetail();
@@ -53,7 +55,6 @@ class Menu extends Controller
         $grid->sortInput();
         $grid->setForm($this->form())->dialog();
         $grid->quickSearch();
-        $grid->export();
         return $grid;
     }
     /**

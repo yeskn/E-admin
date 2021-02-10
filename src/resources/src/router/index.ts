@@ -30,10 +30,12 @@ router.beforeEach( async(to:RouteLocationNormalized, from:RouteLocationNormalize
     }
     action.loading(true)
     if(to.path === '/refresh'){
+        action.clearComponent(from.fullPath)
         await loadComponent(from.fullPath)
         return next(from.fullPath)
     }
-    if(to.fullPath !== '/'){
+    action.cachesVariable(from.fullPath)
+    if(to.fullPath !== '/' && action.getComponentIndex(to.fullPath) === -1){
         await loadComponent(to.fullPath)
     }
     return next()
@@ -45,10 +47,7 @@ router.afterEach((to:RouteLocationNormalized)=>{
             item.remove()
         })
     }
-    action.component('')
-    setTimeout(()=>{
-        action.component(asyncCmponent)
-    },1)
+    action.component(asyncCmponent,to.fullPath)
 })
 function loadComponent(url){
     return new Promise((resolve, reject) =>{
@@ -58,7 +57,6 @@ function loadComponent(url){
             asyncCmponent = res;
             resolve(res)
         }).catch(res=>{
-            asyncCmponent = ''
             resolve(res)
         }).finally(()=>{
             action.loading(false)

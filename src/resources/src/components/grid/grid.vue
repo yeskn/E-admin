@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="grid">
         <!--工具栏-->
         <div class="tools" v-if="!hideTools">
             <el-row style="padding-top: 10px">
@@ -91,7 +91,7 @@
 </template>
 
 <script>
-    import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed,toRaw} from "vue"
+    import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed} from "vue"
     import render from "/@/components/render.vue"
     import {useHttp} from '/@/hooks'
     import request from '/@/utils/axios'
@@ -127,7 +127,6 @@
         inheritAttrs: false,
         emits: ['update:modelValue'],
         setup(props, ctx) {
-            console.log(ctx.attrs.Authorization)
             const route = useRoute()
             const state = inject(store)
             const proxyData = state.proxyData
@@ -141,11 +140,11 @@
             const eadminActionWidth = ref(0)
             const trashed = ref(false)
             const quickSearchOn = ctx.attrs.quickSearch
-            let columns = ref(props.columns)
-            let tableData = ref(props.data)
+            const columns = ref(props.columns)
+            const tableData = ref(props.data)
+            const total = ref(props.pagination.total || 0)
             let page = 1
             let size = props.pagination.pageSize
-            let total = ref(props.pagination.total || 0)
             let sortableParams = {}
             watch(() => props.modelValue, (value) => {
                 quickSearch.value = ''
@@ -438,9 +437,9 @@
         background: #2d8cf0!important;
     }
     .pagination {
-        background: #fff;
+
         padding: 10px 16px;
-        border-radius: 4px;
+
     }
 
     .tools {
@@ -453,5 +452,10 @@
     .filter{
         border-top: 1px solid #ededed;
         background: #fff;
+    }
+    .grid{
+        background: #fff;
+        border-radius: 5px;
+        box-shadow: 0 4px 24px 0 rgba(34,41,47,.1);
     }
 </style>

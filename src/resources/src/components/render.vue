@@ -1,5 +1,5 @@
 <script>
-    import {defineComponent, computed, toRaw, h, resolveComponent, inject,isProxy} from 'vue'
+    import {defineComponent, computed, toRaw, h, resolveComponent, inject,isProxy ,KeepAlive} from 'vue'
     import {store} from '/@/store'
     import {splitCode} from '/@/utils/splitCode'
     import dayjs from 'dayjs'
@@ -141,7 +141,6 @@
                         return h(name, mapAttribute, mapChildren)
                     })
                 } else {
-
                     return h(name, attribute, children)
                 }
             }
@@ -255,7 +254,6 @@
                     op = '||'
                 }
                 expression += evals.join(' ' + op + ' ')
-                console.log(expression)
                 return expression
             }
             //赋值方法

@@ -1,6 +1,6 @@
-import { reactive } from "vue";
+import { reactive ,toRaw} from "vue";
 import request from '/@/utils/axios'
-import router from "../router";
+import {findTree} from '/@/utils'
 export const store = Symbol()
 // 使用 reactive 函数完成响应式转换
 const states = reactive({
@@ -14,8 +14,10 @@ const states = reactive({
     },
     //主内容组件渲染
     mainLoading:false,
-    mainComponent:null,
+    mainComponent:[],
+    componentVariable:[],
     proxyData:{},
+
     //错误信息
     errorPage:{
         visable:false,
@@ -28,7 +30,7 @@ const states = reactive({
     //菜单
     menus:[],
     menuModule:'',
-    breadcrumb:[]
+    breadcrumb:[],
 });
 export const state = states
 //操作方法
@@ -52,9 +54,44 @@ const action = {
     loading:function(bool){
         states.mainLoading = bool
     },
+    //缓存组件变量
+    cachesVariable(url) {
+        const index = action.getComponentIndex(url)
+        if(index > -1){
+            states.componentVariable[index].proxyData = toRaw(states.proxyData)
+        }
+    },
+
+    clearComponent(url){
+        const index = action.getComponentIndex(url)
+        states.mainComponent.splice(index,1)
+        states.componentVariable.splice(index,1)
+    },
+    getComponentIndex(url){
+        return states.mainComponent.findIndex(item=>{
+            return item.url === url
+        })
+    },
     //设置主内容组件
-    component:function(data){
-        states.mainComponent = data
+    component:function(data,url){
+        const index = action.getComponentIndex(url)
+        for(let i in states.proxyData){
+            delete states.proxyData[i]
+        }
+        if(index > -1) {
+            states.proxyData = toRaw(states.componentVariable[index].proxyData)
+        }else{
+            states.componentVariable.push({
+                url:url,
+                proxyData:{}
+            })
+            states.mainComponent.push({
+                title: data.bind.eadmin_title || url,
+                url:url,
+                component:data,
+            })
+        }
+        action.loading(false)
     },
     //关闭错误页面
     errorPageClose(){

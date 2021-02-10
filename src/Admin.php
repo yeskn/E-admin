@@ -203,8 +203,7 @@ class Admin
      */
     public static function dispatch($url){
         $data = $url;
-
-        if(strpos($url,'/') === false){
+        if(strpos($url,'/') !== false){
             $parse = parse_url($url);
             $path = $parse['path'] ?? '';
             $vars = [];
@@ -250,7 +249,6 @@ class Admin
                 }
             }
         }
-
         return $data;
     }
     public static function registerRoute(){
