@@ -6,11 +6,9 @@
             <tags-view></tags-view>
             <div class="main-content" v-loading="state.mainLoading">
                 <el-backtop target=".main-content"></el-backtop>
-                <template v-for="item in state.mainComponent">
-                        <keep-alive>
-                            <render v-if="route.fullPath == item.url" :data="item.component"></render>
-                        </keep-alive>
-                </template>
+                <keep-alive v-for="item in state.mainComponent">
+                    <render v-if="route.fullPath == item.url" :data="item.component"></render>
+                </keep-alive>
             </div>
         </div>
     </div>

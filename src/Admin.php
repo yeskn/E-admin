@@ -51,22 +51,29 @@ class Admin
             }
         }
     }
+
     /**
      * 渲染组件
      * @param $template 模板文件名
      * @param array $vars 模板变量
      * @return Component
      */
-    public static function view($template,$vars=[]){
-        $content =  View::fetch($template,$vars);
+    public static function view($template, $vars = [])
+    {
+        $content = View::fetch($template, $vars);
         return Component::create($content);
     }
-    public static function notification(){
+
+    public static function notification()
+    {
         return new Notification();
     }
-    public static function message(){
+
+    public static function message()
+    {
         return new Message();
     }
+
     /**
      * 获取用户角色组
      */
@@ -74,6 +81,7 @@ class Admin
     {
         return self::user()->roles;
     }
+
     /**
      * 获取当前登陆用户id
      * @return string
@@ -82,14 +90,17 @@ class Admin
     {
         return self::token()->id();
     }
-    public static function menus(){
+
+    public static function menus()
+    {
         if (self::id() == config('admin.admin_auth_id')) {
             self::user()->menus();
-        }else{
+        } else {
             self::user()->menus();
         }
 
     }
+
     /**
      * 验证权限节点
      * @param $class 完整类名
@@ -97,17 +108,17 @@ class Admin
      * @param string $method 请求方法
      * @return bool
      */
-    public static function check($class,$function,$method='get')
+    public static function check($class, $function, $method = 'get')
     {
-        $nodeId = md5($class.$function.strtolower($method));
+        $nodeId = md5($class . $function . strtolower($method));
         $permissions = self::permissions();
 
-        foreach ($permissions as $permission){
-            if($permission['id'] == $nodeId){
-                if($permission['is_login']){
+        foreach ($permissions as $permission) {
+            if ($permission['id'] == $nodeId) {
+                if ($permission['is_login']) {
                     self::token()->auth();
                 }
-                if(!$permission['is_auth']){
+                if (!$permission['is_auth']) {
                     return false;
                 }
             }
@@ -121,30 +132,31 @@ class Admin
      */
     public static function permissions()
     {
-        
-        $permissionsKey = 'eadmin_permissions'.self::id();
+
+        $permissionsKey = 'eadmin_permissions' . self::id();
         $nodes = Cache::get($permissionsKey);
-        if($nodes){
+        if ($nodes) {
             return $nodes;
         }
         $nodes = self::node()->all();
-        if(self::id()){
+        if (self::id()) {
             $permissions = self::user()->permissions();
-            $nodeIds = array_column($permissions,'node_id');
-        }else{
+            $nodeIds = array_column($permissions, 'node_id');
+        } else {
             $nodeIds = [];
         }
         if (self::id() != config('admin.admin_auth_id')) {
             foreach ($nodes as $key => &$node) {
-                if(!in_array($node['id'],$nodeIds)){
+                if (!in_array($node['id'], $nodeIds)) {
                     $node['is_auth'] = false;
                 }
             }
         }
 
-        Cache::tag('eadmin_permissions')->set($permissionsKey,$nodes);
+        Cache::tag('eadmin_permissions')->set($permissionsKey, $nodes);
         return $nodes;
     }
+
     /**
      * 获取当前用户
      * @return mixed
@@ -153,14 +165,18 @@ class Admin
     {
         return self::token()->user();
     }
-    public static function token(){
+
+    public static function token()
+    {
         return new TokenService();
     }
+
     /**
      * 菜单服务
      * @return MenuService
      */
-    public static function menu(){
+    public static function menu()
+    {
         return app('admin.menu');
     }
 
@@ -168,9 +184,11 @@ class Admin
      * 权限节点
      * @return NodeService
      */
-    public static function node(){
+    public static function node()
+    {
         return new NodeService();
     }
+
     /**
      * 树形
      * @param array $data 数据
@@ -179,17 +197,17 @@ class Admin
      * @param string $children
      * @return array
      */
-    public static function tree(array $data,  $id = 'id',$pid = 'pid',$children = 'children')
+    public static function tree(array $data, $id = 'id', $pid = 'pid', $children = 'children')
     {
         $items = array();
-        foreach($data as $v){
+        foreach ($data as $v) {
             $items[$v[$id]] = $v;
         }
         $tree = array();
-        foreach($items as $k => $item){
-            if(isset($items[$item[$pid]])){
+        foreach ($items as $k => $item) {
+            if (isset($items[$item[$pid]])) {
                 $items[$item[$pid]][$children][] = &$items[$k];
-            }else{
+            } else {
                 $tree[] = &$items[$k];
             }
         }
@@ -201,57 +219,59 @@ class Admin
      * @param mixed $url
      * @return mixed
      */
-    public static function dispatch($url){
+    public static function dispatch($url)
+    {
         $data = $url;
-        if(strpos($url,'/') !== false){
-            $parse = parse_url($url);
-            $path = $parse['path'] ?? '';
-            $vars = [];
-            $request = app()->request;
-            if (isset($parse['query'])){
-                $querys = explode('&',$parse['query']);
-                foreach ($querys as $query){
-                    list($name,$value) = explode('=',$query);
-                    $vars[$name] = $value;
+        try {
+            if (strpos($url, '/') !== false) {
+                $parse = parse_url($url);
+                $path = $parse['path'] ?? '';
+                $vars = [];
+                $request = app()->request;
+                if (isset($parse['query'])) {
+                    $querys = explode('&', $parse['query']);
+                    foreach ($querys as $query) {
+
+                        list($name, $value) = explode('=', $query);
+                        $vars[$name] = $value;
+                    }
                 }
-            }
-            $pathinfo = array_filter(explode('/', $path));
-            $name = current($pathinfo);
-            if($name == app('http')->getName()){
-                array_shift($pathinfo);
-            }
-            $url = implode('/',$pathinfo);
-            $dispatch = Request::rule()->check(request(),$url);
-            if($dispatch === false){
-                try{
+                $pathinfo = array_filter(explode('/', $path));
+                $name = current($pathinfo);
+                if ($name == app('http')->getName()) {
+                    array_shift($pathinfo);
+                }
+                $url = implode('/', $pathinfo);
+                $dispatch = Request::rule()->check(request(), $url);
+                if ($dispatch === false) {
+
                     $dispatch = Route::url($url);
-                }catch (\Exception $exception){
 
                 }
-            }
 
-            if($dispatch){
-                $dispatch->init(app());
-                try{
+                if ($dispatch) {
+                    $dispatch->init(app());
                     $get = $request->get();
                     $request->withGet($vars);
-                    if($dispatch instanceof Controller) {
-                        list($controller,$action) = $dispatch->getDispatch();
+                    if ($dispatch instanceof Controller) {
+                        list($controller, $action) = $dispatch->getDispatch();
                         $instance = $dispatch->controller($controller);
                         $reflect = new \ReflectionMethod($instance, $action);
-                        $data =  app()->invokeReflectMethod($instance, $reflect, $vars);
-                    }elseif ($dispatch instanceof Callback){
+                        $data = app()->invokeReflectMethod($instance, $reflect, $vars);
+                    } elseif ($dispatch instanceof Callback) {
                         $data = app()->invoke($dispatch->getDispatch(), $vars);
                     }
                     $request->withGet($get);
-                }catch (\Exception $exception){
-
                 }
             }
+        } catch (\Exception $exception) {
+
         }
         return $data;
     }
-    public static function registerRoute(){
-        app()->route->resource('eadmin',ResourceController::class)->ext('rest');;
+
+    public static function registerRoute()
+    {
+        app()->route->resource('eadmin', ResourceController::class)->ext('rest');;
     }
 }

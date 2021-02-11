@@ -135,15 +135,20 @@ abstract class Component implements \JsonSerializable
         if(is_null($content)){
             return $this;
         }
-
-        if(!($content instanceof Component)){
-            $content = Admin::dispatch($content);
+        if(is_array($content)){
+            foreach ($content as $item){
+                $this->content($item);
+            }
+        }else{
+            if(!($content instanceof Component)){
+                $content = Admin::dispatch($content);
+            }
+            if($content instanceof Form && ($this instanceof Dialog || $this instanceof Drawer)){
+                $field = $this->bindAttr('modelValue');
+                $content->eventSuccess([$field=>false]);
+            }
+            $this->content[$name][] = $content;    
         }
-        if($content instanceof Form && ($this instanceof Dialog || $this instanceof Drawer)){
-            $field = $this->bindAttr('modelValue');
-            $content->eventSuccess([$field=>false]);
-        }
-        $this->content[$name][] = $content;
         return $this;
     }
 

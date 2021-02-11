@@ -80,7 +80,7 @@ class Actions extends Component
     protected function actionDropdown(){
         //是否隐藏详情
         if (!$this->hideDetailButton && !is_null($this->grid->detailAction())) {
-            $text = '<i class="el-icon-info"> '.$this->detailTextText;
+            $text = '<i class="el-icon-info"> '.$this->detailText;
             $detail = $this->grid->detailAction()->detail()->renderable();
             $action = clone $this->grid->detailAction()->component();
             if($action instanceof Router){
@@ -131,7 +131,7 @@ class Actions extends Component
     protected function actionButton(){
         //是否隐藏详情
         if (!$this->hideDetailButton && !is_null($this->grid->detailAction())) {
-            $button = Button::create($this->delText)
+            $button = Button::create($this->detailText)
                 ->size('small')
                 ->icon('el-icon-info');
             $detail = $this->grid->detailAction()->detail();

@@ -1,6 +1,6 @@
 <template>
     <div class="tagsView">
-        <!--<el-scrollbar class="scroll-container" :noresize="true">-->
+        <!--<el-scrollbar class="scroll-container">-->
         <ul>
             <li v-for="item in state.mainComponent" @mouseover="selectTag(item.url)" @mouseout="selectTag('')" @click="clickHandel(item.url)" :class="[route.fullPath ===item.url ? 'activte':'']">
                 <span>{{item.title}}</span>

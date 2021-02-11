@@ -141,6 +141,7 @@
             const trashed = ref(false)
             const quickSearchOn = ctx.attrs.quickSearch
             const columns = ref(props.columns)
+
             const tableData = ref(props.data)
             const total = ref(props.pagination.total || 0)
             let page = 1

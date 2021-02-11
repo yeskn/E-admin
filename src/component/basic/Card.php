@@ -17,15 +17,20 @@ use Eadmin\component\Component;
 class Card extends Component
 {
     protected $name = 'ElCard';
+
     public function __construct($content)
     {
-         $this->content($content);
+        if (!empty($content)) {
+            $this->content($content);
+        }
     }
+
     /**
      * 创建卡片
      * @return Card
      */
-    public static function create($content=''){
+    public static function create($content = '')
+    {
         return new self($content);
     }
 
@@ -33,7 +38,8 @@ class Card extends Component
      * 头部内容
      * @param string $content
      */
-    public function header($content){
-        return $this->content($content,'header');
+    public function header($content)
+    {
+        return $this->content($content, 'header');
     }
 }

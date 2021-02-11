@@ -15,9 +15,12 @@ use Eadmin\component\basic\Dropdown;
 use Eadmin\component\basic\DropdownItem;
 use Eadmin\component\basic\Html;
 use Eadmin\component\basic\Tip;
+use Eadmin\component\layout\Content;
+use Eadmin\component\layout\Row;
 use Eadmin\Controller;
 use Eadmin\grid\Actions;
 use Eadmin\form\Form;
+use Eadmin\detail\Detail;
 use Eadmin\grid\Grid;
 use Eadmin\model\SystemMenu;
 use Eadmin\service\MenuService;
@@ -45,18 +48,20 @@ class Menu extends Controller
         $grid->column('name', '菜单名称')->display(function ($val, $data) {
             return "<i class='{$data['icon']}'></i>" . $val;
         });
-        $grid->column('url', '菜单链接')->display(function ($val){
-            return ' '.$val;
+        $grid->column('url', '菜单链接')->display(function ($val) {
+            return ' ' . $val;
         });
         $grid->column('status', '状态')->switch();
         $grid->actions(function (Actions $action, $data) {
-            $action->hideDetail();
+            //  $action->hideDetail();
         });
         $grid->sortInput();
         $grid->setForm($this->form())->dialog();
+        $grid->setDetail($this->detail());
         $grid->quickSearch();
         return $grid;
     }
+
     /**
      * 系统菜单
      * @auth true
@@ -75,5 +80,37 @@ class Menu extends Controller
         $form->text('params', '链接参数');
         $form->icon('icon', '菜单图标');
         return $form;
+    }
+
+    /**
+     * 系统菜单详情
+     * @auth true
+     * @login true
+     * @return Detail
+     */
+    public function detail($id = 0): Detail
+    {
+
+        $detail = new Detail(SystemMenu::find($id));
+        $detail->title('系统菜单详情');
+        $detail->field('name','菜单')->md(12)->tip();
+        $detail->field('name','icon')->md(12)->display(function ($val,$data){
+            return $data['icon'];
+        });
+        $detail->field('name','菜单')->md(12);
+
+        $detail->row(function ($detail){
+            $detail->card('卡片',function ($detail){
+                $detail->field('name','菜单')->md(12);
+                $detail->field('name','菜单')->md(12);
+                $detail->field('name','菜单')->md(12);
+
+            },24);
+        });
+//        $detail->grid('test','auth',function (Grid $grid){
+//            $grid->column('auth_id','auth_id');
+//        });
+
+        return $detail;
     }
 }

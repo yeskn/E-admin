@@ -9,12 +9,18 @@ namespace Eadmin\grid\drive;
 
 
 use Eadmin\contract\GridInterface;
+use think\Collection;
+
 
 class Arrays implements GridInterface
 {
+
     protected $data = [];
     public function __construct($data)
     {
+        if(is_array($data)){
+            $data = Collection::make($data);
+        }
         $this->data = $data;
     }
 
@@ -24,13 +30,13 @@ class Arrays implements GridInterface
             return $this->data;
         }else{
             $page = ($page-1) * $size;
-            $data = array_slice($this->data,$page,$size);
+            $data =  $this->data->slice($page,$size);
             return $data;
         }
     }
     public function getTotal(): int
     {
-        return count($this->data);
+        return $this->data->count();
     }
     /**
      * 是否有回收站

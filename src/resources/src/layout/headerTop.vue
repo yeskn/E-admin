@@ -20,10 +20,10 @@
             <el-dropdown trigger="click" class="avatar-container">
                 <div class="avatar-wrapper">
                     <img :src="state.info.avatar" class="user-avatar ">
-                    <span class="right-menu-item">
-            <span style="color: #777777">{{ state.info.nickname }}</span>
-            <div><el-badge is-dot type="success" style="top:4px"/> <span style="color: #999999">{{ state.info.username }}</span></div>
-          </span>
+                    <span class="right-menu-item" style="line-height: 1">
+                        <span style="color: #777777">{{ state.info.nickname }}</span>
+                        <div style="line-height: 18px"><el-badge is-dot type="success" style="top:4px;"/> <span style="color: #999999">{{ state.info.username }}</span></div>
+                    </span>
                     <i class="el-icon-caret-bottom" style="line-height: 30px"/>
                 </div>
                 <template #dropdown>

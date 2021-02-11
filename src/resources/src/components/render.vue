@@ -1,5 +1,5 @@
 <script>
-    import {defineComponent, computed, toRaw, h, resolveComponent, inject,isProxy ,KeepAlive} from 'vue'
+    import {defineComponent, computed, toRaw, h, resolveComponent, inject,isProxy } from 'vue'
     import {store} from '/@/store'
     import {splitCode} from '/@/utils/splitCode'
     import dayjs from 'dayjs'
@@ -171,14 +171,19 @@
                         if (typeof (item) == 'object') {
                             return renderComponent(item, scope)
                         } else {
-                            return h({
-                                setup() {
-                                    return {
-                                        ...modelValue
-                                    }
-                                },
-                                template: `${item}`
-                            })
+                            if(item && typeof(item) == 'string' &&item.indexOf('#') !== 0){
+                                return h({
+                                    setup() {
+                                        return {
+                                            ...modelValue
+                                        }
+                                    },
+                                    template: `${item}`
+                                })
+                            }else{
+                                return item
+                            }
+
                         }
                     }
                 })
