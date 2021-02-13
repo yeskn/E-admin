@@ -64,7 +64,7 @@
                 <render :data="column.header" :slot-props="{grid:grid}"></render>
             </template>
             <template  #default="{ text , record , index }">
-                 <render :data="text" :slot-props="{grid:grid}"></render>
+                 <render :key="record.id" :data="text" :slot-props="{grid:grid}"></render>
             </template>
             <template #sortDrag="{ text , record , index }">
                 <div style="display: flex;flex-direction: column">
@@ -372,7 +372,6 @@
                     ElMessage.warning('暂无数据')
                     return false
                 }
-                console.log(213)
                 let  requestParams = {
                         eadmin_export:true,
                         export_type:type,

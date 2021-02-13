@@ -14,6 +14,7 @@ use Eadmin\component\basic\Card;
 use Eadmin\component\basic\TabPane;
 use Eadmin\component\basic\Tabs;
 use Eadmin\component\form\Field;
+use Eadmin\component\form\field\Cascader;
 use Eadmin\component\form\field\DatePicker;
 use Eadmin\component\form\field\Input;
 use Eadmin\component\form\field\Select;
@@ -241,10 +242,12 @@ class Form extends Field
     {
         foreach ($component->bindAttribute as $attr => $field) {
             $value = $this->drive->getData($field, $data);
+           
             if (!empty($value)) {
                 $component->bind($field, $value);
             }
         }
+
         foreach ($component->bindAttribute as $attr => $field) {
             $value = $this->drive->getData($field, $data);
             if(is_null($value) && ($component instanceof DatePicker || $component instanceof TimePicker) && $startField = $component->bindAttr('startField')){
@@ -455,8 +458,9 @@ class Form extends Field
         return $manyItem;
     }
 
-    protected function formItem($name, $field, $arguments)
+    protected function formItem($name, $arguments)
     {
+        $field = $arguments[0];
         $label = array_pop($arguments);
         $label = $label ?? '';
         $class = "Eadmin\\component\\form\\field\\";
@@ -511,20 +515,27 @@ class Form extends Field
             //由于element时间范围字段返回是一个数组,这里特殊绑定处理成2个字段
             if ($name == 'dateRange' || $name == 'datetimeRange' || $name == 'timeRange') {
                 $component = $class::create();
-                $component->rangeField($field, $arguments[0]);
+                $component->rangeField($field, $arguments[1]);
                 $component->startPlaceholder('请选择开始' . $label . '时间');
                 $component->endPlaceholder('请选择结束' . $label . '时间');
                 $prop = $component->bindAttr('modelValue');
             }
             $component->type($name);
         }
+        if ($name == 'cascader') {
+            $component = $class::create();
+            $component->attr('bindFields',$arguments);
+            $component->bindFields($arguments);
+            $prop = $component->bindAttr('modelValue');
+        }
+
         if ($name == 'hidden') {
             //隐藏域
             $this->push($component);
         } else {
             if ($component instanceof Input) {
                 $component->placeholder('请输入' . $label);
-            } elseif ($component instanceof Select) {
+            } elseif ($component instanceof Select || $component instanceof Cascader) {
                 $component->placeholder('请选择' . $label);
             }
             $item = $this->item($prop, $label);
@@ -629,7 +640,7 @@ class Form extends Field
 
     public function __call($name, $arguments)
     {
-        return $this->formItem($name, $arguments[0], array_slice($arguments, 1));
+        return $this->formItem($name, $arguments);
     }
     public function popItem(){
         $item =  array_pop($this->formItem);

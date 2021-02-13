@@ -1,5 +1,5 @@
 <script>
-    import {defineComponent, computed, toRaw, h, resolveComponent, inject,isProxy } from 'vue'
+    import {defineComponent, computed, toRaw, h, resolveComponent, inject,isProxy,onRenderTracked,onRenderTriggered,onUpdated } from 'vue'
     import {store} from '/@/store'
     import {splitCode} from '/@/utils/splitCode'
     import dayjs from 'dayjs'
@@ -13,12 +13,28 @@
             slotProps:Object
         },
         render() {
-            return this.render
+            if (this.data) {
+                this.setProxyData(this.data)
+                const jsonRender = toRaw(this.data)
+                return this.renderComponent(jsonRender,this.slotProps)
+            } else {
+                return null
+            }
         },
         setup(props,ctx) {
+            onRenderTracked(e=>{
+              //  console.log(e)
+            })
+            onRenderTriggered(e=>{
+                //console.log(e)
+            })
+            onUpdated(e=>{
+               // console.log(e)
+            })
             const state = inject(store)
             const modelValue = state.proxyData
             const renderComponent = (data, slotProps) => {
+           //     console.log(data.name)
                 if(!data.attribute){
                     return
                 }
@@ -47,7 +63,10 @@
                                         slotProps.row[data.bindAttribute.endField] = value[1]
                                     }
                                 }
-
+                            }else if(data.attribute.bindFields){
+                                data.attribute.bindFields.forEach((field,index)=>{
+                                    slotProps.row[data.bindAttribute.field] = value[index]
+                                })
                             }
                             slotProps.row[field] = value
                         }
@@ -71,6 +90,26 @@
                                         eval(expression)
                                     }
                                 }
+                            }else if(data.attribute.bindFields){
+                                //级联选择器处理
+                                if(data.bindAttribute.relation){
+                                    expression = 'modelValue.' + data.bindAttribute.relation + ' = []'
+                                    eval(expression)
+                                    value.forEach(row=>{
+                                        var rowValue = {}
+                                        data.attribute.bindFields.forEach((field,index)=>{
+                                            rowValue[field] = row[index]
+                                        })
+                                        expression = 'modelValue.' + data.bindAttribute.relation + '.push(rowValue)'
+                                        eval(expression)
+                                    })
+                                }else{
+                                    data.attribute.bindFields.forEach((field,index)=>{
+                                        expression = 'modelValue.' + data.bindAttribute[field] + ' = value[index]'
+                                        eval(expression)
+                                    })
+                                }
+
                             }
                             expression = 'modelValue.' + field + ' = value'
                             eval(expression)
@@ -110,6 +149,7 @@
                 }
 
                 attribute = {...data.attribute}
+               // console.log(data.name)
                 if(data.name == 'html'){
                     return h('span', attribute, children)
                 }else if(data.name == 'component'){
@@ -276,17 +316,16 @@
                     })
                 }
             }
-            const render = computed(() => {
-                if (props.data) {
-                    setProxyData(props.data)
-                    const jsonRender = toRaw(props.data)
-                    return renderComponent(jsonRender,props.slotProps)
-                } else {
-                    return null
-                }
-            })
+            // const render = computed(() => {
+            //
+            // })
+            function render() {
+
+            }
             return {
-                render
+                setProxyData,
+                render,
+                renderComponent
             }
         },
     })

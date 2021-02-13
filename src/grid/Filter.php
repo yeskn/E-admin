@@ -300,14 +300,18 @@ class Filter
      * 级联筛选
      * @param ...$field 字段1,字段2,字段3...
      * @param $label 标签
-     * @return \Eadmin\form\field\Cascader
+     * @return \Eadmin\component\form\field\Cascader
      */
     public function cascader(...$field)
     {
-        $label = array_pop($field);
+        $cascader =  $this->form->cascader(...$field);
+        $requestField = md5(implode(',',$field));
+        $cascader->bind($requestField,'');
+        $cascader->bindAttr('modelValue',$requestField);
+        array_unshift($field,$requestField);
+        array_pop($field);
         $this->paseFilter('cascader', $field);
-        $formItem = $this->formItem($field[0], $label, 'cascader', array_slice($field, 1));
-        return $formItem;
+        return $cascader;
     }
 
     /**
@@ -453,8 +457,8 @@ class Filter
                 }
                 $requestField = $field;
             } elseif (is_array($field)) {
-                $dbField = $field;
                 $requestField = array_shift($field);
+                $dbField = $field;
             }
             $this->filterField($method, $dbField, $requestField);
         }
@@ -486,11 +490,13 @@ class Filter
         }
         if (is_array($dbField)) {
             $dbFields = $dbField;
+
         } else {
             $dbFields[] = $dbField;
         }
 
         $whereOr = [];
+
         foreach ($dbFields as $f) {
             if (isset($data[$field]) && $data[$field] !== '') {
                 if (is_array($data[$field]) && $method == 'cascader') {
@@ -517,6 +523,7 @@ class Filter
                 $this->parseRule($method, $f, $field, $fieldData);
             }
         }
+
         if (!empty($whereOr)) {
             $fieldData[$field] = $whereOr;
             $this->parseRule($method, $f, $field, $fieldData);

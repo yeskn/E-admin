@@ -38,7 +38,6 @@
             const state = inject(store)
             let proxyData = state.proxyData
             let sidebar = state.sidebar
-
             return {
                 route,
                 state,
