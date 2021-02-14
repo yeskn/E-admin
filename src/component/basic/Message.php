@@ -78,6 +78,9 @@ class Message
     public function refresh(){
         $this->data = array_merge($this->data,['refresh'=>true]);
     }
+    public function data(array $data){
+        $this->data = array_merge($this->data,['data'=>$data]);
+    }
     protected function response($message, $type, $url = '')
     {
         $this->data = [

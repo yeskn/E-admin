@@ -23,6 +23,7 @@ use Eadmin\component\form\Field;
  */
 class Number extends Field
 {
+    protected $name = 'ElInputNumber';
     public function __construct($field = null, $value = '')
     {
         if(empty($value)){
@@ -31,5 +32,5 @@ class Number extends Field
         $this->min(0);
         parent::__construct($field, $value);
     }
-    protected $name = 'ElInputNumber';
+    
 }

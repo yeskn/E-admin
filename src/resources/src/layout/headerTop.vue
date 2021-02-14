@@ -13,7 +13,7 @@
                 <screenfull id="screenfull" class="right-menu-item hover-effect" />
             </el-tooltip>
             <el-tooltip effect="dark" content="刷新" placement="bottom">
-                <div class="right-menu-item hover-effect" @click="refresh">
+                <div class="right-menu-item hover-effect" @click="refreshs">
                     <i class="el-icon-refresh-right refresh"/>
                 </div>
             </el-tooltip>
@@ -47,7 +47,7 @@
 <script>
 
     import {useRoute} from 'vue-router'
-    import {link, findParent, findTree} from '/@/utils'
+    import {link, findParent, findTree,refresh} from '/@/utils'
     import {defineComponent, watch, inject, computed} from 'vue'
     import {store, action} from '/@/store'
     import router from "../router";
@@ -132,13 +132,13 @@
             }
             //退出登录
             function logout() {
-                state.info.id = null
-                localStorage.removeItem('eadmin_token')
-                router.push(`/login?redirect=${route.fullPath}`)
+                action.logout().then(res=>{
+                    router.push(`/login?redirect=${route.fullPath}`)
+                })
             }
             //刷新
-            function refresh() {
-                router.push({path:'/refresh',replace:true})
+            function refreshs() {
+                refresh()
             }
             return {
                 activeIndex,
@@ -148,7 +148,7 @@
                 sidebar,
                 menus,
                 logout,
-                refresh
+                refreshs
             }
         }
     })

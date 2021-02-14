@@ -8,7 +8,7 @@
         <slot></slot>
         <render :data="content" :slot-props="slotProps" @success="hide"></render>
     </el-dialog>
-    <span @click="open">
+    <span @click.stop="open">
         <slot name="reference"></slot>
     </span>
 </template>

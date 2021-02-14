@@ -188,7 +188,7 @@ class Column extends Component
             $this->exportData = $value;
         }
         if($this->tip){
-            $value = Tip::create($value)->content($value)->placement('right')->offset(-800);
+            $value = Tip::create($value)->content($value)->placement('right');
         }
         return Html::create()->content($value);
     }

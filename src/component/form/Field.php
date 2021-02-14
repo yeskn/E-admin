@@ -78,6 +78,10 @@ abstract class Field extends Component
         $this->default = $value;
         return $this;
     }
+    public function append($content){
+        $this->formItem->content($content);
+        return $this;
+    }
     /**
      * 获取缺省默认值
      * @return |null

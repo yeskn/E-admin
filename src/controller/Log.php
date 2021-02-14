@@ -2,6 +2,7 @@
 
 namespace Eadmin\controller;
 
+use Eadmin\Controller;
 use think\facade\Request;
 use think\facade\View;
 use Eadmin\service\LogService;
@@ -11,7 +12,7 @@ use Eadmin\service\LogService;
  * Class Log
  * @package
  */
-class Log extends BaseAdmin
+class Log extends Controller
 {
     /**
      * 日志数据

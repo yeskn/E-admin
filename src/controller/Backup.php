@@ -9,23 +9,24 @@
 namespace Eadmin\controller;
 
 
+use Eadmin\Admin;
+use Eadmin\component\basic\Button;
+use Eadmin\component\form\FormAction;
+use Eadmin\component\layout\Content;
+use Eadmin\component\layout\Row;
+use Eadmin\Controller;
+use Eadmin\form\drive\Config;
+use Eadmin\grid\Actions;
+use Eadmin\grid\Grid;
 use Eadmin\service\BackupData;
-use Eadmin\controller\BaseAdmin;
-use Eadmin\facade\Button;
-use Eadmin\facade\Component;
 use Eadmin\form\Form;
-use Eadmin\grid\Column;
-use Eadmin\grid\Table;
-use Eadmin\layout\Content;
-use Eadmin\layout\Row;
-
 
 /**
  * 数据库备份
  * Class Backup
  * @package
  */
-class Backup extends BaseAdmin
+class Backup extends Controller
 {
     /**
      * 数据库备份列表
@@ -33,29 +34,34 @@ class Backup extends BaseAdmin
      * @login true
      * @return $this
      */
-    protected function grid()
+    public function index() : Grid
     {
-        if (request()->method() == 'DELETE') {
-            return $this;
-        }
-        $content = new Content();
-        $content->row(function (Row $row) {
-            $row->columnComponentUrl('backup/config');
+        $datas = BackupData::instance()->getBackUpList();
+        $grid = new Grid($datas);
+        $grid->title('数据库备份');
+        $grid->column('name', '备份名称');
+        $grid->column('size', '备份大小');
+        $grid->column('create_time', '备份时间');
+        $grid->actions(function (Actions $actions,$data){
+            $actions->prepend(
+                Button::create('还原')
+                    ->typePrimary()
+                    ->sizeSmall()
+                    ->save(['id'=>$data['id']],'backup/reduction','确认还原备份？')
+            );
         });
-        $content->rowComponent($this->table());
-        Component::view($content->view());
+        $grid->deling(function ($ids){
+            foreach ($ids as $id){
+                BackupData::instance()->delete($id);
+            }
+        });
+        $grid->hideDeleteButton();
+        $grid->tools('backup/config');
+        return $grid;
     }
 
 
-    //删除备份文件
-    protected function destroy($id)
-    {
-        if (BackupData::instance()->delete($id)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+
 
     /**
      * 备份配置
@@ -64,20 +70,19 @@ class Backup extends BaseAdmin
      */
     public function config()
     {
-
-        $form = new Form();
-        $form->setAttr('inline', true);
-        $form->setAttr('size', 'mini');
-        $form->labelPosition('right', 120);
+        $form = new Form(new Config());
+        $form->inline();
+        $form->size('mini');
         $form->radio('databackup_on', '自动备份')->options([
             1 => '开启',
             0 => '关闭',
         ])->default(0)->themeButton();
-        $form->number('database_number', '最多保留')->setAttr('style', 'width:150px')->min(1)->append('份')->required();
-        $form->number('database_day', '	数据库每')->min(1)->setAttr('style', 'width:180px')->append('天自动备份')->required();
-        $button = Button::create('备份数据库', 'primary', 'mini', '', true)->save('', [], 'backup/add', '', true);
-
-        $form->appendSubmitExtend($button);
+        $form->number('database_number', '最多保留')->min(1)->append('<span style="padding-left: 12px">份</span>')->required();
+        $form->number('database_day', '	数据库每')->min(1)->append('<span style="padding-left: 12px">天自动备份</span>')->required();
+        $form->actions(function (FormAction $action){
+            $action->addRightAction(Button::create('备份数据库')->typeWarning()->sizeMini()->save([],'backup/add'));
+            $action->hideResetButton();
+        });
         return $form;
     }
 
@@ -86,12 +91,12 @@ class Backup extends BaseAdmin
      * @auth true
      * @login true
      */
-    public function reduction()
+    public function reduction($id)
     {
-        if (BackupData::instance()->reduction()) {
-            Component::message()->success('数据库还原完成')->refresh();
+        if (BackupData::instance()->reduction($id)) {
+            admin_success_message('数据库还原完成');
         } else {
-            Component::message()->error('数据库还原失败');
+            admin_error_message('数据库还原失败');
         }
     }
 
@@ -104,34 +109,12 @@ class Backup extends BaseAdmin
     {
         $res = BackupData::instance()->backup();
         if ($res === true) {
-            Component::message()->success('数据库备份成功')->refresh();
+            admin_success_message('数据库备份成功')->refresh();
         } else {
-            Component::message()->error($res);
+            admin_error_message($res);
         }
 
     }
 
-    protected function table()
-    {
-        $datas = BackupData::instance()->getBackUpList();
-        $columns[] = new Column('name', '备份名称');
-        $columns[] = new Column('size', '备份大小');
-        $columns[] = new Column('create_time', '备份时间');
-        $columns[] = new Column('action', '操作');
-        foreach ($datas as $rows) {
-            foreach ($columns as $column) {
-                $field = $column->getField();
-                if ($field == 'action') {
-                    $column->display(function () use ($rows) {
-                        $button = Button::create('还原', 'primary')->save($rows['id'], ['name' => $rows['id']], 'backup/reduction', '确认还原备份？');
-                        $button .= Button::create('删除', 'danger')->delete($rows['id'], '确认删除？');
-                        return $button;
-                    });
-                }
-                $column->setData($rows);
-            }
-        }
-        $table = new Table($columns, $datas);
-        return $table->view();
-    }
+
 }

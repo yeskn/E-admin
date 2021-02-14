@@ -3,6 +3,7 @@ import { ElMessage, ElNotification } from 'element-plus'
 import router from '/@/router'
 import { isExternal } from '/@/utils/validate'
 import { action } from '/@/store'
+import { refresh } from '/@/utils'
 // create an axios instance
 const service = axios.create({
   // baseURL: window.global_config.VUE_APP_BASE_API, // url = base url + request url
@@ -77,7 +78,7 @@ service.interceptors.response.use(
           }
         }
         if(res.refresh){
-          router.replace()
+          refresh()
         }
         if (res.type == 'success') {
           res.code = 200
@@ -105,7 +106,7 @@ service.interceptors.response.use(
           }
         }
         if(res.refresh){
-          router.replace()
+          refresh()
         }
         if (res.type == 'success') {
           res.code = 200

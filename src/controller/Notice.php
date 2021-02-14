@@ -3,6 +3,7 @@
 
 namespace Eadmin\controller;
 
+use Eadmin\Controller;
 use Eadmin\controller\BaseAdmin;
 use Eadmin\model\SystemNotice;
 use Eadmin\service\AdminService;
@@ -13,7 +14,7 @@ use Eadmin\service\NoticeService;
  * Class Notice
  * @package app\admin\controller
  */
-class Notice extends BaseAdmin
+class Notice extends Controller
 {
     /**
      * 系统通知

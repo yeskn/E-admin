@@ -96,6 +96,7 @@ class Grid extends Component
         } else {
             $this->drive = new \Eadmin\grid\drive\Arrays($data);
         }
+        $this->params(Request::param());
         $this->hideTrashed(!$this->drive->trashed());
         //分页初始化
         $this->pagination = new Pagination();
@@ -285,7 +286,6 @@ class Grid extends Component
         $this->treeParent = $pidField;
         $this->isTree = true;
         $this->hidePage();
-        $this->expandRowByClick();
         $this->defaultExpandAllRows($expand);
     }
     /**

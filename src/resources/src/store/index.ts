@@ -138,6 +138,19 @@ const action = {
                 reject(res)
             })
         })
+    },
+    logout(){
+        return new Promise((resolve, reject) =>{
+            request({
+                url:'/admin/login/logout'
+            }).then(res=>{
+                states.info.id = 0
+                localStorage.removeItem('eadmin_token')
+                resolve(res)
+            }).catch(res=>{
+                reject(res)
+            })
+        })
     }
 }
 export {action}

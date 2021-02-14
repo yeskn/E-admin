@@ -25,6 +25,9 @@ export function findTree(datas, id,field) {
     }
     return null
 }
+export function refresh() {
+    router.push({path:'/refresh',replace:true})
+}
 export function link(url){
     if (isExternal(url)) {
         window.open(url)

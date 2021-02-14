@@ -242,13 +242,12 @@ class Admin
                     array_shift($pathinfo);
                 }
                 $url = implode('/', $pathinfo);
-                $dispatch = Request::rule()->check(request(), $url);
-                if ($dispatch === false) {
 
+                $dispatch = Route::getDomains()['-']->check(request(), $url);
+                if ($dispatch === false) {
                     $dispatch = Route::url($url);
 
                 }
-
                 if ($dispatch) {
                     $dispatch->init(app());
                     $get = $request->get();
@@ -259,13 +258,15 @@ class Admin
                         $reflect = new \ReflectionMethod($instance, $action);
                         $data = app()->invokeReflectMethod($instance, $reflect, $vars);
                     } elseif ($dispatch instanceof Callback) {
+
                         $data = app()->invoke($dispatch->getDispatch(), $vars);
+
                     }
                     $request->withGet($get);
                 }
             }
         } catch (\Exception $exception) {
-
+          
         }
         return $data;
     }

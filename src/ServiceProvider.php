@@ -64,20 +64,21 @@ class ServiceProvider extends Service
         $this->app->route->post('log/remove',Log::class.'@remove');
         //插件
         $this->app->route->get('plug/add',Plug::class.'@add');
+        $this->app->route->get('plug/grid',Plug::class.'@grid');
+        $this->app->route->post('plug/enable',Plug::class.'@enable');
+        $this->app->route->post('plug/install',Plug::class.'@install');
         $this->app->route->get('plug',Plug::class.'@index');
-        $this->app->route->put('plug/enable',Plug::class.'@enable');
-        $this->app->route->put('plug/install',Plug::class.'@install');
-        $this->app->route->resource('plug',Plug::class);
         //消息通知
         $this->app->route->get('notice/notification',Notice::class.'@notification');
         $this->app->route->post('notice/system',Notice::class.'@system');
         $this->app->route->post('notice/reads',Notice::class.'@reads');
         $this->app->route->delete('notice/clear',Notice::class.'@clear');
         //数据库备份
+
         $this->app->route->get('backup/config',Backup::class.'@config');
-        $this->app->route->put('backup/add',Backup::class.'@add');
-        $this->app->route->put('backup/reduction',Backup::class.'@reduction');
-        $this->app->route->resource('backup',Backup::class);
+        $this->app->route->post('backup/add',Backup::class.'@add');
+        $this->app->route->post('backup/reduction',Backup::class.'@reduction');
+        $this->app->route->get('backup',Backup::class.'@index');
 
         $this->app->route->resource(':controller',':controller')->ext('rest');
         $rules = $this->app->route->getGroup()->getRules();

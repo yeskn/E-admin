@@ -40,6 +40,7 @@ use think\Model;
  * @method \Eadmin\component\form\field\Input textarea($field, $label='') 多行文本输入框
  * @method \Eadmin\component\form\field\Input password($field, $label='') 密码输入框
  * @method \Eadmin\component\form\field\Mobile mobile($field, $label='') 手机号输入框
+ * @method \Eadmin\component\form\field\Mobile email($field, $label='') 邮箱输入框
  * @method \Eadmin\component\form\field\Number number($field, $label='') 数字输入框
  * @method \Eadmin\component\form\field\Select select($field, $label='') 下拉选择器
  * @method \Eadmin\component\form\field\RadioGroup radio($field, $label='') 单选框
@@ -64,9 +65,8 @@ use think\Model;
  * @method \Eadmin\component\form\field\Cascader cascader(...$field, $label='') 级联选择器
  * @method \Eadmin\component\form\field\Transfer transfer($field, $label='') 穿梭框
  * @method \Eadmin\component\form\field\Icon icon($field, $label='') 图标选择器
- * @method \Eadmin\component\form\field\IframeTag iframeTag($field, $label='') 弹窗选择框
- * @method \Eadmin\component\form\field\Map map($lng, $lat, $address, $label='') 高德地图
- * @method \Eadmin\component\form\field\TableText tableText($field, $label='') 表格编辑
+ * @method \Eadmin\component\form\field\IframeTag iframeTag($field, $label='') 弹窗选择框  TODO
+ * @method \Eadmin\component\form\field\Map map($lng, $lat, $address, $label='') 高德地图  TODO
  */
 class Form extends Field
 {
@@ -461,7 +461,9 @@ class Form extends Field
     protected function formItem($name, $arguments)
     {
         $field = $arguments[0];
-        $label = array_pop($arguments);
+        if(count($arguments) > 1){
+            $label = array_pop($arguments);
+        }
         $label = $label ?? '';
         $class = "Eadmin\\component\\form\\field\\";
         $inputs = [

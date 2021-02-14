@@ -85,6 +85,36 @@ class Menu extends Controller
         $form->text('url', '菜单链接');
         $form->text('params', '链接参数');
         $form->icon('icon', '菜单图标');
+        $data = [
+            [
+                'id' => 'admin/index/dashboard',
+                'pid'   => 0,
+                'label' => '一级菜单1',
+            ],
+            [
+                'id' => '仪表盘',
+                'pid'   => 'admin/index/dashboard',
+                'label' => '二级菜单',
+            ],
+//            [
+//                'id' => 4,
+//                'pid'   => 3,
+//                'label' => '三级菜单',
+//            ],
+            [
+                'id' => 'df',
+                'pid'   => 0,
+                'label' => '一级菜单2',
+            ],
+            [
+                'id' => 'df1',
+                'pid'   => 'df',
+                'label' => '一级菜单2',
+            ],
+        ];
+       // $form->dateRange('create_at','update_time','sd');
+        $form->transfer('a','选中')->data($data);
+
         return $form;
     }
 }

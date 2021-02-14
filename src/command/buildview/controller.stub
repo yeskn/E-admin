@@ -2,7 +2,7 @@
 
 namespace {%namespace%};
 
-use Eadmin\controller\BaseAdmin;
+use Eadmin\Controller;
 use Eadmin\form\Form;
 use Eadmin\grid\Actions;
 use Eadmin\grid\Detail;
@@ -15,7 +15,7 @@ use {%model_namespace%};
  * Class {%className%}
  * @package {%namespace%}
  */
-class {%className%} extends BaseAdmin
+class {%className%} extends Controller
 {
     /**
      * 列表
@@ -23,11 +23,10 @@ class {%className%} extends BaseAdmin
      * @login true
      * @return string
      */
-    protected function grid()
+    public function index() : Grid
     {
         $grid = new Grid(new {%model%});
-        $grid->setTitle('列表');
-        $grid->indexColumn();
+        $grid->title('列表');
 {%grid%}
         $grid->quickSearch();
         $grid->actions(function (Actions $action){
@@ -42,9 +41,10 @@ class {%className%} extends BaseAdmin
      * @login true
      * @return string
      */
-    protected function detail()
+    public function detail()
     {
         $detail = new Detail(new {%model%});
+        $detail->title('详情');
 {%detail%}
         return $detail;
     }
@@ -55,9 +55,10 @@ class {%className%} extends BaseAdmin
      * @login true
      * @return string
      */
-    protected function form()
+    public function form()
     {
         $form = new Form(new {%model%});
+        $form->title('表单');
 {%form%}
          return $form;
     }

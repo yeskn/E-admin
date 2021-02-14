@@ -63,9 +63,8 @@ class BackupData extends Service
      * @auth true
      * @login true
      */
-    public function reduction()
+    public function reduction($name)
     {
-        $name = $this->app->request->put('name');
         $file = $this->backupPath() . $name . '.sql';
         set_time_limit(0);
         $mysqli = mysqli_connect(config('database.connections.mysql.hostname'), config('database.connections.mysql.username'), config('database.connections.mysql.password'), config('database.connections.mysql.database'), config('database.connections.mysql.hostport'));

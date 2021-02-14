@@ -29,6 +29,7 @@ use Eadmin\component\Component;
  */
 class Button extends Component
 {
+    use Common;
     protected $name = 'EadminButton';
 
     public function __construct($content)

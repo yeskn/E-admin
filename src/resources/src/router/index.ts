@@ -47,7 +47,9 @@ router.afterEach((to:RouteLocationNormalized)=>{
             item.remove()
         })
     }
-    action.component(asyncCmponent,to.fullPath)
+    if(asyncCmponent){
+        action.component(asyncCmponent,to.fullPath)
+    }
 })
 function loadComponent(url){
     return new Promise((resolve, reject) =>{
@@ -57,7 +59,8 @@ function loadComponent(url){
             asyncCmponent = res;
             resolve(res)
         }).catch(res=>{
-            resolve(res)
+            asyncCmponent = ''
+            reject(res)
         }).finally(()=>{
             action.loading(false)
         })
