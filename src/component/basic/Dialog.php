@@ -58,8 +58,8 @@ class Dialog extends Field
      */
     public function form(Form $form){
         $this->url('/eadmin.rest');
-        $oarams = array_merge($form->getCallMethod(),$form->getCallParams());
-        $this->params($oarams);
+        $params = array_merge($form->getCallMethod(),$form->getCallParams());
+        $this->params($params);
         return $this;
     }
     public function reference($content){

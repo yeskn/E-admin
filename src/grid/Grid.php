@@ -96,7 +96,8 @@ class Grid extends Component
         } else {
             $this->drive = new \Eadmin\grid\drive\Arrays($data);
         }
-        $this->params(Request::param());
+
+
         $this->hideTrashed(!$this->drive->trashed());
         //分页初始化
         $this->pagination = new Pagination();
@@ -107,6 +108,7 @@ class Grid extends Component
         $this->attr('eadmin_grid', $this->bindAttr('modelValue'));
         $this->loadDataUrl('eadmin.rest');
         $this->getCallMethod();
+        $this->params($this->getCallParams());
         if (!is_null(self::$init)) {
             call_user_func(self::$init, $this);
         }

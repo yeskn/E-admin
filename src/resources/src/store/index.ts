@@ -26,6 +26,9 @@ const states = reactive({
     //个人信息
     info:{
         id:0,
+        webLogo:'',
+        webName:'',
+        dropdownMenu:[],
     },
     //菜单
     menus:[],
@@ -58,7 +61,8 @@ const action = {
     cachesVariable(url) {
         const index = action.getComponentIndex(url)
         if(index > -1){
-            states.componentVariable[index].proxyData = toRaw(states.proxyData)
+            states.componentVariable[index].proxyData = {...states.proxyData}
+
         }
     },
 
@@ -79,7 +83,7 @@ const action = {
             delete states.proxyData[i]
         }
         if(index > -1) {
-            states.proxyData = toRaw(states.componentVariable[index].proxyData)
+            states.proxyData = {...states.componentVariable[index].proxyData}
         }else{
             states.componentVariable.push({
                 url:url,
@@ -132,6 +136,9 @@ const action = {
                 states.menus = res.data.menus
                 if(info){
                     states.info = info
+                    states.info.webLogo = res.data.webLogo
+                    states.info.webName = res.data.webName
+                    states.info.dropdownMenu = res.data.dropdownMenu
                 }
                 resolve(res)
             }).catch(res=>{

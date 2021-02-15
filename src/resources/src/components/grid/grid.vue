@@ -18,8 +18,7 @@
                         <template #dropdown>
                             <el-dropdown-menu>
                                 <el-dropdown-item @click.native="exportData('page')">导出当前页</el-dropdown-item>
-                                <el-dropdown-item @click.native="exportData('select')" v-show="selectIds.length > 0">导出选中行
-                                </el-dropdown-item>
+                                <el-dropdown-item @click.native="exportData('select')" v-show="selectIds.length > 0">导出选中行</el-dropdown-item>
                                 <el-dropdown-item @click.native="exportData('all')">导出全部</el-dropdown-item>
                             </el-dropdown-menu>
                         </template>
@@ -28,8 +27,8 @@
                     <el-button plain size="small" icon="el-icon-help" v-if="trashed && selectIds.length > 0" @click="recoverySelect">恢复选中</el-button>
                     <el-button type="danger" size="small" icon="el-icon-delete" v-if="!hideDeleteButton" @click="deleteAll()">{{trashed && !hideTrashed?'清空回收站':'清空数据'}}</el-button>
                     <div style="float: right;margin-right: 15px">
-                        <el-tooltip placement="top" :content="[trashed?'数据列表':'回收站']"  v-if="!hideTrashed">
-                            <el-button :type="[trashed?'primary':'info']" size="mini" circle :icon="[trashed?'el-icon-s-grid':'el-icon-delete']" @click="trashedHandel"></el-button>
+                        <el-tooltip placement="top" :content="trashed?'数据列表':'回收站'"  v-if="!hideTrashed">
+                            <el-button :type="trashed?'primary':'info'" size="mini" circle :icon="trashed?'el-icon-s-grid':'el-icon-delete'" @click="trashedHandel"></el-button>
                         </el-tooltip>
                         <!--刷新-->
                         <el-button icon="el-icon-refresh" size="mini" circle style="margin-right: 10px"
@@ -148,8 +147,10 @@
             let size = props.pagination.pageSize
             let sortableParams = {}
             watch(() => props.modelValue, (value) => {
-                quickSearch.value = ''
-                loading.value = value
+                if(value){
+                    quickSearch.value = ''
+                    loading.value = value
+                }
             })
             watch(loading, (value) => {
                 if (value) {

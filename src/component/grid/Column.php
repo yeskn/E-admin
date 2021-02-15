@@ -4,10 +4,12 @@
 namespace Eadmin\component\grid;
 
 
+use Eadmin\component\basic\DownloadFile;
 use Eadmin\component\basic\Html;
 use Eadmin\component\basic\Tag;
 use Eadmin\component\basic\Tip;
 use Eadmin\component\basic\Tooltip;
+use Eadmin\component\basic\Video;
 use Eadmin\component\Component;
 use Eadmin\component\form\field\Rate;
 use Eadmin\component\form\field\Switchs;
@@ -40,7 +42,8 @@ class Column extends Component
     protected $tip = false;
     protected $exportClosure = null;
     protected $exportData;
-    public function __construct($prop, $label,$grid)
+
+    public function __construct($prop, $label, $grid)
     {
         $this->attr('slots', ['title' => $prop, 'customRender' => 'default']);
         if (!empty($prop)) {
@@ -82,18 +85,22 @@ class Column extends Component
      * 自定义导出
      * @param \Closure $closure
      */
-    public function export(\Closure $closure){
+    public function export(\Closure $closure)
+    {
         $this->exportClosure = $closure;
         return $this;
     }
+
     /**
      * 关闭当前列导出
      * @return $this
      */
-    public function closeExport(){
-        $this->attr('closeExport',true);
+    public function closeExport()
+    {
+        $this->attr('closeExport', true);
         return $this;
     }
+
     /**
      * 开启排序
      * @return $this
@@ -178,7 +185,7 @@ class Column extends Component
         //自定义内容显示处理
         if (!is_null($this->closure)) {
             $value = call_user_func_array($this->closure, [$originValue, $data]);
-            if(is_string($value)){
+            if (is_string($value)) {
                 $this->exportData = $value;
             }
         }
@@ -187,14 +194,17 @@ class Column extends Component
             $value = call_user_func_array($this->exportClosure, [$originValue, $data]);
             $this->exportData = $value;
         }
-        if($this->tip){
+        if ($this->tip) {
             $value = Tip::create($value)->content($value)->placement('right');
         }
         return Html::create()->content($value);
     }
-    public function getExportData(){
+
+    public function getExportData()
+    {
         return $this->exportData;
     }
+
     /**
      * 显示的标题
      * @param string $label
@@ -223,13 +233,29 @@ class Column extends Component
     }
 
     /**
+     * 视频显示
+     * @param int|string $width 宽度
+     * @param int|string $height 高度
+     * @return $this
+     */
+    public function video($width = 200, $height = 100)
+    {
+        $this->display(function ($val) use ($width, $height) {
+            $video = new Video;
+            $video->url($val)->size($width, $height);
+            return $video;
+        });
+        return $this;
+    }
+
+    /**
      * switch开关
      * @param array $active 开启状态 [1=>'开启']
      * @param array $inactive 关闭状态 [0=>'关闭']
      */
     public function switch(array $active = [1 => '开启'], array $inactive = [0 => '关闭'])
     {
-        $this->display(function ($val, $data) use ($active, $inactive) {
+        return $this->display(function ($val, $data) use ($active, $inactive) {
             $params = $this->grid->getCallMethod();
             $params['eadmin_ids'] = [$data[$this->grid->drive()->getPk()]];
             $switch = Switchs::create(null, $val)
@@ -240,9 +266,18 @@ class Column extends Component
             return $switch;
 
         });
-        return $this;
     }
 
+    /**
+     * 文件显示
+     * @return Column
+     */
+    public function file(){
+        return $this->display(function ($val){
+           $file = new DownloadFile();
+           return $file->url($val);
+        });
+    }
     /**
      * 追加前面
      * @param $append

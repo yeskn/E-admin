@@ -1,21 +1,29 @@
 <template>
     <div class="sidebar-logo-container" :class="{'collapse':!collapse}">
         <transition name="sidebarLogoFade">
-            <router-link   key="collapse" class="sidebar-logo-link" to="/">
-                <img src="http://e-admin.test/E-admin" class="sidebar-logo">
-                <h1 v-if="collapse" class="sidebar-title">E-admin</h1>
+            <router-link key="collapse" class="sidebar-logo-link" to="/">
+                <img :src="state.info.webLogo" class="sidebar-logo">
+                <h1 v-if="collapse" class="sidebar-title">{{state.info.webName}}</h1>
             </router-link>
         </transition>
     </div>
 </template>
 
 <script>
-    export default {
+    import { store } from '/@/store'
+    import {defineComponent,inject} from 'vue'
+    export default defineComponent({
         name: 'SidebarLogo',
         props:{
             collapse:Boolean
+        },
+        setup(){
+            const state = inject(store)
+            return {
+                state
+            }
         }
-    }
+    })
 </script>
 
 <style lang="scss" scoped>

@@ -12,6 +12,7 @@ namespace Eadmin\detail;
 use Eadmin\component\basic\Html;
 use Eadmin\component\basic\Tag;
 use Eadmin\component\basic\Tip;
+use Eadmin\component\basic\Video;
 use Eadmin\component\Component;
 use Eadmin\component\form\field\Rate;
 use Eadmin\component\layout\Column;
@@ -102,7 +103,19 @@ class Field extends Component
             return $prepend . $val;
         });
     }
-
+    /**
+     * 视频显示
+     * @param int|string $width 宽度
+     * @param int|string $height 高度
+     * @return $this
+     */
+    public function video($width,$height){
+        return $this->display(function ($val) use ($width,$height){
+            $video = new Video();
+            $video->url($val)->size($width,$height);
+            return $video;
+        });
+    }
     /**
      * 追加末尾
      * @param $append

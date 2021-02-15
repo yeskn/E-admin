@@ -37,8 +37,8 @@ class Plug extends Controller
             $content->title('插件管理')->content(
                 Card::create(
                     Tabs::create()
-                        ->pane('全部', url('plug/grid', ['type' => 0]))
-                        ->pane('已安装', url('plug/grid', ['type' => 1]))
+                        ->pane('全部', $this->grid(0))
+                        ->pane('已安装',$this->grid(1))
                 )
             );
 
@@ -76,27 +76,27 @@ EOF;
             if ($rows['install']) {
                 if ($rows['status']) {
                     $actions->append(
-                        Button::create('禁用')->typeInfo()->save(['id' => $rows['name'], 'status' => 0], 'plug/enable', '确认禁用？')
+                        Button::create('禁用')->sizeSmall()->typeInfo()->save(['id' => $rows['name'], 'status' => 0], 'plug/enable', '确认禁用？')
                     );
                 } else {
                     $actions->append(
-                        Button::create('启用')->typeSuccess()->save(['id' => $rows['name'], 'status' => 1], 'plug/enable', '确认启用？')
+                        Button::create('启用')->sizeSmall()->typeSuccess()->save(['id' => $rows['name'], 'status' => 1], 'plug/enable', '确认启用？')
                     );
                 }
                 $actions->append(
-                    Button::create('卸载')->typeDanger()->save(['id' => $rows['name'], 'path' => $rows['path'], 'type' => 2], 'plug/install', '确认卸载？')
+                    Button::create('卸载')->sizeSmall()->typeDanger()->save(['id' => $rows['name'], 'path' => $rows['path'], 'type' => 2], 'plug/install', '确认卸载？')
                 );
 
             } else {
                 $actions->append(
-                    Button::create('安装')->typePrimary()->save(['id' => $rows['name'], 'path' => $rows['download'], 'type' => 1], 'plug/install', '确认安装？')
+                    Button::create('安装')->sizeSmall()->typePrimary()->save(['id' => $rows['name'], 'path' => $rows['download'], 'type' => 1], 'plug/install', '确认安装？')
                 );
             }
         });
         $grid->hideDeleteButton();
         $grid->tools([
             Button::create('创建扩展')
-                ->typePrimary()
+                ->typeWarning()
                 ->sizeMini()
                 ->dialog()
                 ->form($this->add()),

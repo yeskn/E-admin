@@ -3,6 +3,7 @@
 
 namespace Eadmin\service;
 
+use Eadmin\Admin;
 use Eadmin\model\AdminModel;
 use Eadmin\model\SystemNotice;
 use Eadmin\Service;
@@ -128,7 +129,7 @@ class NoticeService extends Service
      */
     public function receive()
     {
-        $uid = AdminService::instance()->id();
+        $uid = Admin::id();
         $cacheKey = $this->cacheKey . $uid;
         $pushDatas = $this->app->cache->pull($cacheKey);
         return $pushDatas;

@@ -13,7 +13,7 @@
             <breadcrumb style="margin-right: 10px"></breadcrumb>
             <i class="el-icon-back back" @click="back"></i>
             <el-dropdown @command="handleCommand">
-                <i class="el-icon-close back" @click="back"></i>
+                <i class="el-icon-close back"></i>
                 <template #dropdown>
                     <el-dropdown-menu>
                         <el-dropdown-item icon="el-icon-close" command="other">关闭其他</el-dropdown-item>

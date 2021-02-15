@@ -4,6 +4,7 @@
 namespace Eadmin\component\form;
 
 
+use Eadmin\component\basic\Html;
 use Eadmin\component\Component;
 use Eadmin\form\traits\WhenForm;
 use think\helper\Str;
@@ -80,6 +81,10 @@ abstract class Field extends Component
     }
     public function append($content){
         $this->formItem->content($content);
+        return $this;
+    }
+    public function help($content){
+        $this->formItem->content(Html::create($content)->attr('style',['fontSize'=>'12px']));
         return $this;
     }
     /**

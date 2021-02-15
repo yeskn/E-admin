@@ -1,6 +1,6 @@
 <template>
     <div class="header-container">
-        <i v-if="sidebar.visible" :class="[sidebar.opend?'el-icon-s-unfold hamburger':'el-icon-s-fold hamburger']"
+        <i v-if="sidebar.visible" :class="sidebar.opend?'el-icon-s-unfold hamburger':'el-icon-s-fold hamburger'"
            style="font-size: 18px" @click="collapse"/>
         <el-menu :default-active="activeIndex" @select="selectMenu" class="el-menu-demo" mode="horizontal">
             <el-menu-item v-for="item in menus" :index="item.id+''">
@@ -9,6 +9,7 @@
             </el-menu-item>
         </el-menu>
         <div class="right-menu">
+
             <el-tooltip effect="dark" content="全屏" placement="bottom">
                 <screenfull id="screenfull" class="right-menu-item hover-effect" />
             </el-tooltip>
@@ -17,6 +18,7 @@
                     <i class="el-icon-refresh-right refresh"/>
                 </div>
             </el-tooltip>
+            <notice></notice>
             <el-dropdown trigger="click" class="avatar-container">
                 <div class="avatar-wrapper">
                     <img :src="state.info.avatar" class="user-avatar ">
@@ -28,12 +30,7 @@
                 </div>
                 <template #dropdown>
                     <el-dropdown-menu class="user-dropdown">
-                        <el-dropdown-item @click.native="info">
-                            <span style="display:block;">个人信息</span>
-                        </el-dropdown-item>
-                        <el-dropdown-item @click.native="updatePwd">
-                            <span style="display:block;">修改密码</span>
-                        </el-dropdown-item>
+                        <render v-for="item in state.info.dropdownMenu" :data="item"></render>
                         <el-dropdown-item divided @click.native="logout">
                             <span style="display:block;">退出登陆</span>
                         </el-dropdown-item>
@@ -52,11 +49,13 @@
     import {store, action} from '/@/store'
     import router from "../router";
     import screenfull from "/@/components/screenfull.vue";
+    import notice from "/@/layout/notice.vue";
 
     export default defineComponent({
         name: "headerTop",
         components:{
-            screenfull
+            screenfull,
+            notice
         },
         setup() {
             const route = useRoute()

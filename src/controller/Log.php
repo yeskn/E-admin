@@ -2,6 +2,7 @@
 
 namespace Eadmin\controller;
 
+use Eadmin\component\basic\Component;
 use Eadmin\Controller;
 use think\facade\Request;
 use think\facade\View;
@@ -54,7 +55,7 @@ class Log extends Controller
      */
     public function debug(){
         $content = file_get_contents(__DIR__.'/../view/log.vue');
-        $this->successCode($content);
+        return Component::create($content)->bind('eadmin_title','调试日志');
     }
     /**
      * 删除日志
@@ -64,9 +65,9 @@ class Log extends Controller
         $path = $this->request->post('path');
         $res = unlink($path);
         if($res){
-            $this->successCode();
+            admin_success_message('删除成功')->refresh();
         }else{
-            $this->errorCode();
+            admin_error_message('删除失败');
         }
     }
 }

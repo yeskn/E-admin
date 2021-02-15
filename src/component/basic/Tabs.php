@@ -9,6 +9,7 @@
 namespace Eadmin\component\basic;
 
 use Eadmin\component\form\Field;
+use think\helper\Str;
 
 /**
  * 标签页

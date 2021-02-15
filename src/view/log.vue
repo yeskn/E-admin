@@ -1,8 +1,9 @@
 <template>
     <el-row :gutter="10" >
         <el-col :span="19">
-            <el-card shadow="hover" :body-style="{ padding: '0px 0px' }" shadow="always">
-                <div slot="header" class="logHeader">
+            <el-card :body-style="{ padding: '0px 0px' }" shadow="always">
+                <template #header>
+                <div class="logHeader">
                     <div>日志信息</div>
                     <div>
                         <el-input v-model="logKeyWord" placeholder="请输入关键内容" style="width: 150px" size="mini" clearable></el-input>
@@ -20,16 +21,19 @@
                         <el-button size="mini" @click="next" v-if="logData.next !== false">下一页</el-button>
                     </div>
                 </div>
+                </template>
                 <pre class="code-view"><ol start="1"><li v-for="item in logData.list"><el-tag size="mini">{{item.time}}</el-tag> <el-tag size="mini" :type="item.type == 'error' ? 'danger':'info'">{{item.type}}</el-tag><br><br><div>{{item.msg}}</div><br></li></ol></pre>
             </el-card>
         </el-col>
         <el-col :span="5">
-            <el-card shadow="hover" :body-style="{ padding: '0px 0px' }" shadow="always">
-            <div slot="header" class="clearfix">
-                <span>日志文件</span>
-            </div>
+            <el-card :body-style="{ padding: '0px 0px' }" shadow="always">
+                <template #header>
+                <div class="clearfix">
+                    <span>日志文件</span>
+                </div>
+                </template>
             <div>
-                <ul class="fileListBox" :style="{maxHeight:(window.innerHeight - 247) + 'px'}">
+                <ul class="fileListBox">
                     <li v-for="item in logData.files" class="fileItem" @click="selectFile(item.path)" :style="{backgroundColor:(logData.file == item.path?'#ededed':'')}">
                         <div style="flex:1;">
                             <span style="color: #000;font-weight: bold">{{item.file_name}}</span><br>{{item.size}}
@@ -39,9 +43,11 @@
                             <div @click.stop>
                                 <el-popconfirm
                                         title="确认删除？"
-                                        @onConfirm="del(item.path)"
+                                        @confirm="del(item.path)"
                                 >
-                                    <el-button size="mini" type="danger" slot="reference">删除</el-button>
+                                    <template #reference>
+                                        <el-button size="mini" type="danger">删除</el-button>
+                                    </template>
                                 </el-popconfirm>
                             </div>
                         </div>
@@ -59,7 +65,7 @@
         inject: ['reload'],
         data(){
             return {
-                dateKeyWord:['',''],
+                dateKeyWord:'',
                 logKeyWord:'',
                 logData:{
                     file:'',
@@ -107,9 +113,6 @@
                     data:{
                         path : path
                     }
-                }).then(res=>{
-                   this.$message.success('删除成功')
-                   this.reload()
                 })
             },
         }

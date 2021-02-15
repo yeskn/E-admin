@@ -42,6 +42,12 @@ abstract class Component implements \JsonSerializable
         }
     }
 
+    public function attrs(array $attrs)
+    {
+        $this->attribute = array_merge($this->attribute, $attrs);
+        return $this;
+    }
+
     public function removeAttr($name)
     {
         unset($this->attribute[$name]);
@@ -123,6 +129,7 @@ abstract class Component implements \JsonSerializable
         }
         return $this;
     }
+
     /**
      * 插槽内容
      * @param mixed $content 内容
@@ -132,22 +139,22 @@ abstract class Component implements \JsonSerializable
     public function content($content, $name = 'default')
     {
 
-        if(is_null($content)){
+        if (is_null($content)) {
             return $this;
         }
-        if(is_array($content)){
-            foreach ($content as $item){
+        if (is_array($content)) {
+            foreach ($content as $item) {
                 $this->content($item);
             }
-        }else{
-            if(!($content instanceof Component)){
+        } else {
+            if (!($content instanceof Component)) {
                 $content = Admin::dispatch($content);
             }
-            if($content instanceof Form && ($this instanceof Dialog || $this instanceof Drawer)){
+            if ($content instanceof Form && ($this instanceof Dialog || $this instanceof Drawer)) {
                 $field = $this->bindAttr('modelValue');
-                $content->eventSuccess([$field=>false]);
+                $content->eventSuccess([$field => false]);
             }
-            $this->content[$name][] = $content;    
+            $this->content[$name][] = $content;
         }
         return $this;
     }
