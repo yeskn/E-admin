@@ -1,5 +1,5 @@
 <script>
-    import {defineComponent, computed, toRaw, h, resolveComponent, inject,isProxy,onRenderTracked,onRenderTriggered,onUpdated } from 'vue'
+    import {defineComponent, computed, toRaw, h, resolveComponent, inject,isProxy} from 'vue'
     import {store} from '/@/store'
     import {splitCode} from '/@/utils/splitCode'
     import dayjs from 'dayjs'
@@ -22,19 +22,9 @@
             }
         },
         setup(props,ctx) {
-            onRenderTracked(e=>{
-              //  console.log(e)
-            })
-            onRenderTriggered(e=>{
-                //console.log(e)
-            })
-            onUpdated(e=>{
-               // console.log(e)
-            })
             const state = inject(store)
             const modelValue = state.proxyData
             const renderComponent = (data, slotProps) => {
-           //     console.log(data.name)
                 if(!data.attribute){
                     return
                 }

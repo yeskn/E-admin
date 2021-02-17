@@ -42,7 +42,6 @@ class Dialog extends Field
     public static function create($content = null, $field = '')
     {
         $self = new self($field, false);
-        $self->closeOnClickModal(false);
         $self->destroyOnClose();
         $self->width('35%');
         if(!is_null($content)){

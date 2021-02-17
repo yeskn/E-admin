@@ -14,7 +14,7 @@
 </template>
 
 <script>
-    import {defineComponent,ref} from "vue";
+    import {defineComponent,ref,watch} from "vue";
     import {useVisible, useHttp} from '/@/hooks'
     import render from '/@/components/render.vue'
     export default defineComponent({
@@ -36,6 +36,11 @@
         setup(props,ctx){
             const {visible,hide} = useVisible(props,ctx)
             let content = ref(null)
+            watch(()=>props.modelValue,(value)=>{
+                if(value){
+                    open()
+                }
+            })
             function open(){
                 if (props.url) {
                     const {http} = useHttp()

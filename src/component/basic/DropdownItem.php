@@ -16,7 +16,24 @@ namespace Eadmin\component\basic;
 class DropdownItem extends Component
 {
     protected $name = 'EadminDropdownItem';
+    protected $dropdown;
 
+    public function dropdown(Dropdown $dropdown){
+        $this->dropdown = $dropdown;
+        return $this->dropdown;
+    }
+    /**
+     * 模态对话框
+     * @return Dialog
+     */
+    public function dialog()
+    {
+        $dialog = Dialog::create();
+        $visible = $dialog->bindAttr('modelValue');
+        $this->event('click',[$visible=>true]);
+        $this->dropdown->content($dialog,'reference');
+        return $dialog;
+    }
     /**
      * 保存数据
      * @param array $data

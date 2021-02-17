@@ -49,7 +49,6 @@ class Actions extends Component
         $this->attr('class','EadminAction');
         $this->attr('style',['whiteSpace'=>'nowrap']);
         $this->column = new Column('EadminAction','',$grid);
-        $this->column->fixed('right');
     }
     public function row($data)
     {
@@ -80,27 +79,34 @@ class Actions extends Component
     protected function actionDropdown(){
         //是否隐藏详情
         if (!$this->hideDetailButton && !is_null($this->grid->detailAction())) {
-            $text = '<i class="el-icon-info"> '.$this->detailText;
             $detail = $this->grid->detailAction()->detail()->renderable();
             $action = clone $this->grid->detailAction()->component();
             if($action instanceof Router){
-                $button = $action->content($text)->to("/eadmin/{$this->id}.rest",$detail->getCallMethod());
+                $button = $action->content($this->detailText)->to("/eadmin/{$this->id}.rest",$detail->getCallMethod());
+                $this->dropdown->item($button)->icon('el-icon-info');
             }else{
-                $button = $action->bindValue(null,false)->reference($text)->url("/eadmin/{$this->id}.rest")->params($detail->getCallMethod());
+                $button = $action->bindValue(null,false)->url("/eadmin/{$this->id}.rest")->params($detail->getCallMethod());
+                $visible = $button->bindAttr('modelValue');
+                $this->dropdown->content($button,'reference');
+                $item = $this->dropdown->item($this->detailText)->icon('el-icon-info');
+                $item->event('click',[$visible=>true]);
             }
-            $this->dropdown->item($button)->icon('el-icon-info');
         }
         //是否隐藏编辑
         if (!$this->hideEditButton && !is_null($this->grid->formAction())) {
-            $text = '<i class="el-icon-edit"> '.$this->editText;
             $form = $this->grid->formAction()->form()->renderable();
             $action = clone $this->grid->formAction()->component();
             if($action instanceof Router){
-                $button = $action->content($text)->to("/eadmin/{$this->id}/edit.rest",$form->getCallMethod());
+                $button = $action->content($this->editText)->to("/eadmin/{$this->id}/edit.rest",$form->getCallMethod());
+                $this->dropdown->item($button)->icon('el-icon-edit');
             }else{
-                $button = $action->bindValue(null,false)->title($form->bind('eadmin_title'))->reference($text)->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod());
+                $button = $action->bindValue(null,false)->title($form->bind('eadmin_title'))->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod());
+                $visible = $button->bindAttr('modelValue');
+                $this->dropdown->content($button,'reference');
+                $item = $this->dropdown->item($this->editText)->icon('el-icon-edit');
+                $item->event('click',[$visible=>true]);
             }
-            $this->dropdown->item($button);
+
         }
         //是否隐藏删除
         if (!$this->hideDelButton) {
@@ -185,6 +191,10 @@ class Actions extends Component
             );
         }
     }
+
+    /**
+     * @return Dropdown
+     */
     public function dropdown(){
         $this->isDropdown = true;
         if(is_null($this->dropdown)){

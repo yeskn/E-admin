@@ -14,7 +14,8 @@ import batchAction from './components/grid/batchAction.vue'
 import confirm from './components/confirm.vue'
 import eadminErrorPage from './components/EadminErrorPage.vue'
 import render from './components/render.vue'
-import DropdownItem from './components/DropdownItem.vue'
+import DropdownItem from './components/dropdown/DropdownItem.vue'
+import dropdown from './components/dropdown/dropdown.vue'
 import video from './components/video.vue'
 import downloadFile from './components/downloadFile.vue'
 app.component(form.name,form)
@@ -33,5 +34,6 @@ app.component(tinymce.name,tinymce)
 app.component(downloadFile.name,downloadFile)
 app.component(video.name,video)
 app.component(DropdownItem.name,DropdownItem)
+app.component(dropdown.name,dropdown)
 app.component(batchAction.name,batchAction)
 app.component(eadminErrorPage.name,eadminErrorPage)

@@ -58,7 +58,7 @@
             <render :data="filter" ></render>
         </div>
         <!--表格-->
-        <a-table :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" v-loading="loading" v-bind="$attrs" ref='dragTable' row-key='id' >
+        <a-table :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" v-loading="loading" v-bind="$attrs" ref='dragTable' :row-key="record => record.id">
             <template v-for="column in tableColumns" v-slot:[column.dataIndex]>
                 <render :data="column.header" :slot-props="{grid:grid}"></render>
             </template>
@@ -90,7 +90,7 @@
 </template>
 
 <script>
-    import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed} from "vue"
+    import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed,reactive} from "vue"
     import render from "/@/components/render.vue"
     import {useHttp} from '/@/hooks'
     import request from '/@/utils/axios'
@@ -140,7 +140,6 @@
             const trashed = ref(false)
             const quickSearchOn = ctx.attrs.quickSearch
             const columns = ref(props.columns)
-
             const tableData = ref(props.data)
             const total = ref(props.pagination.total || 0)
             let page = 1
@@ -164,8 +163,12 @@
             })
             const tableColumns = computed(()=>{
                 return columns.value.filter(item=>{
+                    if(item.prop === 'EadminAction'){
+                        item.width = eadminActionWidth.value
+                    }
                     return checkboxColumn.value.indexOf(item.prop) >= 0
                 })
+
             })
             nextTick(()=>{
                 //操作列宽度自适应
@@ -258,23 +261,35 @@
                 page = val
                 loading.value = true
             }
-            const rowSelection = computed(()=>{
-                if(props.hideSelection){
-                    return null
-                }else{
-                    return {
-                        selectedRowKeys:selectIds.value,
-                        //当用户手动勾选数据行的 Checkbox 时触发的事件
-                        onChange: (selectedRowKeys, selectedRows) => {
-                            selectionData.value = selectedRows
-                            selectIds.value = selectionData.value.map(item=>{
-                                return item.id
-                            })
-                        }
+            let rowSelection = null
+            if(!props.hideSelection){
+                rowSelection = {
+                    //当用户手动勾选数据行的 Checkbox 时触发的事件
+                    onChange: (selectedRowKeys, selectedRows) => {
+                        selectionData.value = selectedRows
+                        selectIds.value = selectionData.value.map(item=>{
+                            return item.id
+                        })
                     }
                 }
-
-            })
+            }
+            // const rowSelection = computed(()=>{
+            //     if(props.hideSelection){
+            //         return null
+            //     }else{
+            //         return {
+            //            // selectedRowKeys:selectIds.value,
+            //             //当用户手动勾选数据行的 Checkbox 时触发的事件
+            //             onChange: (selectedRowKeys, selectedRows) => {
+            //                 selectionData.value = selectedRows
+            //                 selectIds.value = selectionData.value.map(item=>{
+            //                     return item.id
+            //                 })
+            //             }
+            //         }
+            //     }
+            //
+            // })
 
             //快捷搜索
             function handleFilter() {

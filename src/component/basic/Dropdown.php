@@ -16,7 +16,7 @@ namespace Eadmin\component\basic;
  */
 class Dropdown extends Component
 {
-    protected $name = 'ElDropdown';
+    protected $name = 'EadminDropdown';
     protected $menu;
     protected $prependArr = [];
     protected $appendArr = [];
@@ -66,7 +66,8 @@ class Dropdown extends Component
         if(!empty($icon) && is_string($content)){
             $content = '<i class="'.$icon.'"> '.$content;
         }
-        $item = new DropdownItem();
+        $item = new DropdownItem($this);
+        $item->dropdown($this);
         $item->content($content);
         return $item;
     }
