@@ -320,15 +320,8 @@
                     })
                 }
             }
-            // const render = computed(() => {
-            //
-            // })
-            function render() {
-
-            }
             return {
                 setProxyData,
-                render,
                 renderComponent
             }
         },

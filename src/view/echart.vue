@@ -62,12 +62,7 @@
                 <el-button class="hidden-md-and-down filter-item" size="small" icon="el-icon-refresh" @click="filterReset">重置</el-button>
 
             </el-form>
-            <el-form class="hidden-md-and-up" size="mini" ref="form" @submit.native.prevent :model="form">
-                {$filter|raw|default=''}
-                <!-- 移动端-->
-                <el-button class="hidden-md-and-up filter-item" size="mini" type="primary" icon="el-icon-search" @click="handleFilter"></el-button>
-                <el-button class="hidden-md-and-up filter-item" size="mini" icon="el-icon-refresh" @click="filterReset"></el-button>
-            </el-form>
+
             <!--{/notempty}-->
             <component v-loading="loading" :is="component"></component>
     </el-card>
@@ -83,8 +78,7 @@
                 loading:false,
                 params:{
                     date_type:'today'
-                },
-                {$tableScriptVar|raw|default=''}
+                }
             }
         },
         watch:{

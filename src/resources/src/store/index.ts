@@ -1,6 +1,5 @@
-import { reactive ,toRaw} from "vue";
+import { reactive } from "vue";
 import request from '/@/utils/axios'
-import {findTree} from '/@/utils'
 export const store = Symbol()
 // 使用 reactive 函数完成响应式转换
 const states = reactive({
@@ -70,6 +69,7 @@ const action = {
         const index = action.getComponentIndex(url)
         states.mainComponent.splice(index,1)
         states.componentVariable.splice(index,1)
+        console.log(states.mainComponent)
     },
     getComponentIndex(url){
         return states.mainComponent.findIndex(item=>{

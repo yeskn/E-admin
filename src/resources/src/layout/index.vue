@@ -6,7 +6,7 @@
             <tags-view></tags-view>
             <div class="main-content" v-loading="state.mainLoading">
                 <el-backtop target=".main-content"></el-backtop>
-                <keep-alive v-for="item in state.mainComponent">
+                <keep-alive v-for="item in state.mainComponent" :key="item.url">
                     <render v-if="route.fullPath == item.url" :data="item.component"></render>
                 </keep-alive>
             </div>
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-    import {useRoute,useRouter} from 'vue-router'
+    import {useRoute} from 'vue-router'
     import {defineComponent, inject} from 'vue'
     import headerTop from './headerTop.vue'
     import Sidebar from './sidebar/sidebar.vue'
@@ -34,7 +34,7 @@
         },
         setup(){
             const route = useRoute()
-            const router = useRouter()
+
             const state = inject(store)
             let proxyData = state.proxyData
             let sidebar = state.sidebar
