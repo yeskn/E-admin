@@ -18,6 +18,7 @@ import DropdownItem from './components/dropdown/DropdownItem.vue'
 import dropdown from './components/dropdown/dropdown.vue'
 import video from './components/video.vue'
 import downloadFile from './components/downloadFile.vue'
+import debugLog from './components/debugLog.vue'
 app.component(form.name,form)
 app.component(manyItem.name,manyItem)
 app.component(dialog.name,dialog)
@@ -32,6 +33,7 @@ app.component(icon.name,icon)
 app.component(render.name,render)
 app.component(tinymce.name,tinymce)
 app.component(downloadFile.name,downloadFile)
+app.component(debugLog.name,debugLog)
 app.component(video.name,video)
 app.component(DropdownItem.name,DropdownItem)
 app.component(dropdown.name,dropdown)

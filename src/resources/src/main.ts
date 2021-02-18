@@ -6,9 +6,11 @@ import {store,state,action} from './store'
 import './styles/index.scss'
 import app from  './app'
 import './component'
+import './directive'
 import zhLocale from 'element-plus/lib/locale/lang/zh-cn'
 import request from '/@/utils/axios'
 import { Table , Switch ,ConfigProvider} from 'ant-design-vue';
+
 app.use(ConfigProvider)
 app.use(Table)
 app.use(Switch)

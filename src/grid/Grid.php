@@ -386,7 +386,7 @@ class Grid extends Component
      */
     protected function parseColumn($datas,$export=false)
     {
-        
+
         //添加操作列
         if (!$this->hideAction) {
             $this->column[] = $this->actionColumn->column();
@@ -476,8 +476,8 @@ class Grid extends Component
                 ->size('small')
                 ->icon('el-icon-plus');
             $action = clone $this->formAction->component();
-            if ($action instanceof Router) {
-                $button = $action->content($button)->to("/eadmin/create.rest", $form->getCallMethod());
+            if ($action instanceof Html) {
+                $button = $action->content($button)->redirect("eadmin/create.rest", $form->getCallMethod());
             } else {
                 $button = $action->bindValue(null, false)->reference($button)->title($form->bind('eadmin_title'))->content($form);
             }

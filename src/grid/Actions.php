@@ -12,7 +12,7 @@ use Eadmin\component\basic\Button;
 use Eadmin\component\basic\Confirm;
 use Eadmin\component\basic\Dropdown;
 use Eadmin\component\basic\DropdownItem;
-use Eadmin\component\basic\Router;
+use Eadmin\component\basic\Html;
 use Eadmin\component\Component;
 use Eadmin\component\grid\Column;
 
@@ -43,13 +43,15 @@ class Actions extends Component
     protected $editText = '编辑';
     protected $detailText = '详情';
     protected $delText = '删除';
+
     public function __construct($grid)
     {
         $this->grid = $grid;
-        $this->attr('class','EadminAction');
-        $this->attr('style',['whiteSpace'=>'nowrap']);
-        $this->column = new Column('EadminAction','',$grid);
+        $this->attr('class', 'EadminAction');
+        $this->attr('style', ['whiteSpace' => 'nowrap']);
+        $this->column = new Column('EadminAction', '', $grid);
     }
+
     public function row($data)
     {
         $this->row = $data;
@@ -66,9 +68,9 @@ class Actions extends Component
         foreach ($this->prependArr as $content) {
             $this->content($content);
         }
-        if($this->isDropdown){
+        if ($this->isDropdown) {
             $this->actionDropdown();
-        }else{
+        } else {
             $this->actionButton();
         }
         //追加尾部
@@ -76,55 +78,59 @@ class Actions extends Component
             $this->content($content);
         }
     }
-    protected function actionDropdown(){
+
+    protected function actionDropdown()
+    {
         //是否隐藏详情
         if (!$this->hideDetailButton && !is_null($this->grid->detailAction())) {
+            $text = '<i class="el-icon-info"> ' . $this->detailText;
             $detail = $this->grid->detailAction()->detail()->renderable();
             $action = clone $this->grid->detailAction()->component();
-            if($action instanceof Router){
-                $button = $action->content($this->detailText)->to("/eadmin/{$this->id}.rest",$detail->getCallMethod());
+            if ($action instanceof Html) {
+                $button = $action->content($text)->redirect("eadmin/{$this->id}.rest", $detail->getCallMethod());
                 $this->dropdown->item($button)->icon('el-icon-info');
-            }else{
-                $button = $action->bindValue(null,false)->url("/eadmin/{$this->id}.rest")->params($detail->getCallMethod());
+            } else {
+                $button = $action->bindValue(null, false)->url("/eadmin/{$this->id}.rest")->params($detail->getCallMethod());
                 $visible = $button->bindAttr('modelValue');
-                $this->dropdown->content($button,'reference');
-                $item = $this->dropdown->item($this->detailText)->icon('el-icon-info');
-                $item->event('click',[$visible=>true]);
+                $this->dropdown->content($button, 'reference');
+                $item = $this->dropdown->item($text)->icon('el-icon-info');
+                $item->event('click', [$visible => true]);
             }
         }
         //是否隐藏编辑
         if (!$this->hideEditButton && !is_null($this->grid->formAction())) {
+            $text = '<i class="el-icon-edit"> ' . $this->editText;
             $form = $this->grid->formAction()->form()->renderable();
             $action = clone $this->grid->formAction()->component();
-            if($action instanceof Router){
-                $button = $action->content($this->editText)->to("/eadmin/{$this->id}/edit.rest",$form->getCallMethod());
-                $this->dropdown->item($button)->icon('el-icon-edit');
-            }else{
-                $button = $action->bindValue(null,false)->title($form->bind('eadmin_title'))->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod());
+            if ($action instanceof Html) {
+                $button = $action->content($text)->redirect("eadmin/{$this->id}/edit.rest", $form->getCallMethod());
+                $this->dropdown->item($button);
+            } else {
+                $button = $action->bindValue(null, false)->title($form->bind('eadmin_title'))->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod());
                 $visible = $button->bindAttr('modelValue');
-                $this->dropdown->content($button,'reference');
-                $item = $this->dropdown->item($this->editText)->icon('el-icon-edit');
-                $item->event('click',[$visible=>true]);
+                $this->dropdown->content($button, 'reference');
+                $item = $this->dropdown->item($text);
+                $item->event('click', [$visible => true]);
             }
 
         }
         //是否隐藏删除
         if (!$this->hideDelButton) {
-            $text = '<i class="el-icon-help"> '.$this->delText;
+            $text = '<i class="el-icon-help"> ' . $this->delText;
             $params = $this->grid->getCallMethod();
-            if(request()->has('eadmin_deleted')){
+            if (request()->has('eadmin_deleted')) {
                 $text = '<i class="el-icon-help"> 恢复数据 ';
                 $url = "/eadmin/batch.rest";
                 $confirm = Confirm::create($text)->message('确认恢复？')
                     ->url($url)
                     ->type('warning')
-                    ->params($params+['delete_time'=>null,'eadmin_ids'=>[$this->id]])
+                    ->params($params + ['delete_time' => null, 'eadmin_ids' => [$this->id]])
                     ->method('put');
                 $this->dropdown->item($confirm);
                 $params['trueDelete'] = true;
                 $text = '<i class="el-icon-delete"> 彻底删除';
             }
-            $url = '/eadmin/' . $this->id.'.rest';
+            $url = '/eadmin/' . $this->id . '.rest';
             $confirm = Confirm::create($text)->message('确认删除？')
                 ->url($url)
                 ->type('error')
@@ -134,7 +140,9 @@ class Actions extends Component
         }
         $this->content($this->dropdown);
     }
-    protected function actionButton(){
+
+    protected function actionButton()
+    {
         //是否隐藏详情
         if (!$this->hideDetailButton && !is_null($this->grid->detailAction())) {
             $button = Button::create($this->detailText)
@@ -142,10 +150,10 @@ class Actions extends Component
                 ->icon('el-icon-info');
             $detail = $this->grid->detailAction()->detail();
             $action = clone $this->grid->detailAction()->component();
-            if($action instanceof Router){
-                $button = $action->content($button)->to("/eadmin/{$this->id}.rest",$detail->getCallMethod());
-            }else{
-                $button = $action->bindValue(null,false)->reference($button)->url("/eadmin/{$this->id}.rest")->params($detail->getCallMethod());
+            if ($action instanceof Html) {
+                $button = $action->content($button)->redirect("eadmin/{$this->id}.rest", $detail->getCallMethod());
+            } else {
+                $button = $action->bindValue(null, false)->reference($button)->url("/eadmin/{$this->id}.rest")->params($detail->getCallMethod());
             }
             $this->content($button);
         }
@@ -156,11 +164,11 @@ class Actions extends Component
                 ->size('small')
                 ->icon('el-icon-edit');
             $form = $this->grid->formAction()->form();
-            $action =  clone $this->grid->formAction()->component();
-            if($action instanceof Router){
-                $button = $action->content($button)->to("/eadmin/{$this->id}/edit.rest",$form->getCallMethod());
-            }else{
-                $button = $action->bindValue(null,false)->title($form->bind('eadmin_title'))->reference($button)->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod());
+            $action = clone $this->grid->formAction()->component();
+            if ($action instanceof Html) {
+                $button = $action->content($button)->redirect("eadmin/{$this->id}/edit.rest", $form->getCallMethod());
+            } else {
+                $button = $action->bindValue(null, false)->title($form->bind('eadmin_title'))->reference($button)->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod());
             }
             $this->content($button);
         }
@@ -168,17 +176,17 @@ class Actions extends Component
         if (!$this->hideDelButton) {
             $text = $this->delText;
             $params = $this->grid->getCallMethod();
-            if(request()->has('eadmin_deleted')){
+            if (request()->has('eadmin_deleted')) {
                 $this->content(
                     Button::create('恢复数据')
                         ->size('small')
                         ->icon('el-icon-s-help')
-                        ->save($params+['delete_time'=>null,'eadmin_ids'=>[$this->id]],"/eadmin/batch.rest",'确认恢复?')->method('put')
+                        ->save($params + ['delete_time' => null, 'eadmin_ids' => [$this->id]], "/eadmin/batch.rest", '确认恢复?')->method('put')
                 );
                 $params['trueDelete'] = true;
                 $text = '彻底删除';
             }
-            $url = '/eadmin/' . $this->id.'.rest';
+            $url = '/eadmin/' . $this->id . '.rest';
             $this->content(
                 Button::create($text)
                     ->type('danger')
@@ -195,13 +203,15 @@ class Actions extends Component
     /**
      * @return Dropdown
      */
-    public function dropdown(){
+    public function dropdown()
+    {
         $this->isDropdown = true;
-        if(is_null($this->dropdown)){
+        if (is_null($this->dropdown)) {
             $this->dropdown = Dropdown::create(Button::create('操作 <i class="el-icon-arrow-down">')->size('mini'));
         }
         return $this->dropdown;
     }
+
     public function column()
     {
         return $this->column;
@@ -234,6 +244,7 @@ class Actions extends Component
     {
         $this->hideDelButton = true;
     }
+
     /**
      * 前面追加
      * @param mixed $val
@@ -243,6 +254,7 @@ class Actions extends Component
         $this->prependArr[] = $val;
         return $this;
     }
+
     /**
      * 追加尾部
      * @param mixed $val

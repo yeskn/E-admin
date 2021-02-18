@@ -1,5 +1,5 @@
 <script>
-    import {defineComponent, computed, toRaw, h, resolveComponent, inject,isProxy} from 'vue'
+    import {defineComponent, toRaw, h, resolveComponent, inject,isProxy,resolveDirective,withDirectives} from 'vue'
     import {store} from '/@/store'
     import {splitCode} from '/@/utils/splitCode'
     import dayjs from 'dayjs'
@@ -139,9 +139,9 @@
                 }
 
                 attribute = {...data.attribute}
-               // console.log(data.name)
+
                 if(data.name == 'html'){
-                    return h('span', attribute, children)
+                    return _createVnode('span', attribute, children,data.directive)
                 }else if(data.name == 'component'){
                     return h(splitCode(data.content.default[0]),attribute)
                 }
@@ -168,9 +168,24 @@
                             children.default = ()=> mapAttribute.slotDefault
                         }
                         let mapChildren = {...children}
-                        return h(name, mapAttribute, mapChildren)
+                        return _createVnode(name, mapAttribute, mapChildren,data.directive)
+
                     })
                 } else {
+                    return _createVnode(name, attribute, children,data.directive)
+                }
+            }
+            function _createVnode(name, attribute, children,directives) {
+                //自定义指令绑定
+                let directiveBind = []
+                directives.forEach(item=>{
+                    directiveBind.push([
+                        resolveDirective(item.name),item.value,item.argument
+                    ])
+                })
+                if(directiveBind.length > 0){
+                    return withDirectives(h(name, attribute, children),directiveBind)
+                }else{
                     return h(name, attribute, children)
                 }
             }
@@ -217,7 +232,6 @@
                         }
                     }
                 })
-
             }
 
             /**

@@ -6,6 +6,7 @@ namespace Eadmin\grid;
 
 use Eadmin\component\basic\Dialog;
 use Eadmin\component\basic\Drawer;
+use Eadmin\component\basic\Html;
 use Eadmin\component\basic\Router;
 
 class ActionMode
@@ -15,7 +16,7 @@ class ActionMode
     protected $detail;
     public function __construct()
     {
-        $this->component =  Router::create();
+        $this->component =  Html::create();
     }
     public function form($form=null){
         if(!is_null($form)) {

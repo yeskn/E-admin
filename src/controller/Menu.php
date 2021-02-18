@@ -48,20 +48,18 @@ class Menu extends Controller
         $grid->treeTable();
         $grid->title('系统菜单管理');
         $grid->column('name', '菜单名称')->display(function ($val, $data) {
-            return "<i class='{$data['icon']}'></i>" . $val;
+            return "<i class='{$data['icon']}'></i> " . $val;
         });
         $grid->column('url', '菜单链接')->display(function ($val) {
             return ' ' . $val;
         });
         $grid->column('status', '状态')->switch();
-       
+
         $grid->actions(function (Actions $action, $data) {
               $action->hideDetail();
-              $dropdown = $action->dropdown();
-              $dropdown->item('打开')->dialog()->form($this->form());
         });
         $grid->sortInput();
-        $grid->setForm($this->form());
+        $grid->setForm($this->form())->dialog();
         $grid->quickSearch();
 
         return $grid;

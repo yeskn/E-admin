@@ -3,6 +3,7 @@
 namespace Eadmin\controller;
 
 use Eadmin\component\basic\Component;
+use Eadmin\component\basic\DebugLog;
 use Eadmin\Controller;
 use think\facade\Request;
 use think\facade\View;
@@ -54,8 +55,9 @@ class Log extends Controller
      * @return string
      */
     public function debug(){
-        $content = file_get_contents(__DIR__.'/../view/log.vue');
-        return Component::create($content)->bind('eadmin_title','调试日志');
+        $log = new DebugLog();
+        $log->title('调试日志');
+        return $log;
     }
     /**
      * 删除日志
