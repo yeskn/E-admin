@@ -160,6 +160,9 @@ abstract class Component implements \JsonSerializable
         if($params){
             $url = $url .'?'. http_build_query($params);
         }
+        $style = $this->attr('style') ?? [];
+        $style = array_merge($style,['cursor'=>'pointer']);
+        $this->attr('style',$style);
         return $this->directive('redirect',$url);
     }
     /**
