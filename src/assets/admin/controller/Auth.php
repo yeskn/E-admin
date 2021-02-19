@@ -8,89 +8,146 @@
 
 namespace app\admin\controller;
 
-
-use Eadmin\controller\BaseAdmin;
-
-use Eadmin\facade\Button;
+use Eadmin\component\basic\Button;
+use Eadmin\component\form\FormAction;
+use Eadmin\Controller;
 use Eadmin\form\Form;
 use Eadmin\grid\Actions;
 use Eadmin\grid\Grid;
-
 use Eadmin\model\SystemAuth;
+use Eadmin\model\SystemAuthMenu;
 use Eadmin\model\SystemAuthNode;
-use Eadmin\service\NodeService;
+use Eadmin\Admin;
 
 /**
- * 系统权限管理
+ * 系统角色管理
  * Class Auth
  * @package app\admin\controller
  */
-class Auth extends BaseAdmin
+class Auth extends Controller
 {
     /**
-     * 系统权限列表
+     * 系统角色列表
      * @auth true
      * @login true
      * @return Grid
      */
-    protected function grid()
+    public function index(): Grid
     {
         $grid = new Grid(new SystemAuth());
-        $grid->setTitle('访问权限管理');
-        $grid->indexColumn();
-        $grid->column('name', '权限名称');
-        $grid->column('desc', '权限描述');
-        $grid->column('status', '状态')->switch([1=>'使用中'],[0=>'已禁用']);
-        $grid->actions(function (Actions $action,$data) {
+        $grid->title('系统角色管理');
+        $grid->column('name', '角色名称');
+        $grid->column('desc', '角色描述');
+         $grid->column('status', '状态')->switch();
+        $grid->actions(function (Actions $action, $data) {
             $action->hideDetail();
-            $button = Button::create('权限授权','primary','small','el-icon-s-check',true)
-                ->href(url('authNode',['id'=>$data['id']]));
+            $button = Button::create('权限授权')
+                ->type('primary')
+                ->plain()
+                ->size('small')
+                ->icon('el-icon-s-check')
+                ->dialog()
+                ->width('70%')
+                ->title('权限授权')
+                ->form($this->authNode($data['id']));
+            $action->prepend($button);
+            $button = Button::create('菜单授权')
+                ->type('primary')
+                ->plain()
+                ->size('small')
+                ->icon('el-icon-menu')
+                ->dialog()
+                ->title('菜单授权')
+                ->form($this->menu($data['id']));
             $action->prepend($button);
         });
-        $grid->setFormDialog();
+        $grid->setForm($this->form())->dialog();
         return $grid;
     }
 
     /**
-     * 系统权限
+     * 系统角色
      * @auth true
      * @login true
      * @return Form
      */
-    protected function form()
+    public function form(): Form
     {
         $form = new Form(new SystemAuth());
         $form->text('name', '权限名称')->required();
         $form->textarea('desc', '权限描述')->rows(4)->required();
         return $form;
     }
+
+    /**
+     * 菜单授权
+     * @auth true
+     * @login true
+     * @return Form
+     */
+    public function menu($id): Form
+    {
+        $form = new Form(new SystemAuth());
+        $form->edit($id);
+        $form->labelPosition('top');
+        $menus = SystemAuthMenu::where('auth_id', request()->get('id'))->column('menu_id');
+        $form->tree('menu_nodes')
+            ->data([['name' => '全选', 'id' => 0, 'children' => Admin::menu()->tree()]])
+            ->showCheckbox()
+            ->value($menus)
+            ->props(['children' => 'children', 'label' => 'name'])
+            ->defaultExpandAll();
+        $form->saving(function ($data) {
+            SystemAuthMenu::where('auth_id', $data['id'])->delete();
+            if (!empty($data['menu_nodes']) && count($data['menu_nodes']) > 0) {
+                $menuData = [];
+                foreach ($data['menu_nodes'] as $menuId) {
+                    $menuData[] = [
+                        'auth_id' => $data['id'],
+                        'menu_id' => $menuId,
+                    ];
+                }
+                (new SystemAuthMenu())->saveAll($menuData);
+            }
+        });
+        return $form;
+    }
+
     /**
      * 权限授权
      * @auth true
      * @login true
      * @return string
      */
-    public function authNode(){
+    public function authNode($id): Form
+    {
         $form = new Form(new SystemAuth());
-        $form->setTitle('权限授权');
-        $data = NodeService::instance()->tree();
-        $nodes = SystemAuthNode::where('auth',request()->get('id'))->field('md5(concat(node,method)) as node')->select()->column('node');
-        $form->tree('auth_nodes', '')->data($data)->setChecked('mark',$nodes)->horizontal();
-        $form->hideResetButton();
-        $form->saving(function ($data){
-            if(!empty($data['auth_nodes']) &&count($data['auth_nodes']) > 0){
-                SystemAuthNode::where('auth',$data['id'])->delete();
+        $form->edit($id);
+        $form->labelPosition('top');
+        $nodes = SystemAuthNode::where('auth_id', $id)->column('node_id');
+        $form->tree('auth_nodes')
+            ->data(Admin::node()->tree())
+            ->showCheckbox()
+            ->horizontal()
+            ->value($nodes)
+            ->defaultExpandAll();
+        $form->saving(function ($data) {
+            SystemAuthNode::where('auth_id', $data['id'])->delete();
+            if (!empty($data['auth_nodes']) && count($data['auth_nodes']) > 0) {
                 $authData = [];
-                foreach ($data['auth_nodes'] as $node){
-                    if(!empty($node['rule'])){
+                $nodes = Admin::node()->all();
+                foreach ($nodes as $node) {
+                    if (in_array($node['id'], $data['auth_nodes'])) {
                         $authData[] = [
-                            'auth'=>$data['id'],
-                            'method'=>$node['method'],
-                            'node'=>$node['rule'],
+                            'auth_id' => $data['id'],
+                            'node_id' => $node['id'],
+                            'method' => $node['method'],
+                            'class' => $node['class'],
+                            'action' => $node['action'],
                         ];
                     }
                 }
-                if(count($authData)> 0){
+                if (count($authData) > 0) {
                     (new SystemAuthNode())->saveAll($authData);
                 }
 

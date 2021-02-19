@@ -4,7 +4,7 @@
 
 <script>
 import * as echarts from 'echarts'
-import {defineComponent,ref,onMounted,onActivated,onUnmounted,onUpdated} from 'vue'
+import {defineComponent,ref,onMounted,onUpdated} from 'vue'
 
 export default defineComponent({
   name: 'EadminChart',
@@ -23,15 +23,15 @@ export default defineComponent({
     }
   },
   setup(props){
-
     const echart = ref('')
+    let chart = null
     function initChart() {
-      const chart = echarts.init(echart.value)
-      chart.setOption(props.options)
+      setTimeout(()=>{
+        chart = echarts.init(echart.value)
+        chart.setOption(props.options)
+        chart.resize()
+      },1)
     }
-    onMounted(()=>{
-      initChart()
-    })
     onUpdated(()=>{
       initChart()
     })

@@ -5,21 +5,20 @@ namespace app\admin\controller;
 
 use Eadmin\chart\Echart;
 
-use Eadmin\controller\BaseAdmin;
-use Eadmin\facade\Component;
-use Eadmin\facade\CountCard;
-use Eadmin\facade\Quick;
+use Eadmin\component\basic\Card;
+use Eadmin\component\basic\Tabs;
+use Eadmin\component\layout\Content;
+use Eadmin\component\layout\Row;
+use Eadmin\Controller;
 use Eadmin\grid\Filter;
-use Eadmin\layout\Content;
 
-use Eadmin\layout\Row;
 
 /**
  * 控制台
  * Class Index
  * @package app\admin\controller
  */
-class Index extends BaseAdmin
+class Index extends Controller
 {
     /**
      * 仪表盘
@@ -29,36 +28,17 @@ class Index extends BaseAdmin
      */
     public function dashboard(Content $content)
     {
-        $content->row(function (Row $row) {
-            $row->gutter(10);
-            $row->column(Quick::create('微信授权配置', 'el-icon-mobile-phone', 'green')->href('/wechat/config/wechat')->render(), 8);
-            $row->column(Quick::create('系统用户', 'el-icon-user-solid', '#4486f1')->href('/admin/admin')->render(), 8);
-            $row->column(Quick::create('打开百度', 'el-icon-map-location', 'red')->href('http://www.baidu.com')->render(), 8);
-        });
-        $content->row(function (Row $row) {
-            $row->gutter(10);
-            $card = CountCard::create('访问量', 100,1000,'el-icon-mobile-phone', '#4486f1');
-            $row->column($card, 6)->clickLink(url('lineEchart'),'lineEchartName');
-            $card = CountCard::create('用户', 200,500,'el-icon-user-solid', 'red','周','info');
-            $row->column($card, 6)->clickLink(url('radarEchart'),'lineEchartName');
-            $card =CountCard::create('访问量', 300,300,'el-icon-mobile-phone', '#4486f1','月','warning');
-            $row->column($card, 6)->clickLink(url('funnelchart'),'lineEchartName');
-            $card = CountCard::create('用户', 400.54,648.39,'el-icon-user-solid', 'red','年','success');
-            $row->column($card, 6)->clickLink(url('barEchart'),'lineEchartName');
 
-        });
-        $content->rowComponentUrl(url('lineEchart'),24,'lineEchartName');
-        $content->row(function (Row $row) {
-            $row->gutter(10);
-            $row->columnComponentUrl(url('pieEchart'), 12);
-            $row->columnComponentUrl(url('radarEchart'), 12);
-        });
-        $content->row(function (Row $row) {
-            $row->gutter(10);
-            $row->columnComponentUrl(url('funnelchart'), 12);
-            $row->columnComponentUrl(url('barEchart'), 12);
-        });
-        Component::view($content->view());
+        $tab = Tabs::create()
+            ->tabPosition('left')
+            ->pane('折线图',$this->lineEchart())
+//            ->pane('漏斗图',$this->funnelchart())
+//            ->pane('饼图',$this->pieEchart())
+//            ->pane('祝转图',$this->barEchart())
+            ->pane('柱状图',$this->radarEchart());
+        $content->title('数据分析');
+        $content->row(Card::create($tab));
+        return $content;
     }
 
     /**
@@ -86,7 +66,7 @@ class Index extends BaseAdmin
             $echart->count('日志总数量', 50);
             $echart->sum('日志id总和', 'id', 1000);
         });
-        Component::view($echart->view());
+        return $echart;
     }
 
     /**
@@ -99,7 +79,7 @@ class Index extends BaseAdmin
         $echart->count('日志总数量');
         $echart->sum('日志id总和', 'id');
         $echart->avg('日志id平均', 'id');
-        Component::view($echart->view());
+        return $echart;
     }
 
     /**
@@ -125,7 +105,7 @@ class Index extends BaseAdmin
             $echart->avg('日志id平均', 'id');
         });
 
-        Component::view($echart->view());
+        return $echart;
     }
 
     /**
@@ -144,7 +124,7 @@ class Index extends BaseAdmin
         });
         $echart->sum('123', 'id');
         $echart->sum('ff', 'id');
-        Component::view($echart->view());
+        return $echart;
     }
 
     /**
@@ -163,6 +143,6 @@ class Index extends BaseAdmin
         });
         $echart->sum('123', 'id');
         $echart->sum('ff', 'id');
-        Component::view($echart->view());
+        return $echart;
     }
 }

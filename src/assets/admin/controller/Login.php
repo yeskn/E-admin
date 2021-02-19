@@ -9,11 +9,12 @@
 namespace app\admin\controller;
 
 
-use Eadmin\model\SystemConfig;
+
 use EasyWeChat\Factory;
 use think\facade\Cache;
+use think\facade\Db;
 use think\facade\Validate;
-use Eadmin\controller\BaseAdmin;
+use Eadmin\Controller;
 use Eadmin\model\AdminModel;
 use Eadmin\service\CaptchaService;
 use Eadmin\service\TokenService;
@@ -24,7 +25,7 @@ use Eadmin\Admin;
  * Class Login
  * @package app\admin\controller
  */
-class Login extends BaseAdmin
+class Login extends Controller
 {
 
     /**
@@ -77,14 +78,20 @@ class Login extends BaseAdmin
                 }
                 $tokens = Admin::token()->encode($user);
                 event('UserLogin', $user);
-                $this->successCode($tokens);
+                admin_success_message('登陆成功')->data($tokens);
             } else {
-                $this->errorCode(999, $validate->getError());
+                admin_error_message($validate->getError());
             }
         }else{
            $where= ['web_logo','web_name','web_miitbeian','web_copyright'];
-           $data = SystemConfig::whereIn('name',$where)->column('value','name');
-           return Admin::view('/login',$data);
+           $data = Db::name('SystemConfig')->whereIn('name',$where)->column('value','name');
+           return Admin::view('/login')->attrs([
+               'webLogo'=>$data['web_logo'],
+               'webName'=>$data['web_name'],
+               'webMiitbeian'=>$data['web_miitbeian'],
+               'webCopyright'=>$data['web_copyright'],
+               'deBug'=>env('APP_DEBUG')
+           ]);
         }
     }
     /**
@@ -92,8 +99,8 @@ class Login extends BaseAdmin
      */
     protected function wxQrcodeLogin($code){
         $config = [
-            'app_id'   => Data::sysconf('wechat_open_appid'),
-            'secret'   => Data::sysconf('wechat_open_secret'),
+            'app_id'   => sysconf('wechat_open_appid'),
+            'secret'   => sysconf('wechat_open_secret'),
         ];
         $needBindWx = false;
         try {
@@ -105,7 +112,7 @@ class Login extends BaseAdmin
             $user = AdminModel::where('openid', $openid)->find();
             if($user){
                 event('UserLogin', $user);
-                $tokens = TokenService::instance()->encode($user);
+                $tokens = Admin::token()->encode($user);
             }else{
                 $needBindWx = true;
             }
@@ -116,7 +123,7 @@ class Login extends BaseAdmin
         if($needBindWx){
             $this->successCode($openid,422);
         }else{
-            $this->successCode($tokens);
+            admin_success_message('登陆成功')->data($tokens);
         }
     }
     /**
@@ -127,6 +134,6 @@ class Login extends BaseAdmin
     public function logout()
     {
         Admin::token()->logout();
-        $this->successCode();
+        admin_success_message('成功退出登陆');
     }
 }

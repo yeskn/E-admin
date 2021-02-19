@@ -212,7 +212,7 @@ class Admin extends Controller
     {
         $form = new Form(new AdminModel());
         $form->edit(\Eadmin\Admin::id());
-        $userInput = $form->text('username', '用户名')->rule([
+        $form->text('username', '用户名')->rule([
             'chsDash' => '用户名只能是汉字、字母、数字和下划线_及破折号-'
         ])->disabled();
         $form->text('nickname', '用户昵称')->rule([

@@ -14,7 +14,6 @@ use Eadmin\component\Component;
 class Row extends Component
 {
     protected $name = 'ElRow';
-
     /**
      * 栅格间隔
      * @param int $value
