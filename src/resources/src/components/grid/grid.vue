@@ -90,7 +90,7 @@
 </template>
 
 <script>
-    import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed,reactive} from "vue"
+    import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed,reactive,onActivated} from "vue"
     import render from "/@/components/render.vue"
     import {useHttp} from '/@/hooks'
     import request from '/@/utils/axios'

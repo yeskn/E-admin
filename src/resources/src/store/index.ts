@@ -1,4 +1,4 @@
-import { reactive } from "vue";
+import { reactive} from "vue";
 import request from '/@/utils/axios'
 export const store = Symbol()
 // 使用 reactive 函数完成响应式转换
@@ -69,7 +69,6 @@ const action = {
         const index = action.getComponentIndex(url)
         states.mainComponent.splice(index,1)
         states.componentVariable.splice(index,1)
-        console.log(states.mainComponent)
     },
     getComponentIndex(url){
         return states.mainComponent.findIndex(item=>{
@@ -83,7 +82,9 @@ const action = {
             delete states.proxyData[i]
         }
         if(index > -1) {
-            states.proxyData = {...states.componentVariable[index].proxyData}
+            for(let field in states.componentVariable[index].proxyData){
+                states.proxyData[field] = states.componentVariable[index].proxyData[field]
+            }
         }else{
             states.componentVariable.push({
                 url:url,

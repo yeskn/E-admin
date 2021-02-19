@@ -479,7 +479,7 @@ class Grid extends Component
             if ($action instanceof Html) {
                 $button = $action->content($button)->redirect("eadmin/create.rest", $form->getCallMethod());
             } else {
-                $button = $action->bindValue(null, false)->reference($button)->title($form->bind('eadmin_title'))->content($form);
+                $button = $action->bindValue(null, false)->reference($button)->title($form->bind('eadmin_title'))->form($form);
             }
             $this->attr('addButton', $button);
         }

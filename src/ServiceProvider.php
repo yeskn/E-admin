@@ -31,13 +31,12 @@ class ServiceProvider extends Service
 {
     public function register()
     {
-
         //注册上传路由
         FileService::instance()->registerRoute();
         //注册插件
         PlugService::instance()->register();
-        $this->registerView();
         $this->app->middleware->route( \Eadmin\middleware\Permission::class);
+        $this->registerView();
         $this->registerService();
     }
     public function registerService(){
@@ -74,22 +73,21 @@ class ServiceProvider extends Service
         $this->app->route->post('notice/reads',Notice::class.'@reads');
         $this->app->route->delete('notice/clear',Notice::class.'@clear');
         //数据库备份
-
         $this->app->route->get('backup/config',Backup::class.'@config');
         $this->app->route->post('backup/add',Backup::class.'@add');
         $this->app->route->post('backup/reduction',Backup::class.'@reduction');
         $this->app->route->get('backup',Backup::class.'@index');
 
-        $this->app->route->resource(':controller',':controller')->ext('rest');
-        $rules = $this->app->route->getGroup()->getRules();
-        foreach ($rules as $key=>$rule){
-            if(isset($rule[1]) && $rule[1] instanceof Resource){
-                if($rule[1]->getRoute() !=':controller'){
-                    $this->app->route->get($rule[1]->getName(),$rule[1]->getRoute().'@index');
-                }
-                $rule[1]->ext('rest');
-            }
-        }
+//        $this->app->route->resource(':controller',':controller')->ext('rest');
+//        $rules = $this->app->route->getGroup()->getRules();
+//        foreach ($rules as $key=>$rule){
+//            if(isset($rule[1]) && $rule[1] instanceof Resource){
+//                if($rule[1]->getRoute() !=':controller'){
+//                    $this->app->route->get($rule[1]->getName(),$rule[1]->getRoute().'@index');
+//                }
+//                $rule[1]->ext('rest');
+//            }
+//        }
     }
     public function boot()
     {

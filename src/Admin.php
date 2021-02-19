@@ -273,6 +273,6 @@ class Admin
 
     public static function registerRoute()
     {
-        app()->route->resource('eadmin', ResourceController::class)->ext('rest');;
+        app()->route->resource('eadmin', ResourceController::class)->ext('rest');
     }
 }

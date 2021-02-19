@@ -3,7 +3,7 @@
         <template #title>
             <i :class="menu.icon" v-if="menu.icon"></i><span>{{menu.name}}</span>
         </template>
-        <template v-for="item in menu.children">
+        <template v-for="item in menu.children" :key="item.id">
             <menu-item v-if="item.children" :menu="item"></menu-item>
             <el-menu-item :index="item.id+''" v-else>
                 <i :class="item.icon" v-if="item.icon"></i>

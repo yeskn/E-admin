@@ -9,30 +9,34 @@
 namespace Eadmin\chart;
 
 
+use Carbon\Carbon;
+use Eadmin\component\basic\Button;
+use Eadmin\component\Component;
+use Eadmin\grid\Filter;
+use Eadmin\traits\CallProvide;
 use think\db\Query;
 use think\facade\Db;
 use think\facade\Request;
+use think\helper\Str;
 use think\Model;
 use Eadmin\chart\echart\FunnelChart;
 use Eadmin\chart\echart\LineChart;
 use Eadmin\chart\echart\PieChart;
 use Eadmin\chart\echart\RadarChart;
-use Eadmin\grid\Column;
-use Eadmin\grid\Filter;
-use Eadmin\tools\DateTime;
-use Eadmin\View;
 
 /**
  * Class Echarts
- * @package buildView
+ * @package
  * @method $this count($text, \Closure $query) 统计数量
  * @method $this max($text, $filed, \Closure $query) 统计最大值
  * @method $this avg($text, $field, \Closure $query) 统计平均值
  * @method $this sum($text, $field, \Closure $query) 统计总和
  * @method $this min($text, $field, \Closure $query) 统计最小值
  */
-class Echart extends View
+class Echart extends Component
 {
+    use CallProvide;
+    protected $name = 'EadminEchartCard';
     protected $db;
     protected $chart;
     protected $dateField;
@@ -55,8 +59,8 @@ class Echart extends View
     public function __construct($title, $type = 'line', $height = "350px")
     {
         $this->title = $title;
-        $this->setVar('title', $this->title);
-        $this->setVar('height', $height);
+        $this->attr('params',$this->getCallMethod());
+        $this->attr('title',$title);
         $this->chartType = $type;
         $this->date_type = Request::get('date_type', 'today');
         if ($this->chartType == 'line' || $this->chartType == 'bar') {
@@ -69,16 +73,32 @@ class Echart extends View
             $this->chart = new RadarChart($height, '100%');
         }
     }
-    public function title(){
-        return $this->title;
-    }
+
     /**
      * 当前图表
-     * @return RadarChart
+     * @return EchartAbstract
      */
     public function chart()
     {
         return $this->chart;
+    }
+    /**
+     * 查询过滤
+     * @param $callback
+     */
+    public function filter($callback)
+    {
+        if ($callback instanceof \Closure) {
+            $field = Str::random(15, 3);
+            $this->bind($field, false);
+            $this->bindAttr('modelValue',$field);
+            $this->filter = new Filter($this->db);
+            call_user_func($callback, $this->filter);
+            $form = $this->filter->render();
+            $form->eventSuccess([$field=>true]);
+            $this->attr('filterField', $form->bindAttr('model'));
+            $this->attr('filter',$form);
+        }
     }
     /**
      * 设置表名数据源
@@ -98,21 +118,6 @@ class Echart extends View
         $this->dateField = $dateField;
     }
 
-    /**
-     * 查询过滤
-     * @param $callback
-     */
-    public function filter($callback)
-    {
-        if ($callback instanceof \Closure) {
-            $this->filter = new Filter($this->db);
-            call_user_func($callback, $this->filter);
-            $this->setVar('filter', $this->filter->render());
-            $tableScriptVar = implode(',', $this->filter->scriptArr);
-            $this->setVar('tableScriptVar',$tableScriptVar);
-        }
-
-    }
     public function __call($name, $arguments)
     {
         if ($name == 'count') {
@@ -184,6 +189,7 @@ class Echart extends View
     protected function radarAnalyze($type, $field, $name, $max = 100, $closure = null)
     {
         $value = $this->parse($type, $field, $closure);
+
         $this->chart->indicator($name, $max);
         $key = $this->chart()->getIndicatorKey($name);
         if($this->radarMaxKey < $key){
@@ -234,9 +240,9 @@ class Echart extends View
                 }
                 break;
             case 'week':
-                $start_week = date('Y-m-d', strtotime('this week'));
+                $start_week = Carbon::now()->startOfWeek()->addDays(-1)->toDateString();
                 for ($i = 0; $i <= 6; $i++) {
-                    $week = DateTime::afterDate($i, $start_week);
+                    $week = Carbon::make($start_week)->addDays($i)->toDateString();
                     $xAxis[] = $week;
                     $db = clone $this->db;
                     if ($closure instanceof \Closure) {
@@ -246,9 +252,10 @@ class Echart extends View
                 }
                 break;
             case 'month':
-                $months = DateTime::thisMonths();
+                $now = Carbon::today();
+                $months = Carbon::parse($now->firstOfMonth()->toDateString())->daysUntil($now->endOfMonth()->toDateString())->toArray();
                 foreach ($months as $month) {
-                    $xAxis[] = $month;
+                    $xAxis[] = $month->toDateString();
                     $db = clone $this->db;
                     if ($closure instanceof \Closure) {
                         call_user_func($closure, $db);
@@ -269,9 +276,9 @@ class Echart extends View
             case 'range':
                 $start_date = Request::get('start_date');
                 $end_date = Request::get('end_date');
-                $dates = DateTime::rangeDates($start_date, $end_date);
+                $dates = Carbon::parse($start_date)->daysUntil($end_date)->toArray();
                 foreach ($dates as $date) {
-                    $xAxis[] = $date;
+                    $xAxis[] = $date->toDateString();
                     $db = clone $this->db;
                     if ($closure instanceof \Closure) {
                         call_user_func($closure, $db);
@@ -283,12 +290,7 @@ class Echart extends View
         $total = array_sum($series);
         $this->chart->xAxis($xAxis)->series($name. " ($total)", $series);
     }
-
-    /**
-     * 返回视图
-     * @return string
-     */
-    public function view()
+    public function jsonSerialize()
     {
         if ($this->chart instanceof RadarChart) {
             $seriesData[] = [
@@ -315,18 +317,12 @@ class Echart extends View
         if (count($this->seriesData) > 0) {
             $this->chart->series($this->title, $this->seriesData);
         }
-        $html = $this->chart->render();
-        $html = "<template>{$html}</template>";
-        $moudel = app('http')->getName();
-        $node = $moudel . '/' . request()->pathinfo();
-        $this->setVar('url', $node);
-        if (Request::has('ajax')) {
-            return $html;
+        if(Request::has('ajax')){
+            return $this->chart;
         }
 
-        $this->setVar('html', rawurlencode($html));
-        $this->setVar('headerTotal', rawurlencode($html));
-        return parent::render();
+        $this->attr('echart',$this->chart);
+        return parent::jsonSerialize();
     }
 
     /**
@@ -339,7 +335,6 @@ class Echart extends View
     {
         $db = clone $this->db;
         if ($closure instanceof \Closure) {
-
             call_user_func($closure, $db);
         }
         switch ($this->date_type) {
@@ -359,7 +354,6 @@ class Echart extends View
             case 'range':
                 $start_date = Request::get('start_date');
                 $end_date = Request::get('end_date');
-                $dates = DateTime::rangeDates($start_date, $end_date);
                 $value = $db->whereBetweenTime($this->dateField, $start_date, $end_date)->$type($field);
                 break;
         }

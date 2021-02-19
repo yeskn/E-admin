@@ -46,7 +46,7 @@ abstract class EchartAbstract extends Component
     public function jsonSerialize()
     {
         if(!empty($this->series)){
-            $this->options['series'] = $this->series;
+           $this->options['series'] = $this->series;
         }
         if(!empty($this->legend)){
             $this->options['legend']['data'] = $this->legend;

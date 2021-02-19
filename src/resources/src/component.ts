@@ -19,7 +19,8 @@ import dropdown from './components/dropdown/dropdown.vue'
 import video from './components/video.vue'
 import downloadFile from './components/downloadFile.vue'
 import debugLog from './components/debugLog.vue'
-import echart from './components/echart.vue'
+import echart from './components/echart/echart.vue'
+import echartCard from './components/echart/echartCard.vue'
 app.component(form.name,form)
 app.component(manyItem.name,manyItem)
 app.component(dialog.name,dialog)
@@ -39,5 +40,6 @@ app.component(video.name,video)
 app.component(DropdownItem.name,DropdownItem)
 app.component(dropdown.name,dropdown)
 app.component(echart.name,echart)
+app.component(echartCard.name,echartCard)
 app.component(batchAction.name,batchAction)
 app.component(eadminErrorPage.name,eadminErrorPage)

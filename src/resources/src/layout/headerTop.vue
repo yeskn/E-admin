@@ -87,17 +87,20 @@
             })
             watch(() => state.menuModule, (val, oldVal) => {
                 if(oldVal){
-                    menus.forEach(item => {
-                        if (item.id == val && item.children) {
+                    for (var i = 0; i < menus.length; i++) {
+                        if (menus[i].id == val && menus[i].children) {
+
                             action.sidebarVisible(true)
-                            let url = defaultMenu(item.children)
+                            let url = defaultMenu(menus[i].children)
                             if (url) {
                                 link(url)
                             }
+                            break;
                         } else {
                             action.sidebarVisible(false)
                         }
-                    })
+
+                    }
                 }
             })
 

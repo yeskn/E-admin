@@ -9,7 +9,7 @@
                  background-color="#000000"
                  @select="select"
                  >
-            <menu-item v-for="item in menus" :menu="item"></menu-item>
+            <menu-item v-for="item in menus" :menu="item" :key="item.id"></menu-item>
         </el-menu>
     </div>
 </template>
@@ -43,15 +43,15 @@
             })
             //侧边栏菜单渲染
             const menus = computed(()=>{
-                let menus = []
+                let menu= null
                 state.menus.forEach(res=>{
                     if(res.id == state.menuModule && res.children){
-                        menus = res.children
+                        menu = res.children
                     }
                 })
-                return menus
-            })
 
+                return menu
+            })
             //选择菜单
             function select(id,index) {
                 let menu = findTree(state.menus,id,'id')

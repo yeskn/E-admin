@@ -27,9 +27,10 @@ export default function () {
         optimizeDeps: {
             include: [
                 'element-plus/lib/locale/lang/zh-cn',
+                'ant-design-vue/es/locale/zh_CN',
                 'dayjs',
                 'tinymce/plugins/',
-                 'tinymce/tinymce'
+                'tinymce/tinymce'
                 , 'tinymce/themes/silver'
                 , 'tinymce/icons/default'
                 , 'tinymce/plugins/advlist'

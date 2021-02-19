@@ -2,7 +2,7 @@ import ElementPlus from 'element-plus';
 import 'ant-design-vue/dist/antd.css';
 import 'element-plus/lib/theme-chalk/index.css';
 import router from './router'
-import {store,state,action} from './store'
+import {store,state} from './store'
 import './styles/index.scss'
 import app from  './app'
 import './component'

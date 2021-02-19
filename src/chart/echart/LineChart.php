@@ -14,43 +14,35 @@ use Eadmin\View;
 class LineChart extends EchartAbstract
 {
     protected $type = 'line';
+
     public function __construct($height = '350px', $width = '100%', $type = 'line')
     {
-        parent::__construct($height,$width);
+        parent::__construct($height, $width);
         $this->options = [
             'title' => [
                 'text' => '',
             ],
+            'tooltip' => [
+                'trigger' => 'axis'
+            ],
             'xAxis' => [
                 'data' => [],
+                'type'=> 'category',
                 'boundaryGap' => false,
-                'axisTick' => [
-                    'show' => false
-                ]
             ],
             'grid' => [
-                'left' => 10,
-                'right' => 10,
-                'bottom' => 20,
-                'top' => 30,
+                'left' => '3%',
+                'right' => '4%',
+                'bottom' => '3%',
                 'containLabel' => true
             ],
-            'tooltip' => [
-                'trigger' => 'axis',
-                'axisPointer' => [
-                    'type' => 'cross'
-                ],
-                'padding' => [5, 10]
-            ],
             'yAxis' => [
-                'axisTick' => [
-                    'show' => false
-                ]
+                'type' => 'value'
             ],
             'legend' => [
                 'data' => [],
             ],
-            'series' => []
+            'series' => [ ]
         ];
         $this->type = $type;
     }
