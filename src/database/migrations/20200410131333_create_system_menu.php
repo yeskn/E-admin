@@ -34,8 +34,8 @@ class CreateSystemMenu extends Migrator
         $table->addColumn(Column::string('icon',100)->setDefault('')->setComment('菜单图标'));
         $table->addColumn(Column::string('url',400)->setDefault('')->setComment('链接'));
         $table->addColumn(Column::string('params',500)->setDefault('')->setComment('链接参数'));
-        $table->addColumn(Column::integer('sort')->setDefault(0)->setComment('菜单排序'));
         $table->addColumn(Column::string('mark')->setDefault('')->setComment('标记'));
+        $table->addColumn(Column::integer('sort')->setDefault(0)->setComment('菜单排序'));
         $table->addColumn(Column::tinyInteger('status')->setDefault(1)->setComment('状态(0:禁用,1:启用)'));
         $table->addTimestamps('create_at');
         $table->create();

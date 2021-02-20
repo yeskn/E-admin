@@ -22,9 +22,10 @@ class CheckboxGroup extends Field
     protected $name = 'ElCheckboxGroup';
     //禁用数据
     protected $disabledData = [];
+
     public function __construct($field = null, $value = '')
     {
-        if(empty($value)){
+        if (empty($value)) {
             $value = [];
         }
         parent::__construct($field, $value);
@@ -47,6 +48,7 @@ class CheckboxGroup extends Field
      */
     public function options(array $data, bool $buttonTheme = false)
     {
+        $options = [];
         foreach ($data as $value => $label) {
             if (in_array($value, $this->disabledData)) {
                 $disabled = true;

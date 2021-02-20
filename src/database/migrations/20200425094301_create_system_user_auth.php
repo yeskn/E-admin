@@ -30,7 +30,7 @@ class CreateSystemUserAuth extends Migrator
     {
         $table = $this->table('system_user_auth',['engine'=>'InnoDB','collation'=>'utf8mb4_unicode_ci'])->setComment('系统用户授权角色表');
         $table->addColumn(Column::integer('user_id')->setComment('系统用户id'));
-        $table->addColumn(Column::integer('role_id')->setComment('系统角色id'));
+        $table->addColumn(Column::integer('auth_id')->setComment('权限角色id'));
         $table->create();
     }
 }

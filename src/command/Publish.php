@@ -21,12 +21,14 @@ class Publish extends Command
         $this->setName('eadmin:publish')->setDescription('Publish any publishable assets from vendor packages');
     }
 
-    protected function execute(Input $input,Output $output)
+    protected function execute(Input $input, Output $output)
     {
         $assetsDir = __DIR__ . '/../assets/public';
-        $this->copyDir($assetsDir, app()->getRootPath()  . 'public/eadmin');
+        $this->copyDir($assetsDir, app()->getRootPath() . 'public/eadmin');
         $assetsDir = __DIR__ . '/../assets/admin';
-        $this->copyDir($assetsDir, app()->getAppPath()  . 'admin');
+        $this->copyDir($assetsDir, app()->getAppPath() . 'admin');
+        $assetsDir = __DIR__ . '/../database';
+        $this->copyDir($assetsDir, app()->getRootPath() . 'database');
     }
 
     /**

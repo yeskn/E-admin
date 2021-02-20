@@ -3,7 +3,7 @@
 namespace Eadmin\command;
 
 
-use app\common\tools\Str;
+
 use think\console\Command;
 use think\console\Input;
 
@@ -11,6 +11,7 @@ use think\console\input\Option;
 use think\console\Output;
 use think\facade\Db;
 use think\facade\Env;
+use think\helper\Str;
 
 /**
  * 生成数据库表填充文件
@@ -79,11 +80,11 @@ class Iseed extends Command
     {
         $data = Db::table($table)->select()->toArray();
         $stub = file_get_contents($this->getStubs('iseed'));
-        $fileName = ucfirst(Str::camelize($table)) . 'Seeder';
+        $fileName = Str::studly($table) . 'Seeder';
         $content = strtr($stub, [
             '$className' => $fileName,
             '$dataArr' => var_export($data, true),
-            '$table' => Str::uncamelize($table),
+            '$table' => $table,
         ]);
         $filePath = $path . DIRECTORY_SEPARATOR . $fileName . '.php';
         $write = true;

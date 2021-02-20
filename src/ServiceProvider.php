@@ -92,6 +92,7 @@ class ServiceProvider extends Service
             'Eadmin\command\Plug',
             'Eadmin\command\Migrate',
             'Eadmin\command\Seed',
+            'Eadmin\command\Iseed',
             'Eadmin\command\Install',
         ]);
     }
