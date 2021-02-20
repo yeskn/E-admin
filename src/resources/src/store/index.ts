@@ -159,6 +159,21 @@ const action = {
             })
         })
     },
+    login(data:object) {
+        return new Promise((resolve, reject) => {
+            request({
+                url: '/admin/login',
+                method: 'post',
+                data:data
+            }).then((res: any) => {
+                states.mainComponent = []
+                states.componentVariable = []
+                resolve(res)
+            }).catch((res: any) => {
+                reject(res)
+            })
+        })
+    },
     logout() {
         return new Promise((resolve, reject) => {
             request({

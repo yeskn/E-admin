@@ -158,11 +158,7 @@
             },
             handleLogin() {
                 this.loading = true
-                this.$request({
-                    url: '/admin/login',
-                    method: 'post',
-                    data: this.loginForm
-                }).then(res => {
+                this.$action.login(this.loginForm).then(res => {
                     localStorage.setItem('eadmin_token', res.data.token)
                     this.$router.push({ path: this.redirect || '/' })
                 }).catch(res=>{

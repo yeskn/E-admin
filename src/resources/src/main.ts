@@ -2,7 +2,7 @@ import ElementPlus from "element-plus";
 import 'ant-design-vue/dist/antd.css';
 import 'element-plus/lib/theme-chalk/index.css';
 import router from './router'
-import {store,state} from './store'
+import {store,state,action} from './store'
 import './styles/index.scss'
 import app from  './app'
 import './component'
@@ -18,4 +18,5 @@ app.use(ElementPlus,{size: 'medium', locale :zhLocale})
 app.use(router)
 app.provide(store, state)
 app.config.globalProperties.$request = request
+app.config.globalProperties.$action = action
 app.mount('#app')

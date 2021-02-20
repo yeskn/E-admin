@@ -22,7 +22,6 @@ const router = createRouter({
 })
 var formRoute:RouteLocationNormalized
 router.beforeEach( async(to:RouteLocationNormalized, from:RouteLocationNormalized,next:NavigationGuardNext) => {
-    asyncCmponent = ''
     formRoute = from
     if(!localStorage.getItem('eadmin_token') && to.path !== '/login'){
         return next('/login?redirect='+to.fullPath)
@@ -62,6 +61,7 @@ function loadComponent(url:string){
             asyncCmponent = res;
             resolve(res)
         }).catch((res:any)=>{
+            asyncCmponent = null
             reject(res)
         }).finally(()=>{
             action.loading(false)
