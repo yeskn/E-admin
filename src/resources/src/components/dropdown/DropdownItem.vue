@@ -4,7 +4,7 @@
 
 <script>
     import {defineComponent} from 'vue'
-    import {useAjax} from '/@/hooks'
+    import {useAjax} from '@/hooks'
     export default defineComponent({
         name: "EadminDropdownItem",
         emits: ['gridRefresh'],

@@ -33,6 +33,7 @@ class NodeService
             $files = $this->getControllerFiles();
             $data = $this->parse($files);
             app()->cache->set($this->cacheKey, $data);
+
             return $data;
         }
     }

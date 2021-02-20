@@ -1,8 +1,9 @@
 import {useRoute} from 'vue-router'
+// @ts-ignore
 import md5 from 'js-md5'
-export const getSource = (source, type) => {
+export const getSource = (source:string, type:string) => {
   const regex = new RegExp(`<${type}[^>]*>`)
-  let openingTag = source.match(regex)
+  let openingTag:any = source.match(regex)
 
   if (!openingTag) {
     return ''
@@ -13,7 +14,7 @@ export const getSource = (source, type) => {
   return source.slice(source.indexOf(openingTag) + openingTag.length, source.lastIndexOf(`</${type}>`))
 }
 
-export const splitCode = (codeStr) => {
+export const splitCode = (codeStr:string) => {
 
   const script = getSource(codeStr, 'script').replace(/export default/, 'return ')
   const css = getSource(codeStr, 'style')

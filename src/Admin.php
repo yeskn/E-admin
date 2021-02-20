@@ -112,9 +112,9 @@ class Admin
     {
         $nodeId = md5($class . $function . strtolower($method));
         $permissions = self::permissions();
-
         foreach ($permissions as $permission) {
             if ($permission['id'] == $nodeId) {
+
                 if ($permission['is_login']) {
                     self::token()->auth();
                 }
@@ -139,6 +139,7 @@ class Admin
             return $nodes;
         }
         $nodes = self::node()->all();
+
         if (self::id()) {
             $permissions = self::user()->permissions();
             $nodeIds = array_column($permissions, 'node_id');
@@ -266,7 +267,7 @@ class Admin
                 }
             }
         } catch (\Exception $exception) {
-          
+
         }
         return $data;
     }

@@ -10,7 +10,7 @@
 </template>
 
 <script>
-    import { store } from '/@/store'
+    import { store } from '@/store'
     import {defineComponent,inject} from 'vue'
     export default defineComponent({
         name: 'SidebarLogo',

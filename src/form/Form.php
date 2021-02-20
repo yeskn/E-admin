@@ -66,7 +66,7 @@ use think\Model;
  * @method \Eadmin\component\form\field\Transfer transfer($field, $label='') 穿梭框
  * @method \Eadmin\component\form\field\Icon icon($field, $label='') 图标选择器
  * @method \Eadmin\component\form\field\IframeTag iframeTag($field, $label='') 弹窗选择框  TODO
- * @method \Eadmin\component\form\field\Map map($lng, $lat, $address, $label='') 高德地图  TODO
+ * @method \Eadmin\component\form\field\Map maps($lng, $lat, $address, $label='') 高德地图  TODO
  */
 class Form extends Field
 {
@@ -242,7 +242,7 @@ class Form extends Field
     {
         foreach ($component->bindAttribute as $attr => $field) {
             $value = $this->drive->getData($field, $data);
-           
+
             if (!empty($value)) {
                 $component->bind($field, $value);
             }
@@ -503,6 +503,8 @@ class Form extends Field
             $class .= 'CheckboxGroup';
         } elseif ($name == 'switch') {
             $class .= 'Switchs';
+        } elseif ($name == 'maps') {
+            $class .= 'Map';
         } else {
             $class .= ucfirst($name);
         }

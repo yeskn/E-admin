@@ -32,7 +32,7 @@ export default defineComponent({
       var index = path.lastIndexOf('\.')
       var ext = path.substring(index + 1, path.length)
       try {
-        return '/@/assets/file_icon/' + ext + '.png'
+        return '@/assets/file_icon/' + ext + '.png'
       } catch (e) {
         return ''
       }

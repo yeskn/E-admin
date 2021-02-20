@@ -3,9 +3,9 @@
 </template>
 
 <script>
-    import { store,action } from '/@/store'
+    import { store,action } from '@/store'
     import {defineComponent,inject,computed,onBeforeUnmount} from 'vue'
-    import render from '/@/components/render.vue'
+    import render from '@/components/render.vue'
     import {useRoute} from 'vue-router'
     export default defineComponent({
         name: "login.vue",

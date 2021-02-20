@@ -44,7 +44,7 @@ import 'tinymce/plugins/visualblocks'
 import 'tinymce/plugins/visualchars'
 import 'tinymce/plugins/wordcount'
 import 'tinymce/plugins/print'
-import '/plugins/axupimgs/plugin.js'
+import './axupimgs/plugin'
 import 'tinymce/icons/default'
 import OSS from 'ali-oss'
 import md5 from 'js-md5'
@@ -111,10 +111,10 @@ export default {
   data() {
     return {
       init: {
-        language_url: `/tinymce/langs/zh_CN.js`,
+        language_url: `/eadmin/tinymce/langs/zh_CN.js`,
         language: 'zh_CN',
-        skin_url: `/tinymce/skins/ui/oxide`,
-        content_css: `/tinymce/skins/content/default/content.css`,
+        skin_url: `/eadmin/tinymce/skins/ui/oxide`,
+        content_css: `/eadmin/tinymce/skins/content/default/content.css`,
         height: this.height,
         width: this.width,
         menubar: false,
@@ -124,7 +124,7 @@ export default {
         convert_urls: false,
         content_style: 'img {max-width:100% !important }',
         external_plugins: {
-          'powerpaste': '/plugins/powerpaste/plugin.min.js'
+          'powerpaste': '/eadmin/plugins/powerpaste/plugin.min.js'
         },
         images_upload_handler: (blobInfo, succFun, failFun) => {
           var file = blobInfo.blob()

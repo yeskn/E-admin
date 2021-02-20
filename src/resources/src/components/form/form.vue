@@ -14,11 +14,11 @@
 
 <script>
     import {defineComponent, inject,nextTick,ref,watch} from 'vue'
-    import render from "/@/components/render.vue"
+    import render from "@/components/render.vue"
     import manyItem from "./manyItem.vue"
-    import { store } from '/@/store'
-    import { useHttp } from '/@/hooks'
-    import request from '/@/utils/axios'
+    import { store } from '@/store'
+    import { useHttp } from '@/hooks'
+    import request from '@/utils/axios'
     export default defineComponent({
         components:{
             render,manyItem

@@ -88,7 +88,7 @@
 </template>
 
 <script>
-    import {store, action} from '/@/store'
+    import {store, action} from '@/store'
     import {defineComponent, inject, computed, reactive, watch,ref} from 'vue'
 
     export default defineComponent({

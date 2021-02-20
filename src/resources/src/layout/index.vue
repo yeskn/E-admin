@@ -19,10 +19,10 @@
     import {defineComponent, inject} from 'vue'
     import headerTop from './headerTop.vue'
     import Sidebar from './sidebar/sidebar.vue'
-    import render from '/@/components/render.vue'
-    import breadcrumb from '/@/components/breadcrumb.vue'
+    import render from '@/components/render.vue'
+    import breadcrumb from '@/components/breadcrumb.vue'
     import tagsView from './tagsView.vue'
-    import { store } from '/@/store'
+    import { store } from '@/store'
     export default defineComponent({
         name: "index",
         components: {

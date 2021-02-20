@@ -58,7 +58,7 @@
             <render :data="filter" ></render>
         </div>
         <!--表格-->
-        <a-table :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" v-loading="loading" v-bind="$attrs" ref='dragTable' :row-key="record => record.id">
+        <a-table :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" v-loading="loading" v-bind="$attrs" ref='dragTable' row-key="id">
             <template v-for="column in tableColumns" v-slot:[column.dataIndex]>
                 <render :data="column.header" :slot-props="{grid:grid}"></render>
             </template>
@@ -91,10 +91,10 @@
 
 <script>
     import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed,reactive,onActivated} from "vue"
-    import render from "/@/components/render.vue"
-    import {useHttp} from '/@/hooks'
-    import request from '/@/utils/axios'
-    import {store} from '/@/store'
+    import render from "@/components/render.vue"
+    import {useHttp} from '@/hooks'
+    import request from '@/utils/axios'
+    import {store} from '@/store'
     import {ElMessageBox,ElMessage} from 'element-plus'
     import Sortable from 'sortablejs'
     import {useRoute} from 'vue-router'

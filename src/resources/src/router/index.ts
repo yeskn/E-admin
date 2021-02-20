@@ -1,10 +1,11 @@
 import { createRouter, createWebHashHistory ,RouteLocationNormalized,NavigationGuardNext} from 'vue-router'
-import request from '/@/utils/axios'
-import { action,state } from '/@/store'
+import request from '@/utils/axios'
+import { action,state } from '@/store'
+// @ts-ignore
 import md5 from 'js-md5'
-import Layout from '/@/layout/index.vue'
-import Login from '/@/layout/login.vue'
-let asyncCmponent
+import Layout from '@/layout/index.vue'
+import Login from '@/layout/login.vue'
+let asyncCmponent:any
 const routes = [
     {
         path: '/login',
@@ -19,8 +20,9 @@ const router = createRouter({
     history: createWebHashHistory(),
     routes
 })
-var formRoute
+var formRoute:RouteLocationNormalized
 router.beforeEach( async(to:RouteLocationNormalized, from:RouteLocationNormalized,next:NavigationGuardNext) => {
+    asyncCmponent = ''
     formRoute = from
     if(!localStorage.getItem('eadmin_token') && to.path !== '/login'){
         return next('/login?redirect='+to.fullPath)
@@ -35,6 +37,7 @@ router.beforeEach( async(to:RouteLocationNormalized, from:RouteLocationNormalize
         return next(from.fullPath)
     }
     action.cachesVariable(from.fullPath)
+
     if(to.fullPath !== '/' && action.getComponentIndex(to.fullPath) === -1){
         await loadComponent(to.fullPath)
     }
@@ -51,15 +54,14 @@ router.afterEach((to:RouteLocationNormalized)=>{
         action.component(asyncCmponent,to.fullPath)
     }
 })
-function loadComponent(url){
+function loadComponent(url:string){
     return new Promise((resolve, reject) =>{
         request({
             url:url
-        }).then(res=>{
+        }).then((res:any)=>{
             asyncCmponent = res;
             resolve(res)
-        }).catch(res=>{
-            asyncCmponent = ''
+        }).catch((res:any)=>{
             reject(res)
         }).finally(()=>{
             action.loading(false)

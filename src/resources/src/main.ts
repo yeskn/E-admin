@@ -1,4 +1,4 @@
-import ElementPlus from 'element-plus';
+import ElementPlus from "element-plus";
 import 'ant-design-vue/dist/antd.css';
 import 'element-plus/lib/theme-chalk/index.css';
 import router from './router'
@@ -8,7 +8,7 @@ import app from  './app'
 import './component'
 import './directive'
 import zhLocale from 'element-plus/lib/locale/lang/zh-cn'
-import request from '/@/utils/axios'
+import request from '@/utils/axios'
 import { Table , Switch ,ConfigProvider} from 'ant-design-vue';
 
 app.use(ConfigProvider)

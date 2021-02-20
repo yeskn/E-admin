@@ -28,7 +28,7 @@ class Plug extends Controller
 {
     /**
      * 插件列表
-     * @auth true
+     * @auth false
      * @login true
      */
     public function index(Content $content)
@@ -86,7 +86,6 @@ EOF;
                 $actions->append(
                     Button::create('卸载')->sizeSmall()->typeDanger()->save(['id' => $rows['name'], 'path' => $rows['path'], 'type' => 2], 'plug/install', '确认卸载？')
                 );
-
             } else {
                 $actions->append(
                     Button::create('安装')->sizeSmall()->typePrimary()->save(['id' => $rows['name'], 'path' => $rows['download'], 'type' => 1], 'plug/install', '确认安装？')
@@ -107,7 +106,7 @@ EOF;
 
     /**
      * 创建扩展
-     * @auth true
+     * @auth false
      * @login true
      */
     public function add()
@@ -140,7 +139,7 @@ EOF;
 
     /**
      * 启用/禁用
-     * @auth true
+     * @auth false
      * @login true
      */
     public function enable($id, $status)
@@ -151,7 +150,7 @@ EOF;
 
     /**
      * 安装/卸载
-     * @auth true
+     * @auth false
      * @login true
      */
     public function install()

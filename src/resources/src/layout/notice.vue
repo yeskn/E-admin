@@ -50,8 +50,8 @@
 
 <script>
     import {defineComponent, ref} from 'vue'
-    import request from '/@/utils/axios'
-    import {link} from '/@/utils'
+    import request from '@/utils/axios'
+    import {link} from '@/utils'
     import { ElNotification } from 'element-plus'
     export default defineComponent({
         name: "notice",

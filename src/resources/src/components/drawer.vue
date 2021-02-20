@@ -15,8 +15,8 @@
 
 <script>
     import {defineComponent,ref,watch} from "vue";
-    import {useVisible, useHttp} from '/@/hooks'
-    import render from '/@/components/render.vue'
+    import {useVisible, useHttp} from '@/hooks'
+    import render from '@/components/render.vue'
     export default defineComponent({
         name: "EadminDrawer",
         components: {

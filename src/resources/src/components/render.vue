@@ -1,7 +1,7 @@
 <script>
     import {defineComponent, toRaw, h, resolveComponent, inject,isProxy,resolveDirective,withDirectives} from 'vue'
-    import {store} from '/@/store'
-    import {splitCode} from '/@/utils/splitCode'
+    import {store} from '@/store'
+    import {splitCode} from '@/utils/splitCode'
     import dayjs from 'dayjs'
     export default defineComponent({
         name: "render",

@@ -3,7 +3,7 @@ tinymce.PluginManager.add('axupimgs', function(editor, url) {
 	window.axupimgs={}; //扔外部公共变量，也可以扔一个自定义的位置
 
 	var baseURL=tinymce.baseURL;
-	var iframe1 = baseURL+'/plugins/axupimgs/upfiles.html';
+	var iframe1 = baseURL+'plugins/axupimgs/upfiles.html';
     axupimgs.images_upload_handler = editor.getParam('images_upload_handler', undefined, 'function');
     axupimgs.images_upload_base_path = editor.getParam('images_upload_base_path', '', 'string');
     axupimgs.axupimgs_filetype = editor.getParam('axupimgs_filetype', '.png,.gif,.jpg,.jpeg', 'string');

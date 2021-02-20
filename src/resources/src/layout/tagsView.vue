@@ -30,8 +30,8 @@
 <script>
     import {useRoute,useRouter} from 'vue-router'
     import {defineComponent, inject,ref} from 'vue'
-    import {store,action} from '/@/store'
-    import breadcrumb from '/@/components/breadcrumb.vue'
+    import {store,action} from '@/store'
+    import breadcrumb from '@/components/breadcrumb.vue'
     export default defineComponent({
         name: "TagsView.vue",
         components: {
@@ -91,6 +91,7 @@
 <style lang="scss" scoped>
     @import '../styles/element-variables.scss';
     .tagsView {
+        z-index: 100;
         display: flex;
         align-items: center;
         height: 45px;

@@ -4,7 +4,7 @@
 
 <script>
     import {defineComponent,ref} from "vue";
-    import request from '/@/utils/axios'
+    import request from '@/utils/axios'
     export default defineComponent({
         name: "EadminSwitch",
         props: {

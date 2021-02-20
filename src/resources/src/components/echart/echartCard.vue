@@ -41,9 +41,9 @@
 
 <script>
     import {defineComponent, ref, reactive, watch, inject} from 'vue'
-    import {useHttp} from '/@/hooks'
+    import {useHttp} from '@/hooks'
     import dayjs from "dayjs";
-    import {store} from '/@/store'
+    import {store} from '@/store'
     export default defineComponent({
         name:'EadminEchartCard',
         props:{

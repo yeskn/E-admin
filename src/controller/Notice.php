@@ -19,7 +19,7 @@ class Notice extends Controller
     /**
      * 系统通知
      * @auth false
-     * @login false
+     * @login true
      */
     public function notification(){
         $data = NoticeService::instance()->receive();
@@ -33,7 +33,7 @@ class Notice extends Controller
     /**
      * 获取系统通知
      * @auth false
-     * @login false
+     * @login true
      */
     public function system(){
         $data = SystemNotice::where('user_id',Admin::id())
@@ -43,7 +43,7 @@ class Notice extends Controller
     /**
      * 读取系统通知
      * @auth false
-     * @login false
+     * @login true
      */
     public function reads(){
         SystemNotice::where('id',$this->request->post('id'))->update(['is_read'=>1]);
@@ -54,7 +54,7 @@ class Notice extends Controller
     /**
      * 清空通知
      * @auth false
-     * @login false
+     * @login true
      */
     public function clear(){
         SystemNotice::where('user_id',Admin::id())->delete();

@@ -1,161 +1,175 @@
-import { reactive} from "vue";
-import request from '/@/utils/axios'
+import {reactive} from "vue";
+import request from '@/utils/axios'
+
 export const store = Symbol()
 // 使用 reactive 函数完成响应式转换
 const states = reactive({
-    routerStatus:true,
+    routerStatus: true,
     //侧边栏
     sidebar: {
         //打开关闭
-        opend:true,
+        opend: true,
         //显示隐藏
-        visible:true,
+        visible: true,
     },
     //主内容组件渲染
-    mainLoading:false,
-    mainComponent:[],
-    componentVariable:[],
-    proxyData:{},
+    mainLoading: false,
+    mainComponent: [],
+    componentVariable: [],
+    proxyData: {},
 
     //错误信息
-    errorPage:{
-        visable:false,
-        data:null,
+    errorPage: {
+        visable: false,
+        data: null,
     },
     //个人信息
-    info:{
-        id:0,
-        webLogo:'',
-        webName:'',
-        dropdownMenu:[],
+    info: {
+        id: 0,
+        webLogo: '',
+        webName: '',
+        dropdownMenu: [],
     },
     //菜单
-    menus:[],
-    menuModule:'',
-    breadcrumb:[],
+    menus: [],
+    menuModule: '',
+    breadcrumb: [],
 });
 export const state = states
 //操作方法
 const action = {
-    setProxyData(data){
+    setProxyData(data: any) {
         states.proxyData = data
     },
     //设置面包屑
-    setBreadcrumb(data){
+    setBreadcrumb(data: any) {
         states.breadcrumb = data
     },
     //侧边栏打开关闭
-    sidebarOpen:function(bool) {
+    sidebarOpen: function (bool: boolean) {
         states.sidebar.opend = bool
     },
     //显示隐藏侧边栏
-    sidebarVisible:function(bool) {
+    sidebarVisible: function (bool: boolean) {
         states.sidebar.visible = bool
     },
     //设置加载状态
-    loading:function(bool){
+    loading: function (bool: boolean) {
         states.mainLoading = bool
     },
     //缓存组件变量
-    cachesVariable(url) {
+    cachesVariable(url: string) {
         const index = action.getComponentIndex(url)
-        if(index > -1){
+        if (index > -1) {
+            // @ts-ignore
             states.componentVariable[index].proxyData = {...states.proxyData}
 
         }
     },
 
-    clearComponent(url){
+    clearComponent(url: string) {
         const index = action.getComponentIndex(url)
-        states.mainComponent.splice(index,1)
-        states.componentVariable.splice(index,1)
+        states.mainComponent.splice(index, 1)
+        states.componentVariable.splice(index, 1)
     },
-    getComponentIndex(url){
-        return states.mainComponent.findIndex(item=>{
+    getComponentIndex(url: string) {
+        return states.mainComponent.findIndex(item => {
+            // @ts-ignore
             return item.url === url
         })
     },
     //设置主内容组件
-    component:function(data,url){
+    component: function (data: object, url: string) {
         const index = action.getComponentIndex(url)
-        for(let i in states.proxyData){
+        for (let i in states.proxyData) {
+            // @ts-ignore
             delete states.proxyData[i]
         }
-        if(index > -1) {
-            for(let field in states.componentVariable[index].proxyData){
+        if (index > -1) {
+            // @ts-ignore
+            for (let field in states.componentVariable[index].proxyData) {
+                // @ts-ignore
                 states.proxyData[field] = states.componentVariable[index].proxyData[field]
             }
-        }else{
+        } else {
             states.componentVariable.push({
-                url:url,
-                proxyData:{}
+                // @ts-ignore
+                url: url,
+                // @ts-ignore
+                proxyData: {}
             })
             states.mainComponent.push({
+                // @ts-ignore
                 title: data.bind.eadmin_title || url,
-                url:url,
-                component:data,
+                // @ts-ignore
+                url: url,
+                // @ts-ignore
+                component: data,
             })
         }
         action.loading(false)
     },
     //关闭错误页面
-    errorPageClose(){
+    errorPageClose() {
         states.errorPage.visable = false
     },
     //打开错误页面
-    errorPageOpen(data){
+    errorPageOpen(data: object) {
+        // @ts-ignore
         states.errorPage.data = data
         states.errorPage.visable = true
     },
     //选择头部菜单模块
-    selectMenuModule(id){
-       states.menuModule = id
+    selectMenuModule(id: string) {
+        states.menuModule = id
     },
-    refreshToken(){
-        return new Promise((resolve, reject) =>{
+    refreshToken() {
+        return new Promise((resolve, reject) => {
             request({
-                url:'/admin/admin/refreshToken'
-            }).then(res=>{
-                if(res.data.token){
-                    localStorage.setItem('eadmin_token',res.data.token)
+                url: '/admin/admin/refreshToken'
+            }).then((res: any) => {
+                if (res.data.token) {
+                    localStorage.setItem('eadmin_token', res.data.token)
                     resolve(res)
-                }else{
+                } else {
                     localStorage.removeItem('eadmin_token')
                     reject(res)
                 }
-            }).catch(res=>{
+            }).catch((res: any) => {
                 reject(res)
             })
         })
     },
-    getInfo(){
-        return new Promise((resolve, reject) =>{
+    getInfo() {
+        return new Promise((resolve, reject) => {
             request({
-                url:'/admin/admin/info'
-            }).then(res=>{
+                url: '/admin/admin/info'
+            }).then((res: any) => {
                 const info = res.data.info
                 states.menus = res.data.menus
-                if(info){
+                if (info) {
                     states.info = info
                     states.info.webLogo = res.data.webLogo
                     states.info.webName = res.data.webName
                     states.info.dropdownMenu = res.data.dropdownMenu
                 }
                 resolve(res)
-            }).catch(res=>{
+            }).catch((res: any) => {
                 reject(res)
             })
         })
     },
-    logout(){
-        return new Promise((resolve, reject) =>{
+    logout() {
+        return new Promise((resolve, reject) => {
             request({
-                url:'/admin/login/logout'
-            }).then(res=>{
+                url: '/admin/login/logout'
+            }).then((res: any) => {
                 states.info.id = 0
+                states.mainComponent = []
+                states.componentVariable = []
                 localStorage.removeItem('eadmin_token')
                 resolve(res)
-            }).catch(res=>{
+            }).catch((res: any) => {
                 reject(res)
             })
         })

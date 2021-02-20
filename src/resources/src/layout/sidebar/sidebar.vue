@@ -16,11 +16,11 @@
 
 <script>
     import {useRoute} from 'vue-router'
-    import { link,findTree } from '/@/utils'
+    import { link,findTree } from '@/utils'
     import Logo from '../logo.vue'
     import menuItem from './menuItem.vue'
     import { defineComponent,inject, computed} from 'vue'
-    import { store ,action} from '/@/store'
+    import { store ,action} from '@/store'
     export default defineComponent ({
         name: "sidebar",
         components: {

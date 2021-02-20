@@ -6,7 +6,7 @@
 
 <script>
     import {defineComponent} from 'vue'
-    import request from '/@/utils/axios'
+    import request from '@/utils/axios'
     import {ElMessageBox} from 'element-plus';
 
     export default defineComponent({

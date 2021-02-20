@@ -12,10 +12,10 @@ class Statistic extends Component
     public function __construct($title,$value,$icon,$bgColor1,$bgColor2)
     {
         $html = <<<HTML
-        <div style="display: flex;align-items: center; background:  linear-gradient(145deg, {$bgColor1} 0%, {$bgColor2} 100%);color: #ffffff;border-radius: 5px;padding: 10px">
-        <div style="margin:0 10px"><i class="{$icon}" style="font-size:40px;"></i></div>
+        <div style="display: flex;align-items: center; background:  linear-gradient(145deg, {$bgColor1} 0%, {$bgColor2} 100%);color: #ffffff;border-radius: 5px;padding:15px 10px">
+        <div style="margin:0 10px"><i class="{$icon}" style="font-size:50px;"></i></div>
         <div>
-        <div style="margin-bottom: 4px;font-size: 14px;">{$title}</div><div style="font-size: 24px;">{$value}</div>
+        <div style="font-size: 14px;margin-bottom: 4px;">{$title}</div><div style="font-size: 24px;line-height: 24px">{$value}</div>
         </div>
 </div>
 HTML;
