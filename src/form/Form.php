@@ -267,7 +267,7 @@ class Form extends Field
             }
             $this->setData($field, $value ?? '');
             if (is_null($data)) {
-                $component->bindAttr($attr, $this->bindAttr('model') . '.' . $field);
+                $component->bindAttr($attr, $this->bindAttr('model') . '.' . $field,true);
             }
             $component->removeBind($field);
         }
@@ -529,6 +529,11 @@ class Form extends Field
         if ($name == 'cascader') {
             $component = $class::create();
             $component->attr('bindFields',$arguments);
+            $component->bindFields($arguments);
+            $prop = $component->bindAttr('modelValue');
+        }elseif ($name == 'maps'){
+            $field = array_pop($arguments);
+            $component = $class::create($field);
             $component->bindFields($arguments);
             $prop = $component->bindAttr('modelValue');
         }

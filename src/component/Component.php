@@ -28,15 +28,20 @@ abstract class Component implements \JsonSerializable
     protected $event = [];
     //自定义指令
     protected $directive = [];
+    //双向绑定
+    protected $modelBind = [];
+
     /**
      * 设置标题
      * @param string $title
      * @return $this
      */
-    public function title(string $title){
-        $this->bind('eadmin_title',$title);
+    public function title(string $title)
+    {
+        $this->bind('eadmin_title', $title);
         return $this;
     }
+
     /**
      * 设置属性
      * @param string $name 属性名
@@ -72,6 +77,7 @@ abstract class Component implements \JsonSerializable
 
     public function removeAttrBind($name)
     {
+        unset($this->modelBind[$name]);
         unset($this->bindAttribute[$name]);
     }
 
@@ -79,12 +85,16 @@ abstract class Component implements \JsonSerializable
      * 绑定属性对应绑定字段
      * @param string $name 属性名称
      * @param string $field 绑定字段名称
+     * @param bool $model 是否双向绑定
      */
-    public function bindAttr(string $name, $field = null)
+    public function bindAttr(string $name, $field = null, $model = false)
     {
         if (is_null($field)) {
             return $this->bindAttribute[$name] ?? null;
         } else {
+            if ($model) {
+                $this->modelBind[$name] = $field;
+            }
             $this->bindAttribute[$name] = $field;
             return $this;
         }
@@ -136,10 +146,12 @@ abstract class Component implements \JsonSerializable
      * @param string $argument 参数(可选)
      * @return $this
      */
-    public function directive($name,$value,$argument=''){
-        $this->directive[] = ['name'=>$name,'argument'=>$argument,'value'=>$value];
+    public function directive($name, $value, $argument = '')
+    {
+        $this->directive[] = ['name' => $name, 'argument' => $argument, 'value' => $value];
         return $this;
     }
+
     public function event($name, array $value)
     {
         $name = ucfirst($name);
@@ -150,21 +162,24 @@ abstract class Component implements \JsonSerializable
         }
         return $this;
     }
+
     /**
      * 跳转路径
      * @param string $url
-     * @param array  $params
+     * @param array $params
      * @return $this
      */
-    public function redirect($url,array $params=[]){
-        if($params){
-            $url = $url .'?'. http_build_query($params);
+    public function redirect($url, array $params = [])
+    {
+        if ($params) {
+            $url = $url . '?' . http_build_query($params);
         }
         $style = $this->attr('style') ?? [];
-        $style = array_merge($style,['cursor'=>'pointer']);
-        $this->attr('style',$style);
-        return $this->directive('redirect',$url);
+        $style = array_merge($style, ['cursor' => 'pointer']);
+        $this->attr('style', $style);
+        return $this->directive('redirect', $url);
     }
+
     /**
      * 插槽内容
      * @param mixed $content 内容
@@ -202,6 +217,7 @@ abstract class Component implements \JsonSerializable
             'map' => $this->map,
             'bind' => $this->bind,
             'attribute' => $this->attribute,
+            'modelBind' => $this->modelBind,
             'bindAttribute' => $this->bindAttribute,
             'content' => $this->content,
             'event' => $this->event,

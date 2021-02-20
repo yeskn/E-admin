@@ -2,9 +2,9 @@
     <div class="login-container">
         <div class="title-container">
             <h3 class="title">
-                <el-avatar :size="100" fit="fill" src="{$web_logo}"/>
+                <el-avatar :size="100" fit="fill" :src="webLogo"/>
                 <br>
-                <span>{$web_name}</span>
+                <span>{{webName}}</span>
             </h3>
         </div>
         <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on"
@@ -73,13 +73,20 @@
                 </el-button>
             </div>
         </el-form>
-        <div class="icp">{$web_miitbeian} | <a href="http://beian.miit.gov.cn" target="_blank">{$web_copyright}</a>
+        <div class="icp">{{webMiitbeian}} | <a href="http://beian.miit.gov.cn" target="_blank">{{webCopyright}}</a>
         </div>
     </div>
 </template>
 <script>
     export default {
         name: 'Login',
+        props:{
+            webLogo:String,
+            webName:String,
+            webCopyright:String,
+            webMiitbeian:String,
+            deBug: Boolean,
+        },
         data() {
             const validatePassword = (rule, value, callback) => {
                 if (value.length < 5) {
@@ -89,12 +96,8 @@
                 }
             }
             return {
-                sildeVerify: false,
                 verifyMode: 1,
                 buttonShow: false,
-                web_name: '',
-                web_miitbeian: '',
-                web_copyright: '',
                 loginForm: {
                     debug: false,
                     username: '',
@@ -103,18 +106,17 @@
                     hash: '',
                 },
                 loginRules: {
-                    username: [{required: true, trigger: 'blur', message: '请输入账号'}],
-                    verify: [{required: true, trigger: 'blur', message: '请输入验证码'}],
-                    password: [{required: true, trigger: 'blur', validator: validatePassword}]
+                    username: [{required: true, trigger: 'change', message: '请输入账号'}],
+                    verify: [{required: true, trigger: 'change', message: '请输入验证码'}],
+                    password: [{required: true, trigger: 'change', validator: validatePassword}]
                 },
                 loading: false,
                 passwordType: 'password',
                 inputFocusCss: '',
                 inputFocusIndex: '',
                 verifyImage: '',
-                app_debug: true,
                 loginBtnText: '登录',
-                redirect: undefined,
+                redirect: null,
             }
         },
         watch: {
@@ -125,7 +127,21 @@
                 immediate: true
             }
         },
+        created(){
+            if(this.deBug){
+                this.loginForm.username = 'admin';
+                this.loginForm.password = 'admin';
+            }
+            this.getVerify()
+        },
         methods: {
+            getVerify() {
+                this.$request('admin/system/verify').then(res => {
+                    this.verifyImage = res.data.image
+                    this.loginForm.hash = res.data.hash
+                    this.verifyMode = res.data.mode
+                })
+            },
             inputFocus(mark) {
                 this.inputFocusIndex = mark
                 this.inputFocusCss = 'box-shadow: 0px 1px 6px #d3dce6;'
@@ -149,6 +165,8 @@
                 }).then(res => {
                     localStorage.setItem('eadmin_token', res.data.token)
                     this.$router.push({ path: this.redirect || '/' })
+                }).catch(res=>{
+                    this.getVerify()
                 }).finally(() => {
                     this.loading = false
                 })

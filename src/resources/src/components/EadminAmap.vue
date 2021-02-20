@@ -7,15 +7,15 @@
       :append-to-body="true"
       v-model="drawer"
       direction="ttb"
-      size="40%"
+      size="50%"
       :destroy-on-close="true"
       :with-header="false"
       @opened="init"
     >
       <div ref="container" style="width: 100%;height: 100%" />
-      <div style="position: absolute;right: 10px;top: 10px">
-        <el-card :body-style="{ padding: '10px',}">
-          <el-input ref="input" v-model="searchText" placeholder="请输入关键字" size="mini" prefix-icon="el-icon-search" />
+      <div style="position: absolute;left: 80px;top: 10px">
+        <el-card :body-style="{ padding: '10px'}">
+          <el-input id="tipinput" v-model="searchText" placeholder="请输入关键字" size="mini" prefix-icon="el-icon-search" />
         </el-card>
       </div>
       <div style="position: absolute;right: 10px;bottom: 10px">
@@ -32,21 +32,20 @@ import {defineComponent, ref,watch,onMounted} from "vue";
 export default defineComponent({
   name: 'EadminAmap',
   props: {
-    modelValue: [String, Array],
+    modelValue: String,
     lat: [Number, String],
     lng: [Number, String],
-    address: String,
     apiKey: {
       type: String,
       default: ''
     }
   },
-  setup(props){
-    if (props.modelValue) {
-      [this.mapLng, this.mapLat, this.mapAddress] = props.modelValue
-    }
+  emits:['update:modelValue','update:lat','update:lng'],
+  setup(props,ctx){
     const container = ref('')
-    const input = ref('')
+    const searchText = ref('')
+    const drawer = ref(false)
+    const mapAddress = ref(props.modelValue)
     function loadScript(url, id) {
       const jsapi = document.createElement('script')
       jsapi.charset = 'utf-8'
@@ -60,46 +59,43 @@ export default defineComponent({
         loadScript(url, 'amapscript')
       }
     })
-
+    watch(mapAddress,(val)=>{
+      ctx.emit('update:modelValue',val)
+    })
     function onComplete(data) {
       // data是具体的定位信息
-      this.mapAddress = data.formattedAddress
-      this.mapLat = data.position.lat
-      this.mapLng = data.position.lng
-      this.$emit('input', [this.mapLng, this.mapLat, this.mapAddress])
+      ctx.emit('update:modelValue',data.formattedAddress)
+      ctx.emit('update:lat',data.position.lat)
+      ctx.emit('update:lng',data.position.lng)
       position()
     }
     let map = null
     let geolocation = null
     let placeSearch = null
     let marker = null
-    const geocoder = new AMap.Geocoder({
-      extensions: 'all'
-    })
+    let geocoder = null
+    let mapLng = props.lng
+    let mapLat = props.lat
     function position() {
-      map.setCenter([this.mapLng, this.mapLat])
+      map.setCenter([mapLng, mapLat])
       marker = new AMap.Marker({
-        position: [this.mapLng, this.mapLat],
-        map: this.map
+        position: [mapLng, mapLat],
+        map: map
       })
       const info = []
       info.push("<div class='input-card content-window-card'> ")
-      info.push("<p class='input-item'>" + this.mapAddress + '</p></div></div>')
+      info.push("<p class='input-item'>" + props.modelValue + '</p></div></div>')
       const infoWindow = new AMap.InfoWindow({
         content: info.join(''),
         offset: new AMap.Pixel(0, -35)
       })
-      infoWindow.open(map, [this.mapLng, this.mapLat])
+      infoWindow.open(map, [mapLng, mapLat])
       map.setFitView([marker])
     }
     function clickMap(e) {
       geocoder.getAddress(e.lnglat, (status, result) => {
         if (status === 'complete' && result.regeocode) {
-          const address = result.regeocode.formattedAddress
-          this.mapAddress = address
-          this.mapLat = e.lnglat.lat
-          this.mapLng = e.lnglat.lng
-          this.$emit('input', [this.mapLng, this.mapLat, this.mapAddress])
+          updateEmit(result.regeocode.formattedAddress,e.lnglat.lat,e.lnglat.lng)
           if (marker) {
             map.remove(marker)
           }
@@ -108,11 +104,15 @@ export default defineComponent({
       })
     }
     function init() {
-      map = new AMap.Map(this.containerId, {
+      geocoder = new AMap.Geocoder({
+        extensions: 'all'
+      })
+
+      map = new AMap.Map(container.value, {
         resizeEnable: true
       })
 
-      if (this.value) {
+      if (props.modelValue) {
         position()
       } else {
         AMap.plugin('AMap.Geolocation', () => {
@@ -129,44 +129,48 @@ export default defineComponent({
             buttonPosition: 'RB'
           })
         })
-        this.geolocation.getCurrentPosition()
+        geolocation.getCurrentPosition()
         AMap.event.addListener(geolocation, 'complete', onComplete)
       }
       map.on('click', clickMap)
-
       // 输入提示
-      const autoOptions = {
-        input: input.value
-      }
-      const auto = new AMap.Autocomplete(autoOptions)
+      const auto = new AMap.Autocomplete({
+        input: 'tipinput'
+      })
       placeSearch = new AMap.PlaceSearch({
         map: map
       })
-      this.map.plugin(['AMap.ToolBar'], () => {
-        this.map.addControl(new AMap.ToolBar())
+      map.plugin(['AMap.ToolBar'], () => {
+        map.addControl(new AMap.ToolBar())
       })
       if (location.href.indexOf('&guide=1') !== -1) {
         map.setStatus({ scrollWheel: false })
       }
       AMap.event.addListener(auto, 'select', select)// 注册监听，当选中某条记录时会触发
       AMap.event.addListener(placeSearch, 'markerClick', e => {
-        this.mapAddress = e.data.address
-        this.mapLat = e.location.lat
-        this.mapLng = e.location.lng
-        this.$emit('input', [this.mapLng, this.mapLat, this.mapAddress])
+        updateEmit(e.data.address,e.location.lat,e.location.lng)
       })
     }
+    function updateEmit(address,lat,lng) {
+      mapLat = lat
+      mapLng = lng
+      mapAddress.value = address
+      ctx.emit('update:modelValue',address)
+      ctx.emit('update:lat',lat)
+      ctx.emit('update:lng',lng)
+    }
     function select(e) {
+      console.log(e)
       const poi = e.poi
       placeSearch.setCity(poi.adcode)
       placeSearch.search(poi.name) // 关键字查询查询
-      this.mapAddress = poi.district + poi.address
-      this.mapLat = poi.location.lat
-      this.mapLng = poi.location.lng
-      this.$emit('input', [this.mapLng, this.mapLat, this.mapAddress])
+      updateEmit(poi.district + poi.address,poi.location.lat,poi.location.lng)
     }
     return {
-      input,
+      init,
+      searchText,
+      drawer,
+      mapAddress,
       container
     }
   },

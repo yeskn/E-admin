@@ -35,12 +35,12 @@
                     eval(expression)
                 }
                 //双向绑定值
-                if (data.bindAttribute && data.bindAttribute.modelValue) {
-                    let field = data.bindAttribute.modelValue
+                for (let modelBind in data.modelBind) {
+                    let field = data.modelBind[modelBind]
                     // 本次渲染是循环属性
                     if (slotProps && slotProps.row) {
                         data.attribute.modelValue = slotProps.row[field]
-                        data.attribute['onUpdate:modelValue'] = value => {
+                        data.attribute['onUpdate:'+modelBind] = value => {
                             if(data.attribute.valueFormat){
                                 //时间特殊处理
                                 if(value == null){
@@ -63,7 +63,7 @@
                     } else {
                         expression = 'data.attribute.modelValue = modelValue.' + field
                         eval(expression)
-                        data.attribute['onUpdate:modelValue'] = value => {
+                        data.attribute['onUpdate:'+modelBind] = value => {
                             if(data.attribute.valueFormat){
                                 //时间特殊处理
                                 if(value == null){
@@ -105,6 +105,9 @@
                             eval(expression)
                         }
                     }
+                }
+                if (data.bindAttribute && data.bindAttribute.modelValue) {
+
                 }
                 //事件绑定
                 for (let event in data.event) {
