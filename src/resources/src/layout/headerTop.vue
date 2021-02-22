@@ -79,7 +79,11 @@
                     if (menu.pid === 0) {
                         action.selectMenuModule(menu.id)
                     }
-                    action.setBreadcrumb(menuLevels)
+                    if(menuLevels.length > 1){
+                        action.setBreadcrumb(menuLevels)
+                    }else{
+                        action.setBreadcrumb([])
+                    }
                     return menuLevels[0].id + ''
                 }else {
                     return state.menuModule + ''

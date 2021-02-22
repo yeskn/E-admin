@@ -1,5 +1,6 @@
-import {reactive} from "vue";
+import {reactive, toRaw} from "vue";
 import request from '@/utils/axios'
+import {findTree} from '@/utils'
 
 export const store = Symbol()
 // 使用 reactive 函数完成响应式转换
@@ -15,7 +16,9 @@ const states = reactive({
     //主内容组件渲染
     mainLoading: false,
     mainComponent: [],
-    component:null,
+    mainTitle: '',
+    mainDescription: '',
+    component: null,
     componentVariable: [],
     proxyData: {},
 
@@ -39,9 +42,6 @@ const states = reactive({
 export const state = states
 //操作方法
 const action = {
-    setProxyData(data: any) {
-        states.proxyData = data
-    },
     //设置面包屑
     setBreadcrumb(data: any) {
         states.breadcrumb = data
@@ -87,10 +87,10 @@ const action = {
             // @ts-ignore
             delete states.proxyData[i]
         }
-        console.log( states.proxyData)
         if (index === -1) {
             // @ts-ignore
-            if(data.cache){
+            const menu = findTree(state.menus, url.substr(1), 'url')
+            if (menu) {
                 states.componentVariable.push({
                     // @ts-ignore
                     url: url,
@@ -102,20 +102,31 @@ const action = {
                     // @ts-ignore
                     title: data.bind.eadmin_title || url,
                     // @ts-ignore
+                    description: data.bind.eadmin_description || '',
+                    // @ts-ignore
                     url: url,
                     // @ts-ignore
                     component: data,
                 })
-            }else{
+            } else {
                 // @ts-ignore
                 state.component = data
             }
-        }else{
+
+            // @ts-ignore
+            state.mainTitle = data.bind.eadmin_title || ''
+            // @ts-ignore
+            state.mainDescription = data.bind.eadmin_description || ''
+        } else {
             // @ts-ignore
             for (let field in states.componentVariable[index].proxyData) {
                 // @ts-ignore
                 states.proxyData[field] = states.componentVariable[index].proxyData[field]
             }
+            // @ts-ignore
+            state.mainTitle = states.mainComponent[index].title || ''
+            //@ts-ignore
+            state.mainDescription = states.mainComponent[index].description || ''
         }
         action.loading(false)
     },
@@ -169,12 +180,12 @@ const action = {
             })
         })
     },
-    login(data:object) {
+    login(data: object) {
         return new Promise((resolve, reject) => {
             request({
                 url: '/admin/login',
                 method: 'post',
-                data:data
+                data: data
             }).then((res: any) => {
                 states.mainComponent = []
                 states.componentVariable = []

@@ -30,8 +30,6 @@ abstract class Component implements \JsonSerializable
     protected $directive = [];
     //双向绑定
     protected $modelBind = [];
-    protected $cache = true;
-
     /**
      * 设置标题
      * @param string $title
@@ -42,7 +40,16 @@ abstract class Component implements \JsonSerializable
         $this->bind('eadmin_title', $title);
         return $this;
     }
-
+    /**
+     * 设置描述
+     * @param string $description
+     * @return $this
+     */
+    public function description($description)
+    {
+        $this->bind('eadmin_description', $description);
+        return $this;
+    }
     /**
      * 设置属性
      * @param string $name 属性名
@@ -216,7 +223,6 @@ abstract class Component implements \JsonSerializable
     {
         return [
             'name' => $this->name,
-            'cache' => $this->cache,
             'where' => $this->where,
             'map' => $this->map,
             'bind' => $this->bind,

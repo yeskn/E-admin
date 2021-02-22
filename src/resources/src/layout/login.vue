@@ -1,5 +1,5 @@
 <template>
-    <render :data="mainComponent"></render>
+    <render :data="state.component"></render>
 </template>
 
 <script>
@@ -16,15 +16,10 @@
             const route = useRoute()
             const state = inject(store)
             const path = route.fullPath
-            const mainComponent = computed(()=>{
-                const index = action.getComponentIndex(path)
-                return state.mainComponent[index].component
-            })
             onBeforeUnmount(()=>{
                 action.clearComponent(path)
             })
             return {
-                mainComponent,
                 state
             }
         }

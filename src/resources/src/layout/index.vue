@@ -5,9 +5,10 @@
             <header-top></header-top>
             <tags-view></tags-view>
             <div class="main-content" v-loading="state.mainLoading">
-                <div class="header-title" v-if="proxyData.eadmin_title">
+                <div class="header-title" v-if="state.mainTitle">
                     <div>
-                        <span class="title">{{proxyData.eadmin_title}}</span><span class="desc" v-if="proxyData.eadmin_description">{{proxyData.eadmin_description}}</span>
+                        <span class="title">{{state.mainTitle}}</span>
+                        <span class="desc" v-if="state.mainDescription">{{state.mainDescription}}</span>
                     </div>
                     <breadcrumb style="margin-right: 5px"></breadcrumb>
                 </div>
@@ -78,6 +79,6 @@
         font-weight: 400;
         font-size: 24px;
         font-family: Montserrat,Nunito,sans-serif;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
 </style>

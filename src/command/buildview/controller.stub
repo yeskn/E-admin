@@ -17,6 +17,7 @@ use {%model_namespace%};
  */
 class {%className%} extends Controller
 {
+    protected $title = '标题';
     /**
      * 列表
      * @auth true
@@ -26,10 +27,10 @@ class {%className%} extends Controller
     public function index() : Grid
     {
         $grid = new Grid(new {%model%});
-        $grid->title('列表');
+        $grid->title($this->title);
 {%grid%}
         $grid->quickSearch();
-        $grid->setForm($this->form());
+        $grid->setForm($this->form())->dialog();
         $grid->setDetail($this->detail(0));
         return $grid;
     }
@@ -43,23 +44,23 @@ class {%className%} extends Controller
     public function form() : Form
     {
         $form = new Form(new {%model%});
-        $form->title('表单');
+        $form->title($this->title);
 {%form%}
-         return $form;
+        return $form;
     }
 
     /**
-         * 详情
-         * @auth true
-         * @login true
-         * @param int $id
-         * @return Detail
-         */
-        public function detail($id) : Detail
-        {
-            $detail = new Detail({%model%}::find($id));
-            $detail->title('详情');
-    {%detail%}
-            return $detail;
-        }
+     * 详情
+     * @auth true
+     * @login true
+     * @param int $id
+     * @return Detail
+     */
+     public function detail($id) : Detail
+     {
+        $detail = new Detail({%model%}::find($id));
+        $detail->title($this->title);
+{%detail%}
+        return $detail;
+     }
 }

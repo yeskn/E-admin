@@ -33,6 +33,7 @@ use Eadmin\model\SystemAuth;
  */
 class Admin extends Controller
 {
+    protected $title = '系统用户';
     /**
      * 系统用户列表
      * @auth true
@@ -42,7 +43,7 @@ class Admin extends Controller
     public function index(): Grid
     {
         $grid = new Grid(new AdminModel());
-        $grid->title('系统用户');
+        $grid->title($this->title);
         $grid->userInfo('avatar', 'nickname', '头像');
         $grid->column('username', '用户账号')->display(function ($val, $data) {
             if ($data['id'] == config('admin.admin_auth_id')) {
@@ -72,6 +73,7 @@ class Admin extends Controller
                 ->icon('el-icon-key')
                 ->plain()
                 ->dialog()
+                ->title('重置密码')
                 ->form($this->resetPassword($data['id']));
             $action->prepend($button);
 
@@ -198,8 +200,8 @@ class Admin extends Controller
         $data['webLogo'] = sysconf('web_logo');
         $data['webName'] = sysconf('web_name');
         $data['dropdownMenu'] = [
-            DropdownItem::create(Dialog::create('个人信息')->form($this->editInfo())),
-            DropdownItem::create(Dialog::create('修改密码')->form($this->updatePassword())),
+            DropdownItem::create(Dialog::create('个人信息')->title('个人信息')->form($this->editInfo())),
+            DropdownItem::create(Dialog::create('修改密码')->title('修改密码')->form($this->updatePassword())),
         ];
         $this->successCode($data);
     }

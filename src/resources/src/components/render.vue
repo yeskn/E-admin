@@ -14,6 +14,7 @@
         },
         render() {
             if (this.data) {
+
                 this.setProxyData(this.data)
                 const jsonRender = toRaw(this.data)
                 return this.renderComponent(jsonRender,this.slotProps)

@@ -480,7 +480,7 @@ class Grid extends Component
                 ->icon('el-icon-plus');
             $action = clone $this->formAction->component();
             if ($action instanceof Html) {
-                $button = $action->content($button)->redirect("eadmin/create.rest", $form->getCallMethod());
+                $button = $action->content($button)->redirect("eadmin/create.rest", ['eadmin_description'=>'添加']+$form->getCallMethod());
             } else {
                 $button = $action->bindValue(null, false)->reference($button)->title('添加')->form($form);
             }

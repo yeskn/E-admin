@@ -73,7 +73,6 @@ class Form extends Field
     use CallProvide;
 
     protected $name = 'EadminForm';
-    protected $cache = false;
     protected $actions;
     protected $tab;
 
@@ -114,7 +113,8 @@ class Form extends Field
         $this->event('gridRefresh',[]);
         $this->validator = new ValidatorForm();
         $this->validatorBind();
-        $this->bind('eadmin_description','添加');
+        $this->description(Request::param('eadmin_description'));
+        $this->description(Request::param('eadmin_description'));
     }
     /**
      * 设置标题
@@ -414,7 +414,6 @@ class Form extends Field
      */
     public function edit($id)
     {
-        $this->bind('eadmin_description','编辑');
         $this->drive->edit($id);
         $pk = $this->drive->getPk();
         $this->data[$pk] = $this->drive->getData($pk);

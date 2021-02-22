@@ -90,7 +90,7 @@ class Actions extends Component
                 $button = $action->content($text)->redirect("eadmin/{$this->id}.rest", $detail->getCallMethod());
                 $this->dropdown->item($button)->icon('el-icon-info');
             } else {
-                $button = $action->title($this->detailText)->bindValue(null, false)->url("/eadmin/{$this->id}.rest")->params(['eadmin_layout'=>true]+$detail->getCallMethod());
+                $button = $action->title($this->detailText)->bindValue(null, false)->url("/eadmin/{$this->id}.rest")->params(['eadmin_layout' => true] + $detail->getCallMethod());
                 $visible = $button->bindAttr('modelValue');
                 $this->dropdown->content($button, 'reference');
                 $item = $this->dropdown->item($text)->icon('el-icon-info');
@@ -103,7 +103,7 @@ class Actions extends Component
             $form = $this->grid->formAction()->form()->renderable();
             $action = clone $this->grid->formAction()->component();
             if ($action instanceof Html) {
-                $button = $action->content($text)->redirect("eadmin/{$this->id}/edit.rest", $form->getCallMethod());
+                $button = $action->content($text)->redirect("eadmin/{$this->id}/edit.rest", ['eadmin_description' => $this->editText] + $form->getCallMethod());
                 $this->dropdown->item($button);
             } else {
                 $button = $action->bindValue(null, false)->title($this->editText)->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod());
@@ -153,7 +153,7 @@ class Actions extends Component
             if ($action instanceof Html) {
                 $button = $action->content($button)->redirect("eadmin/{$this->id}.rest", $detail->getCallMethod());
             } else {
-                $button = $action->bindValue(null, false)->title($this->detailText)->reference($button)->url("/eadmin/{$this->id}.rest")->params(['eadmin_layout'=>true]+$detail->getCallMethod());
+                $button = $action->bindValue(null, false)->title($this->detailText)->reference($button)->url("/eadmin/{$this->id}.rest")->params(['eadmin_layout' => true] + $detail->getCallMethod());
             }
             $this->content($button);
         }
@@ -166,7 +166,7 @@ class Actions extends Component
             $form = $this->grid->formAction()->form();
             $action = clone $this->grid->formAction()->component();
             if ($action instanceof Html) {
-                $button = $action->content($button)->redirect("eadmin/{$this->id}/edit.rest", $form->getCallMethod());
+                $button = $action->content($button)->redirect("eadmin/{$this->id}/edit.rest", ['eadmin_description' => $this->editText] + $form->getCallMethod());
             } else {
                 $button = $action->bindValue(null, false)->title($this->editText)->reference($button)->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod());
             }
