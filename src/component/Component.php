@@ -30,6 +30,7 @@ abstract class Component implements \JsonSerializable
     protected $directive = [];
     //双向绑定
     protected $modelBind = [];
+    protected $cache = true;
 
     /**
      * 设置标题
@@ -209,10 +210,13 @@ abstract class Component implements \JsonSerializable
         return $this;
     }
 
+
+
     public function jsonSerialize()
     {
         return [
             'name' => $this->name,
+            'cache' => $this->cache,
             'where' => $this->where,
             'map' => $this->map,
             'bind' => $this->bind,

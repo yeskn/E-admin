@@ -14,6 +14,7 @@ use Eadmin\component\grid\Column;
 use Eadmin\component\grid\Pagination;
 use Eadmin\component\layout\Content;
 use Eadmin\contract\GridInterface;
+use Eadmin\detail\Detail;
 use Eadmin\form\Form;
 use Eadmin\grid\excel\Csv;
 use Eadmin\grid\excel\Excel;
@@ -106,9 +107,11 @@ class Grid extends Component
         $this->actionColumn = new Actions($this);
         $this->bindAttValue('modelValue', false);
         $this->attr('eadmin_grid', $this->bindAttr('modelValue'));
+        $this->attr('style',['overflowX'=>'auto']);
         $this->loadDataUrl('eadmin.rest');
         $this->getCallMethod();
         $this->params($this->getCallParams());
+        $this->bind('eadmin_description','列表');
         if (!is_null(self::$init)) {
             call_user_func(self::$init, $this);
         }
@@ -479,7 +482,7 @@ class Grid extends Component
             if ($action instanceof Html) {
                 $button = $action->content($button)->redirect("eadmin/create.rest", $form->getCallMethod());
             } else {
-                $button = $action->bindValue(null, false)->reference($button)->title($form->bind('eadmin_title'))->form($form);
+                $button = $action->bindValue(null, false)->reference($button)->title('添加')->form($form);
             }
             $this->attr('addButton', $button);
         }

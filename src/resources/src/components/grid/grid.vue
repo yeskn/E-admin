@@ -58,7 +58,7 @@
             <render :data="filter" ></render>
         </div>
         <!--表格-->
-        <a-table :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" v-loading="loading" v-bind="$attrs" ref='dragTable' row-key="id">
+        <a-table :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" v-loading="loading" v-bind="$attrs" row-key="id">
             <template v-for="column in tableColumns" v-slot:[column.dataIndex]>
                 <render :data="column.header" :slot-props="{grid:grid}"></render>
             </template>
@@ -157,7 +157,7 @@
                 }
             })
             //动态控制列显示隐藏
-            let checkboxColumn = ref([])
+            const checkboxColumn = ref([])
             checkboxColumn.value = props.columns.map(item => {
                 return item.prop
             })
@@ -290,7 +290,6 @@
             //     }
             //
             // })
-
             //快捷搜索
             function handleFilter() {
                 page = 1
@@ -360,6 +359,7 @@
                         data: Object.assign({eadmin_ids: ids},props.params,params),
                         method:'delete',
                     }).then(res=>{
+                        selectIds.value = []
                         loadData()
                     })
                 })

@@ -73,6 +73,7 @@ class Form extends Field
     use CallProvide;
 
     protected $name = 'EadminForm';
+    protected $cache = false;
     protected $actions;
     protected $tab;
 
@@ -93,6 +94,8 @@ class Form extends Field
     protected $beforeSave = null;
     //保存后回调
     protected $afterSave = null;
+    //保存修改成功后跳转的url
+    protected $redirectUrl = '';
     public function __construct($data)
     {
         if ($data instanceof Model) {
@@ -111,8 +114,8 @@ class Form extends Field
         $this->event('gridRefresh',[]);
         $this->validator = new ValidatorForm();
         $this->validatorBind();
+        $this->bind('eadmin_description','添加');
     }
-
     /**
      * 设置标题
      * @param string $title
@@ -150,7 +153,25 @@ class Form extends Field
         $this->attr(__FUNCTION__, $bool);
         return $this;
     }
-
+    /**
+     * 设置保存修改成功后跳转的url
+     * @param string $url
+     */
+    public function redirectUrl($url='')
+    {
+        if($url){
+            $this->redirectUrl = $url;
+        }
+        return $this->redirectUrl;
+    }
+    /**
+     * 修改成功后后退
+     * @return string
+     */
+    public function redirectBack()
+    {
+        $this->redirectUrl = 'back';
+    }
     /**
      * 行内表单模式
      * @param bool $bool
@@ -393,6 +414,7 @@ class Form extends Field
      */
     public function edit($id)
     {
+        $this->bind('eadmin_description','编辑');
         $this->drive->edit($id);
         $pk = $this->drive->getPk();
         $this->data[$pk] = $this->drive->getData($pk);

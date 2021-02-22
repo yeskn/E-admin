@@ -80,7 +80,7 @@ class BuildView extends Make
                     $grid .= "\t\t" . '$grid->column(\'' . $val['Field'] . '\',\'' . $label . '\');' . PHP_EOL;
                 }
             }
-            $detail .= "\t\t".'$detail->column(\''.$val['Field'].'\',\''.$label.'\');'.PHP_EOL;
+            $detail .= "\t\t".'$detail->field(\''.$val['Field'].'\',\''.$label.'\');'.PHP_EOL;
             if (!in_array($val['Field'], $formFilter)) {
                 if(strstr($val['Type'],'varchar')){
                     if (in_array($val['Field'], $imgType)) {

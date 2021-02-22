@@ -10,7 +10,7 @@
         </ul>
         <!--</el-scrollbar>-->
         <div class="breadcrumb">
-            <breadcrumb style="margin-right: 10px"></breadcrumb>
+<!--            <breadcrumb style="margin-right: 10px"></breadcrumb>-->
             <i class="el-icon-back back" @click="back"></i>
             <el-dropdown @command="handleCommand">
                 <i class="el-icon-close back"></i>

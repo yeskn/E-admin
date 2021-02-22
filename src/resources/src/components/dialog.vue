@@ -1,9 +1,7 @@
 <template>
     <el-dialog v-model="visible" v-bind="$attrs">
         <template #title>
-            <span>
-                <slot name="title"></slot>
-             </span>
+            <slot name="title"></slot>
         </template>
         <slot></slot>
         <render :data="content" :slot-props="slotProps" @success="hide"></render>

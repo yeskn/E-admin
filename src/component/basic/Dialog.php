@@ -70,6 +70,6 @@ class Dialog extends Field
      * @return Dialog
      */
     public function title($content){
-        return $this->content($content,'title');
+        return $this->attr('title',$content);
     }
 }

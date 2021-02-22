@@ -15,6 +15,7 @@ const states = reactive({
     //主内容组件渲染
     mainLoading: false,
     mainComponent: [],
+    component:null,
     componentVariable: [],
     proxyData: {},
 
@@ -80,32 +81,41 @@ const action = {
     },
     //设置主内容组件
     component: function (data: object, url: string) {
+        state.component = null
         const index = action.getComponentIndex(url)
         for (let i in states.proxyData) {
             // @ts-ignore
             delete states.proxyData[i]
         }
-        if (index > -1) {
+        console.log( states.proxyData)
+        if (index === -1) {
+            // @ts-ignore
+            if(data.cache){
+                states.componentVariable.push({
+                    // @ts-ignore
+                    url: url,
+                    // @ts-ignore
+                    proxyData: {}
+                })
+
+                states.mainComponent.push({
+                    // @ts-ignore
+                    title: data.bind.eadmin_title || url,
+                    // @ts-ignore
+                    url: url,
+                    // @ts-ignore
+                    component: data,
+                })
+            }else{
+                // @ts-ignore
+                state.component = data
+            }
+        }else{
             // @ts-ignore
             for (let field in states.componentVariable[index].proxyData) {
                 // @ts-ignore
                 states.proxyData[field] = states.componentVariable[index].proxyData[field]
             }
-        } else {
-            states.componentVariable.push({
-                // @ts-ignore
-                url: url,
-                // @ts-ignore
-                proxyData: {}
-            })
-            states.mainComponent.push({
-                // @ts-ignore
-                title: data.bind.eadmin_title || url,
-                // @ts-ignore
-                url: url,
-                // @ts-ignore
-                component: data,
-            })
         }
         action.loading(false)
     },

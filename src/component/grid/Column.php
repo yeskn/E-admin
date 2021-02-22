@@ -247,7 +247,50 @@ class Column extends Component
         });
         return $this;
     }
+    /**
+     * 显示图片
+     * @param int $width 宽度
+     * @param int $height 高度
+     * @param int $radius 圆角
+     * @param int $multi 是否显示多图
+     * @return $this
+     */
+    public function image($width = 80, $height = 80, $radius = 5, $multi = false)
+    {
+        $this->display(function ($val, $data) use ($width, $height, $radius, $multi) {
+            if (empty($val)) {
+                return '--';
+            }
+            if (is_string($val)) {
+                $images = explode(',', $val);
+            } elseif (is_array($val)) {
+                $images = $val;
+            }
+            $html = '';
+            $jsonImage = json_encode($images);
+            if ($multi) {
+                foreach ($images as $image) {
+                    $html .= "<el-image style='width: {$width}px; height: {$height}px;border-radius: {$radius}%' src='{$image}' fit='cover' :preview-src-list='{$jsonImage}'></el-image>&nbsp;";
+                }
+            } else {
+                $html = "<el-image style='width: {$width}px; height: {$height}px;border-radius: {$radius}%' src='{$images[0]}' fit='cover' :preview-src-list='{$jsonImage}'></el-image>&nbsp;";
+            }
+            return $html;
+        });
+        return $this;
+    }
 
+    /**
+     * 显示多图片
+     * @param int $width 宽度
+     * @param int $height 高度
+     * @param int $radius 圆角
+     * @return $this
+     */
+    public function images($width = 80, $height = 80, $radius = 5)
+    {
+        $this->image($width, $height, $radius, true);
+    }
     /**
      * switch开关
      * @param array $active 开启状态 [1=>'开启']

@@ -70,8 +70,7 @@ service.interceptors.response.use(
                 })
                 if (res.url) {
                     if (res.url == 'back') {
-                        router.go(-1)
-                        return
+                        router.back()
                     } else {
                         link(res.url)
                         return
@@ -95,8 +94,7 @@ service.interceptors.response.use(
                 })
                 if (res.url) {
                     if (res.url == 'back') {
-                        router.go(-1)
-                        return
+                        router.back()
                     } else {
                         link(res.url)
                         return

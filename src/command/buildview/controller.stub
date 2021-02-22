@@ -5,7 +5,7 @@ namespace {%namespace%};
 use Eadmin\Controller;
 use Eadmin\form\Form;
 use Eadmin\grid\Actions;
-use Eadmin\grid\Detail;
+use Eadmin\detail\Detail;
 use Eadmin\grid\Filter;
 use Eadmin\grid\Grid;
 use {%model_namespace%};
@@ -21,7 +21,7 @@ class {%className%} extends Controller
      * 列表
      * @auth true
      * @login true
-     * @return string
+     * @return Grid
      */
     public function index() : Grid
     {
@@ -29,37 +29,37 @@ class {%className%} extends Controller
         $grid->title('列表');
 {%grid%}
         $grid->quickSearch();
-        $grid->actions(function (Actions $action){
-        	 $action->hideDetail();
-        });
-         return $grid;
-    }
-
-    /**
-     * 详情
-     * @auth true
-     * @login true
-     * @return string
-     */
-    public function detail()
-    {
-        $detail = new Detail(new {%model%});
-        $detail->title('详情');
-{%detail%}
-        return $detail;
+        $grid->setForm($this->form());
+        $grid->setDetail($this->detail(0));
+        return $grid;
     }
 
     /**
      * 表单
      * @auth true
      * @login true
-     * @return string
+     * @return Form
      */
-    public function form()
+    public function form() : Form
     {
         $form = new Form(new {%model%});
         $form->title('表单');
 {%form%}
          return $form;
     }
+
+    /**
+         * 详情
+         * @auth true
+         * @login true
+         * @param int $id
+         * @return Detail
+         */
+        public function detail($id) : Detail
+        {
+            $detail = new Detail({%model%}::find($id));
+            $detail->title('详情');
+    {%detail%}
+            return $detail;
+        }
 }

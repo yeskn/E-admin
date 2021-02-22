@@ -3,8 +3,10 @@ import router from '@/router'
 export function findParent(datas:Array<any>, pid:string) {
     let list = [],find
     do{
+
         find = findTree(datas,pid,'id')
         if(find){
+            // @ts-ignore
             list.unshift(find)
             pid = find.pid
         }
@@ -26,7 +28,9 @@ export function findTree(datas:Array<any>, id:any,field:string) {
     return null
 }
 export function refresh() {
-    router.push({path:'/refresh',replace:true})
+    setTimeout(()=>{
+        router.push({path:'/refresh',replace:true})
+    },10)
 }
 export function link(url:string){
     if (isExternal(url)) {

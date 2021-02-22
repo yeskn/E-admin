@@ -90,7 +90,7 @@ class Actions extends Component
                 $button = $action->content($text)->redirect("eadmin/{$this->id}.rest", $detail->getCallMethod());
                 $this->dropdown->item($button)->icon('el-icon-info');
             } else {
-                $button = $action->bindValue(null, false)->url("/eadmin/{$this->id}.rest")->params($detail->getCallMethod());
+                $button = $action->title($this->detailText)->bindValue(null, false)->url("/eadmin/{$this->id}.rest")->params(['eadmin_layout'=>true]+$detail->getCallMethod());
                 $visible = $button->bindAttr('modelValue');
                 $this->dropdown->content($button, 'reference');
                 $item = $this->dropdown->item($text)->icon('el-icon-info');
@@ -106,7 +106,7 @@ class Actions extends Component
                 $button = $action->content($text)->redirect("eadmin/{$this->id}/edit.rest", $form->getCallMethod());
                 $this->dropdown->item($button);
             } else {
-                $button = $action->bindValue(null, false)->title($form->bind('eadmin_title'))->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod());
+                $button = $action->bindValue(null, false)->title($this->editText)->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod());
                 $visible = $button->bindAttr('modelValue');
                 $this->dropdown->content($button, 'reference');
                 $item = $this->dropdown->item($text);
@@ -153,7 +153,7 @@ class Actions extends Component
             if ($action instanceof Html) {
                 $button = $action->content($button)->redirect("eadmin/{$this->id}.rest", $detail->getCallMethod());
             } else {
-                $button = $action->bindValue(null, false)->reference($button)->url("/eadmin/{$this->id}.rest")->params($detail->getCallMethod());
+                $button = $action->bindValue(null, false)->title($this->detailText)->reference($button)->url("/eadmin/{$this->id}.rest")->params(['eadmin_layout'=>true]+$detail->getCallMethod());
             }
             $this->content($button);
         }
@@ -168,7 +168,7 @@ class Actions extends Component
             if ($action instanceof Html) {
                 $button = $action->content($button)->redirect("eadmin/{$this->id}/edit.rest", $form->getCallMethod());
             } else {
-                $button = $action->bindValue(null, false)->title($form->bind('eadmin_title'))->reference($button)->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod());
+                $button = $action->bindValue(null, false)->title($this->editText)->reference($button)->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod());
             }
             $this->content($button);
         }

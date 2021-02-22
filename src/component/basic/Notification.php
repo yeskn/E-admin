@@ -80,6 +80,7 @@ class Notification
     public function redirect($url)
     {
         $this->data = array_merge($this->data, ['url' => $url]);
+        return $this;
     }
     /**
      * 刷新当前页面
@@ -87,6 +88,7 @@ class Notification
     public function refresh()
     {
         $this->data = array_merge($this->data, ['refresh' => true]);
+        return $this;
     }
     public function data(array $data){
         $this->data = array_merge($this->data,['data'=>$data]);
