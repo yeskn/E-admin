@@ -10,6 +10,7 @@ namespace Eadmin\command;
 
 use Symfony\Component\Finder\Finder;
 use think\console\Input;
+use think\console\input\Option;
 use think\console\Output;
 use think\console\Command;
 
@@ -19,16 +20,18 @@ class Publish extends Command
     {
         // 指令配置
         $this->setName('eadmin:publish')->setDescription('Publish any publishable assets from vendor packages');
+        $this->addOption('force', 'f', Option::VALUE_NONE, 'Force overwrite file');
     }
 
     protected function execute(Input $input, Output $output)
     {
+        $force = $input->getOption('force');
         $assetsDir = __DIR__ . '/../assets/public';
-        $this->copyDir($assetsDir, app()->getRootPath() . 'public/eadmin');
+        $this->copyDir($assetsDir, app()->getRootPath() . 'public/eadmin',$force);
         $assetsDir = __DIR__ . '/../assets/admin';
-        $this->copyDir($assetsDir, app()->getAppPath() . 'admin');
+        $this->copyDir($assetsDir, app()->getAppPath() . 'admin',$force);
         $assetsDir = __DIR__ . '/../database';
-        $this->copyDir($assetsDir, app()->getRootPath() . 'database');
+        $this->copyDir($assetsDir, app()->getRootPath() . 'database',$force);
     }
 
     /**
@@ -36,15 +39,16 @@ class Publish extends Command
      * @param $dir 源目录
      * @param $src 目标目录
      */
-    protected function copyDir($dir, $src)
+    protected function copyDir($dir, $src,$cover =false)
     {
-        $cover = false;
-        if (is_dir($src)) {
+        if (is_dir($src) && !$cover) {
             if ($this->output->confirm($this->input, "确认覆盖资源文件目录[$src]? [y]/n")) {
                 $cover = true;
             }
         } else {
-            mkdir($src, 0755);
+            if (!is_dir($src)) {
+                mkdir($src, 0755);
+            }
             $cover = true;
         }
         if ($cover) {
