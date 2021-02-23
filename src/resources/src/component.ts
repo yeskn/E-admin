@@ -22,6 +22,7 @@ import debugLog from './components/debugLog.vue'
 import echart from './components/echart/echart.vue'
 import echartCard from './components/echart/echartCard.vue'
 import EadminAmap from './components/EadminAmap.vue'
+import selectTable from './components/selectTable.vue'
 app.component(form.name,form)
 app.component(manyItem.name,manyItem)
 app.component(dialog.name,dialog)
@@ -40,6 +41,7 @@ app.component(debugLog.name,debugLog)
 app.component(video.name,video)
 app.component(DropdownItem.name,DropdownItem)
 app.component(dropdown.name,dropdown)
+app.component(selectTable.name,selectTable)
 app.component(echart.name,echart)
 app.component(echartCard.name,echartCard)
 app.component(batchAction.name,batchAction)

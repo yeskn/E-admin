@@ -3,6 +3,7 @@
     import {store} from '@/store'
     import {splitCode} from '@/utils/splitCode'
     import dayjs from 'dayjs'
+    import {useRoute} from 'vue-router'
     export default defineComponent({
         name: "render",
         props: {
@@ -10,11 +11,11 @@
                 type: [String, Number, Array, Object],
                 default: '',
             },
-            slotProps:Object
+            slotProps:Object,
         },
         render() {
             if (this.data) {
-
+                const route = useRoute()
                 this.setProxyData(this.data)
                 const jsonRender = toRaw(this.data)
                 return this.renderComponent(jsonRender,this.slotProps)

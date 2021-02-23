@@ -129,7 +129,7 @@ abstract class Field extends Component
      */
     public function bindValue($field = null, $value = '')
     {
-        empty($field) ? $field = Str::random(15, 3) : $field;
+        empty($field) ? $field = Str::random(30, 3) : $field;
         $this->bind($field, $value);
         
         $this->bindAttr('modelValue',$field,true);

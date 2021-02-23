@@ -100,7 +100,7 @@ const action = {
 
                 states.mainComponent.push({
                     // @ts-ignore
-                    title: data.bind.eadmin_title || url,
+                    title: menu.name || url,
                     // @ts-ignore
                     description: data.bind.eadmin_description || '',
                     // @ts-ignore

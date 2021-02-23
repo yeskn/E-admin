@@ -1,5 +1,5 @@
 <template>
-    <div class="grid">
+    <div>
         <!--工具栏-->
         <div class="tools" v-if="!hideTools">
             <el-row style="padding-top: 10px">
@@ -58,7 +58,7 @@
             <render :data="filter" ></render>
         </div>
         <!--表格-->
-        <a-table :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" v-loading="loading" v-bind="$attrs" row-key="id">
+        <a-table :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" v-loading="loading" v-bind="$attrs" row-key="id" ref="dragTable">
             <template v-for="column in tableColumns" v-slot:[column.dataIndex]>
                 <render :data="column.header" :slot-props="{grid:grid}"></render>
             </template>
@@ -90,11 +90,12 @@
 </template>
 
 <script>
-    import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed,reactive,onActivated} from "vue"
+    import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed,reactive,unref } from "vue"
     import render from "@/components/render.vue"
     import {useHttp} from '@/hooks'
     import request from '@/utils/axios'
     import {store} from '@/store'
+    import {unique,deleteArr} from '@/utils'
     import {ElMessageBox,ElMessage} from 'element-plus'
     import Sortable from 'sortablejs'
     import {useRoute} from 'vue-router'
@@ -115,6 +116,14 @@
             sortInput: Boolean,
             tools:[Object,Array],
             hideSelection: Boolean,
+            selectionType:{
+                type:String,
+                default:'checkbox'
+            },
+            selection:{
+                type:Array,
+                default:[]
+            },
             hideDeleteButton: Boolean,
             hideTrashed: Boolean,
             hideDeleteSelection: Boolean,
@@ -124,7 +133,7 @@
             params:Object,
         },
         inheritAttrs: false,
-        emits: ['update:modelValue'],
+        emits: ['update:modelValue','update:selection'],
         setup(props, ctx) {
             const route = useRoute()
             const state = inject(store)
@@ -134,8 +143,7 @@
             const {loading,http} = useHttp()
             const filterShow = ref(false)
             const quickSearch = ref('')
-            const selectionData = ref([])
-            const selectIds = ref([])
+            const selectIds = ref(props.selection || [])
             const eadminActionWidth = ref(0)
             const trashed = ref(false)
             const quickSearchOn = ctx.attrs.quickSearch
@@ -151,6 +159,7 @@
                     loading.value = value
                 }
             })
+
             watch(loading, (value) => {
                 if (value) {
                     loadData()
@@ -261,35 +270,45 @@
                 page = val
                 loading.value = true
             }
-            let rowSelection = null
-            if(!props.hideSelection){
-                rowSelection = {
-                    //当用户手动勾选数据行的 Checkbox 时触发的事件
-                    onChange: (selectedRowKeys, selectedRows) => {
-                        selectionData.value = selectedRows
-                        selectIds.value = selectionData.value.map(item=>{
-                            return item.id
-                        })
+            const rowSelection = computed(()=>{
+                if(props.hideSelection){
+                    return null
+                }else{
+                    return {
+                        selectedRowKeys:unref(selectIds),
+                        type:props.selectionType,
+                        //当用户手动勾选数据行的 Checkbox 时触发的事件
+                        onSelect: (record, selected, selectedRows, nativeEvent) => {
+                            const ids = selectedRows.map(item=>{
+                                return item.id
+                            })
+                            if(selected){
+                                if(props.selectionType === 'checkbox'){
+                                    selectIds.value = unique(selectIds.value.concat(ids))
+                                }else{
+                                    selectIds.value = ids
+                                }
+                            }else{
+                                deleteArr(selectIds.value,record.id)
+                            }
+                            ctx.emit('update:selection',selectIds.value)
+                        },
+                        onSelectAll:(selected, selectedRows, changeRows)=>{
+                            const ids = selectedRows.map(item=>{
+                                return item.id
+                            })
+                            if(selected){
+                                selectIds.value = unique(selectIds.value.concat(ids))
+                            }else{
+                                changeRows.map(item=>{
+                                    deleteArr(selectIds.value,item.id)
+                                })
+                            }
+                            ctx.emit('update:selection',selectIds.value)
+                        },
                     }
                 }
-            }
-            // const rowSelection = computed(()=>{
-            //     if(props.hideSelection){
-            //         return null
-            //     }else{
-            //         return {
-            //            // selectedRowKeys:selectIds.value,
-            //             //当用户手动勾选数据行的 Checkbox 时触发的事件
-            //             onChange: (selectedRowKeys, selectedRows) => {
-            //                 selectionData.value = selectedRows
-            //                 selectIds.value = selectionData.value.map(item=>{
-            //                     return item.id
-            //                 })
-            //             }
-            //         }
-            //     }
-            //
-            // })
+            })
             //快捷搜索
             function handleFilter() {
                 page = 1
@@ -421,7 +440,6 @@
                 loading,
                 tableData,
                 quickSearch,
-                selectionData,
                 rowSelection,
                 visibleFilter,
                 filterShow,
@@ -445,7 +463,6 @@
 <style scoped>
     .sortable-selecte{
         background-color: #EBEEF5 !important;
-
     }
     .sortable-ghost{
         opacity: .8;
@@ -453,11 +470,10 @@
         background: #2d8cf0!important;
     }
     .pagination {
-
+        background: #fff;
         padding: 10px 16px;
-
+        border-radius: 5px;
     }
-
     .tools {
         background: #fff;
         position: relative;
@@ -469,9 +485,5 @@
         border-top: 1px solid #ededed;
         background: #fff;
     }
-    .grid{
-        background: #fff;
-        border-radius: 5px;
-        box-shadow: 0 4px 24px 0 rgba(34,41,47,.1);
-    }
+
 </style>

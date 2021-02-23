@@ -30,7 +30,17 @@ export function findTree(datas: Array<any>, id: any, field: string) {
     }
     return null
 }
+export function deleteArr(arr, value) {
+    for (var i = arr.length; i > 0; i--) {
+        if (arr[i - 1] == value) {
+            arr.splice(i - 1, 1)
+        }
+    }
+}
 
+export function unique(arrs) {
+    return arrs.filter((value,index,arr)=>arr.indexOf(value)===index)
+}
 export function refresh() {
     setTimeout(()=>{
         router.push({path: '/refresh', replace: true})

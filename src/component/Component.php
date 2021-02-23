@@ -132,7 +132,7 @@ abstract class Component implements \JsonSerializable
      */
     protected function bindAttValue($name, $value)
     {
-        $field = Str::random(15, 3);
+        $field = Str::random(30, 3);
         $this->bind($field, $value);
         $this->bindAttr($name, $field);
         return $field;

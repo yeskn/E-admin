@@ -82,7 +82,6 @@ class Menu extends Controller
         $form->text('url', '菜单链接');
         $form->text('params', '链接参数');
         $form->icon('icon', '菜单图标');
-        $form->maps('lng','lat','address','地图');
         return $form;
     }
 }

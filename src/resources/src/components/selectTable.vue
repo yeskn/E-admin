@@ -1,0 +1,118 @@
+<template>
+    <div style="display: flex">
+        <el-select v-bind="$attrs" style="flex: 1" v-model="value" :multiple="multiple" ref="select" @focus="focus" value-key="id">
+            <el-option
+                    v-for="item in options"
+                    :key="item.id"
+                    :label="item.label"
+                    :value="item.id">
+            </el-option>
+        </el-select>
+        <el-button icon="el-icon-search" type="primary" plain style="margin-left: 5px" @click="open"></el-button>
+        <el-dialog v-model="visible" :append-to-body="true" width="70%" destroy-on-close>
+            <div v-loading="loading">
+                <render :data="content" v-model:selection="selection" :scroll="height"
+                        :selection-type="multiple ? 'checkbox':'radio'" style="overflow-x:auto"></render>
+            </div>
+            <template #footer>
+                <el-button type="primary" @click="submit">确认</el-button>
+                <el-button @click="visible = false">取消</el-button>
+            </template>
+        </el-dialog>
+    </div>
+</template>
+
+<script>
+    import {defineComponent, ref, watch} from "vue";
+    import {useHttp} from '@/hooks'
+    import {unique} from '@/utils'
+
+    export default defineComponent({
+        name: "EadminSelectTable",
+        props: {
+            modelValue: [String, Array, Number],
+            params: Object,
+            remoteParams: Object,
+            multiple: Boolean
+        },
+        inheritAttrs: false,
+        emits: ['update:modelValue'],
+        setup(props, ctx) {
+            const value = ref([])
+            const visible = ref(false)
+            const options = ref([])
+            const selection = ref([])
+            const content = ref('')
+            const select = ref('')
+            const {loading, http} = useHttp()
+            const height = {
+                y: window.innerHeight / 2
+            }
+            watch(value, (val) => {
+                if (props.multiple) {
+                    selection.value = val
+                } else {
+                    selection.value = [val]
+                }
+                ctx.emit('update:modelValue', val)
+                console.log(selection.value)
+                console.log(options.value)
+                console.log(value.value)
+            })
+            function open() {
+                content.value = null
+                visible.value = true
+                http({
+                    url: '/eadmin.rest',
+                    params: props.params
+                }).then(res => {
+                    content.value = res
+                })
+            }
+
+            function submit() {
+                const {http} = useHttp()
+                http({
+                    url: '/eadmin.rest',
+                    params: Object.assign(props.remoteParams, {eadminSelectTable: true, eadmin_id: selection.value}),
+                }).then(res => {
+                    options.value = res.data
+                    visible.value = false
+                    const selects = []
+                    selection.value.forEach(item => {
+                        selects.push(item)
+                    })
+                    if (props.multiple) {
+                        value.value = selects
+                    } else {
+                        value.value = selects.pop()
+                    }
+                })
+            }
+
+            function focus(e) {
+                //select.value.blur()
+            }
+
+            return {
+                loading,
+                focus,
+                submit,
+                open,
+                content,
+                options,
+                value,
+                selection,
+                visible,
+                select,
+                height
+            }
+        }
+    })
+</script>
+
+<style scoped>
+    .selectTable .el-icon-arrow-up {
+        display: none !important;
+    }
+</style>

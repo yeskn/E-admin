@@ -65,7 +65,7 @@ use think\Model;
  * @method \Eadmin\component\form\field\Cascader cascader(...$field, $label='') 级联选择器
  * @method \Eadmin\component\form\field\Transfer transfer($field, $label='') 穿梭框
  * @method \Eadmin\component\form\field\Icon icon($field, $label='') 图标选择器
- * @method \Eadmin\component\form\field\IframeTag iframeTag($field, $label='') 弹窗选择框  TODO
+ * @method \Eadmin\component\form\field\SelectTable selectTable($field, $label='') 表格选择器  TODO
  * @method \Eadmin\component\form\field\Map maps($lng, $lat, $address, $label='') 高德地图  TODO
  */
 class Form extends Field
