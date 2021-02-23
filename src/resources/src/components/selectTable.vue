@@ -1,6 +1,6 @@
 <template>
-    <div style="display: flex">
-        <el-select v-bind="$attrs" style="flex: 1" v-model="value" :multiple="multiple" ref="select" @focus="focus" value-key="id">
+    <div style="display: flex;align-items: center">
+        <el-select style="flex: 1" v-bind="$attrs" v-model="value" :multiple="multiple" @focus="focus" @click="focus" ref="select" value-key="id" v-loading="selectLoading">
             <el-option
                     v-for="item in options"
                     :key="item.id"
@@ -8,7 +8,7 @@
                     :value="item.id">
             </el-option>
         </el-select>
-        <el-button icon="el-icon-search" type="primary" plain style="margin-left: 5px" @click="open"></el-button>
+        <el-button icon="el-icon-plus" type="primary" plain style="margin-left: 5px;height: 36px" @click="open"></el-button>
         <el-dialog v-model="visible" :append-to-body="true" width="70%" destroy-on-close>
             <div v-loading="loading">
                 <render :data="content" v-model:selection="selection" :scroll="height"
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-    import {defineComponent, ref, watch} from "vue";
+    import {defineComponent, ref, watch,triggerRef} from "vue";
     import {useHttp} from '@/hooks'
     import {unique} from '@/utils'
 
@@ -38,16 +38,21 @@
         inheritAttrs: false,
         emits: ['update:modelValue'],
         setup(props, ctx) {
-            const value = ref([])
+            const selectLoading = ref(true)
+            const select = ref('')
+            const value = ref(props.modelValue)
             const visible = ref(false)
             const options = ref([])
-            const selection = ref([])
+            const selection = ref(props.modelValue || [])
             const content = ref('')
-            const select = ref('')
+            if(!Array.isArray(selection.value)){
+                selection.value = [selection.value]
+            }
             const {loading, http} = useHttp()
             const height = {
                 y: window.innerHeight / 2
             }
+            submit()
             watch(value, (val) => {
                 if (props.multiple) {
                     selection.value = val
@@ -86,19 +91,21 @@
                         value.value = selects
                     } else {
                         value.value = selects.pop()
+                        select.value.focus()
                     }
+                }).finally(()=>{
+                    selectLoading.value = false
                 })
             }
-
-            function focus(e) {
-                //select.value.blur()
+            function focus() {
+                select.value.blur()
             }
-
             return {
+                selectLoading,
                 loading,
-                focus,
                 submit,
                 open,
+                focus,
                 content,
                 options,
                 value,

@@ -43,6 +43,7 @@ class Select extends Field
     {
         parent::__construct($field, $value);
         $this->clearable();
+        $this->filterable();
     }
 
     /**
