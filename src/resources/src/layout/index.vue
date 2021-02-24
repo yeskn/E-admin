@@ -13,8 +13,8 @@
                     <breadcrumb style="margin-right: 5px"></breadcrumb>
                 </div>
                 <el-backtop target=".main-content"></el-backtop>
-                <keep-alive>
-                    <render :data="mainComponent" :key="route.fullPath"></render>
+                <keep-alive v-for="item in state.mainComponent" :key="item.url">
+                    <render v-if="route.fullPath == item.url" :data="item.component"></render>
                 </keep-alive>
                 <render :data="state.component"></render>
             </div>
@@ -43,22 +43,11 @@
         setup(){
             const route = useRoute()
             const state = inject(store)
-            const mainComponent = computed(()=>{
-                const index =  action.getComponentIndex(route.fullPath)
-                if(state.mainComponent[index]){
-                    return state.mainComponent[index].component
-                }else{
-                    return null
-                }
-            })
-            let proxyData = state.proxyData
             let sidebar = state.sidebar
             return {
-                mainComponent,
                 route,
                 state,
                 sidebar,
-                proxyData,
             }
         }
     })
