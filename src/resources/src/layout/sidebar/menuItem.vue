@@ -17,14 +17,12 @@
     </el-menu-item>
 </template>
 <script>
-    import ItemLink from './link.vue'
+
     import {defineComponent} from 'vue'
 
     export default defineComponent({
         name: "menuItem",
-        components: {
-            ItemLink
-        },
+
         props: {
             menu: [Object, Array]
         },

@@ -9,7 +9,7 @@
                               size="small" style="margin-right: 10px;width: 200px;" placeholder="请输入关键字" @change="handleFilter" v-if="quickSearchOn"></el-input>
                     <el-button class="hidden-md-and-down" type="primary" size="small" icon="el-icon-search" @click="handleFilter" v-if="quickSearchOn">搜索</el-button>
                     <!--添加-->
-                    <render v-if="addButton" :data="addButton" :slot-props="{grid:grid}"></render>
+                    <render v-if="addButton" :data="addButton" :slot-props="grid"></render>
                     <!--导出-->
                     <el-dropdown trigger="click" v-if="export">
                         <el-button type="primary" size="small" icon="el-icon-download">
@@ -60,10 +60,10 @@
         <!--表格-->
         <a-table :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" v-loading="loading" v-bind="$attrs" row-key="id" ref="dragTable">
             <template v-for="column in tableColumns" v-slot:[column.dataIndex]>
-                <render :data="column.header" :slot-props="{grid:grid}"></render>
+                <render :data="column.header" :slot-props="grid"></render>
             </template>
             <template  #default="{ text , record , index }">
-                 <render :key="record.id" :data="text" :slot-props="{grid:grid}"></render>
+                 <render :data="text" :slot-props="grid"></render>
             </template>
             <template #sortDrag="{ text , record , index }">
                 <div style="display: flex;flex-direction: column">
@@ -72,10 +72,11 @@
                     <el-tooltip  effect="dark" content="置底" placement="right-start"><i @click="sortBottom(index,record)" class="el-icon-caret-bottom" style="cursor: pointer"></i></el-tooltip>
                 </div>
             </template>
-             <template #sortInput="{ text , record , index }">
+            <template #sortInput="{ text , record , index }">
                    <el-input v-model="text.content.default[0]" @change="sortInput(record.id,text.content.default[0])"></el-input>
             </template>
         </a-table>
+
         <!--分页-->
         <el-pagination class="pagination"
                        @size-change="handleSizeChange"
@@ -90,7 +91,7 @@
 </template>
 
 <script>
-    import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed,reactive,unref } from "vue"
+    import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed,reactive,unref} from "vue"
     import render from "@/components/render.vue"
     import {useHttp} from '@/hooks'
     import request from '@/utils/axios'
@@ -139,7 +140,7 @@
             const state = inject(store)
             const proxyData = state.proxyData
             const dragTable = ref('')
-            const grid = ctx.attrs.eadmin_grid
+            const grid = {grid:ctx.attrs.eadmin_grid}
             const {loading,http} = useHttp()
             const filterShow = ref(false)
             const quickSearch = ref('')
@@ -270,6 +271,7 @@
                 page = val
                 loading.value = true
             }
+
             const rowSelection = computed(()=>{
                 if(props.hideSelection){
                     return null
@@ -426,8 +428,8 @@
                 filterShow.value = !filterShow.value
             }
             return {
-                eadminActionWidth,
                 grid,
+                eadminActionWidth,
                 quickSearchOn,
                 page,
                 size,

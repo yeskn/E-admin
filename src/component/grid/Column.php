@@ -50,6 +50,7 @@ class Column extends Component
             $this->prop = $prop;
             $this->prop($prop);
             $this->dataIndex($prop);
+            $this->key($prop);
         }
         if (!empty($label)) {
             $this->label($label);

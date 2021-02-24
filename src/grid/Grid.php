@@ -105,9 +105,10 @@ class Grid extends Component
         $this->pagination->pageSize(20)->background()->layout('total, sizes, prev, pager, next, jumper');
         //操作列
         $this->actionColumn = new Actions($this);
-        $this->bindAttValue('modelValue', false);
+        $this->bindAttValue('modelValue', false,true);
         $this->attr('eadmin_grid', $this->bindAttr('modelValue'));
         $this->attr('style',['overflowX'=>'auto']);
+        $this->attr('locale',['emptyText'=>'暂无数据']);
         $this->loadDataUrl('eadmin.rest');
         $this->getCallMethod();
         $this->params($this->getCallParams());

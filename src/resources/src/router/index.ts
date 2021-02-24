@@ -30,6 +30,7 @@ router.beforeEach( async(to:RouteLocationNormalized, from:RouteLocationNormalize
         await action.getInfo()
     }
     action.loading(true)
+
     if(to.path === '/refresh'){
         action.clearComponent(from.fullPath)
         await loadComponent(from.fullPath)

@@ -11,12 +11,17 @@
         <el-button icon="el-icon-plus" type="primary" plain style="margin-left: 5px;height: 36px" @click="open"></el-button>
         <el-dialog v-model="visible" :append-to-body="true" width="70%" destroy-on-close>
             <div v-loading="loading">
-                <render :data="content" v-model:selection="selection" :scroll="height"
+                <render  :data="content" v-model:selection="selection" :scroll="height"
                         :selection-type="multiple ? 'checkbox':'radio'" style="overflow-x:auto"></render>
             </div>
             <template #footer>
-                <el-button type="primary" @click="submit">确认</el-button>
-                <el-button @click="visible = false">取消</el-button>
+                <div :class="multiple && selection.length > 0 ? 'footer':''">
+                    <div v-if="multiple && selection.length > 0">已选中: {{selection.length}}</div>
+                    <div>
+                        <el-button type="primary" @click="submit">确认</el-button>
+                        <el-button @click="visible = false">取消</el-button>
+                    </div>
+                </div>
             </template>
         </el-dialog>
     </div>
@@ -57,12 +62,13 @@
                 if (props.multiple) {
                     selection.value = val
                 } else {
-                    selection.value = [val]
+                    if(val){
+                        selection.value = [val]
+                    }else{
+                        selection.value = []
+                    }
                 }
                 ctx.emit('update:modelValue', val)
-                console.log(selection.value)
-                console.log(options.value)
-                console.log(value.value)
             })
             function open() {
                 content.value = null
@@ -119,7 +125,9 @@
 </script>
 
 <style scoped>
-    .selectTable .el-icon-arrow-up {
-        display: none !important;
+    .footer{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 </style>

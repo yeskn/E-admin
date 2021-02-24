@@ -91,7 +91,7 @@
 <style lang="scss" scoped>
     @import '../styles/element-variables.scss';
     .tagsView {
-        z-index: 100;
+        z-index: 1;
         display: flex;
         align-items: center;
         height: 45px;

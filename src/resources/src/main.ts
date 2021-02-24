@@ -9,9 +9,9 @@ import './component'
 import './directive'
 import zhLocale from 'element-plus/lib/locale/lang/zh-cn'
 import request from '@/utils/axios'
-import { Table , Switch ,ConfigProvider} from 'ant-design-vue';
+import Switch from "ant-design-vue/lib/switch"; // 加载 JS
+import Table from "ant-design-vue/lib/table"; // 加载 JS
 
-app.use(ConfigProvider)
 app.use(Table)
 app.use(Switch)
 app.use(ElementPlus,{size: 'medium', locale :zhLocale})

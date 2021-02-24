@@ -50,6 +50,7 @@ class Actions extends Component
         $this->attr('class', 'EadminAction');
         $this->attr('style', ['whiteSpace' => 'nowrap']);
         $this->column = new Column('EadminAction', '', $grid);
+        $this->column->fixed('right');
     }
 
     public function row($data)

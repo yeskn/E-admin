@@ -128,13 +128,14 @@ abstract class Component implements \JsonSerializable
      * 绑定属性值
      * @param $name
      * @param $value
+     * @param bool $model 是否双向绑定
      * @return string
      */
-    protected function bindAttValue($name, $value)
+    protected function bindAttValue($name, $value,$model=false)
     {
         $field = Str::random(30, 3);
         $this->bind($field, $value);
-        $this->bindAttr($name, $field);
+        $this->bindAttr($name, $field,$model);
         return $field;
     }
 
@@ -221,6 +222,7 @@ abstract class Component implements \JsonSerializable
 
     public function jsonSerialize()
     {
+        $this->attribute['key'] = Str::random(30, 3);
         return [
             'name' => $this->name,
             'where' => $this->where,

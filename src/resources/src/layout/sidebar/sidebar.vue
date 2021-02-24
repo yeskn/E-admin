@@ -33,8 +33,7 @@
             const sidebar = state.sidebar
             //当前激活菜单
             const activeIndex = computed(()=>{
-
-                let menu = findTree(state.menus,route.path.substr(1),'url')
+                let menu = findTree(state.menus,route.fullPath.substr(1),'url')
                 if(menu){
                     return menu.id+''
                 }else{

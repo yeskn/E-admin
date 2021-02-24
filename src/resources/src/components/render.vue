@@ -3,7 +3,6 @@
     import {store} from '@/store'
     import {splitCode} from '@/utils/splitCode'
     import dayjs from 'dayjs'
-    import {useRoute} from 'vue-router'
     export default defineComponent({
         name: "render",
         props: {
@@ -15,7 +14,6 @@
         },
         render() {
             if (this.data) {
-                const route = useRoute()
                 this.setProxyData(this.data)
                 const jsonRender = toRaw(this.data)
                 return this.renderComponent(jsonRender,this.slotProps)
@@ -107,9 +105,6 @@
                             eval(expression)
                         }
                     }
-                }
-                if (data.bindAttribute && data.bindAttribute.modelValue) {
-
                 }
                 //事件绑定
                 for (let event in data.event) {
@@ -205,7 +200,6 @@
                 return value
             }
             function userRender(slot, scope) {
-
                 return slot.map(item => {
                     if (typeof (item.where) == 'object' && (item.where.AND.length > 0 || item.where.OR.length > 0)) {
                         // //条件if渲染实现

@@ -54,14 +54,12 @@ class Menu extends Controller
             return ' ' . $val;
         });
         $grid->column('status', '状态')->switch();
-
         $grid->actions(function (Actions $action, $data) {
               $action->hideDetail();
         });
         $grid->sortInput();
         $grid->setForm($this->form())->dialog();
         $grid->quickSearch();
-
         return $grid;
     }
 
@@ -80,7 +78,6 @@ class Menu extends Controller
             ->required();
         $form->text('name', '菜单名称')->required();
         $form->text('url', '菜单链接');
-        $form->text('params', '链接参数');
         $form->icon('icon', '菜单图标');
         return $form;
     }
