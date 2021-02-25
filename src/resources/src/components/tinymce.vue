@@ -120,6 +120,30 @@ export default {
         menubar: false,
         plugins: 'axupimgs advlist anchor autolink autosave code codesample colorpicker  contextmenu directionality fullscreen hr image imagetools insertdatetime link lists media nonbreaking noneditable pagebreak preview print save searchreplace spellchecker tabfocus table template textcolor textpattern visualblocks visualchars wordcount',
         toolbar: this.toolbar,
+        file_picker_types: 'media',
+        video_template_callback:(data)=>{
+          return '<video width="' + data.width + '" height="' + data.height + '"' + (data.poster ? ' poster="' + data.poster + '"' : '') + ' controls="controls" src="' + data.source +'"></video>';
+        },
+        file_picker_callback: (callback, value, meta)=> {
+          if (meta.filetype == 'media') {
+            let input = document.createElement('input');//创建一个隐藏的input
+            input.setAttribute('type', 'file');
+            let that = this;
+            input.onchange = function () {
+              let file = this.files[0];//选取第一个文件
+              that.upload(file).then(res=>{
+                callback(res, {title: file.name})
+              }).catch(res=>{
+                that.$message({
+                  type: 'error',
+                  message: res
+                })
+              })
+            }
+            //触发点击
+            input.click();
+          }
+        },
         branding: false,
         convert_urls: false,
         content_style: 'img {max-width:100% !important }',
@@ -127,82 +151,15 @@ export default {
           'powerpaste': '/eadmin/tinymce/plugins/powerpaste/plugin.min.js'
         },
         images_upload_handler: (blobInfo, succFun, failFun) => {
-          var file = blobInfo.blob()
-          if (file instanceof File) {
-            // 是文件对象不做处理
-          } else {
-            // 转换成文件对象
-            file = new File([file], file.name)
-          }
-          var filename = file.name
-          var index = filename.lastIndexOf('.')
-          var suffix = filename.substring(index + 1, filename.length)
-          filename = this.uniqidMd5() + '.' + suffix
-          if (this.upType == 'oss') {
-            this.oss = new OSS({
-              accessKeyId: this.accessKey,
-              accessKeySecret: this.secretKey,
-              bucket: this.bucket,
-              region: this.region
+          this.upload(blobInfo.blob()).then(res=>{
+            succFun(res)
+          }).catch(res=>{
+            this.$message({
+              type: 'error',
+              message: res
             })
-            this.oss.multipartUpload(filename, file).then(result => {
-              if (result.res.requestUrls) {
-                succFun(`${this.domain}/${filename}`)
-              }
-            }).catch(function(err) {
-              failFun('上传失败: ' + err)
-              return
-            })
-          } else if (this.upType == 'qiniu') {
-            var observable = qiniu.upload(file, filename, this.uploadToken, {
-              fname: filename,
-              params: {}
-            })
-            observable.subscribe({
-              next(res) {
-
-              },
-              error(err) {
-                failFun('上传失败: ' + err)
-                return
-              },
-              complete: res => {
-                succFun(`${this.domain}/${filename}`)
-              }
-            })
-          } else {
-            var xhr, formData
-            xhr = new XMLHttpRequest()
-            xhr.withCredentials = false
-            xhr.open('POST', this.url)
-            xhr.onload = function() {
-              var json
-              if (xhr.status != 200) {
-                failFun('上传失败: ' + xhr.status)
-                return
-              }
-              try {
-                json = JSON.parse(xhr.responseText)
-                if (json.code !== 200) {
-                  failFun('Invalid JSON: ' + xhr.responseText)
-                  return
-                }
-                succFun(json.data)
-              } catch (e) {
-                this.$message({
-                  type: 'error',
-                  message: '上传失败'
-                })
-              }
-            }
-            formData = new FormData()
-            formData.append('file', file, file.name)
-            formData.append('filename', filename)
-            xhr.setRequestHeader('Authorization', this.token)
-            xhr.send(formData)
-          }
+          })
         }
-
       },
       oss: null,
       myValue: this.valueModel
@@ -220,6 +177,81 @@ export default {
     tinymce.init({})
   },
   methods: {
+    upload(file){
+      return new Promise((resolve, reject) =>{
+        if (file instanceof File) {
+          // 是文件对象不做处理
+        } else {
+          // 转换成文件对象
+          file = new File([file], file.name)
+        }
+        var filename = file.name
+        var index = filename.lastIndexOf('.')
+        var suffix = filename.substring(index + 1, filename.length)
+        filename = this.uniqidMd5() + '.' + suffix
+        if (this.upType == 'oss') {
+          this.oss = new OSS({
+            accessKeyId: this.accessKey,
+            accessKeySecret: this.secretKey,
+            bucket: this.bucket,
+            region: this.region
+          })
+          this.oss.multipartUpload(filename, file).then(result => {
+            if (result.res.requestUrls) {
+              resolve(`${this.domain}/${filename}`)
+            }
+          }).catch(function(err) {
+
+            reject('上传失败: ' + err)
+            return
+          })
+        } else if (this.upType == 'qiniu') {
+          var observable = qiniu.upload(file, filename, this.uploadToken, {
+            fname: filename,
+            params: {}
+          })
+          observable.subscribe({
+            next(res) {
+
+            },
+            error(err) {
+              reject('上传失败: ' + err)
+              return
+            },
+            complete: res => {
+              resolve(`${this.domain}/${filename}`)
+            }
+          })
+        } else {
+          var xhr, formData
+          xhr = new XMLHttpRequest()
+          xhr.withCredentials = false
+          xhr.open('POST', this.url)
+          xhr.onload = function() {
+            var json
+            if (xhr.status != 200) {
+              reject('上传失败: ' + xhr.status)
+              return
+            }
+            try {
+              json = JSON.parse(xhr.responseText)
+              if (json.code !== 200) {
+                reject('Invalid JSON: ' + xhr.responseText)
+                return
+              }
+              resolve(json.data)
+            } catch (e) {
+              reject('上传失败')
+            }
+          }
+          formData = new FormData()
+          formData.append('file', file, file.name)
+          formData.append('filename', filename)
+          xhr.setRequestHeader('Authorization', this.token)
+          xhr.send(formData)
+        }
+      })
+    },
     uniqidMd5() {
       const rand = ('0000' + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4)
       return md5(rand)
