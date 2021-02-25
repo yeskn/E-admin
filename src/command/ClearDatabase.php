@@ -2,7 +2,7 @@
 
 namespace Eadmin\command;
 
-use app\common\service\BackupData;
+use Eadmin\service\BackupData;
 
 use think\console\Command;
 use think\console\Input;
@@ -31,8 +31,12 @@ class ClearDatabase extends Command
     protected function execute(Input $input, Output $output)
     {
         $table = $input->getOption('table');
-        $table =  Str::snake($table);
-        //获取表白名单
+        // 判断是不是指定表操作
+        if (!empty($table)) {
+			$table =  Str::snake($table);
+		}
+
+        //获取白名单表
         $white_table = config('white_table');
 
         //获取数据库所有表

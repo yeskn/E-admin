@@ -47,6 +47,7 @@ class BaseAdmin extends Controller
         $form = $this->$submitFromMethod();
         $res = $form->save($request->post());
         if ($res !== false) {
+        	$url = $form->getRedirectUrl();
             eadmin_success('操作完成','数据更新成功')->redirect($url);
         } else {
             eadmin_msg_error('数据保存失败');
