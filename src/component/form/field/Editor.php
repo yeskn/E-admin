@@ -9,8 +9,8 @@
 namespace Eadmin\component\form\field;
 
 
+use Eadmin\Admin;
 use Eadmin\component\form\Field;
-use Eadmin\service\TokenService;
 use Overtrue\Flysystem\Qiniu\Plugins\UploadToken;
 use think\facade\Filesystem;
 
@@ -22,7 +22,7 @@ class Editor extends Field
     {
         parent::__construct($field, $value);
         $this->attr('url', request()->domain() . '/eadmin/upload');
-        $this->attr('token', TokenService::instance()->get());
+        $this->attr('token', Admin::token()->get());
         $this->disk(config('admin.uploadDisks'));
     }
 
