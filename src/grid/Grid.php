@@ -697,7 +697,9 @@ EOF;
             if (Request::get('export_type') == 'all') {
                 set_time_limit(0);
                 if ($excel instanceof Excel) {
-                    $excel->rows($this->db->select()->toArray())->export();
+                    $this->data = $this->db->select()->toArray();
+                    $this->parseColumn();
+                    $excel->rows($this->exportData)->export();
                 } else {
                     $this->db->chunk(500, function ($datas) use ($excel) {
                         $this->data = $datas;
