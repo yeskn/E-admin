@@ -107,7 +107,7 @@ class Grid extends Component
         $this->actionColumn = new Actions($this);
         $this->bindAttValue('modelValue', false,true);
         $this->attr('eadmin_grid', $this->bindAttr('modelValue'));
-        $this->attr('style',['overflowX'=>'auto']);
+        $this->scroll(['x'=>true]);
         $this->attr('locale',['emptyText'=>'暂无数据']);
         $this->loadDataUrl('eadmin.rest');
         $this->getCallMethod();
@@ -186,7 +186,7 @@ class Grid extends Component
      */
     public function model()
     {
-        return $this->drive->model();
+        return $this->drive->db();
     }
 
     /**

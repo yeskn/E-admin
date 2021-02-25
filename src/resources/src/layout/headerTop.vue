@@ -91,23 +91,24 @@
             })
             watch(() => state.menuModule, (val, oldVal) => {
                 if(oldVal){
-                    for (var i = 0; i < menus.length; i++) {
-                        if (menus[i].id == val && menus[i].children) {
-
-                            action.sidebarVisible(true)
-                            let url = defaultMenu(menus[i].children)
-                            if (url) {
-                                link(url)
-                            }
-                            break;
-                        } else {
-                            action.sidebarVisible(false)
-                        }
-
-                    }
+                    selectMenuModule(val)
                 }
             })
+            function selectMenuModule(val) {
+                for (var i = 0; i < menus.length; i++) {
+                    if (menus[i].id == val && menus[i].children) {
+                        action.sidebarVisible(true)
+                        let url = defaultMenu(menus[i].children)
+                        if (url) {
+                            link(url)
+                        }
+                        break;
+                    } else {
+                        action.sidebarVisible(false)
+                    }
 
+                }
+            }
             //侧边栏展开收缩
             function collapse() {
                 action.sidebarOpen(!sidebar.opend)
@@ -116,6 +117,9 @@
             //选择菜单
             function selectMenu(index, indexPath) {
                 let menu = findTree(menus, index, 'id')
+                if(!state.menuModule){
+                    selectMenuModule(index)
+                }
                 action.selectMenuModule(index)
                 if (!menu.children) {
                     link(menu.url)

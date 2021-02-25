@@ -91,7 +91,7 @@ class Echart extends Component
         if ($callback instanceof \Closure) {
             $field = Str::random(15, 3);
             $this->bind($field, false);
-            $this->bindAttr('modelValue',$field);
+            $this->bindAttr('modelValue',$field,true);
             $this->filter = new Filter($this->db);
             call_user_func($callback, $this->filter);
             $form = $this->filter->render();

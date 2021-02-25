@@ -117,8 +117,7 @@
                     }else{
                         data.attribute['on'+event] = (e)=>{
                             for (let field in eventBind) {
-                                expression = 'modelValue.' + field + ' = eventBind[field]'
-                                eval(expression)
+                                modelValue[field] = eventBind[field]
                             }
                         }
                     }

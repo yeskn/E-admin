@@ -54,7 +54,7 @@ class GitlabService extends Service
      */
     public function getFile($projectId,$file){
         try {
-            $response = $this->client->get("projects/{$projectId}/repository/files/{$file}?ref=master");
+            $response = $this->client->get("projects/{$projectId}/repository/files/{$file}?ref=eadmin");
             $res = $response->getBody()->getContents();
             $res =  json_decode($res, true);
             return base64_decode($res['content']);

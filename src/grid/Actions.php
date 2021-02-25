@@ -85,16 +85,16 @@ class Actions extends Component
         //是否隐藏详情
         if (!$this->hideDetailButton && !is_null($this->grid->detailAction())) {
             $text = '<i class="el-icon-info"> ' . $this->detailText;
-            $detail = $this->grid->detailAction()->detail()->renderable();
+            $detail = $this->grid->detailAction()->detail();
             $action = clone $this->grid->detailAction()->component();
             if ($action instanceof Html) {
                 $button = $action->content($text)->redirect("eadmin/{$this->id}.rest", $detail->getCallMethod());
-                $this->dropdown->item($button)->icon('el-icon-info');
+                $this->dropdown->item($button);
             } else {
                 $button = $action->title($this->detailText)->bindValue(null, false)->url("/eadmin/{$this->id}.rest")->params(['eadmin_layout' => true] + $detail->getCallMethod());
                 $visible = $button->bindAttr('modelValue');
                 $this->dropdown->content($button, 'reference');
-                $item = $this->dropdown->item($text)->icon('el-icon-info');
+                $item = $this->dropdown->item($text);
                 $item->event('click', [$visible => true]);
             }
         }

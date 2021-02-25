@@ -162,7 +162,8 @@ export default {
         }
       },
       oss: null,
-      myValue: this.valueModel
+      myValue: this.valueModel,
+      loading:null,
     }
   },
   watch: {
@@ -177,14 +178,15 @@ export default {
     tinymce.init({})
   },
   methods: {
-    upload(file){
-      return new Promise((resolve, reject) =>{
+    upload: function (file) {
+      return new Promise((resolve, reject) => {
         if (file instanceof File) {
           // 是文件对象不做处理
         } else {
           // 转换成文件对象
           file = new File([file], file.name)
         }
+
         var filename = file.name
         var index = filename.lastIndexOf('.')
         var suffix = filename.substring(index + 1, filename.length)
@@ -196,12 +198,18 @@ export default {
             bucket: this.bucket,
             region: this.region
           })
-          this.oss.multipartUpload(filename, file).then(result => {
+          this.oss.multipartUpload(filename, file, {
+            progress: percentage => {
+              this.loadingText(parseInt(percentage * 100))
+            }
+          }).then(result => {
+
             if (result.res.requestUrls) {
+              this.loading.close()
               resolve(`${this.domain}/${filename}`)
             }
-          }).catch(function(err) {
-
+          }).catch(err => {
+            this.loading.close()
             reject('上传失败: ' + err)
             return
           })
@@ -211,14 +219,16 @@ export default {
             params: {}
           })
           observable.subscribe({
-            next(res) {
-
+            next: res => {
+              this.loadingText(parseInt(res.total.percent))
             },
-            error(err) {
+            error: err => {
+              this.loading.close()
               reject('上传失败: ' + err)
               return
             },
             complete: res => {
+              this.loading.close()
               resolve(`${this.domain}/${filename}`)
             }
           })
@@ -227,7 +237,15 @@ export default {
           xhr = new XMLHttpRequest()
           xhr.withCredentials = false
           xhr.open('POST', this.url)
-          xhr.onload = function() {
+          xhr.onerror= evt => {
+            reject('上传失败')
+          }
+          xhr.upload.onprogress = evt => {
+            const progress = Math.round(evt.loaded / evt.total * 100) + "%";
+            this.loadingText(progress)
+          }
+          xhr.onload = () => {
+            this.loading.close()
             var json
             if (xhr.status != 200) {
               reject('上传失败: ' + xhr.status)
@@ -251,6 +269,16 @@ export default {
           xhr.send(formData)
         }
       })
+    },
+    loadingText(text){
+      if(this.loading ){
+        this.loading.text = '上传中 '+text
+      }else{
+        this.loading = this.$loading({
+          target:'.tox-dialog__footer',
+          text:'上传中 '+text,
+        })
+      }
     },
     uniqidMd5() {
       const rand = ('0000' + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4)

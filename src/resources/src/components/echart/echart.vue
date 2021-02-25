@@ -27,13 +27,17 @@ export default defineComponent({
     let chart = null
     function initChart() {
       setTimeout(()=>{
-        chart = echarts.init(echart.value)
+        if(!chart){
+          chart = echarts.init(echart.value)
+        }
         chart.setOption(props.options)
         chart.resize()
       },10)
     }
     window.addEventListener("resize", () => {
-      chart.resize()
+      if(chart){
+        chart.resize()
+      }
     })
     onMounted(()=>{
       initChart()

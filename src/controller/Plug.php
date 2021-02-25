@@ -59,9 +59,9 @@ class Plug extends Controller
             $html = <<<EOF
 <div style='display: flex;justify-content: space-between;align-items: center'>
     <div style="flex: 1">
-         <b><el-link target="_blank" href="{$rows['web_url']}">{$rows['name']}</el-link>&nbsp;<el-tag size="small" effect="dark">{$rows['title']}</el-tag>&nbsp;<el-tag size="small" type="info">{$rows['version']}</b></el-tag><br>{$rows['description']}
+         <el-link target="_blank" href="{$rows['web_url']}">{$rows['name']}</el-link>&nbsp;<el-tag size="small" effect="dark">{$rows['title']}</el-tag>&nbsp;<el-tag size="small" type="info">{$rows['version']}</el-tag><br>{$rows['description']}
     </div>
-</div> 
+</div>
 EOF;
             return $html;
         })->tip();

@@ -9,6 +9,8 @@
 namespace Eadmin\detail;
 
 use Eadmin\component\basic\Card;
+use Eadmin\component\basic\Html;
+use Eadmin\component\basic\Image;
 use Eadmin\component\Component;
 use Eadmin\component\layout\Column;
 use Eadmin\component\layout\Row;
@@ -27,7 +29,7 @@ class Detail extends Component
     protected $card = null;
     protected $row;
     protected $fields = [];
-   
+
     public function __construct($data)
     {
         $this->data = $data;
@@ -107,6 +109,27 @@ class Detail extends Component
         $column->content($card);
         $this->push($column);
         return $this;
+    }
+    /**
+     * 头像昵称列
+     * @param string $headimg  头像
+     * @param string $nickname 昵称
+     * @param string $label    标签
+     * @return Column
+     */
+    public function userInfo($headimg = 'headimg', $nickname = 'nickname', $label = '')
+    {
+        $field = $this->field($headimg, $label);
+        return $field->display(function ($val, $data) use ($nickname) {
+
+            $nicknameValue = $this->getData($nickname);
+            return Card::create(
+                Html::create([
+                    Image::create()->src($val)->fit('cover')->previewSrcList([$val])->attr('style',['width'=>'80px','height'=>'80px','borderRadius'=>'50%']),
+                    "<br>{$nicknameValue}"
+                ])->attr('style',['textAlign'=>'center','lineHeight'=>'25px','display'=>'block'])
+            )->bodyStyle(['padding'=>'10px']);
+        });
     }
     public function field($field,$label=''){
         $field = new Field($label,$this->getData($field),$this->data);

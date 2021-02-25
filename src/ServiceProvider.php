@@ -31,6 +31,7 @@ class ServiceProvider extends Service
 {
     public function register()
     {
+        header("Access-Control-Allow-Origin:*");
         //注册上传路由
         FileService::instance()->registerRoute();
         //注册插件
@@ -47,7 +48,7 @@ class ServiceProvider extends Service
         ]);
     }
     protected function registerView(){
-       
+
         Admin::registerRoute();;
 
         //菜单管理
