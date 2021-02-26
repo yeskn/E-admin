@@ -53,7 +53,7 @@ class Select extends Field
 	 * @param string $value 主键字段
      * @return $this
      */
-    public function groupOptions(array $data, $name = 'options', $label = 'title', $value = 'id')
+    public function groupOptions(array $data, $name = 'options', $label = 'label', $value = 'value')
     {
         /* 格式
          $data = [
