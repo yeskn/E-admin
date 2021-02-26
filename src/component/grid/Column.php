@@ -45,7 +45,7 @@ class Column extends Component
 
     public function __construct($prop, $label, $grid)
     {
-        $this->attr('slots', ['title' => $prop, 'customRender' => 'default']);
+        $this->attr('slots', ['title' => 'eadmin_'.$prop, 'customRender' => 'default']);
         if (!empty($prop)) {
             $this->prop = $prop;
             $this->prop($prop);
@@ -181,7 +181,9 @@ class Column extends Component
         }
         //是否显示标签
         if (!is_null($this->tag)) {
-            $value = $this->tag->content($value);
+            $tag = clone $this->tag;
+            $value = $tag->content($value);
+
         }
         //自定义内容显示处理
         if (!is_null($this->closure)) {
@@ -198,6 +200,7 @@ class Column extends Component
         if ($this->tip) {
             $value = Tip::create($value)->content($value)->placement('right');
         }
+
         return Html::create()->content($value);
     }
 
@@ -356,4 +359,5 @@ class Column extends Component
         $this->closure = $closure;
         return $this;
     }
+
 }

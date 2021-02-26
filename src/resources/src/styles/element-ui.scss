@@ -34,4 +34,6 @@
 .ant-table-body{
   overflow-x: auto!important;
 }
-
+.el-drawer .el-drawer__body {
+   overflow-y: auto;
+}

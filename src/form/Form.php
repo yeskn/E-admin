@@ -534,7 +534,7 @@ class Form extends Field
         $compenentArr = array_merge($inputs, $dates, $times);
         if ($name == 'image') {
             //图片组件
-            $component->displayType('image')->imageExt()->size(120, 120)->isUniqidmd5();
+            $component->displayType('image')->accept('image/*')->size(120, 120)->isUniqidmd5();
         }
         if (in_array($name, $compenentArr)) {
             //由于element时间范围字段返回是一个数组,这里特殊绑定处理成2个字段
@@ -603,10 +603,14 @@ class Form extends Field
             foreach ($value as &$v){
                 if(!is_array($v) && preg_match('/^\d+$/',$v)){
                     $v = intval($v);
+                }elseif(is_numeric($v) && strpos($v, '.') !== false){
+                    $v = floatval($v);
                 }
             }
         }elseif(!is_array($value) && preg_match('/^\d+$/',$value)){
             $value = intval($value);
+        }elseif(is_numeric($value) && strpos($value, '.') !== false){
+            $value = floatval($value);
         }
 
         if (strpos($field, '.')) {

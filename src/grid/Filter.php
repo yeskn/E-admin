@@ -280,8 +280,7 @@ class Filter
     public function datetime($field, $label = '')
     {
         $this->paseFilter('eq', $field);
-        $this->form->datetime($field, $label);
-        return $formItem;
+        return $this->form->datetime($field, $label);
     }
 
     /**

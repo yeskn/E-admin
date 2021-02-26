@@ -32,7 +32,7 @@
       <el-progress v-show="progressShow" class="progess" type="circle" :width="height" :percentage="percentage" />
       <i v-show="!progressShow" class="el-icon-plus progess" />
     </label>
-    <span v-if="displayType=='file' || displayType=='audio' || displayType=='video'" class="fileList">
+    <span v-if="displayType=='file'" class="fileList">
       <div v-for="(file,index) in files" :key="index" style="margin-bottom: 10px;">
         <div class="el-upload-list__item is-success" :style="{width:styleWidth}" @mouseover="showImgTool(index)" @mouseout="showImgToolIndex = -1">
           <a class="el-upload-list__item-name" target="_blank" :href="file">
@@ -59,20 +59,7 @@
           <label class="el-upload-list__item-status-label"><i class="el-icon-upload-success el-icon-check" style="color: #ffffff" /></label>
           <i class="el-icon-close" @click="fileDelete(index)" /><i class="el-icon-close-tip" />
         </div>
-        <!--<video-player-->
-          <!--v-if="files.length > 0 && displayType == 'video'"-->
-          <!--:style="{width:styleWidth}"-->
-          <!--class="video-player vjs-custom-skin"-->
-          <!--:playsinline="true"-->
-          <!--:options="videoList[index]"-->
-        <!--/>-->
       </div>
-      <!--<aplayer-->
-        <!--v-if="files.length > 0 && displayType == 'audio'"-->
-        <!--:style="{width:styleWidth}"-->
-        <!--:music="audio"-->
-        <!--:list="audioList"-->
-      <!--/>-->
       <el-progress v-show="progressShow" style="margin: 13px 0px" :text-inside="true" :stroke-width="15" :percentage="percentage" />
       <label v-if="displayType == 'file' || displayType=='audio' || displayType=='video'" v-show="showUploadBtn" ref="btn" class="fileButton" @click="handelBrowse">
         <template v-if="drag">
@@ -84,34 +71,7 @@
         </template>
       </label>
     </span>
-    <el-dialog title="图片剪裁" v-model="dialogVisible" append-to-body width="50%">
-      <div class="cropper-content">
-        <div class="vue-cropper-content">
-          <VueCropper
-            ref="cropper"
-            :img="cropper.img"
-            :output-size="cropper.outputSize"
-            :output-type="cropper.outputType"
-            :info="true"
-            :full="cropper.full"
-            :can-move="cropper.canMove"
-            :can-move-box="cropper.canMoveBox"
-            :center-box="options.centerBox"
-            :original="cropper.original"
-            :auto-crop="cropper.autoCrop"
-            :auto-crop-width="cropper.autoCropWidth"
-            :auto-crop-height="cropper.autoCropHeight"
-            :fixed-box="cropper.fixedBox"
-            :fixed="cropper.fixed"
-            :fixed-number="cropper.fixedNumber"
-          />
-        </div>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="cropperFinish">确认</el-button>
-      </div>
-    </el-dialog>
+
   </div>
 </template>
 <script>
@@ -119,16 +79,14 @@ import Uploader from 'simple-uploader.js'
 import OSS from 'ali-oss'
 import md5 from 'js-md5'
 import * as qiniu from 'qiniu-js'
-// import Aplayer from 'vue-aplayer'
-import { VueCropper } from 'vue-cropper'
-export default {
+
+import {defineComponent, reactive,watch ,nextTick,toRefs,ref} from "vue";
+import {ElMessage} from 'element-plus'
+export default defineComponent({
   name: 'EadminUpload',
-  components: {
-    //Aplayer,
-    VueCropper
-  },
+
   props: {
-    valueModel: [String, Number, Array],
+    modelValue: [String, Array],
     token: {
       type: String,
       default: ''
@@ -138,15 +96,6 @@ export default {
       default: 'auto'
     },
     height: {
-      type: [String, Number],
-      default: 'auto'
-    },
-
-    cropWidth: {
-      type: [String, Number],
-      default: 'auto'
-    },
-    cropHeight: {
       type: [String, Number],
       default: 'auto'
     },
@@ -202,21 +151,13 @@ export default {
       type: Boolean,
       default: false
     },
-    cropperOn: {
-      type: Boolean,
-      default: false
-    },
-    cropperAuto: {
-      type: Boolean,
-      default: false
-    },
     drag: {
       type: Boolean,
       default: false
     }
   },
-  data() {
-    return {
+  setup(props,ctx){
+    const state = reactive({
       styleWdith: '',
       styleHeight: '',
       files: [],
@@ -224,37 +165,23 @@ export default {
       audioList: [],
       videoList: [],
       dialogVisible: false,
-      cropper: {
-        img: '',
-        outputSize: 1, // 剪切后的图片质量（0.1-1）
-        full: true, // 输出原图比例截图 props名full
-        outputType: 'png',
-        canMove: true,
-        canMoveBox: true,
-        centerBox: true,
-        autoCrop: true,
-        autoCropWidth: this.cropWidth,
-        autoCropHeight: this.cropHeight,
-        fixedBox: false,
-        fixed: false,
-        original: false
-      },
+
       options: {
-        target: this.url,
+        target: props.url,
         query: {
-          saveDir: this.saveDir,
-          isUniqidmd5: this.isUniqidmd5,
-          upType: this.upType
+          saveDir: props.saveDir,
+          isUniqidmd5: props.isUniqidmd5,
+          upType: props.upType
         },
         testChunks: true,
         chunkSize: 1 * 1024 * 1024,
         headers: {
-          Authorization: this.token
+          Authorization: props.token
         }
       },
-      uploader: null,
+
       attrs: {
-        accept: this.accept
+        accept: props.accept
       },
       // 进度条显示
       progressShow: false,
@@ -265,142 +192,73 @@ export default {
       // 显示隐藏上传按钮
       showUploadBtn: true,
       oss: null
-    }
-  },
-
-  watch: {
-    files(val) {
-      if (this.singleFile && this.files.length == 1) {
-        this.showUploadBtn = false
-      } else if (this.files.length == 0) {
-        this.showUploadBtn = true
-      }
-      this.audio = null
-      this.audioList = []
-      this.videoList = []
-      this.files.forEach(item => {
-        if (this.audio == null) {
-          this.audio = {
-            title: this.lastName(item),
-            author: ' ',
-            url: item
-          }
-        }
-        this.audioList.push({
-          title: this.lastName(item),
-          author: ' ',
-          url: item
-        })
-        this.videoList.push({
-          // 播放速度
-          playbackRates: [0.5, 1.0, 1.5, 2.0],
-          // 如果true,浏览器准备好时开始回放。
-          autoplay: false,
-          // 默认情况下将会消除任何音频。
-          muted: false,
-          // 导致视频一结束就重新开始。
-          loop: false,
-          // 建议浏览器在<video>加载元素后是否应该开始下载视频数据。auto浏览器选择最佳行为,立即开始加载视频（如果浏览器支持）
-          preload: 'auto',
-          language: 'zh-CN',
-          // 将播放器置于流畅模式，并在计算播放器的动态大小时使用该值。值应该代表一个比例 - 用冒号分隔的两个数字（例如"16:9"或"4:3"）
-          aspectRatio: '16:9',
-          // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
-          fluid: true,
-          sources: [{
-            // 类型
-            // type: 'video/mp4',
-            // url地址
-            src: item
-          }],
-          // 你的封面地址
-          poster: '',
-          // 允许覆盖Video.js无法播放媒体源时显示的默认信息。
-          notSupportedMessage: '此视频暂无法播放，请稍后再试',
-          controlBar: {
-            timeDivider: true,
-            durationDisplay: true,
-            remainingTimeDisplay: false,
-            // 全屏按钮
-            fullscreenToggle: true
-          }
-        })
-      })
-      this.$emit('update:modelValue', this.files.join(','))
-
-    },
-    valueModel(val) {
+    })
+    watch(()=>props.modelValue,val=>{
       if (typeof val === 'string') {
-        this.files = val.split(',')
-        this.files = this.files.filter(function(s) {
+        state.files = val.split(',')
+        state.files = state.files.filter(function(s) {
           return s && s.trim()
         })
       } else if (typeof val === 'object' && val instanceof Array) {
-        this.files = val
+        state.files = val
       }
-    }
-  },
-  mounted() {
-    this.$nextTick(() => {
-      this.uploader.assignDrop(this.$refs.btn)
-      this.uploader.assignBrowse(this.$refs.btn, false, this.singleFile, this.attrs)
     })
-  },
-  created() {
-    if (this.width != 'auto') {
-      this.styleWidth = this.width + 'px'
+
+    const btn = ref('')
+    watch(()=>state.files,val=>{
+      if (props.singleFile && val.length == 1) {
+        state.showUploadBtn = false
+      } else if (val.length == 0) {
+        state.showUploadBtn = true
+      }
+      ctx.emit('update:modelValue', val.join(','))
+    },{deep:true})
+    if (props.width != 'auto') {
+      state.styleWidth = props.width + 'px'
     } else {
-      this.styleWidth = '100%'
+      state.styleWidth = '100%'
     }
-    if (this.height != 'auto') {
-      this.styleHeight = this.height + 'px'
+    if (props.height != 'auto') {
+      state.styleHeight = props.height + 'px'
     } else {
-      this.styleHeight = '100%'
+      state.styleHeight = '100%'
     }
-    if (typeof this.valueModel === 'string') {
-      this.files = this.valueModel.split(',')
-      this.files = this.files.filter(function(s) {
+
+    if (typeof props.modelValue === 'string') {
+      state.files = props.modelValue.split(',')
+      state.files = state.files.filter(function(s) {
         return s && s.trim()
       })
-    } else if (typeof this.valueModel === 'object' && this.valueModel instanceof Array) {
-      this.files = this.valueModel
+    } else if (typeof props.modelValue === 'object' && props.modelValue instanceof Array) {
+      state.files = props.modelValue
     }
-    if (this.upType == 'oss') {
-      this.oss = new OSS({
-        accessKeyId: this.accessKey,
-        accessKeySecret: this.secretKey,
-        bucket: this.bucket,
-        region: this.region
+    let oss = null
+    if (props.upType == 'oss') {
+      oss = new OSS({
+        accessKeyId: props.accessKey,
+        accessKeySecret: props.secretKey,
+        bucket: props.bucket,
+        region: props.region
       })
     }
-    this.uploader = new Uploader(this.options)
-    const that = this
-    this.uploader.on('fileAdded', function(file, event) {
-      if (that.checkExt(file)) {
-        if (that.cropperOn && file.name.indexOf('eadmincropper') == -1) {
 
-          var reader = new FileReader()
+    const uploader = new Uploader(state.options)
 
-          reader.readAsDataURL(file.file)
-          reader.onload = function(e) {
-            that.cropper.img = this.result
-            that.dialogVisible = true
-            if (that.cropperAuto) {
-              setTimeout(function() {
-                that.cropperFinish()
-              }, 500)
-            }
-          }
-          return false
-        }
-        if (that.upType == 'oss') {
-          that.ossMultipartUpload(file)
-        } else if (that.upType == 'qiniu') {
-          that.qiniuMultipartUpload(file)
+
+    nextTick(() => {
+      uploader.assignDrop(btn.value)
+      uploader.assignBrowse(btn.value, false, props.singleFile, state.attrs)
+    })
+    uploader.on('fileAdded', function(file, event) {
+      if (checkExt(file)) {
+        if (props.upType == 'oss') {
+          ossMultipartUpload(file)
+        } else if (props.upType == 'qiniu') {
+          qiniuMultipartUpload(file)
         }
       } else {
-        that.uploader.cancel()
-        that.$message({
+        uploader.cancel()
+        ElMessage({
           type: 'error',
           message: '不支持的上传类型格式'
         })
@@ -408,205 +266,206 @@ export default {
       }
     })
     // 开始上传
-    this.uploader.on('uploadStart', function() {
+    uploader.on('uploadStart', function() {
 
     })
     // 文件已经加入到上传列表中，一般用来开始整个的上传。
-    this.uploader.on('filesSubmitted', function(files, fileList) {
-      if (that.upType != 'oss' && that.upType != 'qiniu') {
-        that.uploader.upload()
+    uploader.on('filesSubmitted', function(files, fileList) {
+      if (props.upType != 'oss' && props.upType != 'qiniu') {
+        uploader.upload()
       }
       if (files.length > 0) {
-        that.progressShow = true
+        state.progressShow = true
       }
     })
     // 单个文件上传成功
-    this.uploader.on('fileSuccess', function(rootFile, file, message) {
+    uploader.on('fileSuccess', function(rootFile, file, message) {
       try {
         const res = JSON.parse(message)
         if (res.code == 200) {
-          that.uploader.removeFile(file)
-          that.progressShow = false
-          if (that.singleFile) {
-            that.files = []
+          uploader.removeFile(file)
+          state.progressShow = false
+          if (props.singleFile) {
+            state.files = []
           }
-          that.files.push(res.data)
+          state.files.push(res.data)
         }
       } catch (e) {
-        that.uploader.removeFile(file)
-        that.progressShow = false
-        that.$message({
+        uploader.removeFile(file)
+        state.progressShow = false
+        ElMessage({
           type: 'error',
           message: '上传失败:未知错误'
         })
       }
     })
-    this.uploader.on('fileProgress', function(rootFile, file, chunk) {
-      that.progressShow = true
-      that.percentage = parseInt(this.uploader.progress() * 100)
+    uploader.on('fileProgress', function(rootFile, file, chunk) {
+      state.progressShow = true
+      state.percentage = parseInt(uploader.progress() * 100)
     })
     // 根下的单个文件（文件夹）上传完成
-    this.uploader.on('fileComplete', function(rootFile) {
+    uploader.on('fileComplete', function(rootFile) {
       // console.log(rootFile)
     })
     // 某个文件上传失败了
-    this.uploader.on('fileError', function(rootFile, file, message) {
-      that.uploader.removeFile(file)
-      that.progressShow = false
+    uploader.on('fileError', function(rootFile, file, message) {
+      uploader.removeFile(file)
+      state.progressShow = false
       try {
         const res = JSON.parse(message)
-        that.$message({
+        ElMessage({
           type: 'error',
           message: res.message
         })
       } catch (e) {
-        that.$message({
+        ElMessage({
           type: 'error',
           message: '上传失败:未知错误'
         })
       }
     })
-  },
-  methods: {
-    // 确认裁剪
-    cropperFinish() {
-      this.dialogVisible = false
-      this.$refs.cropper.getCropBlob((data) => {
-        var file = new File([data], this.uniqidMd5() + 'eadmincropper.png', { type: 'image' })
-        this.uploader.addFile(file)
-      })
-    },
-    fileIcon(path) {
+
+    function fileIcon(path) {
       var index = path.lastIndexOf('\.')
       var ext = path.substring(index + 1, path.length)
       try {
-        return '@/assets/file_icon/' + ext + '.png'
+        return require('@/assets/file_icon/' + ext + '.png')
       } catch (e) {
         return ''
       }
-    },
-    lastName(path) {
+    }
+    function lastName(path) {
       var index = path.lastIndexOf('\/')
       return path.substring(index + 1, path.length)
-    },
-    uniqidMd5() {
+    }
+    function uniqidMd5() {
       const rand = ('0000' + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4)
       return md5(rand)
-    },
+    }
     // 图片工具栏显示
-    showImgTool(index) {
-      this.showImgToolIndex = index
-    },
+    function showImgTool(index) {
+      state.showImgToolIndex = index
+    }
     // 图片左移动
-    imgLeft(index) {
+    function imgLeft(index) {
       if (index > 0) {
-        this.swapArray(this.files, index - 1, index)
+        swapArray(state.files, index - 1, index)
       }
-    },
+    }
     // 图片右移动
-    imgRight(index) {
-      if (index < this.files.length - 1) {
-        this.swapArray(this.files, index, index + 1)
+    function imgRight(index) {
+      if (index < state.files.length - 1) {
+        swapArray(state.files, index, index + 1)
       }
-    },
-    swapArray(arr, index1, index2) {
+    }
+    function swapArray(arr, index1, index2) {
       arr[index1] = arr.splice(index2, 1, arr[index1])[0]
       return arr
-    },
+    }
     // 图片移除
-    fileDelete(key) {
-      this.files.splice(key, 1)
-    },
+    function fileDelete(key) {
+      state.files.splice(key, 1)
+    }
     // 判断是否支持上传个类型格式
-    checkExt(file) {
-      if (this.accept == '*') {
+    function checkExt(file) {
+      if (props.accept == '*') {
         return true
-      } else if (this.displayType == 'image' && file.fileType.indexOf('image') != -1) {
+      } else if (props.displayType == 'image' && file.fileType.indexOf('image') != -1) {
         return true
       } else {
-        const ext = this.accept.split(',')
+        const ext = props.accept.split(',')
         if (ext.indexOf('.' + file.getExtension()) == -1) {
           return false
         } else {
           return true
         }
       }
-    },
+    }
     // 七牛云上传
-    async qiniuMultipartUpload(file) {
+    async function qiniuMultipartUpload(file) {
       let filename = ''
-      if (this.isUniqidmd5) {
-        filename = this.saveDir + this.uniqidMd5() + '.' + file.getExtension()
+      if (props.isUniqidmd5) {
+        filename = props.saveDir + uniqidMd5() + '.' + file.getExtension()
       } else {
-        filename = this.saveDir + file.name
+        filename = props.saveDir + file.name
       }
-      const that = this
-      that.progressShow = true
-      var observable = qiniu.upload(file.file, filename, this.uploadToken, {
+      state.progressShow = true
+      var observable = qiniu.upload(file.file, filename, props.uploadToken, {
         fname: filename,
         params: {}
       })
       await observable.subscribe({
         next(res) {
-          that.progressShow = true
-          that.percentage = parseInt(res.total.percent)
+          state.progressShow = true
+          state.percentage = parseInt(res.total.percent)
         },
         error(err) {
-          that.progressShow = false
-          that.$message({
+          state.progressShow = false
+          ElMessage({
             type: 'error',
             message: err.message
           })
         },
         complete(res) {
-          that.uploader.removeFile(file)
-          that.progressShow = false
-          const url = `${that.domain}/${filename}`
-          if (that.singleFile) {
-            that.files = []
+          uploader.removeFile(file)
+          state.progressShow = false
+          const url = `${props.domain}/${filename}`
+          if (props.singleFile) {
+            state.files = []
           }
-          that.files.push(url)
+          state.files.push(url)
         }
       })
-    },
+    }
     // 阿里云开始分片上传。
-    async ossMultipartUpload(file) {
-      const that = this
+    async function ossMultipartUpload(file) {
       let filename = ''
-      if (this.isUniqidmd5) {
-        filename = this.saveDir + this.uniqidMd5() + '.' + file.getExtension()
+      if (props.isUniqidmd5) {
+        filename = props.saveDir + uniqidMd5() + '.' + file.getExtension()
       } else {
-        filename = this.saveDir + file.name
+        filename = props.saveDir + file.name
       }
-      that.progressShow = true
+      state.progressShow = true
       // object-name可以自定义为文件名（例如file.txt）或目录（例如abc/test/file.txt）的形式，实现将文件上传至当前Bucket或Bucket下的指定目录。
-      await this.oss.multipartUpload(filename, file.file, {
+      await oss.multipartUpload(filename, file.file, {
         progress: function(percentage) {
-          that.progressShow = true
-          that.percentage = parseInt(percentage * 100)
+          state.progressShow = true
+          state.percentage = parseInt(percentage * 100)
         }
       }).then(result => {
         // 生成文件下载地址
-        that.uploader.removeFile(file)
-        that.progressShow = false
-        const url = `${this.domain}/${filename}`
-        if (that.singleFile) {
-          that.files = []
+        uploader.removeFile(file)
+        state.progressShow = false
+        const url = `${props.domain}/${filename}`
+        if (props.singleFile) {
+          state.files = []
         }
-        that.files.push(url)
+        state.files.push(url)
       }).catch(err => {
-        that.progressShow = false
-        that.$message({
+        state.progressShow = false
+        ElMessage({
           type: 'error',
           message: err
         })
       })
-    },
-    handelBrowse() {
-      this.percentage = 0
     }
-  }
-}
+    function handelBrowse() {
+      state.percentage = 0
+    }
+    return {
+      btn,
+      lastName,
+      fileIcon,
+      handelBrowse,
+      fileDelete,
+      imgRight,
+      imgLeft,
+      showImgTool,
+      ...toRefs(state)
+    }
+  },
+
+})
 </script>
 
 <style scoped>

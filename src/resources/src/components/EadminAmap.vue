@@ -4,6 +4,7 @@
       <template #append><el-button icon="el-icon-map-location" @click="drawer = true">地图</el-button></template>
     </el-input>
     <el-drawer
+      custom-class="el-drawers"
       :append-to-body="true"
       v-model="drawer"
       direction="ttb"
@@ -176,7 +177,7 @@ export default defineComponent({
   },
 })
 </script>
-<style>
+<style scoped>
   .amap-sug-result {
     z-index: 10000 !important;
   }
@@ -186,4 +187,5 @@ export default defineComponent({
     padding: 5px 0px;
     text-indent: 10px;
   }
+
 </style>

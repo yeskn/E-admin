@@ -31,7 +31,7 @@ class FormItem extends Field
 {
     protected $name = 'ElFormItem';
     protected $form;
-    
+
     public function __construct($prop, $label, $form = null)
     {
         $this->prop($prop);
@@ -73,7 +73,7 @@ class FormItem extends Field
     {
         $this->attr('rules',[
                 'required' => true,
-                'trigger' => 'change',
+                'trigger' => 'blur',
                 'message' => $this->attr('label').'不能为空',
             ]
         );

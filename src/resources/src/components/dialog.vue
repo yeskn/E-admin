@@ -6,7 +6,7 @@
         <slot></slot>
         <render :data="content" :slot-props="slotProps" @success="hide"></render>
     </el-dialog>
-    <span @click.stop="open">
+    <span @click.stop="visible = true">
         <slot name="reference"></slot>
     </span>
 </template>
@@ -33,26 +33,25 @@
         },
         emits: ['update:modelValue'],
         setup(props, ctx) {
-            const {visible,hide} = useVisible(props, ctx)
+            const {visible,show,hide} = useVisible(props,ctx)
             let content = ref(null)
-            watch(()=>props.modelValue,(value)=>{
+            watch(()=>props.modelValue,(value,old)=>{
                 if(value){
                     open()
                 }
             })
             function open(){
-                if (props.url) {
-                    const {http} = useHttp()
-                    http({
-                        url: props.url,
-                        params:props.params
-                    }).then(res => {
-                        content.value = res
-                        visible.value = true
-                    })
-                }else{
-                    visible.value = true
-                }
+                show(()=>{
+                    if (props.url) {
+                        const {http} = useHttp()
+                        http({
+                            url: props.url,
+                            params:props.params
+                        }).then(res => {
+                            content.value = res
+                        })
+                    }
+                })
             }
             return {
                 hide,

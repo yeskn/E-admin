@@ -34,7 +34,7 @@
         },
         emits:['update:modelValue'],
         setup(props,ctx){
-            const {visible,hide} = useVisible(props,ctx)
+            const {visible,show,hide} = useVisible(props,ctx)
             let content = ref(null)
             watch(()=>props.modelValue,(value)=>{
                 if(value){
@@ -42,18 +42,17 @@
                 }
             })
             function open(){
-                if (props.url) {
-                    const {http} = useHttp()
-                    http({
-                        url: props.url,
-                        params:props.params
-                    }).then(res => {
-                        content.value = res
-                        visible.value = true
-                    })
-                }else{
-                    visible.value = true
-                }
+                show(()=>{
+                    if (props.url) {
+                        const {http} = useHttp()
+                        http({
+                            url: props.url,
+                            params:props.params
+                        }).then(res => {
+                            content.value = res
+                        })
+                    }
+                })
             }
             return {
                 open,

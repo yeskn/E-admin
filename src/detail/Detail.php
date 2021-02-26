@@ -20,9 +20,8 @@ use Eadmin\traits\CallProvide;
 use think\facade\Request;
 use think\helper\Arr;
 
-class Detail extends Component
+class Detail extends Html
 {
-    protected $name = 'html';
     use CallProvide;
     protected $data = null;
     protected $title = '详情';
@@ -32,6 +31,7 @@ class Detail extends Component
 
     public function __construct($data)
     {
+        parent::__construct();
         $this->data = $data;
         $this->getCallMethod();
         $this->title($this->title);
@@ -169,7 +169,7 @@ class Detail extends Component
                 $this->content['default'] = [];
             }
             if(Request::has('eadmin_layout')){
-                array_unshift($this->content['default'],$this->row);
+                array_unshift($this->content['default'],Html::create($this->row)->tag('div')->attr('style',['padding'=>'20px']));
             }else{
 
                 array_unshift($this->content['default'],$this->card->content($this->row));

@@ -21,9 +21,9 @@ use Eadmin\component\grid\Column;
  * @package Eadmin\grid
  * @property Grid $grid
  */
-class Actions extends Component
+class Actions extends Html
 {
-    protected $name = 'html';
+
     //隐藏详情按钮
     protected $hideDetailButton = false;
     //隐藏编辑按钮
@@ -46,6 +46,7 @@ class Actions extends Component
 
     public function __construct($grid)
     {
+        parent::__construct();
         $this->grid = $grid;
         $this->attr('class', 'EadminAction');
         $this->attr('style', ['whiteSpace' => 'nowrap']);

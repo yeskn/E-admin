@@ -1,9 +1,6 @@
 import {ref,watch} from "vue";
 const useVisible = function(props:object,ctx:any){
     const visible = ref(false)
-    // watch(()=>props.modelValue,(value)=>{
-    //    visible.value = value
-    // })
     watch(visible,(value)=>{
         ctx.emit('update:modelValue',value)
     })
@@ -19,6 +16,7 @@ const useVisible = function(props:object,ctx:any){
             callback()
         }
     }
+
     return {visible,show,hide}
 }
 export default useVisible

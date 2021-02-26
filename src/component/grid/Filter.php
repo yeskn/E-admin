@@ -9,9 +9,9 @@
 namespace Eadmin\component\grid;
 
 
-use Eadmin\component\Component;
+use Eadmin\component\basic\Html;
 
-class Filter extends Component{
-    protected $name = 'html';
+
+class Filter extends Html {
     
 }

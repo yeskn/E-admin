@@ -418,7 +418,6 @@ class Grid extends Component
             }
             $tableData[] = $row;
         }
-
         return $tableData;
     }
 

@@ -39,7 +39,7 @@
                     let field = data.modelBind[modelBind]
                     // 本次渲染是循环属性
                     if (slotProps && slotProps.row) {
-                        data.attribute.modelValue = slotProps.row[field]
+                        data.attribute[modelBind] = slotProps.row[field]
                         data.attribute['onUpdate:'+modelBind] = value => {
                             if(data.attribute.valueFormat){
                                 //时间特殊处理
@@ -61,7 +61,7 @@
                             slotProps.row[field] = value
                         }
                     } else {
-                        expression = 'data.attribute.modelValue = modelValue.' + field
+                        expression = 'data.attribute[modelBind] = modelValue.' + field
                         eval(expression)
                         data.attribute['onUpdate:'+modelBind] = value => {
                             if(data.attribute.valueFormat){
@@ -137,9 +137,8 @@
                 }
 
                 attribute = {...data.attribute}
-
                 if(data.name == 'html'){
-                    return _createVnode('span', attribute, children,data.directive)
+                    return _createVnode(attribute['data-tag'] || 'span', attribute, children,data.directive)
                 }else if(data.name == 'component'){
                     return h(splitCode(data.content.default[0]),attribute)
                 }

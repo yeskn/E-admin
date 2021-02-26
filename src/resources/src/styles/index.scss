@@ -55,3 +55,6 @@ body *::-webkit-scrollbar-thumb:hover {
 }
 .scrollbarHide::-webkit-scrollbar{display: none}
 .scrollbarShow::-webkit-scrollbar{display: block}
+.xgplayer-skin-default .xgplayer-start {
+  z-index:1!important;
+}

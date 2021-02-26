@@ -5,6 +5,7 @@ module.exports = {
 	assetsDir: 'static',
 	indexPath:'../admin/view/index.vue',
 	runtimeCompiler: true,
+
 	devServer: {
 		disableHostCheck: true,
 	},
