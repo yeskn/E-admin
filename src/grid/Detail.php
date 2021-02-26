@@ -73,7 +73,7 @@ class Detail extends View
 
 	/**
 	 * 设置标题
-	 * @param $title
+	 * @param string $title
 	 */
 	public function setTitle($title)
 	{
@@ -103,8 +103,8 @@ class Detail extends View
 	 * 设置列
 	 * @Author: rocky
 	 * 2019/7/25 16:20
-	 * @param $field 字段
-	 * @param $label 标签
+	 * @param string $field 字段
+	 * @param string $label 标签
 	 * @return Column
 	 */
 	public function column($field, $label)

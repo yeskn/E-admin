@@ -13,6 +13,9 @@ use Eadmin\form\Field;
 class Select extends Field
 {
     protected $optionHtml;
+    protected $optionGroupName = '';
+    protected $optionLabel = '';
+    protected $optionValue = '';
     protected $attrs = [
         'data',
         'clearable',
@@ -44,13 +47,16 @@ class Select extends Field
     }
     /**
      * 设置分组选项数据
-     * @param array $datas
+     * @param array  $data
+	 * @param string $name 一对多的方法名
+	 * @param string $label 标题字段
+	 * @param string $value 主键字段
      * @return $this
      */
-    public function groupOptions(array $datas)
+    public function groupOptions(array $data, $name = 'options', $label = 'title', $value = 'id')
     {
         /* 格式
-         $datas = [
+         $data = [
             [
                 'label' => '第一个分组',
                 'value' => 2,
@@ -73,8 +79,10 @@ class Select extends Field
             ]
          ];
         */
-        $this->groupOptions = $datas;
-
+        $this->groupOptions = $data;
+		$this->optionGroupName = $name;
+		$this->optionLabel = $label;
+		$this->optionValue = $value;
         return $this;
 
     }
@@ -101,8 +109,8 @@ class Select extends Field
 
     /**
      * 联动显示数据
-     * @param $field 联动字段
-     * @param $action 联动请求方法
+     * @param string $field 联动字段
+     * @param string $action 联动请求方法
      */
     public function load($field,$action){
         if(is_array($field)){
@@ -191,25 +199,25 @@ EOF;
         $this->optionHtml = "<template v-for='item in selectData{$this->varMark}'>{$optionHtml}</template>";
         $groupOptions = [];
         foreach ($this->groupOptions as $key=>$option){
-            if(in_array($option['value'],$this->disabledData)){
+            if(in_array($option[$this->optionValue],$this->disabledData)){
                 $disabled = true;
             }else{
                 $disabled = false;
             }
             $group = [
-                'value' => $option['value'],
-                'label' => $option['label'],
+                'value' => $option[$this->optionValue],
+                'label' => $option[$this->optionLabel],
                 'disabled' => $disabled,
             ];
-            foreach ($option['options'] as $item){
-                if(in_array($item['value'],$this->disabledData)){
+            foreach ($option[$this->optionGroupName] as $item){
+                if(in_array($item[$this->optionValue],$this->disabledData)){
                     $disabled = true;
                 }else{
                     $disabled = false;
                 }
                 $group['options'][] = [
-                    'value' => $item['value'],
-                    'label' => $item['label'],
+                    'value' => $item[$this->optionValue],
+                    'label' => $item[$this->optionLabel],
                     'disabled' => $disabled,
                 ];
             }
@@ -237,8 +245,8 @@ EOF;
             if(count($this->groupOptions) > 0){
                 $options = [];
                 foreach ($this->groupOptions as $value){
-                    foreach ($value['options'] as $option){
-                        $options[] = $option['value'];
+                    foreach ($value[$this->optionGroupName] as $option){
+                        $options[] = $option[$this->optionValue];
                     }
                 }
                 if(in_array($val,$options)){
