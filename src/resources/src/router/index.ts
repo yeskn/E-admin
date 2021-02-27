@@ -37,7 +37,6 @@ router.beforeEach( async(to:RouteLocationNormalized, from:RouteLocationNormalize
         return next(from.fullPath)
     }
     action.cachesVariable(from.fullPath)
-
     if(to.fullPath !== '/' && action.getComponentIndex(to.fullPath) === -1){
         await loadComponent(to.fullPath)
     }
@@ -50,7 +49,7 @@ router.afterEach((to:RouteLocationNormalized)=>{
             item.remove()
         })
     }
-    if(asyncCmponent){
+    if(asyncCmponent && to.fullPath !== '/'){
         action.component(asyncCmponent,to.fullPath)
     }
 })

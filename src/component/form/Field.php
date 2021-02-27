@@ -21,9 +21,24 @@ abstract class Field extends Component
     protected $default = null;
     protected $value = null;
     protected $formItem;
+    protected $md = 24;
     public function __construct($field = null, $value = '')
     {
         $this->bindValue($field, $value);
+    }
+
+    /**
+     * 占列
+     * @param int $span
+     * @return $this
+     */
+    public function md(int $span=24){
+        $this->md = $span;
+        if( $this->formItem){
+            $this->formItem->md($span);
+        }
+
+        return $this;
     }
     /**
      * 表单新增更新验证规则
@@ -131,7 +146,7 @@ abstract class Field extends Component
     {
         empty($field) ? $field = Str::random(30, 3) : $field;
         $this->bind($field, $value);
-        
+
         $this->bindAttr('modelValue',$field,true);
         return $this;
     }

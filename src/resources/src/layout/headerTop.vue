@@ -1,8 +1,8 @@
 <template>
     <div class="header-container">
-        <i v-if="sidebar.visible" :class="sidebar.opend?'el-icon-s-unfold hamburger':'el-icon-s-fold hamburger'"
+        <i v-if="sidebar.visible || state.device === 'mobile'" :class="sidebar.opend?'el-icon-s-unfold hamburger':'el-icon-s-fold hamburger'"
            style="font-size: 18px" @click="collapse"/>
-        <el-menu :default-active="activeIndex" @select="selectMenu" class="el-menu-demo" mode="horizontal">
+        <el-menu :default-active="activeIndex" @select="selectMenu" class="el-menu-demo" mode="horizontal" v-if="state.device === 'desktop'">
             <el-menu-item v-for="item in menus" :index="item.id+''">
                 <i :class="item.icon" v-if="item.icon"></i>
                 <span slot="title">{{item.name}}</span>

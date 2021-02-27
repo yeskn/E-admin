@@ -77,7 +77,6 @@ class FormItem extends Field
                 'message' => $this->attr('label').'不能为空',
             ]
         );
-        $this->rules(['require'=>$this->attr('label').'不能为空']);
         return $this;
     }
 

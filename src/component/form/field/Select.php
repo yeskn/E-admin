@@ -145,7 +145,7 @@ class Select extends Field
             ->map($options)
             ->mapAttr('label', 'label')
             ->mapAttr('key', 'id')
-            ->mapAttr('id', 'id')
+            ->mapAttr('value', 'id')
             ->mapAttr('disabled', 'disabled');
         return $this->content($selectOption);
     }

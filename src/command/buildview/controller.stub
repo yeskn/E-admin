@@ -31,7 +31,7 @@ class {%className%} extends Controller
 {%grid%}
         $grid->quickSearch();
         $grid->setForm($this->form())->dialog();
-        $grid->setDetail($this->detail(0));
+        $grid->setDetail($this->detail());
         return $grid;
     }
 
@@ -56,7 +56,7 @@ class {%className%} extends Controller
      * @param int $id
      * @return Detail
      */
-     public function detail($id) : Detail
+     public function detail($id=0) : Detail
      {
         $detail = new Detail({%model%}::find($id));
         $detail->title($this->title);

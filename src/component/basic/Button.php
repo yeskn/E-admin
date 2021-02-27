@@ -57,17 +57,7 @@ class Button extends Component
         return $dialog;
     }
 
-    /**
-     * 跳转
-     * @param string $url 跳转url
-     * @param array $params 参数
-     * @return Router|mixed|null
-     */
-    public function to(string $url, array $params)
-    {
-        $router = Router::create()->content($this)->to($url, $params);
-        return $router;
-    }
+    
 
     /**
      * 抽屉

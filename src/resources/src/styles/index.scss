@@ -21,6 +21,9 @@ body {
   flex: 1;
   overflow: auto;
 }
+.mobile .main-content {
+  padding: 15px 10px;
+}
 .app-wrapper{
   position: relative;
   display: flex;

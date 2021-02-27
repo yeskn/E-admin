@@ -362,35 +362,19 @@ class Form extends Field
     }
 
     /**
-     * 列布局
-     * @param int $span 栅格占据的列数,占满一行24
-     * @param \Closure $closure
-     * @return $this
-     */
-    public function column(int $span, \Closure $closure)
-    {
-        $formItems = $this->collectFields($closure);
-        foreach ($formItems as $item) {
-            $row->column($item, $span);
-        }
-        $this->push($row);
-        return $this;
-    }
-
-    /**
      * 添加一行布局
      * @param string $title
      * @param \Closure $closure
      * @return $this
      */
-    public function row(string $title, \Closure $closure)
+    public function row(\Closure $closure,string $title='')
     {
 
         $row = new Row();
         $formItems = $this->collectFields($closure);
-        $row->content("<h4 style='font-size:16px;color: #666666'>{$title}</h4>");
+        $this->push("<h4 style='font-size:16px;'>{$title}</h4>");
         foreach ($formItems as $item) {
-            $row->column($item);
+            $row->column($item,$item->md);
         }
         $this->push($row);
         return $this;

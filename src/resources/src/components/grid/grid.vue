@@ -62,6 +62,9 @@
             <template v-for="column in tableColumns" v-slot:[column.slots.title]>
                 <render :data="column.header" :slot-props="grid"></render>
             </template>
+            <template #expandedRowRender="{ record  }" v-if="expandedRow">
+                <render :data="record.EadminExpandRow" :slot-props="grid"></render>
+            </template>
             <template  #default="{ text , record , index }">
                  <render :data="text" :slot-props="grid"></render>
             </template>
@@ -128,7 +131,9 @@
             hideDeleteButton: Boolean,
             hideTrashed: Boolean,
             hideDeleteSelection: Boolean,
+            expandedRow: Boolean,
             filter: [Object, Boolean],
+            expandFilter: Boolean,
             addButton: [Object, Boolean],
             filterField:String,
             params:Object,
@@ -142,7 +147,7 @@
             const dragTable = ref('')
             const grid = {grid:ctx.attrs.eadmin_grid}
             const {loading,http} = useHttp()
-            const filterShow = ref(false)
+            const filterShow = ref(props.expandFilter)
             const quickSearch = ref('')
             const selectIds = ref(props.selection || [])
             const eadminActionWidth = ref(0)

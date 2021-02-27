@@ -28,7 +28,9 @@ use think\Model;
  * Class Grid
  * @package Eadmin\grid
  * @method $this size(string $size) Radio的尺寸，仅在border为真时有效 medium / small / mini
- * @method $this scroll(array $height) { x: number | true, y: number }
+ * @method $this scroll(array $height) {
+x: number | true, y: number
+}
  * @method $this stripe(bool $bool = true) 是否为斑马纹
  * @method $this bordered(bool $bool = true) 是否展示外边框和列边框
  * @method $this fit(bool $bool) 列的宽度是否自撑开
@@ -38,6 +40,7 @@ use think\Model;
  * @method $this hideTools(bool $bool = true) 隐藏工具栏
  * @method $this hideSelection(bool $bool = true) 隐藏选择框
  * @method $this hideDeleteSelection(bool $bool = true) 隐藏删除选中按钮
+ * @method $this expandFilter(bool $bool = true) 展开筛选
  * @method $this defaultExpandAllRows(bool $bool) 是否默认展开所有行
  * @method $this expandRowByClick(bool $bool) 通过点击行来展开子行
  * @method $this showHeader(bool $bool = true) 是否显示表头
@@ -85,6 +88,8 @@ class Grid extends Component
     protected $beforeUpdate = null;
     //工具栏
     protected $tools = [];
+    //展开行
+    protected $expandRow = null;
     //初始化
     protected static $init = null;
 
@@ -105,14 +110,14 @@ class Grid extends Component
         $this->pagination->pageSize(20)->background()->layout('total, sizes, prev, pager, next, jumper');
         //操作列
         $this->actionColumn = new Actions($this);
-        $this->bindAttValue('modelValue', false,true);
+        $this->bindAttValue('modelValue', false, true);
         $this->attr('eadmin_grid', $this->bindAttr('modelValue'));
-        $this->scroll(['x'=>true]);
-        $this->attr('locale',['emptyText'=>'暂无数据']);
+        $this->scroll(['x' => true]);
+        $this->attr('locale', ['emptyText' => '暂无数据']);
         $this->loadDataUrl('eadmin.rest');
         $this->getCallMethod();
         $this->params($this->getCallParams());
-        $this->bind('eadmin_description','列表');
+        $this->bind('eadmin_description', '列表');
         if (!is_null(self::$init)) {
             call_user_func(self::$init, $this);
         }
@@ -126,6 +131,18 @@ class Grid extends Component
     public function title(string $title)
     {
         return $this->bind('eadmin_title', $title);
+    }
+
+    /**
+     * 展开行
+     * @param \Closure $closure
+     * @param bool $defaultExpandAllRow 默认是否展开
+     */
+    public function expandRow(\Closure $closure,bool $defaultExpandAllRow = false)
+    {
+        $this->expandRow = $closure;
+        $this->attr('expandedRow',true);
+        $this->attr('defaultExpandAllRows',$defaultExpandAllRow);
     }
 
     //头像昵称列
@@ -246,14 +263,15 @@ class Grid extends Component
         }
         return $this->drive->update($ids, $data);
     }
+
     /**
      * 开启导出
      * @param $fileName 导出文件名
      */
     public function export($fileName = '')
     {
-        $this->attr('export',true);
-        $this->attr('Authorization',rawurlencode(Admin::token()->get()));
+        $this->attr('export', true);
+        $this->attr('Authorization', rawurlencode(Admin::token()->get()));
         $this->exportFileName = empty($fileName) ? date('YmdHis') : $fileName;
     }
 
@@ -262,38 +280,43 @@ class Grid extends Component
      * @param string $field 排序字段
      * @param string $label 标题
      */
-    public function sortDrag($field = 'sort',$label='排序'){
+    public function sortDrag($field = 'sort', $label = '排序')
+    {
         $this->drive->sortField($field);
-        $column = $this->column($field,$label)
-            ->attr('slots',['title'=>$field,'customRender'=>'sortDrag'])
+        $column = $this->column($field, $label)
+            ->attr('slots', ['title' => $field, 'customRender' => 'sortDrag'])
             ->width(50)->align('center');
         return $column;
     }
+
     /**
      * 输入框排序
      * @param string $field 排序字段
      * @param string $label 标题
      * @return Column
      */
-    public function sortInput($field = 'sort',$label='排序'){
+    public function sortInput($field = 'sort', $label = '排序')
+    {
         $this->drive->sortField($field);
-        $column = $this->column($field,$label)
-            ->attr('slots',['title'=>$field,'customRender'=>'sortInput'])
+        $column = $this->column($field, $label)
+            ->attr('slots', ['title' => $field, 'customRender' => 'sortInput'])
             ->width(100)->align('center');
         return $column;
     }
+
     /**
      * 开启树形表格
      * @param string $pid 父级字段
      * @param bool $expand 是否展开
      */
-    public function treeTable($pidField = 'pid',$expand = true)
+    public function treeTable($pidField = 'pid', $expand = true)
     {
         $this->treeParent = $pidField;
         $this->isTree = true;
         $this->hidePage();
         $this->defaultExpandAllRows($expand);
     }
+
     /**
      * 操作列定义
      * @param \Closure $closure
@@ -320,15 +343,16 @@ class Grid extends Component
     {
         $this->hideAction = $bool;
     }
+
     public function tools($tools)
     {
         if (is_string($tools)) {
             $this->tools[] = Html::create()->content($tools);
         } elseif (is_array($tools)) {
-            foreach ($tools as $tool){
+            foreach ($tools as $tool) {
                 $this->tools($tool);
             }
-        }elseif($tools instanceof Component){
+        } elseif ($tools instanceof Component) {
             $this->tools[] = $tools;
         }
         return $this;
@@ -355,12 +379,13 @@ class Grid extends Component
      * 设置分页每页限制
      * @Author: rocky
      * 2019/11/6 14:01
-     * @param $limit
+     * @param int $limit
      */
-    public function setPageLimit($limit)
+    public function setPageLimit(int $limit)
     {
         $this->pagination->pageSize($limit);
     }
+
     /**
      * 初始化
      * @param \Closure $closure
@@ -369,6 +394,7 @@ class Grid extends Component
     {
         self::$init = $closure;
     }
+
     /**
      * 添加表格列
      * @param string $field 字段
@@ -388,7 +414,7 @@ class Grid extends Component
      * @param $datas 数据源
      * @return array
      */
-    protected function parseColumn($datas,$export=false)
+    protected function parseColumn($datas, $export = false)
     {
 
         //添加操作列
@@ -401,13 +427,13 @@ class Grid extends Component
             //主键
             $row = ['id' => $data[$this->drive->getPk()]];
             //树形父级pid
-            if($this->isTree){
+            if ($this->isTree) {
                 $row[$this->treeParent] = $data[$this->treeParent];
             }
             foreach ($this->column as $column) {
                 $field = $column->attr('prop');
                 $row[$field] = $column->row($data);
-                if($export){
+                if ($export) {
                     $row[$field] = $column->getExportData();
                 }
             }
@@ -415,6 +441,10 @@ class Grid extends Component
                 $actionColumn = clone $this->actionColumn;
                 $actionColumn->row($data);
                 $row['EadminAction'] = $actionColumn;
+            }
+            if(!is_null($this->expandRow)){
+                $expandRow = call_user_func($this->expandRow,$data);
+                $row['EadminExpandRow'] = Html::create($expandRow);
             }
             $tableData[] = $row;
         }
@@ -446,11 +476,11 @@ class Grid extends Component
             set_time_limit(0);
             if ($excel instanceof Excel) {
                 $data = $this->drive->db()->select()->toArray();
-                $exportData = $this->parseColumn($data,true);
+                $exportData = $this->parseColumn($data, true);
                 $excel->rows($exportData)->export();
             } else {
                 $this->drive->db()->chunk(500, function ($datas) use ($excel) {
-                    $exportData = $this->parseColumn($datas,true);
+                    $exportData = $this->parseColumn($datas, true);
                     $excel->rows($exportData)->export();
                     $this->exportData = [];
                 });
@@ -458,12 +488,12 @@ class Grid extends Component
             }
         } elseif (Request::get('export_type') == 'select') {
             $data = $this->drive->model()->whereIn($this->drive->getPk(), Request::get('eadmin_ids'))->select();
-        }else{
+        } else {
             $page = Request::get('page', 1);
             $size = Request::get('size', (int)$this->pagination->attr('pageSize'));
             $data = $this->drive->getData($this->hidePage, $page, $size);
         }
-        $exportData = $this->parseColumn($data,true);
+        $exportData = $this->parseColumn($data, true);
         $excel->rows($exportData)->export();
         exit;
     }
@@ -480,14 +510,14 @@ class Grid extends Component
                 ->icon('el-icon-plus');
             $action = clone $this->formAction->component();
             if ($action instanceof Html) {
-                $button = $action->content($button)->redirect("eadmin/create.rest", ['eadmin_description'=>'添加']+$form->getCallMethod());
+                $button = $action->content($button)->redirect("eadmin/create.rest", ['eadmin_description' => '添加'] + $form->getCallMethod());
             } else {
                 $button = $action->bindValue(null, false)->reference($button)->title('添加')->form($form);
             }
             $this->attr('addButton', $button);
         }
         //工具栏
-        $this->attr('tools',$this->tools);
+        $this->attr('tools', $this->tools);
         //快捷搜索
         $keyword = Request::get('quickSearch', '', ['trim']);
         $this->drive->quickFilter($keyword, $this->column);
@@ -508,7 +538,7 @@ class Grid extends Component
         }
         //排序
         if (Request::has('eadmin_sort_field')) {
-            $this->drive->db()->removeOption('order')->order(Request::get('eadmin_sort_field'),Request::get('eadmin_sort_by'));
+            $this->drive->db()->removeOption('order')->order(Request::get('eadmin_sort_field'), Request::get('eadmin_sort_by'));
         }
 
 
@@ -516,13 +546,13 @@ class Grid extends Component
         //解析列
         $data = $this->parseColumn($data);
         //树形
-        if($this->isTree){
-            $data = Admin::tree($data,$this->drive->getPk(),$this->treeParent);
+        if ($this->isTree) {
+            $data = Admin::tree($data, $this->drive->getPk(), $this->treeParent);
         }
         $this->bindAttValue('data', $data);
         if (request()->has('ajax_request_data')) {
-            return ['code' => 200, 'data' => $data, 'columns'=>array_column($this->column, 'attribute'), 'total' => $this->pagination->attr('total')];
-        }else {
+            return ['code' => 200, 'data' => $data, 'columns' => array_column($this->column, 'attribute'), 'total' => $this->pagination->attr('total')];
+        } else {
             $params = (array)$this->attr('params');
             $this->params(array_merge($params, $this->getCallMethod()));
             $this->attr('columns', array_column($this->column, 'attribute'));

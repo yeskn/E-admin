@@ -5,6 +5,7 @@ import {findTree} from '@/utils'
 export const store = Symbol()
 // 使用 reactive 函数完成响应式转换
 const states = reactive({
+    device:'desktop',
     routerStatus: true,
     //侧边栏
     sidebar: {
@@ -61,13 +62,17 @@ const action = {
     //缓存组件变量
     cachesVariable(url: string) {
         const index = action.getComponentIndex(url)
+
         if (index > -1) {
             // @ts-ignore
             states.componentVariable[index].proxyData = {...states.proxyData}
 
         }
     },
-
+    device(device:string){
+        console.log(device)
+        states.device = device
+    },
     clearComponent(url: string) {
         const index = action.getComponentIndex(url)
         states.mainComponent.splice(index, 1)
@@ -91,6 +96,7 @@ const action = {
             // @ts-ignore
             const menu = findTree(state.menus, url.substr(1), 'url')
             if (menu) {
+
                 states.componentVariable.push({
                     // @ts-ignore
                     url: url,

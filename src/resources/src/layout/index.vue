@@ -1,5 +1,5 @@
 <template>
-    <div class="app-wrapper">
+    <div :class="['app-wrapper',state.device === 'mobile' ? 'mobile':'']">
         <sidebar v-if="sidebar.visible"></sidebar>
         <div class="main-container">
             <header-top></header-top>
@@ -10,7 +10,7 @@
                         <span class="title">{{state.mainTitle}}</span>
                         <span class="desc" v-if="state.mainDescription">{{state.mainDescription}}</span>
                     </div>
-                    <breadcrumb style="margin-right: 5px"></breadcrumb>
+                    <breadcrumb style="margin-right: 5px" v-if="state.device != 'mobile'"></breadcrumb>
                 </div>
                 <el-backtop target=".main-content"></el-backtop>
                 <keep-alive v-for="item in state.mainComponent" :key="item.url">

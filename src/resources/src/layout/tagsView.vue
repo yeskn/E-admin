@@ -1,6 +1,8 @@
 <template>
     <div class="tagsView">
         <!--<el-scrollbar class="scroll-container">-->
+        <div class="tabs">
+            <i class="el-icon-arrow-left"></i>
         <ul>
             <li v-for="item in state.mainComponent" @mouseover="selectTag(item.url)" @mouseout="selectTag('')" @click="clickHandel(item.url)" :class="[route.fullPath ===item.url ? 'activte':'']">
                 <span>{{item.title}}</span>
@@ -8,6 +10,8 @@
             </li>
 
         </ul>
+            <i class="el-icon-arrow-right"></i>
+        </div>
         <!--</el-scrollbar>-->
         <div class="breadcrumb">
 <!--            <breadcrumb style="margin-right: 10px"></breadcrumb>-->
@@ -94,10 +98,19 @@
         z-index: 1;
         display: flex;
         align-items: center;
-        height: 45px;
+        height: 40px;
         background: #FFFFFF;
         border-top: 1px solid #f6f6f6;
         box-shadow: rgba(0, 21, 41, 0.08) 0px 1px 4px;
+    }
+    .tagsView .tabs{
+        display: flex;
+        align-items:center;
+        flex: 1;
+    }
+    .tagsView .tabs i{
+        cursor: pointer;
+        padding: 0 10px;
     }
     .scroll-container {
         white-space: nowrap;
@@ -110,10 +123,14 @@
         margin: 0;
         display: flex;
         align-items: flex-end;
-        height: 45px;
+        height: 40px;
         flex: 1;
+        overflow-x: auto;
     }
+    .tagsView ul::-webkit-scrollbar {
+        display:none
 
+    }
     .tagsView li {
         white-space: nowrap;
         display: flex;
@@ -126,8 +143,11 @@
         mask-size: 100% 100%;
         -webkit-mask-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANoAAAAkBAMAAAAdqzmBAAAAMFBMVEVHcEwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlTPQ5AAAAD3RSTlMAr3DvEM8wgCBA379gj5//tJBPAAAAnUlEQVRIx2NgAAM27fj/tAO/xBsYkIHyf9qCT8iWMf6nNQhAsk2f5rYheY7Dnua2/U+A28ZEe8v+F9Ax2v7/F4DbxkUH2wzgtvHTwbYPo7aN2jZq26hto7aN2jZq25Cy7Qvctnw62PYNbls9HWz7S8/G6//PsI6H4396gAUQy1je08W2jxDbpv6nD4gB2uWp+J9eYPsEhv/0BPS1DQBvoBLVZ3BppgAAAABJRU5ErkJggg==');
         mask-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANoAAAAkBAMAAAAdqzmBAAAAMFBMVEVHcEwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlTPQ5AAAAD3RSTlMAr3DvEM8wgCBA379gj5//tJBPAAAAnUlEQVRIx2NgAAM27fj/tAO/xBsYkIHyf9qCT8iWMf6nNQhAsk2f5rYheY7Dnua2/U+A28ZEe8v+F9Ax2v7/F4DbxkUH2wzgtvHTwbYPo7aN2jZq26hto7aN2jZq25Cy7Qvctnw62PYNbls9HWz7S8/G6//PsI6H4396gAUQy1je08W2jxDbpv6nD4gB2uWp+J9eYPsEhv/0BPS1DQBvoBLVZ3BppgAAAABJRU5ErkJggg==');
+        transition: all 0.3s;
     }
     .tagsView li:hover{
+        padding-left:30px;
+        padding-right:35px;
         cursor: pointer;
         color: #515a6e;
         background: #dee1e6;
@@ -158,7 +178,7 @@
         justify-content: center;
         align-items: center;
         border-left: 1px solid #ededed;
-        height: 43px;
+        height: 38px;
         width: 40px;
         cursor: pointer
     }

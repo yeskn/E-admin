@@ -1,3 +1,4 @@
+
 .sidebar-container{
   width: $sideBarWidth;
   background-color: $subMenuBg;
@@ -79,5 +80,9 @@
       }
     }
   }
+}
+.mobile .sidebar-container {
+  position: fixed;
+  z-index: 9999;
 }
 
