@@ -6,6 +6,7 @@ namespace Eadmin\component\grid;
 
 use Eadmin\component\basic\DownloadFile;
 use Eadmin\component\basic\Html;
+use Eadmin\component\basic\Popover;
 use Eadmin\component\basic\Tag;
 use Eadmin\component\basic\Tip;
 use Eadmin\component\basic\Tooltip;
@@ -150,10 +151,8 @@ class Column extends Component
                 $data = null;
             }
         }
-
         return $data;
     }
-
     /**
      * 解析每行数据
      * @param $data 数据
