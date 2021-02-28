@@ -1,20 +1,17 @@
 <template>
     <div class="tagsView">
-        <!--<el-scrollbar class="scroll-container">-->
         <div class="tabs">
-            <i class="el-icon-arrow-left"></i>
-        <ul>
-            <li v-for="item in state.mainComponent" @mouseover="selectTag(item.url)" @mouseout="selectTag('')" @click="clickHandel(item.url)" :class="[route.fullPath ===item.url ? 'activte':'']">
-                <span>{{item.title}}</span>
-                <i class="el-icon-close close" v-show="route.fullPath === item.url || select === item.url" @click.stop="close(item.url)"></i>
-            </li>
+            <i class="el-icon-arrow-left" v-if="isScroll" @click="leftMove"></i>
+            <ul ref="tabsTag">
+                <li v-for="item in state.mainComponent" @mouseover="selectTag(item.url)" @mouseout="selectTag('')" @click="clickHandel(item.url)" :class="[route.fullPath ===item.url ? 'activte':'']">
+                    <span>{{item.title}}</span>
+                    <i class="el-icon-close close" v-show="route.fullPath === item.url || select === item.url" @click.stop="close(item.url)"></i>
+                </li>
 
-        </ul>
-            <i class="el-icon-arrow-right"></i>
+            </ul>
+            <i class="el-icon-arrow-right" v-if="isScroll" @click="rightMove"></i>
         </div>
-        <!--</el-scrollbar>-->
         <div class="breadcrumb">
-<!--            <breadcrumb style="margin-right: 10px"></breadcrumb>-->
             <i class="el-icon-back back" @click="back"></i>
             <el-dropdown @command="handleCommand">
                 <i class="el-icon-close back"></i>
@@ -26,14 +23,13 @@
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
-
         </div>
     </div>
 </template>
 
 <script>
     import {useRoute,useRouter} from 'vue-router'
-    import {defineComponent, inject,ref} from 'vue'
+    import {defineComponent, inject,ref,onMounted,onBeforeUnmount,watch} from 'vue'
     import {store,action} from '@/store'
     import breadcrumb from '@/components/breadcrumb.vue'
     export default defineComponent({
@@ -46,6 +42,8 @@
             const router = useRouter()
             const state = inject(store)
             const select = ref('')
+            const isScroll = ref(false)
+            const tabsTag = ref('')
             function clickHandel(url) {
                 router.push(url)
             }
@@ -79,6 +77,34 @@
                     router.push(route.fullPath)
                 }
             }
+            onMounted(()=>{
+                window.addEventListener('resize', hasScrolled)
+            })
+            onBeforeUnmount(()=>{
+                window.removeEventListener('resize', hasScrolled)
+            })
+            watch(state.mainComponent,val=>{
+                hasScrolled()
+            })
+            //是否有滚动条
+            function hasScrolled() {
+                isScroll.value =  tabsTag.value.scrollWidth > tabsTag.value.clientWidth
+            }
+            function leftMove() {
+                if(tabsTag.value.scrollLeft < tabsTag.value.clientWidth){
+                    tabsTag.value.scrollLeft = 0
+                }else{
+                    tabsTag.value.scrollLeft = tabsTag.value.scrollLeft - tabsTag.value.clientWidth
+                }
+            }
+            function rightMove() {
+                const width = tabsTag.value.scrollWidth - tabsTag.value.scrollLeft
+                if(width >=  tabsTag.value.clientWidth){
+                    tabsTag.value.scrollLeft = tabsTag.value.scrollLeft + tabsTag.value.clientWidth
+                }else{
+                    tabsTag.value.scrollLeft = tabsTag.value.scrollWidth
+                }
+            }
             return {
                 handleCommand,
                 back,
@@ -87,7 +113,11 @@
                 route,
                 state,
                 clickHandel,
-                select
+                select,
+                tabsTag,
+                isScroll,
+                leftMove,
+                rightMove
             }
         }
     })
@@ -107,6 +137,7 @@
         display: flex;
         align-items:center;
         flex: 1;
+        overflow: auto;
     }
     .tagsView .tabs i{
         cursor: pointer;
@@ -128,6 +159,10 @@
         overflow-x: auto;
     }
     .tagsView ul::-webkit-scrollbar {
+        display:none
+
+    }
+    .tagsView .tabs::-webkit-scrollbar {
         display:none
 
     }
