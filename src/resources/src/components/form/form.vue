@@ -1,6 +1,6 @@
 <template>
     <el-main class='form'>
-    <el-form ref="eadminForm" v-bind="$attrs" @submit.native.prevent>
+    <el-form ref="eadminForm" :label-position="labelPosition" v-bind="$attrs" @submit.native.prevent>
         <slot></slot>
         <el-form-item>
             <slot name="leftAction"></slot>
@@ -13,7 +13,7 @@
 </template>
 
 <script>
-    import {defineComponent, inject,nextTick,ref,watch} from 'vue'
+    import {defineComponent, inject,nextTick,ref,watch,computed} from 'vue'
     import render from "@/components/render.vue"
     import manyItem from "./manyItem.vue"
     import { store } from '@/store'
@@ -109,8 +109,12 @@
                 }
                 eadminForm.value.clearValidate()
             }
-            watch(ctx.attrs.model,(val)=>{
-
+            const labelPosition = computed(()=>{
+                if(state.device === 'mobile'){
+                    return 'top'
+                }else{
+                    return 'right'
+                }
             })
             //重置
             function resetForm() {
@@ -122,6 +126,7 @@
                 loading,
                 resetForm,
                 sumbitForm,
+                labelPosition,
             }
         }
     })

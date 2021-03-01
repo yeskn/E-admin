@@ -173,7 +173,7 @@
         font-size: 14px;
         height: 36px;
         margin-right: -18px;
-        padding: 0 30px;
+        padding: 0 25px;
         -webkit-mask-size: 100% 100%;
         mask-size: 100% 100%;
         -webkit-mask-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANoAAAAkBAMAAAAdqzmBAAAAMFBMVEVHcEwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlTPQ5AAAAD3RSTlMAr3DvEM8wgCBA379gj5//tJBPAAAAnUlEQVRIx2NgAAM27fj/tAO/xBsYkIHyf9qCT8iWMf6nNQhAsk2f5rYheY7Dnua2/U+A28ZEe8v+F9Ax2v7/F4DbxkUH2wzgtvHTwbYPo7aN2jZq26hto7aN2jZq25Cy7Qvctnw62PYNbls9HWz7S8/G6//PsI6H4396gAUQy1je08W2jxDbpv6nD4gB2uWp+J9eYPsEhv/0BPS1DQBvoBLVZ3BppgAAAABJRU5ErkJggg==');
@@ -181,8 +181,8 @@
         transition: all 0.3s;
     }
     .tagsView li:hover{
-        padding-left:30px;
-        padding-right:35px;
+        padding-left:25px;
+        padding-right:30px;
         cursor: pointer;
         color: #515a6e;
         background: #dee1e6;

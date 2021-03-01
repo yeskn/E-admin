@@ -3,11 +3,13 @@
         <!--工具栏-->
         <div class="tools" v-if="!hideTools">
             <el-row style="padding-top: 10px">
-                <el-col :span="24">
+                <el-col :md="6" style="display: flex;margin-bottom: 10px" v-if="quickSearchOn">
                     <!--快捷搜索-->
                     <el-input class="hidden-md-and-down" v-model="quickSearch" clearable prefix-icon="el-icon-search"
-                              size="small" style="margin-right: 10px;width: 200px;" placeholder="请输入关键字" @change="handleFilter" v-if="quickSearchOn"></el-input>
-                    <el-button class="hidden-md-and-down" type="primary" size="small" icon="el-icon-search" @click="handleFilter" v-if="quickSearchOn">搜索</el-button>
+                              size="small" style="margin-right: 10px;flex: 1" placeholder="请输入关键字" @change="handleFilter" ></el-input>
+                    <el-button class="hidden-md-and-down" type="primary" size="small" icon="el-icon-search" @click="handleFilter">搜索</el-button>
+                </el-col>
+                <el-col :md="quickSearchOn ? 14:20" style="margin-bottom: 10px">
                     <!--添加-->
                     <render v-if="addButton" :data="addButton" :slot-props="grid"></render>
                     <!--导出-->
@@ -26,6 +28,10 @@
                     <el-button plain size="small" icon="el-icon-delete" v-if="!hideDeleteSelection && selectIds.length > 0" @click="deleteSelect">删除选中</el-button>
                     <el-button plain size="small" icon="el-icon-help" v-if="trashed && selectIds.length > 0" @click="recoverySelect">恢复选中</el-button>
                     <el-button type="danger" size="small" icon="el-icon-delete" v-if="!hideDeleteButton" @click="deleteAll()">{{trashed && !hideTrashed?'清空回收站':'清空数据'}}</el-button>
+                    <el-button v-if="filter" type="primary" size="small" icon="el-icon-zoom-in" @click="visibleFilter">筛选</el-button>
+                    <render v-for="tool in tools" :data="tool" :ids="selectIds" :grid-params="params"></render>
+                </el-col>
+                <el-col :md="4" >
                     <div style="float: right;margin-right: 15px">
                         <el-tooltip placement="top" :content="trashed?'数据列表':'回收站'"  v-if="!hideTrashed">
                             <el-button :type="trashed?'primary':'info'" size="mini" circle :icon="trashed?'el-icon-s-grid':'el-icon-delete'" @click="trashedHandel"></el-button>
@@ -47,9 +53,6 @@
                             </template>
                         </el-dropdown>
                     </div>
-                    <el-button v-if="filter" type="primary" size="small" icon="el-icon-zoom-in" @click="visibleFilter">筛选</el-button>
-
-                    <render v-for="tool in tools" :data="tool" :ids="selectIds" :grid-params="params"></render>
                 </el-col>
             </el-row>
         </div>
@@ -57,8 +60,18 @@
         <div class="filter" v-if="filter && filterShow">
             <render :data="filter" ></render>
         </div>
+        <div v-if="isMobile" style="background: #ffffff;overflow: auto" v-loading="loading">
+            <el-row v-for="row in tableData" :key="row.id" style="border-top: 1px solid rgb(240, 240, 240);">
+                <el-col :span="24" >
+                        <div v-for="column in tableColumns" style="padding: 15px 10px;font-size: 14px;display: flex">
+                            <div v-if="column.label" style="margin-right: 5px;color: #888888">{{column.label}}<span>:</span></div>
+                            <render :data="row[column.prop]" :slot-props="grid"></render>
+                        </div>
+                </el-col>
+            </el-row>
+        </div>
         <!--表格-->
-        <a-table :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" v-loading="loading" v-bind="$attrs" row-key="id" ref="dragTable">
+        <a-table v-else :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" v-loading="loading" v-bind="$attrs" row-key="id" ref="dragTable">
             <template v-for="column in tableColumns" v-slot:[column.slots.title]>
                 <render :data="column.header" :slot-props="grid"></render>
             </template>
@@ -86,6 +99,7 @@
                        @current-change="handleCurrentChange"
                        v-if="pagination"
                        v-bind="pagination"
+                       :layout="pageLayout"
                        :total="total"
                        :page-size="size"
                        :current-page="page">
@@ -429,11 +443,27 @@
                 }
                 location.href = '/eadmin.test?' +querys.join('&')
             }
+            const pageLayout = computed(()=>{
+                if(state.device === 'mobile'){
+                    return 'total, prev, pager, next, jumper'
+                }else{
+                    return 'total, sizes, prev, pager, next, jumper'
+                }
+            })
+            const isMobile = computed(()=>{
+                if(state.device === 'mobile'){
+                    return true
+                }else{
+                    return false
+                }
+            })
             function visibleFilter() {
                 filterShow.value = !filterShow.value
             }
             return {
+                isMobile,
                 grid,
+                pageLayout,
                 eadminActionWidth,
                 quickSearchOn,
                 page,

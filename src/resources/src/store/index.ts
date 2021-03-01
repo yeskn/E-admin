@@ -70,7 +70,6 @@ const action = {
         }
     },
     device(device:string){
-        console.log(device)
         states.device = device
     },
     clearComponent(url: string) {

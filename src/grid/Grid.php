@@ -107,7 +107,7 @@ class Grid extends Component
         $this->hideTrashed(!$this->drive->trashed());
         //分页初始化
         $this->pagination = new Pagination();
-        $this->pagination->pageSize(20)->background()->layout('total, sizes, prev, pager, next, jumper');
+        $this->pagination->pageSize(20)->background();
         //操作列
         $this->actionColumn = new Actions($this);
         $this->bindAttValue('modelValue', false, true);

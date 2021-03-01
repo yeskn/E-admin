@@ -37,3 +37,25 @@
 .el-drawer .el-drawer__body {
    overflow-y: auto;
 }
+@media screen and (max-width: 480px) {
+  .el-message-box {
+    width: 95% !important;
+  }
+  .el-message {
+    min-width: 300px !important;
+  }
+}
+@media screen and (max-width: 480px) {
+  .el-overlay .el-dialog {
+    width: 95% !important;
+  }
+  .el-overlay .el-dialog .el-dialog__body {
+    overflow: auto
+  }
+  .el-overlay .el-drawer {
+    width: 95% !important;
+  }
+  .el-overlay .el-drawer .el-drawer__body {
+    overflow: auto
+  }
+}

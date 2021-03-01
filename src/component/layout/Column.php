@@ -29,7 +29,7 @@ class Column extends Component
         $this->content($row);
         return $row;
     }
-    
+
     /**
      * 栅格向左移动格数
      * @param int $value
@@ -64,6 +64,17 @@ class Column extends Component
      */
     public function span(int $value)
     {
+        $this->attr('md',$value);
+        $sm = $value + $value / 2;
+        if($sm > 24){
+            $sm = 24;
+        }
+        $this->attr('sm',$sm);
+        $xs = $value * 4;
+        if($xs > 24){
+            $xs = 24;
+        }
+        $this->attr('xs',$xs);
         return $this->attr(__FUNCTION__, $value);
     }
 }
