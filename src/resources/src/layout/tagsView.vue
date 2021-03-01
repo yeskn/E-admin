@@ -1,7 +1,7 @@
 <template>
     <div class="tagsView">
         <div class="tabs">
-            <i class="el-icon-arrow-left" v-if="isScroll" @click="leftMove"></i>
+            <i class="el-icon-arrow-left tabMove" v-if="isScroll" @click="leftMove"></i>
             <ul ref="tabsTag">
                 <li v-for="item in state.mainComponent" @mouseover="selectTag(item.url)" @mouseout="selectTag('')" @click="clickHandel(item.url)" :class="[route.fullPath ===item.url ? 'activte':'']">
                     <span>{{item.title}}</span>
@@ -9,7 +9,7 @@
                 </li>
 
             </ul>
-            <i class="el-icon-arrow-right" v-if="isScroll" @click="rightMove"></i>
+            <i class="el-icon-arrow-right tabMove" v-if="isScroll" @click="rightMove"></i>
         </div>
         <div class="breadcrumb">
             <i class="el-icon-back back" @click="back"></i>
@@ -139,7 +139,7 @@
         flex: 1;
         overflow: auto;
     }
-    .tagsView .tabs i{
+    .tagsView .tabs .tabMove{
         cursor: pointer;
         padding: 0 10px;
     }
@@ -181,8 +181,8 @@
         transition: all 0.3s;
     }
     .tagsView li:hover{
-        padding-left:25px;
-        padding-right:30px;
+        padding-left:20px;
+        padding-right:25px;
         cursor: pointer;
         color: #515a6e;
         background: #dee1e6;
