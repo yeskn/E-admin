@@ -69,10 +69,9 @@ class Excel extends AbstractExporter
         }
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-        $i = 0;
         $this->filterColumns();
         $rowCount = count($this->data) + 1;
-        $letter = $this->getLetter(count($this->columns) - 1);
+        $letter   = $this->getLetter(count($this->columns) - 1);
         $this->sheet->getStyle("A1:{$letter}{$rowCount}")->applyFromArray([
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -80,9 +79,9 @@ class Excel extends AbstractExporter
             ],
         ]);
         $i = 0;
-        foreach ($this->columns as $field => $vals) {
+        foreach ($this->columns as $field => $val) {
             $values = array_column($this->data, $field);
-            $str = $vals;
+            $str    = $val;
             foreach ($values as $v) {
                 if (mb_strlen($v, 'utf-8') > mb_strlen($str, 'utf-8')) {
                     $str = $v;
@@ -92,17 +91,17 @@ class Excel extends AbstractExporter
             $this->sheet->getColumnDimension($this->getLetter($i))->setWidth($width);
             $i++;
         }
-        $i = 0;
+        $i            = 0;
         $fieldCellArr = [];
         foreach ($this->columns as $field => $val) {
             $i++;
             $this->sheet->setCellValueByColumnAndRow($i, 1, $val);
             $fieldCellArr[$field] = $this->getLetter($i - 1);
         }
-        $i = 1;
-        $tmpMergeCondtion = '';
-        $tmpMergeIndex = 2;
-        $rowIndex = 1;
+        $i                = 1;
+        $tmpMergeCondition = '';
+        $tmpMergeIndex    = 2;
+        $rowIndex         = 1;
         foreach ($this->data as $key => &$val) {
             $rowIndex++;
             if ($this->mapCallback instanceof \Closure) {
@@ -113,12 +112,12 @@ class Excel extends AbstractExporter
                 $i++;
             }
             if (!is_null($this->mergeCondtionField)) {
-                if ($tmpMergeCondtion != $val[$this->mergeCondtionField] || $rowIndex == $rowCount) {
-                    if (!empty($tmpMergeCondtion)) {
+                if ($tmpMergeCondition != $val[$this->mergeCondtionField] || $rowIndex == $rowCount) {
+                    if (!empty($tmpMergeCondition)) {
                         foreach ($this->mergeRowFields as $field) {
                             $letter = $fieldCellArr[$field];
                             if ($rowIndex == $rowCount) {
-                                if($tmpMergeCondtion != $val[$this->mergeCondtionField]){
+                                if ($tmpMergeCondition != $val[$this->mergeCondtionField]) {
                                     break;
                                 }
                                 $mergeIndex = $rowIndex;
@@ -129,8 +128,8 @@ class Excel extends AbstractExporter
                             $this->sheet->mergeCells("{$letter}{$tmpMergeIndex}:{$letter}{$mergeIndex}");
                         }
                     }
-                    $tmpMergeCondtion = $val[$this->mergeCondtionField];
-                    $tmpMergeIndex = $rowIndex;
+                    $tmpMergeCondition = $val[$this->mergeCondtionField];
+                    $tmpMergeIndex    = $rowIndex;
                 }
             }
             $i = 1;
@@ -151,12 +150,12 @@ class Excel extends AbstractExporter
 
     /**
      * 合并行
-     * @param string $conditonField 条件字段(判断重复合并行)
+     * @param string $conditionField 条件字段(判断重复合并行)
      * @param array $fields 合并字段列
      */
-    public function mergeRow(string $conditonField, array $fields)
+    public function mergeRow(string $conditionField, array $fields)
     {
-        $this->mergeCondtionField = $conditonField;
-        $this->mergeRowFields = $fields;
+        $this->mergeCondtionField = $conditionField;
+        $this->mergeRowFields     = $fields;
     }
 }

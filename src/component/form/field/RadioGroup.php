@@ -18,7 +18,7 @@ use Eadmin\component\form\Field;
  */
 class RadioGroup extends Field
 {
-   
+
     protected $name = 'ElRadioGroup';
     //禁用数据
     protected $disabledData = [];
@@ -47,8 +47,8 @@ class RadioGroup extends Field
                 $disabled = false;
             }
             $options[] = [
-                'value' => $value,
-                'label' => $label,
+                'value'    => $value,
+                'label'    => $label,
                 'disabled' => $disabled,
             ];
         }

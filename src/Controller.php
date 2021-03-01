@@ -1,5 +1,5 @@
 <?php
-declare (strict_types = 1);
+declare (strict_types=1);
 
 namespace Eadmin;
 
@@ -15,6 +15,7 @@ use think\Validate;
 abstract class Controller
 {
     use ApiJson;
+
     /**
      * Request实例
      * @var \think\Request
@@ -42,7 +43,7 @@ abstract class Controller
     /**
      * 构造方法
      * @access public
-     * @param  App  $app  应用对象
+     * @param App $app 应用对象
      */
     public function __construct(App $app)
     {
@@ -55,15 +56,16 @@ abstract class Controller
 
     // 初始化
     protected function initialize()
-    {}
+    {
+    }
 
     /**
      * 验证数据
      * @access protected
-     * @param  array        $data     数据
-     * @param  string|array $validate 验证器名或者验证规则数组
-     * @param  array        $message  提示信息
-     * @param  bool         $batch    是否批量验证
+     * @param array $data 数据
+     * @param string|array $validate 验证器名或者验证规则数组
+     * @param array $message 提示信息
+     * @param bool $batch 是否批量验证
      * @return array|string|true
      * @throws ValidateException
      */

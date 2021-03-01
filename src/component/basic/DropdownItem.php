@@ -18,22 +18,25 @@ class DropdownItem extends Component
     protected $name = 'EadminDropdownItem';
     protected $dropdown;
 
-    public function dropdown(Dropdown $dropdown){
+    public function dropdown(Dropdown $dropdown)
+    {
         $this->dropdown = $dropdown;
         return $this->dropdown;
     }
+
     /**
      * 模态对话框
      * @return Dialog
      */
     public function dialog()
     {
-        $dialog = Dialog::create();
+        $dialog  = Dialog::create();
         $visible = $dialog->bindAttr('modelValue');
-        $this->event('click',[$visible=>true]);
-        $this->dropdown->content($dialog,'reference');
+        $this->event('click', [$visible => true]);
+        $this->dropdown->content($dialog, 'reference');
         return $dialog;
     }
+
     /**
      * 保存数据
      * @param array $data
@@ -46,7 +49,7 @@ class DropdownItem extends Component
         if (empty($confirm)) {
             $this->url($url)->params($data);
         } else {
-            $confirm = Confirm::create($this->content['default'][0])
+            $confirm       = Confirm::create($this->content['default'][0])
                 ->message($confirm)->url($url)->params($data)->type('warning');
             $this->content = [];
             $this->content($confirm);

@@ -226,7 +226,7 @@ class Column extends Component
      * 内容映射
      * @param array $usings 映射内容
      * @param array $tagColor 标签颜色
-     * @param tagTheme 标签颜色主题：dark，light，plain
+     * @param string tagTheme 标签颜色主题：dark，light，plain
      */
     public function using(array $usings, array $tagColor = [], $tagTheme = 'light')
     {
@@ -257,7 +257,7 @@ class Column extends Component
      * @param int $width 宽度
      * @param int $height 高度
      * @param int $radius 圆角
-     * @param int $multi 是否显示多图
+     * @param bool $multi 是否显示多图
      * @return $this
      */
     public function image($width = 80, $height = 80, $radius = 5, $multi = false)
@@ -335,7 +335,7 @@ class Column extends Component
 
     /**
      * 追加前面
-     * @param mixed $append
+     * @param mixed $prepend
      * @return Column
      */
     public function prepend($prepend)

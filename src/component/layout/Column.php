@@ -14,16 +14,18 @@ use Eadmin\component\Component;
 class Column extends Component
 {
     protected $name = 'ElCol';
+
     /**
      * 添加一行
-     * @param $content
+     * @param mixed $content
      * @return Row
      */
-    public function row($content){
+    public function row($content)
+    {
         $row = new Row();
-        if($content instanceof \Closure){
-            call_user_func($content,$row);
-        }else{
+        if ($content instanceof \Closure) {
+            call_user_func($content, $row);
+        } else {
             $row->column($content);
         }
         $this->content($row);
@@ -39,6 +41,7 @@ class Column extends Component
     {
         return $this->attr(__FUNCTION__, $value);
     }
+
     /**
      * 栅格向右移动格数
      * @param int $value
@@ -48,6 +51,7 @@ class Column extends Component
     {
         return $this->attr(__FUNCTION__, $value);
     }
+
     /**
      * 栅格左侧的间隔格数
      * @param int $value
@@ -57,6 +61,7 @@ class Column extends Component
     {
         return $this->attr(__FUNCTION__, $value);
     }
+
     /**
      * 栅格占据的列数
      * @param int $value
@@ -64,17 +69,17 @@ class Column extends Component
      */
     public function span(int $value)
     {
-        $this->attr('md',$value);
+        $this->attr('md', $value);
         $sm = $value + $value / 2;
-        if($sm > 24){
+        if ($sm > 24) {
             $sm = 24;
         }
-        $this->attr('sm',$sm);
+        $this->attr('sm', $sm);
         $xs = $value * 4;
-        if($xs > 24){
+        if ($xs > 24) {
             $xs = 24;
         }
-        $this->attr('xs',$xs);
+        $this->attr('xs', $xs);
         return $this->attr(__FUNCTION__, $value);
     }
 }

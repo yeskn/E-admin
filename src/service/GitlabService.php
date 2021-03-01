@@ -21,13 +21,13 @@ class GitlabService extends Service
     {
         $this->client = new Client([
             'base_uri' => 'https://gitlab.my8m.com/api/v4/',
-            'verify' => false,
+            'verify'   => false,
         ]);
     }
 
     /**
      * 返回群组下的项目
-     * @param $groupId
+     * @param int $groupId
      * @param string $search 搜索关键字
      * @param int $page 第几页
      * @param int $size 每页大小
@@ -37,28 +37,30 @@ class GitlabService extends Service
     {
         $response = $this->client->get("groups/{$groupId}/projects", [
             'query' => [
-                'simple' => true,
-                'page' => $page,
+                'simple'   => true,
+                'page'     => $page,
                 'per_page' => $size,
-                'search' => $search
+                'search'   => $search
             ]
         ]);
-        $content = $response->getBody()->getContents();
+        $content  = $response->getBody()->getContents();
         return json_decode($content, true);
     }
+
     /**
      * 获取文件内容
-     * @param $projectId 项目id
-     * @param $file 文件路径
+     * @param int $projectId 项目id
+     * @param string $file 文件路径
      * @return mixed
      */
-    public function getFile($projectId,$file){
+    public function getFile($projectId, $file)
+    {
         try {
             $response = $this->client->get("projects/{$projectId}/repository/files/{$file}?ref=eadmin");
-            $res = $response->getBody()->getContents();
-            $res =  json_decode($res, true);
+            $res      = $response->getBody()->getContents();
+            $res      = json_decode($res, true);
             return base64_decode($res['content']);
-        }catch (RequestException $e){
+        } catch (RequestException $e) {
             return '';
         }
     }

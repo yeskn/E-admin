@@ -30,11 +30,17 @@ class Iseed extends Command
 
     }
 
+    // 获取路径
     protected function getPath()
     {
         return Env::get('root_path') . 'database' . DIRECTORY_SEPARATOR . 'seeds';
     }
 
+    /**
+     * 执行命令
+     * @param Input $input
+     * @param Output $output
+     */
     protected function execute(Input $input, Output $output)
     {
         $table = $input->getOption('table');
@@ -69,6 +75,11 @@ class Iseed extends Command
         }
     }
 
+    /**
+     * 获取文件
+     * @param string $name 文件名
+     * @return string
+     */
     protected function getStubs($name)
     {
         $stubPath = __DIR__ . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR;
@@ -76,6 +87,13 @@ class Iseed extends Command
         return $stubPath . $name . '.stub';
     }
 
+    /**
+     * 生成seeder填充文件
+     * @param string $table 表名
+     * @param string $path 路径
+     * @param string $force 是否强制覆盖
+     * @return bool|false|int
+     */
     private function generateSeedFile($table, $path, $force)
     {
         $data = Db::table($table)->select()->toArray();

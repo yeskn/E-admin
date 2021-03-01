@@ -36,43 +36,47 @@ class ServiceProvider extends Service
         FileService::instance()->registerRoute();
         //注册插件
         PlugService::instance()->register();
-        $this->app->middleware->route( \Eadmin\middleware\Permission::class);
+        $this->app->middleware->route(\Eadmin\middleware\Permission::class);
         $this->registerView();
         $this->registerService();
     }
-    public function registerService(){
+
+    public function registerService()
+    {
         $this->app->bind([
-           'admin.menu'=> MenuService::class,
-           'admin.message'=> Message::class,
-           'admin.notification'=> Notification::class,
+            'admin.menu'         => MenuService::class,
+            'admin.message'      => Message::class,
+            'admin.notification' => Notification::class,
         ]);
     }
-    protected function registerView(){
+
+    protected function registerView()
+    {
 
         Admin::registerRoute();;
 
         //菜单管理
-        $this->app->route->resource('menu',Menu::class);
+        $this->app->route->resource('menu', Menu::class);
         //日志调试
-        $this->app->route->post('log/logData',Log::class.'@logData');
-        $this->app->route->get('log/debug',Log::class.'@debug');
-        $this->app->route->post('log/remove',Log::class.'@remove');
+        $this->app->route->post('log/logData', Log::class . '@logData');
+        $this->app->route->get('log/debug', Log::class . '@debug');
+        $this->app->route->post('log/remove', Log::class . '@remove');
         //插件
-        $this->app->route->get('plug/add',Plug::class.'@add');
-        $this->app->route->get('plug/grid',Plug::class.'@grid');
-        $this->app->route->post('plug/enable',Plug::class.'@enable');
-        $this->app->route->post('plug/install',Plug::class.'@install');
-        $this->app->route->get('plug',Plug::class.'@index');
+        $this->app->route->get('plug/add', Plug::class . '@add');
+        $this->app->route->get('plug/grid', Plug::class . '@grid');
+        $this->app->route->post('plug/enable', Plug::class . '@enable');
+        $this->app->route->post('plug/install', Plug::class . '@install');
+        $this->app->route->get('plug', Plug::class . '@index');
         //消息通知
-        $this->app->route->get('notice/notification',Notice::class.'@notification');
-        $this->app->route->post('notice/system',Notice::class.'@system');
-        $this->app->route->post('notice/reads',Notice::class.'@reads');
-        $this->app->route->delete('notice/clear',Notice::class.'@clear');
+        $this->app->route->get('notice/notification', Notice::class . '@notification');
+        $this->app->route->post('notice/system', Notice::class . '@system');
+        $this->app->route->post('notice/reads', Notice::class . '@reads');
+        $this->app->route->delete('notice/clear', Notice::class . '@clear');
         //数据库备份
-        $this->app->route->get('backup/config',Backup::class.'@config');
-        $this->app->route->post('backup/add',Backup::class.'@add');
-        $this->app->route->post('backup/reduction',Backup::class.'@reduction');
-        $this->app->route->get('backup',Backup::class.'@index');
+        $this->app->route->get('backup/config', Backup::class . '@config');
+        $this->app->route->post('backup/add', Backup::class . '@add');
+        $this->app->route->post('backup/reduction', Backup::class . '@reduction');
+        $this->app->route->get('backup', Backup::class . '@index');
 
 //        $this->app->route->resource(':controller',':controller')->ext('rest');
 //        $rules = $this->app->route->getGroup()->getRules();
@@ -85,6 +89,7 @@ class ServiceProvider extends Service
 //            }
 //        }
     }
+
     public function boot()
     {
         $this->commands([

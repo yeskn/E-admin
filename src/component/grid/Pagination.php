@@ -10,8 +10,8 @@ use Eadmin\component\Component;
  * 分页
  * Class Pagination
  * @package Eadmin\component\grid
- * @method $this small(bool $value=true) 是否使用小型分页样式
- * @method $this background(bool $value=true) 是否为分页按钮添加背景色
+ * @method $this small(bool $value = true) 是否使用小型分页样式
+ * @method $this background(bool $value = true) 是否为分页按钮添加背景色
  * @method $this pageSize(int $value) 每页显示条目个数
  * @method $this total(int $value) 总条目数
  * @method $this pagerCount(int $value) 页码按钮的数量，当总页数超过该值时会折叠

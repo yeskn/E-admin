@@ -29,19 +29,22 @@ class Content extends Component
     {
         return new self;
     }
+
     /**
      * 设置标题
      * @param string $title
      * @return $this
      */
-    public function title(string $title){
-        $this->bind('eadmin_title',$title);
+    public function title(string $title)
+    {
+        $this->bind('eadmin_title', $title);
         return $this;
     }
+
     /**
      * 添加一行
-     * @param Closure|String $content 内容
-     * @param $span 栅格占据的列数,默认24
+     * @param \Closure|String $content 内容
+     * @param int $span 栅格占据的列数,默认24
      */
     public function row($content, $span = 24)
     {

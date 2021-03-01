@@ -19,32 +19,32 @@ class LineChart extends EchartAbstract
     {
         parent::__construct($height, $width);
         $this->options = [
-            'title' => [
+            'title'   => [
                 'text' => '',
             ],
             'tooltip' => [
                 'trigger' => 'axis'
             ],
-            'xAxis' => [
-                'data' => [],
-                'type'=> 'category',
+            'xAxis'   => [
+                'data'        => [],
+                'type'        => 'category',
                 'boundaryGap' => false,
             ],
-            'grid' => [
-                'left' => '3%',
-                'right' => '4%',
-                'bottom' => '3%',
+            'grid'    => [
+                'left'         => '3%',
+                'right'        => '4%',
+                'bottom'       => '3%',
                 'containLabel' => true
             ],
-            'yAxis' => [
+            'yAxis'   => [
                 'type' => 'value'
             ],
-            'legend' => [
+            'legend'  => [
                 'data' => [],
             ],
-            'series' => [ ]
+            'series'  => []
         ];
-        $this->type = $type;
+        $this->type    = $type;
     }
 
 
@@ -57,10 +57,10 @@ class LineChart extends EchartAbstract
     {
         $this->legend[] = $name;
         $this->series[] = [
-            'name' => $name,
-            'type' => $this->type,
+            'name'       => $name,
+            'type'       => $this->type,
             'symbolSize' => 8,
-            'data' => $data,
+            'data'       => $data,
         ];
         return $this;
     }

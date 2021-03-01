@@ -35,38 +35,38 @@ use think\Model;
  * Class Form
  * @link https://element-plus.gitee.io/#/zh-CN/component/form
  * @package Eadmin\component\form\field
- * @method \Eadmin\component\form\field\Input text($field, $label='') 文本输入框
+ * @method \Eadmin\component\form\field\Input text($field, $label = '') 文本输入框
  * @method \Eadmin\component\form\field\Input hidden($field) 隐藏输入框
- * @method \Eadmin\component\form\field\Input textarea($field, $label='') 多行文本输入框
- * @method \Eadmin\component\form\field\Input password($field, $label='') 密码输入框
- * @method \Eadmin\component\form\field\Mobile mobile($field, $label='') 手机号输入框
- * @method \Eadmin\component\form\field\Mobile email($field, $label='') 邮箱输入框
- * @method \Eadmin\component\form\field\Number number($field, $label='') 数字输入框
- * @method \Eadmin\component\form\field\Select select($field, $label='') 下拉选择器
- * @method \Eadmin\component\form\field\RadioGroup radio($field, $label='') 单选框
- * @method \Eadmin\component\form\field\CheckboxGroup checkbox($field, $label='') 多选框
- * @method \Eadmin\component\form\field\Switchs switch ($field, $label='') switch开关
- * @method \Eadmin\component\form\field\DatePicker datetime($field, $label='') 日期时间
- * @method \Eadmin\component\form\field\DatePicker datetimeRange($startFiled, $endField, $label='') 日期时间范围时间
- * @method \Eadmin\component\form\field\DatePicker dateRange($startFiled, $endField, $label='') 日期范围时间
- * @method \Eadmin\component\form\field\DatePicker date($field, $label='') 日期
- * @method \Eadmin\component\form\field\DatePicker dates($field, $label='') 多选日期
- * @method \Eadmin\component\form\field\DatePicker year($field, $label='') 年
- * @method \Eadmin\component\form\field\DatePicker month($field, $label='') 月
- * @method \Eadmin\component\form\field\TimePicker timeRange($startFiled, $endField, $label='') 日期范围时间
- * @method \Eadmin\component\form\field\TimePicker time($field, $label='') 时间
- * @method \Eadmin\component\form\field\Slider slider($field, $label='') 滑块
- * @method \Eadmin\component\form\field\Color color($field, $label='') 颜色选择器
- * @method \Eadmin\component\form\field\Rate rate($field, $label='') 评分组件
- * @method \Eadmin\component\form\field\Upload file($field, $label='') 文件上传
- * @method \Eadmin\component\form\field\Upload image($field, $label='') 图片上传
- * @method \Eadmin\component\form\field\Editor editor($field, $label='') 富文本编辑器
- * @method \Eadmin\component\form\field\Tree tree($field, $label='') 树形
- * @method \Eadmin\component\form\field\Cascader cascader(...$field, $label='') 级联选择器
- * @method \Eadmin\component\form\field\Transfer transfer($field, $label='') 穿梭框
- * @method \Eadmin\component\form\field\Icon icon($field, $label='') 图标选择器
- * @method \Eadmin\component\form\field\SelectTable selectTable($field, $label='') 表格选择器  TODO
- * @method \Eadmin\component\form\field\Map maps($lng, $lat, $address, $label='') 高德地图  TODO
+ * @method \Eadmin\component\form\field\Input textarea($field, $label = '') 多行文本输入框
+ * @method \Eadmin\component\form\field\Input password($field, $label = '') 密码输入框
+ * @method \Eadmin\component\form\field\Mobile mobile($field, $label = '') 手机号输入框
+ * @method \Eadmin\component\form\field\Mobile email($field, $label = '') 邮箱输入框
+ * @method \Eadmin\component\form\field\Number number($field, $label = '') 数字输入框
+ * @method \Eadmin\component\form\field\Select select($field, $label = '') 下拉选择器
+ * @method \Eadmin\component\form\field\RadioGroup radio($field, $label = '') 单选框
+ * @method \Eadmin\component\form\field\CheckboxGroup checkbox($field, $label = '') 多选框
+ * @method \Eadmin\component\form\field\Switchs switch ($field, $label = '') switch开关
+ * @method \Eadmin\component\form\field\DatePicker datetime($field, $label = '') 日期时间
+ * @method \Eadmin\component\form\field\DatePicker datetimeRange($startFiled, $endField, $label = '') 日期时间范围时间
+ * @method \Eadmin\component\form\field\DatePicker dateRange($startFiled, $endField, $label = '') 日期范围时间
+ * @method \Eadmin\component\form\field\DatePicker date($field, $label = '') 日期
+ * @method \Eadmin\component\form\field\DatePicker dates($field, $label = '') 多选日期
+ * @method \Eadmin\component\form\field\DatePicker year($field, $label = '') 年
+ * @method \Eadmin\component\form\field\DatePicker month($field, $label = '') 月
+ * @method \Eadmin\component\form\field\TimePicker timeRange($startFiled, $endField, $label = '') 日期范围时间
+ * @method \Eadmin\component\form\field\TimePicker time($field, $label = '') 时间
+ * @method \Eadmin\component\form\field\Slider slider($field, $label = '') 滑块
+ * @method \Eadmin\component\form\field\Color color($field, $label = '') 颜色选择器
+ * @method \Eadmin\component\form\field\Rate rate($field, $label = '') 评分组件
+ * @method \Eadmin\component\form\field\Upload file($field, $label = '') 文件上传
+ * @method \Eadmin\component\form\field\Upload image($field, $label = '') 图片上传
+ * @method \Eadmin\component\form\field\Editor editor($field, $label = '') 富文本编辑器
+ * @method \Eadmin\component\form\field\Tree tree($field, $label = '') 树形
+ * @method \Eadmin\component\form\field\Cascader cascader(...$field, $label = '') 级联选择器
+ * @method \Eadmin\component\form\field\Transfer transfer($field, $label = '') 穿梭框
+ * @method \Eadmin\component\form\field\Icon icon($field, $label = '') 图标选择器
+ * @method \Eadmin\component\form\field\SelectTable selectTable($field, $label = '') 表格选择器  TODO
+ * @method \Eadmin\component\form\field\Map maps($lng, $lat, $address, $label = '') 高德地图  TODO
  */
 class Form extends Field
 {
@@ -95,11 +95,12 @@ class Form extends Field
     protected $afterSave = null;
     //保存修改成功后跳转的url
     protected $redirectUrl = '';
+
     public function __construct($data)
     {
         if ($data instanceof Model) {
             $this->drive = new \Eadmin\form\drive\Model($data);
-        }elseif ($data instanceof FormInterface) {
+        } elseif ($data instanceof FormInterface) {
             $this->drive = $data;
         } else {
             $this->drive = new \Eadmin\form\drive\Arrays($data);
@@ -110,25 +111,28 @@ class Form extends Field
         $this->labelWidth('100px');
         $this->getCallMethod();
         $this->setAction('/eadmin.rest');
-        $this->event('gridRefresh',[]);
+        $this->event('gridRefresh', []);
         $this->validator = new ValidatorForm();
         $this->validatorBind();
         $this->description(Request::param('eadmin_description'));
         $this->description(Request::param('eadmin_description'));
     }
+
     /**
      * 设置标题
      * @param string $title
      * @return string
      */
-    public function title(string $title){
-        return $this->bind('eadmin_title',$title);
+    public function title(string $title)
+    {
+        return $this->bind('eadmin_title', $title);
     }
 
     /**
      * @return ValidatorForm
      */
-    public function validator(){
+    public function validator()
+    {
         return $this->validator;
     }
 
@@ -139,7 +143,7 @@ class Form extends Field
      */
     public function statusIcon(bool $value = true)
     {
-        $this->attr(__FUNCTION__, $bool);
+        $this->attr(__FUNCTION__, $value);
         return $this;
     }
 
@@ -150,20 +154,22 @@ class Form extends Field
      */
     public function hideRequiredAsterisk(bool $value = true)
     {
-        $this->attr(__FUNCTION__, $bool);
+        $this->attr(__FUNCTION__, $value);
         return $this;
     }
+
     /**
      * 设置保存修改成功后跳转的url
      * @param string $url
      */
-    public function redirectUrl($url='')
+    public function redirectUrl($url = '')
     {
-        if($url){
+        if ($url) {
             $this->redirectUrl = $url;
         }
         return $this->redirectUrl;
     }
+
     /**
      * 修改成功后后退
      * @return string
@@ -172,6 +178,7 @@ class Form extends Field
     {
         $this->redirectUrl = 'back';
     }
+
     /**
      * 行内表单模式
      * @param bool $bool
@@ -233,7 +240,7 @@ class Form extends Field
      * @param string $method 提交method
      * @return $this
      */
-    public function setAction(string $sumbitUrl,string $method = 'POST')
+    public function setAction(string $sumbitUrl, string $method = 'POST')
     {
         $this->attr(__FUNCTION__, $sumbitUrl);
         $this->attr('setActionMethod', $method);
@@ -256,7 +263,7 @@ class Form extends Field
 
     /**
      * 绑定值到form
-     * @param $component 组件
+     * @param mixed $component 组件
      * @param null $data
      */
     private function valueModel($component, $data = null)
@@ -271,10 +278,10 @@ class Form extends Field
 
         foreach ($component->bindAttribute as $attr => $field) {
             $value = $this->drive->getData($field, $data);
-            if(is_null($value) && ($component instanceof DatePicker || $component instanceof TimePicker) && $startField = $component->bindAttr('startField')){
+            if (is_null($value) && ($component instanceof DatePicker || $component instanceof TimePicker) && $startField = $component->bindAttr('startField')) {
                 $value = [];
             }
-            $defaultValue = $component->getDefault();
+            $defaultValue   = $component->getDefault();
             $componentValue = $component->getValue();
             //设置default缺省值
             if (empty($value) && $value !== 0 && !is_null($defaultValue)) {
@@ -288,7 +295,7 @@ class Form extends Field
             }
             $this->setData($field, $value ?? '');
             if (is_null($data)) {
-                $component->bindAttr($attr, $this->bindAttr('model') . '.' . $field,true);
+                $component->bindAttr($attr, $this->bindAttr('model') . '.' . $field, true);
             }
             $component->removeBind($field);
         }
@@ -296,9 +303,9 @@ class Form extends Field
 
     /**
      * 获取时间value特殊处理
-     * @param $component 组件
-     * @param $field 字段
-     * @param $componentValue 值
+     * @param mixed $component 组件
+     * @param string $field 字段
+     * @param mixed $componentValue 值
      * @return mixed
      */
     private function getPickerValue($component, $field, $componentValue)
@@ -306,7 +313,7 @@ class Form extends Field
         $value = $componentValue;
         if ($component instanceof DatePicker || $component instanceof TimePicker) {
             $startField = $component->bindAttr('startField');
-            $endField = $component->bindAttr('endField');
+            $endField   = $component->bindAttr('endField');
             if ($field == $startField && isset($componentValue[0])) {
                 $value = $componentValue[0];
             }
@@ -319,7 +326,7 @@ class Form extends Field
 
     /**
      * 选项卡布局
-     * @param $title 标题
+     * @param string $title 标题
      * @param \Closure $closure
      * @return $this
      */
@@ -330,7 +337,7 @@ class Form extends Field
             $this->push($this->tab);
         }
         $formItems = $this->collectFields($closure);
-        $tabPane = new TabPane();
+        $tabPane   = new TabPane();
         $tabPane->label($title);
         foreach ($formItems as $item) {
             $tabPane->content($item);
@@ -338,16 +345,21 @@ class Form extends Field
         $this->tab->content($tabPane);
         return $this;
     }
-    public function collectFields(\Closure $closure){
+
+    public function collectFields(\Closure $closure)
+    {
         $offset = count($this->formItem);
         call_user_func($closure, $this);
-        $formItems = array_slice($this->formItem,$offset);
-        $this->formItem =  array_slice($this->formItem,0,$offset);
+        $formItems      = array_slice($this->formItem, $offset);
+        $this->formItem = array_slice($this->formItem, 0, $offset);
         return $formItems;
     }
-    public function push($item){
+
+    public function push($item)
+    {
         $this->formItem[] = $item;
     }
+
     /**
      * 添加item
      * @param string $prop 字段
@@ -367,14 +379,14 @@ class Form extends Field
      * @param \Closure $closure
      * @return $this
      */
-    public function row(\Closure $closure,string $title='')
+    public function row(\Closure $closure, string $title = '')
     {
 
-        $row = new Row();
+        $row       = new Row();
         $formItems = $this->collectFields($closure);
         $this->push("<h4 style='font-size:16px;'>{$title}</h4>");
         foreach ($formItems as $item) {
-            $row->column($item,$item->md);
+            $row->column($item, $item->md);
         }
         $this->push($row);
         return $this;
@@ -384,13 +396,15 @@ class Form extends Field
      * 是否编辑
      * @return bool
      */
-    public function isEdit(){
+    public function isEdit()
+    {
         $pkValue = Request::param($this->drive->getPk());
-        if($pkValue && !$this->isEdit){
+        if ($pkValue && !$this->isEdit) {
             $this->edit($pkValue);
         }
         return $this->isEdit;
     }
+
     /**
      * 编辑
      * @param string|int $id 主键id数据
@@ -399,37 +413,40 @@ class Form extends Field
     public function edit($id)
     {
         $this->drive->edit($id);
-        $pk = $this->drive->getPk();
+        $pk              = $this->drive->getPk();
         $this->data[$pk] = $this->drive->getData($pk);
-        $this->isEdit = true;
-        $this->attr('editId',$id);
-        $this->setAction('/eadmin/'.$id.'.rest','PUT');
+        $this->isEdit    = true;
+        $this->attr('editId', $id);
+        $this->setAction('/eadmin/' . $id . '.rest', 'PUT');
         return $this;
     }
-    public function manyRelation(){
+
+    public function manyRelation()
+    {
         return $this->manyRelation;
     }
+
     /**
      * 一对多添加
-     * @param $realtion 关联方法|字段
-     * @param $title 标题
+     * @param mixed $relation 关联方法|字段
+     * @param string $title 标题
      * @param \Closure $closure
      */
-    public function hasMany($realtion, $title, \Closure $closure)
+    public function hasMany($relation, $title, \Closure $closure)
     {
-        $this->validatorBind($realtion);
+        $this->validatorBind($relation);
 
-        $manyItem = FormMany::create($realtion, []);
-        $validatorField = $this->bindAttr('model').'Error';
-        $manyItem->attr('validator',$validatorField);
+        $manyItem       = FormMany::create($relation, []);
+        $validatorField = $this->bindAttr('model') . 'Error';
+        $manyItem->attr('validator', $validatorField);
         $originItemComponent = $this->itemComponent;
         $this->itemComponent = [];
-        $this->manyRelation = $realtion;
-        $formItems = $this->collectFields($closure);
-        $this->manyRelation = '';
-        $itemComponent = $this->itemComponent;
-        $datas = $this->drive->getData($realtion) ?? [];
-        $manyData = [];
+        $this->manyRelation  = $relation;
+        $formItems           = $this->collectFields($closure);
+        $this->manyRelation  = '';
+        $itemComponent       = $this->itemComponent;
+        $datas               = $this->drive->getData($relation) ?? [];
+        $manyData            = [];
         foreach ($itemComponent as $component) {
             $componentClone = clone $component;
             $this->valueModel($componentClone, []);
@@ -440,7 +457,7 @@ class Form extends Field
             $datas[] = $this->data;
         }
         $this->data = [];
-        $manyItem->attr('field', $realtion);
+        $manyItem->attr('field', $relation);
         $manyItem->attr('title', $title);
         foreach ($datas as $key => $data) {
             foreach ($itemComponent as $component) {
@@ -466,18 +483,18 @@ class Form extends Field
     protected function formItem($name, $arguments)
     {
         $field = $arguments[0];
-        if(count($arguments) > 1){
+        if (count($arguments) > 1) {
             $label = array_pop($arguments);
         }
-        $label = $label ?? '';
-        $class = "Eadmin\\component\\form\\field\\";
-        $inputs = [
+        $label   = $label ?? '';
+        $class   = "Eadmin\\component\\form\\field\\";
+        $inputs  = [
             'text',
             'textarea',
             'password',
             'hidden',
         ];
-        $dates = [
+        $dates   = [
             'date',
             'dates',
             'year',
@@ -486,7 +503,7 @@ class Form extends Field
             'datetimeRange',
             'dateRange',
         ];
-        $times = [
+        $times   = [
             'time',
             'timeRange',
         ];
@@ -513,14 +530,14 @@ class Form extends Field
         } else {
             $class .= ucfirst($name);
         }
-        $prop = $field;
-        $component = $class::create($field);
-        $compenentArr = array_merge($inputs, $dates, $times);
+        $prop         = $field;
+        $component    = $class::create($field);
+        $componentArr = array_merge($inputs, $dates, $times);
         if ($name == 'image') {
             //图片组件
             $component->displayType('image')->accept('image/*')->size(120, 120)->isUniqidmd5();
         }
-        if (in_array($name, $compenentArr)) {
+        if (in_array($name, $componentArr)) {
             //由于element时间范围字段返回是一个数组,这里特殊绑定处理成2个字段
             if ($name == 'dateRange' || $name == 'datetimeRange' || $name == 'timeRange') {
                 $component = $class::create();
@@ -533,11 +550,11 @@ class Form extends Field
         }
         if ($name == 'cascader') {
             $component = $class::create();
-            $component->attr('bindFields',$arguments);
+            $component->attr('bindFields', $arguments);
             $component->bindFields($arguments);
             $prop = $component->bindAttr('modelValue');
-        }elseif ($name == 'maps'){
-            $field = array_pop($arguments);
+        } elseif ($name == 'maps') {
+            $field     = array_pop($arguments);
             $component = $class::create($field);
             $component->bindFields($arguments);
             $prop = $component->bindAttr('modelValue');
@@ -558,6 +575,7 @@ class Form extends Field
         }
         return $component;
     }
+
     /**
      * 保存后回调
      * @param \Closure $closure
@@ -578,36 +596,40 @@ class Form extends Field
 
     /**
      * 设置字段值
-     * @param $field 字段
-     * @param $value 值
+     * @param string $field 字段
+     * @param mixed $value 值
      */
-    public function setData(string $field,$value){
+    public function setData(string $field, $value)
+    {
         //数字类型转换处理
-        if(is_array($value) && count($value) == count($value,1)){
-            foreach ($value as &$v){
-                if(!is_array($v) && preg_match('/^\d+$/',$v)){
+        if (is_array($value) && count($value) == count($value, 1)) {
+            foreach ($value as &$v) {
+                if (!is_array($v) && preg_match('/^\d+$/', $v)) {
                     $v = intval($v);
-                }elseif(is_numeric($v) && strpos($v, '.') !== false){
+                } elseif (is_numeric($v) && strpos($v, '.') !== false) {
                     $v = floatval($v);
                 }
             }
-        }elseif(!is_array($value) && preg_match('/^\d+$/',$value)){
+        } elseif (!is_array($value) && preg_match('/^\d+$/', $value)) {
             $value = intval($value);
-        }elseif(is_numeric($value) && strpos($value, '.') !== false){
+        } elseif (is_numeric($value) && strpos($value, '.') !== false) {
             $value = floatval($value);
         }
 
         if (strpos($field, '.')) {
             list($relation, $field) = explode('.', $field);
             $this->data[$relation][$field] = $value;
-        }else{
+        } else {
             $this->data[$field] = $value;
         }
     }
-    public function getData($field = null){
+
+    public function getData($field = null)
+    {
         $this->isEdit();
         return $this->drive->getData($field);
     }
+
     /**
      * 表单操作定义
      * @param \Closure $closure
@@ -621,16 +643,18 @@ class Form extends Field
     {
         $this->itemComponent[] = $component;
     }
+
     /**
      * 保存数据
      * @param array $data 数据
      * @return bool
      * @throws \Exception
      */
-    public function save(array $data){
+    public function save(array $data)
+    {
         //验证数据
         $validatorMode = $this->isEdit() ? 2 : 1;
-        $this->validator->check($data,$validatorMode);
+        $this->validator->check($data, $validatorMode);
         //保存前回调
         if (!is_null($this->beforeSave)) {
             $beforeData = call_user_func($this->beforeSave, $data);
@@ -645,6 +669,7 @@ class Form extends Field
         }
         return $result;
     }
+
     /**
      * 提交成功事件
      * @param array $value
@@ -660,8 +685,10 @@ class Form extends Field
     {
         return $this->formItem($name, $arguments);
     }
-    public function popItem(){
-        $item =  array_pop($this->formItem);
+
+    public function popItem()
+    {
+        $item = array_pop($this->formItem);
         return $item;
     }
 
@@ -670,15 +697,15 @@ class Form extends Field
      */
     protected function parseComponent()
     {
-        foreach ($this->formItem as $item){
+        foreach ($this->formItem as $item) {
             $this->content($item);
         }
         foreach ($this->itemComponent as $component) {
             //各个组件绑定值赋值
             $this->valueModel($component);
         }
-        $field = $this->bindAttr('model');
-        $this->data = array_merge($this->data,$this->callMethod);
+        $field      = $this->bindAttr('model');
+        $this->data = array_merge($this->data, $this->callMethod);
         //将值绑定到form
 
         $this->bind($field, $this->data);
@@ -686,20 +713,22 @@ class Form extends Field
 
     /**
      * 验证错误字段初始化绑定
-     * @param $field
+     * @param null $field
      */
-    protected function validatorBind($field = null){
+    protected function validatorBind($field = null)
+    {
         //验证器属性绑定
-        $validatorField = $this->bindAttr('model').'Error';
-        $this->attr('validator',$validatorField);
-        if(is_null($field)){
+        $validatorField = $this->bindAttr('model') . 'Error';
+        $this->attr('validator', $validatorField);
+        if (is_null($field)) {
             $data = [];
-        }else{
-            $data = $this->bind($validatorField);
+        } else {
+            $data         = $this->bind($validatorField);
             $data[$field] = [];
         }
-        $this->bind($validatorField,$data);
+        $this->bind($validatorField, $data);
     }
+
     public function jsonSerialize()
     {
         $this->parseComponent();

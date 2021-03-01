@@ -40,7 +40,7 @@ class MenuService
     {
         if (Admin::id() == config('admin.admin_auth_id')) {
             $menus = $this->all();
-        }else{
+        } else {
             $menus = Admin::user()->menus();
         }
         return Admin::tree($menus);
@@ -56,7 +56,7 @@ class MenuService
      */
     public function listOptions($data = [])
     {
-        if(count($data) == 0){
+        if (count($data) == 0) {
             $data = Db::name('system_menu')->where('status', 1)->order('sort asc,id asc')->select();
         }
         $menusList = $this->getTreeLevel($data);
@@ -65,7 +65,7 @@ class MenuService
         }
         return $menusList;
     }
-    
+
     protected function getTreeLevel($array, $pid = 0, $level = 0)
     {
         //声明静态数组,避免递归调用时,多次声明导致数组覆盖

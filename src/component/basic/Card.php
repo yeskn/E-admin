@@ -27,6 +27,7 @@ class Card extends Component
 
     /**
      * 创建卡片
+     * @param string $content 内容
      * @return Card
      */
     public static function create($content = '')
@@ -36,7 +37,7 @@ class Card extends Component
 
     /**
      * 头部内容
-     * @param string $content
+     * @param string $content 内容
      */
     public function header($content)
     {

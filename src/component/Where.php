@@ -8,14 +8,19 @@ trait Where
 {
     protected $where = [
         'AND' => [],
-        'OR' => []
+        'OR'  => []
     ];
-    protected function getWhere(){
+
+    protected function getWhere()
+    {
         return $this->where;
     }
-    protected function setWhere($where){
+
+    protected function setWhere($where)
+    {
         return $this->where = $where;
     }
+
     /**
      * 指定AND查询条件
      * @access public
@@ -25,29 +30,29 @@ trait Where
      * @param mixed $logic AND OR
      * @return $this
      */
-    public function where($field, $op = null, $condition = null,$logic='AND')
+    public function where($field, $op = null, $condition = null, $logic = 'AND')
     {
-        if($field instanceof \Closure){
+        if ($field instanceof \Closure) {
             $where = clone $this;
             $where->setWhere([
                 'AND' => [],
-                'OR' => []
+                'OR'  => []
             ]);
-            call_user_func_array($field,[$where]);
+            call_user_func_array($field, [$where]);
             $this->where[$logic][] = [
                 'where' => $where->getWhere()
             ];
-        }else{
-            if($op == '='){
+        } else {
+            if ($op == '=') {
                 $op = '==';
             }
             if (is_null($condition)) {
                 $condition = $op;
-                $op = '==';
+                $op        = '==';
             }
             $this->where[$logic][] = [
-                'field' => $field,
-                'op' => $op,
+                'field'     => $field,
+                'op'        => $op,
                 'condition' => $condition
             ];
         }
@@ -64,6 +69,6 @@ trait Where
      */
     public function whereOr(string $field, $op = null, $condition = null)
     {
-        return $this->where($field,$op,$condition,'OR');
+        return $this->where($field, $op, $condition, 'OR');
     }
 }

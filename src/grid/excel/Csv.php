@@ -25,24 +25,24 @@ class Csv extends AbstractExporter
         $fp = fopen('php://output', 'a');
         $this->filterColumns();
         //设置标题
-        $title = array_values($this->columns);
+        $title  = array_values($this->columns);
         $fields = array_keys($this->columns);
         foreach ($title as $key => $item) {
-            $title[$key] = mb_convert_encoding( $item,'GBK','UTF-8');
+            $title[$key] = mb_convert_encoding($item, 'GBK', 'UTF-8');
         }
         //将标题写到标准输出中
-        if($nums == 0){
+        if ($nums == 0) {
             fputcsv($fp, $title);
         }
-        foreach ($this->data as $item){
+        foreach ($this->data as $item) {
             $row = [];
-            foreach ($fields as $field){
-                $value =  empty($item[$field]) ? '' : $item[$field];
-                $row[] = mb_convert_encoding( $value,'GBK','UTF-8');
+            foreach ($fields as $field) {
+                $value = empty($item[$field]) ? '' : $item[$field];
+                $row[] = mb_convert_encoding($value, 'GBK', 'UTF-8');
             }
             fputcsv($fp, $row);
             $nums++;
-            if($nums == 5000){
+            if ($nums == 5000) {
                 $nums = 0;
                 ob_flush();
                 flush();

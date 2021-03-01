@@ -89,7 +89,7 @@ class Select extends Field
          ];
         */
         foreach ($data as $key => $option) {
-            $groups = [];
+            $groups  = [];
             $options = [];
             if (in_array($option['id'], $this->disabledData)) {
                 $disabled = true;
@@ -103,8 +103,8 @@ class Select extends Field
                     $disabled = false;
                 }
                 $options[] = [
-                    'id' => $item['id'],
-                    'label' => $item['label'],
+                    'id'       => $item['id'],
+                    'label'    => $item['label'],
                     'disabled' => $disabled,
                 ];
             }
@@ -114,7 +114,7 @@ class Select extends Field
                 ->mapAttr('key', 'id')
                 ->mapAttr('value', 'id')
                 ->mapAttr('disabled', 'disabled');
-            $selectGroup = OptionGroup::create()
+            $selectGroup  = OptionGroup::create()
                 ->attr('label', $option['label'])
                 ->attr('disabled', $disabled)
                 ->content($selectOption);
@@ -136,8 +136,8 @@ class Select extends Field
                 $disabled = false;
             }
             $options[] = [
-                'id' => $id,
-                'label' => $label,
+                'id'       => $id,
+                'label'    => $label,
                 'disabled' => $disabled,
             ];
         }

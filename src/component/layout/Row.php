@@ -26,7 +26,7 @@ class Row extends Component
     /**
      * /**
      * 添加列
-     * @param Closure|String $content 内容
+     * @param \Closure|String $content 内容
      * @param int $span 栅格占据的列数,占满一行24,默认24
      * @return Column
      */

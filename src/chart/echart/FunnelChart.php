@@ -16,11 +16,11 @@ class FunnelChart extends EchartAbstract
     {
         parent::__construct($height, $width);
         $this->options = [
-            'title' => [
+            'title'   => [
                 'text' => '',
             ],
             'tooltip' => [
-                'trigger' => 'item',
+                'trigger'   => 'item',
                 'formatter' => '{a} <br/>{b} : {c} ({d}%)'
             ],
 
@@ -38,36 +38,36 @@ class FunnelChart extends EchartAbstract
      */
     public function series(string $name, array $data)
     {
-        $names = array_column($data, 'name');
-        $this->legend = array_merge($this->legend, $names);
-        $length = count($this->series);
-        $start = $length * 30 + 10;
-        $end = ($length + 1) * 20;
+        $names          = array_column($data, 'name');
+        $this->legend   = array_merge($this->legend, $names);
+        $length         = count($this->series);
+        $start          = $length * 30 + 10;
+        $end            = ($length + 1) * 20;
         $this->series[] = [
-            'name' => $name,
-            'type' => 'funnel',
-            'minSize' => '0%',
-            'maxSize' => '100%',
-            'top' => 60,
-            'bottom' => 60,
-            'gap' => 2,
+            'name'      => $name,
+            'type'      => 'funnel',
+            'minSize'   => '0%',
+            'maxSize'   => '100%',
+            'top'       => 60,
+            'bottom'    => 60,
+            'gap'       => 2,
             'itemStyle' => [
                 'borderColor' => '#fff',
                 'borderWidth' => 1,
             ],
             'labelLine' => [
-                'length' => 10,
+                'length'    => 10,
                 'lineStyle' => [
                     'width' => 1,
-                    'type' => 'solid'
+                    'type'  => 'solid'
                 ]
             ],
-            'emphasis' => [
+            'emphasis'  => [
                 'label' => [
                     'fontSize' => 20
                 ]
             ],
-            'data' => $data,
+            'data'      => $data,
         ];
         return $this;
     }

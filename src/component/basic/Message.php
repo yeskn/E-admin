@@ -19,20 +19,22 @@ use think\exception\HttpResponseException;
 class Message
 {
     protected $data = [];
+
     /**
      * 成功提示
-     * @param $message 提示信息
+     * @param string $message 提示信息
      * @param string $url 跳转url
      * @return $this
      */
-    public function success($message='操作成功', $url = '')
+    public function success($message = '操作成功', $url = '')
     {
         $this->response($message, 'success', $url);
         return $this;
     }
+
     /**
      * 警告提示
-     * @param $message 提示信息
+     * @param string $message 提示信息
      * @param string $url 跳转url
      * @return $this
      */
@@ -41,9 +43,10 @@ class Message
         $this->response($message, 'warning', $url);
         return $this;
     }
+
     /**
      * 信息提示
-     * @param $message 提示信息
+     * @param string $message 提示信息
      * @param string $url 跳转url
      * @return $this
      */
@@ -52,20 +55,22 @@ class Message
         $this->response($message, 'info', $url);
         return $this;
     }
+
     /**
      * 错误提示
-     * @param $message 提示信息
+     * @param string $message 提示信息
      * @param string $url 跳转url
      * @return $this
      */
-    public function error($message='数据保存失败', $url = '')
+    public function error($message = '数据保存失败', $url = '')
     {
         $this->response($message, 'error', $url);
         return $this;
     }
+
     /**
      * 跳转url
-     * @param $url
+     * @param string $url
      * @return $this
      */
     public function redirect($url)
@@ -73,25 +78,31 @@ class Message
         $this->data = array_merge($this->data, ['url' => $url]);
         return $this;
     }
+
     /**
      * 刷新当前页面
      */
-    public function refresh(){
-        $this->data = array_merge($this->data,['refresh'=>true]);
+    public function refresh()
+    {
+        $this->data = array_merge($this->data, ['refresh' => true]);
         return $this;
     }
-    public function data(array $data){
-        $this->data = array_merge($this->data,['data'=>$data]);
+
+    public function data(array $data)
+    {
+        $this->data = array_merge($this->data, ['data' => $data]);
     }
+
     protected function response($message, $type, $url = '')
     {
         $this->data = [
-            'code' => 80020,
-            'type' => $type,
-            'message'=>$message,
-            'url' => $url
+            'code'    => 80020,
+            'type'    => $type,
+            'message' => $message,
+            'url'     => $url
         ];
     }
+
     public function __destruct()
     {
         throw new HttpResponseException(json($this->data));

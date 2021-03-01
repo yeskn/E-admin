@@ -45,7 +45,7 @@ class Admin
                 return Db::name('SystemConfig')->where('name', $name)->update(['value' => $value]);
             } else {
                 return Db::name('SystemConfig')->insert([
-                    'name' => $name,
+                    'name'  => $name,
                     'value' => $value,
                 ]);
             }
@@ -54,7 +54,7 @@ class Admin
 
     /**
      * 渲染组件
-     * @param $template 模板文件名
+     * @param string $template 模板文件名
      * @param array $vars 模板变量
      * @return Component
      */
@@ -103,14 +103,14 @@ class Admin
 
     /**
      * 验证权限节点
-     * @param $class 完整类名
-     * @param $function 方法
+     * @param string $class 完整类名
+     * @param string $function 方法
      * @param string $method 请求方法
      * @return bool
      */
     public static function check($class, $function, $method = 'get')
     {
-        $nodeId = md5($class . $function . strtolower($method));
+        $nodeId      = md5($class . $function . strtolower($method));
         $permissions = self::permissions();
         foreach ($permissions as $permission) {
             if ($permission['id'] == $nodeId) {
@@ -134,7 +134,7 @@ class Admin
     {
 
         $permissionsKey = 'eadmin_permissions' . self::id();
-        $nodes = Cache::get($permissionsKey);
+        $nodes          = Cache::get($permissionsKey);
         if ($nodes) {
             return $nodes;
         }
@@ -142,7 +142,7 @@ class Admin
 
         if (self::id()) {
             $permissions = self::user()->permissions();
-            $nodeIds = array_column($permissions, 'node_id');
+            $nodeIds     = array_column($permissions, 'node_id');
         } else {
             $nodeIds = [];
         }
@@ -225,9 +225,9 @@ class Admin
         $data = $url;
         try {
             if (strpos($url, '/') !== false) {
-                $parse = parse_url($url);
-                $path = $parse['path'] ?? '';
-                $vars = [];
+                $parse   = parse_url($url);
+                $path    = $parse['path'] ?? '';
+                $vars    = [];
                 $request = app()->request;
                 if (isset($parse['query'])) {
                     $querys = explode('&', $parse['query']);
@@ -238,7 +238,7 @@ class Admin
                     }
                 }
                 $pathinfo = array_filter(explode('/', $path));
-                $name = current($pathinfo);
+                $name     = current($pathinfo);
                 if ($name == app('http')->getName()) {
                     array_shift($pathinfo);
                 }
@@ -256,8 +256,8 @@ class Admin
                     if ($dispatch instanceof Controller) {
                         list($controller, $action) = $dispatch->getDispatch();
                         $instance = $dispatch->controller($controller);
-                        $reflect = new \ReflectionMethod($instance, $action);
-                        $data = app()->invokeReflectMethod($instance, $reflect, $vars);
+                        $reflect  = new \ReflectionMethod($instance, $action);
+                        $data     = app()->invokeReflectMethod($instance, $reflect, $vars);
                     } elseif ($dispatch instanceof Callback) {
 
                         $data = app()->invoke($dispatch->getDispatch(), $vars);

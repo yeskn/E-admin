@@ -10,9 +10,9 @@ use Eadmin\component\form\Field;
  * 日期选择器
  * Class DatePicker
  * @link https://element-plus.gitee.io/#/zh-CN/component/date-picker
- * @method $this editable(bool $value=true) 文本框可输入
- * @method $this readonly(bool $value=true) 完全只读
- * @method $this clearable(bool $value=true) 是否显示清除按钮
+ * @method $this editable(bool $value = true) 文本框可输入
+ * @method $this readonly(bool $value = true) 完全只读
+ * @method $this clearable(bool $value = true) 是否显示清除按钮
  * @method $this size(string $size) 输入框尺寸    large / medium / small / mini
  * @method $this startPlaceholder(string $text) 范围选择时开始日期的占位内容
  * @method $this endPlaceholder(string $text) 范围选择时开始日期的占位内容
@@ -26,11 +26,11 @@ use Eadmin\component\form\Field;
  * @method $this placeholder(string $text) 非范围选择时的占位内容
  * @method $this prefixIcon(string $icon) 自定义头部图标的类名
  * @method $this clearIcon(string $icon) 自定义清空图标的类名
- * @method $this unlinkPanels(bool $value=true) 在范围选择器里取消两个日期面板之间的联动
- * @method $this validateEvent(bool $value=true) 输入时是否触发表单的校验
- * @method $this shortcuts(bool $value=true) 设置快捷选项，需要传入数组对象 object[{
-text: string, value: Date
-}]
+ * @method $this unlinkPanels(bool $value = true) 在范围选择器里取消两个日期面板之间的联动
+ * @method $this validateEvent(bool $value = true) 输入时是否触发表单的校验
+ * @method $this shortcuts(bool $value = true) 设置快捷选项，需要传入数组对象 object[{
+ * text: string, value: Date
+ * }]
  * @package Eadmin\component\form\field
  */
 class DatePicker extends Field

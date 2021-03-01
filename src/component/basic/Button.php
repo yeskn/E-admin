@@ -30,6 +30,7 @@ use Eadmin\component\Component;
 class Button extends Component
 {
     use Common;
+
     protected $name = 'EadminButton';
 
     public function __construct($content)
@@ -57,7 +58,6 @@ class Button extends Component
         return $dialog;
     }
 
-    
 
     /**
      * 抽屉
@@ -85,9 +85,9 @@ class Button extends Component
 
     /**
      * 保存数据
-     * @param array $data
-     * @param mixed $url
-     * @param string $confirm
+     * @param array $data 数据内容
+     * @param mixed $url 跳转地址
+     * @param string $confirm 消息文案
      * @return $this|Confirm
      */
     public function save(array $data, $url, $confirm = '')

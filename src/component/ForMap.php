@@ -9,36 +9,38 @@
 namespace Eadmin\component;
 
 
-
-
 use think\helper\Str;
 
 trait ForMap
 {
     protected $map = [
-        'attribute'=>[]
+        'attribute' => []
     ];
+
     /**
-     * 遍历绑定字段 
+     * 遍历绑定字段
      * @param string $attrName 属性名称
      * @param string $field 遍历元素中的字段
      * @return $this
      */
-    public function mapAttr($attrName,$field){
+    public function mapAttr($attrName, $field)
+    {
         $this->map['attribute'][$attrName] = $field;
         return $this;
     }
+
     /**
      * 遍历
      * @param array $data 绑定字段
      * @param string $bindName 绑定字段
      * @return $this
      */
-    public function map(array $data,$bindName=null){
-        if(is_null($bindName)){
-            $bindName = Str::random(10,3);
+    public function map(array $data, $bindName = null)
+    {
+        if (is_null($bindName)) {
+            $bindName = Str::random(10, 3);
         }
-        $this->bind($bindName,$data);
+        $this->bind($bindName, $data);
         $this->map['bindName'] = $bindName;
         return $this;
     }

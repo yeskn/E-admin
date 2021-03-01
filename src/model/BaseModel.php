@@ -22,9 +22,10 @@ class BaseModel extends Model
 {
     protected $autoWriteTimestamp = 'datetime';
     protected $globalScope = ['base'];
+
     public function scopeBase($query)
     {
-        $id = $query->getPk();
+        $id          = $query->getPk();
         $tableFields = $query->getTableFields();
         //默认排序
         if (in_array('sort', $tableFields)) {
@@ -37,14 +38,17 @@ class BaseModel extends Model
             $query->whereNull('delete_time');
         }
     }
+
     //分页条件
-    public function scopePages($query,$page=1,$size=10)
+    public function scopePages($query, $page = 1, $size = 10)
     {
         $page = Request::param('page', $page);
         $size = Request::param('size', $size);
         $query->page($page, $size);
     }
-    public function user(){
-        return $this->belongsTo(User::class,'uid');
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'uid');
     }
 }

@@ -29,7 +29,7 @@ class Model implements FormInterface
 
     public function __construct($data)
     {
-        $this->model = $data;
+        $this->model   = $data;
         $this->pkField = $this->model->getPk();
     }
 
@@ -47,7 +47,7 @@ class Model implements FormInterface
             if (isset($data[$this->pkField])) {
                 $isExists = Db::name($this->model->getTable())->where($this->pkField, $data[$this->pkField])->find();
                 if ($isExists) {
-                    $this->data = $this->model->where($this->pkField, $data[$this->pkField])->find();
+                    $this->data  = $this->model->where($this->pkField, $data[$this->pkField])->find();
                     $this->model = $this->model->where($this->pkField, $data[$this->pkField])->find();
                 }
             }

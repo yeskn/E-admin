@@ -15,7 +15,7 @@ use Eadmin\model\AdminModel;
 use Eadmin\Service;
 
 
-class TokenService 
+class TokenService
 {
 
     use ApiJson;
@@ -33,10 +33,10 @@ class TokenService
 
     public function __construct()
     {
-        $key = config('admin.token_key', 'QoYEClMJsgOSWUBkSCq26yWkApqSuH3');
-        $this->model = config('admin.token_model');
+        $key          = config('admin.token_key', 'QoYEClMJsgOSWUBkSCq26yWkApqSuH3');
+        $this->model  = config('admin.token_model');
         $this->unique = config('admin.token_unique', false);
-        $this->key = substr(md5($key), 8, 16);
+        $this->key    = substr(md5($key), 8, 16);
         $this->expire = config('admin.token_expire', 7200);
     }
 
@@ -101,8 +101,8 @@ class TokenService
     public function encode($data)
     {
         $data['expire'] = time() + $this->expire;
-        $str = json_encode($data);
-        $token = openssl_encrypt($str, 'aes-256-cbc', $this->key, 0, self::IV);
+        $str            = json_encode($data);
+        $token          = openssl_encrypt($str, 'aes-256-cbc', $this->key, 0, self::IV);
         if (isset($data['id'])) {
             $cacheKey = 'last_auth_token_' . $data['id'];
             //开启唯一登录就将上次token加入黑名单
@@ -115,7 +115,7 @@ class TokenService
         }
         $this->set($token);
         return [
-            'token' => $token,
+            'token'  => $token,
             'expire' => (int)$this->expire
         ];
     }
@@ -131,7 +131,7 @@ class TokenService
     {
         if (empty($token)) {
             $token = Request::header('Authorization');
-            if(Request::has('Authorization')){
+            if (Request::has('Authorization')) {
                 $token = rawurldecode(Request::get('Authorization'));
             }
         }
@@ -151,7 +151,7 @@ class TokenService
     public function refresh($token = '')
     {
         $token = $token ? $token : Request::header('Authorization');
-        $data = $this->decode($token);
+        $data  = $this->decode($token);
         if ($data) {
             $this->logout($token);
             return $this->encode($data);
@@ -196,7 +196,7 @@ class TokenService
     public function getVar($name)
     {
         $token = self::$token ? self::$token : rawurldecode(Request::header('Authorization'));
-        $data = $this->decode($token);
+        $data  = $this->decode($token);
         if (isset($data[$name])) {
             return $data[$name];
         } else {
@@ -226,7 +226,7 @@ class TokenService
             return null;
         }
         if (is_null(self::$userModel)) {
-            $user = new $this->model;
+            $user            = new $this->model;
             self::$userModel = $user->lock($lock)->find($this->id());
         }
         return self::$userModel;

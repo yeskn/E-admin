@@ -38,7 +38,7 @@ class Plug extends Controller
                 Card::create(
                     Tabs::create()
                         ->pane('全部', $this->grid(0))
-                        ->pane('已安装',$this->grid(1))
+                        ->pane('已安装', $this->grid(1))
                 )
             );
 
@@ -123,7 +123,7 @@ EOF;
             }
             $cmd['name'] = $name;
             $description = $post['description'];
-            $namespace = $post['namespace'];
+            $namespace   = $post['namespace'];
             if (!empty($description)) {
                 array_push($cmd, "--description={$description}");
             }

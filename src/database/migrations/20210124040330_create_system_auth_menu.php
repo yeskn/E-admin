@@ -28,8 +28,8 @@ class CreateSystemAuthMenu extends Migrator
      */
     public function change()
     {
-        $table = $this->table('system_auth_menu',['engine'=>'InnoDB','collation'=>'utf8mb4_unicode_ci'])->setComment('系统-菜单-授权');
-        $table->addColumn(Column::string('menu_id',32)->setDefault('')->setComment('菜单id'));
+        $table = $this->table('system_auth_menu', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_unicode_ci'])->setComment('系统-菜单-授权');
+        $table->addColumn(Column::string('menu_id', 32)->setDefault('')->setComment('菜单id'));
         $table->addColumn(Column::integer('auth_id')->setDefault(0)->setComment('角色'));
         $table->addTimestamps();
         $table->create();

@@ -20,6 +20,11 @@ class Install extends Command
         $this->addOption('force', 'f', Option::VALUE_NONE, 'Force overwrite file');
     }
 
+    /**
+     * 执行命令
+     * @param Input $input
+     * @param Output $output
+     */
     protected function execute(Input $input, Output $output)
     {
         $force = $input->getOption('force');

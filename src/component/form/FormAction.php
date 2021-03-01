@@ -27,10 +27,11 @@ class FormAction extends Component
 
     public function __construct($form)
     {
-        $this->form = $form;
+        $this->form         = $form;
         $this->submitButton = Button::create('保存')->type('primary');
-        $this->resetButton = Button::create('重置');
+        $this->resetButton  = Button::create('重置');
     }
+
     /**
      * 提交按钮
      * @return Button
@@ -69,17 +70,20 @@ class FormAction extends Component
      * 添加左边自定义内容
      * @param string $content
      */
-    public function addLeftAction($content){
-        $this->form->content($content,'leftAction');
+    public function addLeftAction($content)
+    {
+        $this->form->content($content, 'leftAction');
     }
 
     /**
      * 添加右边自定义内容
      * @param string $content
      */
-    public function addRightAction($content){
-        $this->form->content($content,'rightAction');
+    public function addRightAction($content)
+    {
+        $this->form->content($content, 'rightAction');
     }
+
     public function render()
     {
         if ($this->hideResetButton) {
@@ -88,9 +92,9 @@ class FormAction extends Component
         if ($this->hideSubmitButton) {
             $this->submitButton = null;
         }
-        $this->form->attr('action',[
+        $this->form->attr('action', [
             'submit' => $this->submitButton,
-            'reset' => $this->resetButton,
+            'reset'  => $this->resetButton,
         ]);
     }
 }

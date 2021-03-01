@@ -23,8 +23,8 @@ use Eadmin\form\ValidatorForm;
  * @method $this label(string $value) 标签文本
  * @method $this labelWidth(string $value) 表单域标签的的宽度，例如 '50px'。支持 auto
  * @method $this error(string $value) 表单域验证错误信息, 设置该值会使表单验证状态变为error，并显示该错误信息
- * @method $this showMessage(bool $value=true) 是否显示校验错误信息
- * @method $this inlineMessage(bool $value=true) 以行内形式展示校验信息
+ * @method $this showMessage(bool $value = true) 是否显示校验错误信息
+ * @method $this inlineMessage(bool $value = true) 以行内形式展示校验信息
  * @property Form $form
  */
 class FormItem extends Field
@@ -45,36 +45,39 @@ class FormItem extends Field
      * @param int $mode 模式：0新增更新，1新增，2更新
      * @return void
      */
-    public function rules(array $rule,int $mode=0){
-        $prop = $this->attr('prop');
-        $prop = $this->form->manyRelation() ? $this->form->manyRelation().'.'.$prop :$prop;
+    public function rules(array $rule, int $mode = 0)
+    {
+        $prop  = $this->attr('prop');
+        $prop  = $this->form->manyRelation() ? $this->form->manyRelation() . '.' . $prop : $prop;
         $field = $this->form->bindAttr('model') . 'Error.' . $prop;
-        $this->bindAttr('error',$field);
-        if($mode == 1){
-            $this->form->validator()->createRule($prop,$rule);
-        }elseif ($mode == 2){
-            $this->form->validator()->updateRule($prop,$rule);
-        }else{
-            $this->form->validator()->rule($prop,$rule);
+        $this->bindAttr('error', $field);
+        if ($mode == 1) {
+            $this->form->validator()->createRule($prop, $rule);
+        } elseif ($mode == 2) {
+            $this->form->validator()->updateRule($prop, $rule);
+        } else {
+            $this->form->validator()->rule($prop, $rule);
         }
     }
 
     /**
      * @return Form
      */
-    public function form(){
+    public function form()
+    {
         return $this->form;
     }
+
     /**
      * 是否必填
      * @return $this
      */
     public function required()
     {
-        $this->attr('rules',[
+        $this->attr('rules', [
                 'required' => true,
-                'trigger' => 'blur',
-                'message' => $this->attr('label').'不能为空',
+                'trigger'  => 'blur',
+                'message'  => $this->attr('label') . '不能为空',
             ]
         );
         return $this;

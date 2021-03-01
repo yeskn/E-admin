@@ -12,16 +12,18 @@ use think\helper\Str;
 /**
  * Class Field
  * @package Eadmin\component\form
- * @method $this disabled(bool $vlaue=true) 禁用
+ * @method $this disabled(bool $vlaue = true) 禁用
  * @property FormItem $formItem
  */
 abstract class Field extends Component
 {
     use WhenForm;
+
     protected $default = null;
     protected $value = null;
     protected $formItem;
     protected $md = 24;
+
     public function __construct($field = null, $value = '')
     {
         $this->bindValue($field, $value);
@@ -32,14 +34,16 @@ abstract class Field extends Component
      * @param int $span
      * @return $this
      */
-    public function md(int $span=24){
+    public function md(int $span = 24)
+    {
         $this->md = $span;
-        if( $this->formItem){
+        if ($this->formItem) {
             $this->formItem->md($span);
         }
 
         return $this;
     }
+
     /**
      * 表单新增更新验证规则
      * @Author: rocky
@@ -60,7 +64,7 @@ abstract class Field extends Component
      */
     public function createRule(array $rule)
     {
-        $this->formItem->rules($rule,1);
+        $this->formItem->rules($rule, 1);
         return $this;
     }
 
@@ -72,60 +76,82 @@ abstract class Field extends Component
      */
     public function updateRule(array $rule)
     {
-        $this->formItem->rules($rule,2);
+        $this->formItem->rules($rule, 2);
         return $this;
     }
+
     /**
      * 是否必填
      * @return $this
      */
-    public function required(){
+    public function required()
+    {
         $this->formItem->required();
         return $this;
     }
-    public function setFormItem(FormItem $formItem){
+
+    public function setFormItem(FormItem $formItem)
+    {
         $this->formItem = $formItem;
     }
+
     /**
      * 设置缺省默认值
      * @param mixed $value
      */
-    public function default($value){
+    public function default($value)
+    {
         $this->default = $value;
         return $this;
     }
-    public function append($content){
+
+    public function append($content)
+    {
         $this->formItem->content($content);
         return $this;
     }
-    public function help($content){
-        $this->formItem->content(Html::create($content)->attr('style',['fontSize'=>'12px']));
+
+    /**
+     * 帮助内容
+     * @param string $content 内容
+     * @return $this
+     */
+    public function help($content)
+    {
+        $this->formItem->content(Html::create($content)->attr('style', ['fontSize' => '12px']));
         return $this;
     }
+
     /**
      * 获取缺省默认值
      * @return |null
      */
-    protected function getDefault(){
+    protected function getDefault()
+    {
         return $this->default;
     }
+
     /**
      * 获取设置固定值
      * @return |null
      */
-    protected function getValue(){
+    protected function getValue()
+    {
         return $this->value;
     }
+
     /**
      * 设置值
      * @param mixed $value
      */
-    public function value($value){
+    public function value($value)
+    {
         $this->value = $value;
-        $field = $this->bindAttr('modelValue');
-        $this->bind($field,$value);
+        $field       = $this->bindAttr('modelValue');
+        $this->bind($field, $value);
         return $this;
     }
+
     /**
      * 创建
      * @param string $field 字段
@@ -147,7 +173,7 @@ abstract class Field extends Component
         empty($field) ? $field = Str::random(30, 3) : $field;
         $this->bind($field, $value);
 
-        $this->bindAttr('modelValue',$field,true);
+        $this->bindAttr('modelValue', $field, true);
         return $this;
     }
 }

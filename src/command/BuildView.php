@@ -28,19 +28,41 @@ class BuildView extends Make
     {
 
     }
+
+    /**
+     * 获取文件路径
+     * @param string $name 文件名
+     * @return string
+     */
     protected function getStubs($name)
     {
         $stubPath = __DIR__ . DIRECTORY_SEPARATOR . 'buildview' . DIRECTORY_SEPARATOR;
 
         return $stubPath . $name.'.stub';
     }
-    
+
+    /**
+     * 获取类名
+     * @param string $module 模块名
+     * @param string $name 模型名
+     * @return string
+     */
     protected function getClassNames($module,$name)
     {
         return parent::getClassName($this->getNamespace( $module) . '\\' . $name) . (Config::get('controller_suffix') ? ucfirst(Config::get('url_controller_layer')) : '');
     }
-    
-    protected function buildClasss($name,$type,$model='',$model_namespace='',$grid='',$detail='',$form='')
+
+    /**
+     * @param string $name 类名
+     * @param string $type  文件名
+     * @param string $model 模型名
+     * @param string $model_namespace 模型命名空间
+     * @param string $grid 表格
+     * @param string $detail 详情
+     * @param string $form 表单
+     * @return false|string|string[]
+     */
+    protected function buildClasses($name,$type,$model='',$model_namespace='',$grid='',$detail='',$form='')
     {
         $stub = file_get_contents($this->getStubs($type));
         
@@ -59,6 +81,11 @@ class BuildView extends Make
         ], $stub);
     }
 
+    /**
+     * 获取表信息
+     * @param string $model 模型名称
+     * @return string[]
+     */
     protected function getTableInfo($model){
         $db = Db::name($model);
         $tableInfo= Db::query('SHOW FULL COLUMNS FROM '.$db->getTable());
@@ -124,6 +151,13 @@ class BuildView extends Make
             $form,
         ];
     }
+
+    /**
+     * 执行命令
+     * @param Input $input
+     * @param Output $output
+     * @return bool
+     */
     protected function execute(Input $input, Output $output)
     {
 
@@ -152,7 +186,7 @@ class BuildView extends Make
             }
             list($grid,$detail,$form) = $this->getTableInfo($model);
             if (!is_file($pathname)) {
-                file_put_contents($pathname, $this->buildClasss($classname_model,'model'));
+                file_put_contents($pathname, $this->buildClasses($classname_model,'model'));
             }
             
         }
@@ -174,7 +208,7 @@ class BuildView extends Make
             mkdir(dirname($pathname), 0755, true);
         }
         if (!is_file($pathname)) {
-            file_put_contents($pathname, $this->buildClasss($classname,'controller',$model,$classname_model,$grid,$detail,$form));
+            file_put_contents($pathname, $this->buildClasses($classname,'controller',$model,$classname_model,$grid,$detail,$form));
         }
         $output->writeln('<info>created successfully.</info>');
     }

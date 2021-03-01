@@ -14,25 +14,36 @@ use Eadmin\contract\FormInterface;
 
 class Config implements FormInterface
 {
-    public function __construct($data=null){
-        
+    public function __construct($data = null)
+    {
+
     }
-    public function getPk(){
+
+    public function getPk()
+    {
         return 'id';
     }
-    public function setPkField(string $field){
-        
+
+    public function setPkField(string $field)
+    {
+
     }
-    public function getData(string $field = null,$data = null){
+
+    public function getData(string $field = null, $data = null)
+    {
         return Admin::sysconf($field);
     }
-    public function save(array $data){
-        foreach ($data as $field=>$value){
-           Admin::sysconf($field,$value);
+
+    public function save(array $data)
+    {
+        foreach ($data as $field => $value) {
+            Admin::sysconf($field, $value);
         }
         return true;
     }
-    public function edit($id){
-        
+
+    public function edit($id)
+    {
+
     }
 }

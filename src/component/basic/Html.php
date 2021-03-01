@@ -9,23 +9,27 @@ use Eadmin\component\Component;
 class Html extends Component
 {
     protected $name = 'html';
-    public function __construct($content='')
+
+    public function __construct($content = '')
     {
         $this->tag('span');
-        if(!empty($content)){
+        if (!empty($content)) {
             $this->content($content);
         }
     }
 
     /**
      * 自定义元素标签
-     * @param $tag 元素标签
+     * @param string $tag 元素标签
      */
-    public function tag($tag){
-        $this->attr('data-tag',$tag);
+    public function tag($tag)
+    {
+        $this->attr('data-tag', $tag);
         return $this;
     }
-    public static function create($content=''){
+
+    public static function create($content = '')
+    {
         return new static($content);
     }
 }

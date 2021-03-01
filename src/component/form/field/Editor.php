@@ -28,13 +28,13 @@ class Editor extends Field
 
     /**
      * 上传存储类型
-     * @param $uptype local,qiniu,oss
+     * @param string $diskType local,qiniu,oss
      */
     public function disk($diskType)
     {
-        $config = config('filesystem.disks.' . $diskType);
-        $uptype = $config['type'];
-        $accessKey = '';
+        $config          = config('filesystem.disks.' . $diskType);
+        $uptype          = $config['type'];
+        $accessKey       = '';
         $accessKeySecret = '';
         $this->attr('upType', $uptype);
         if ($uptype == 'qiniu') {
@@ -57,7 +57,7 @@ class Editor extends Field
 
     /**
      * 高度
-     * @param $number
+     * @param int $number
      */
     public function height($number)
     {
@@ -67,7 +67,7 @@ class Editor extends Field
 
     /**
      * 宽度
-     * @param $number
+     * @param int $number
      */
     public function width($number)
     {

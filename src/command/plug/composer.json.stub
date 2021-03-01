@@ -13,7 +13,8 @@
     ],
     "require": {
         "php": ">=7.1.0",
-        "rockys/e-admin": "1.0.x-dev"
+        "rockys/e-admin": "1.0.x-dev",
+        "ext-json": "*"
     },
     "autoload": {
         "psr-4": {

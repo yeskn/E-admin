@@ -5,6 +5,7 @@
  * Date: 2021-01-12
  * Time: 23:43
  */
+
 namespace Eadmin\grid\drive;
 
 
@@ -47,11 +48,12 @@ class Model implements GridInterface
     //删除前回调
     protected $beforeDel = null;
 
-    public function __construct($model){
-        $this->model = $model;
-        $this->db = $this->model->db();
+    public function __construct($model)
+    {
+        $this->model       = $model;
+        $this->db          = $this->model->db();
         $this->tableFields = $this->model->getTableFields();
-        $this->pkField = $this->model->getPk();
+        $this->pkField     = $this->model->getPk();
         if (in_array($this->softDeleteField, $this->tableFields)) {
             $this->isSotfDelete = true;
             if (request()->has('eadmin_deleted')) {
@@ -71,11 +73,12 @@ class Model implements GridInterface
     {
         return $this->isSotfDelete;
     }
+
     //预关联加载
     protected function withRelations()
     {
         $this->relations = array_unique($this->relations);
-        $with = $this->db->getOptions('with');
+        $with            = $this->db->getOptions('with');
         if (is_null($with)) {
             $with = [];
         }
@@ -87,9 +90,10 @@ class Model implements GridInterface
 
     /**
      * 解析关联方法设置
-     * @param $realiton 关联方法
+     * @param string $relation 关联方法
      */
-    protected function realiton($relation){
+    protected function realiton($relation)
+    {
         $fields = explode('.', $relation);
         if (count($fields) > 1) {
             array_pop($fields);
@@ -101,35 +105,39 @@ class Model implements GridInterface
             $this->setRelation($relation, $relation);
         }
     }
-    public function getData(bool $hidePage,int $page, int $size)
+
+    public function getData(bool $hidePage, int $page, int $size)
     {
-        if($hidePage){
+        if ($hidePage) {
             return $this->db->select();;
-        }else{
+        } else {
             return $this->db->page($page, $size)->select();
         }
     }
+
     public function getPk()
     {
         return $this->pkField;
     }
+
     //获取数据总条数
     public function getTotal(): int
     {
-        if($this->db){
-            $sql = $this->db->buildSql();
-            $sql = "SELECT COUNT(*) FROM {$sql} userCount";
-            $res = \think\facade\Db::query($sql);
+        if ($this->db) {
+            $sql   = $this->db->buildSql();
+            $sql   = "SELECT COUNT(*) FROM {$sql} userCount";
+            $res   = \think\facade\Db::query($sql);
             $count = $res[0]['COUNT(*)'];
-        }else{
+        } else {
             $count = count($this->data);
         }
         return $count;
     }
+
     /**
      * 设置预加载关联
-     * @param $ifRelation 关联方法名称
-     * @param $relation 关联方法
+     * @param string $ifRelation 关联方法名称
+     * @param mixed $relation 关联方法
      */
     private function setRelation($ifRelation, $relation)
     {
@@ -142,18 +150,19 @@ class Model implements GridInterface
             $this->relations[] = $relation;
         }
     }
+
     //快捷搜索
-    public function quickFilter($keyword,$columns)
+    public function quickFilter($keyword, $columns)
     {
         if ($keyword) {
-            $whereFields = [];
-            $whereOr = [];
+            $whereFields         = [];
+            $whereOr             = [];
             $relationWhereFields = [];
-            $relationWhereOr = [];
+            $relationWhereOr     = [];
             foreach ($columns as $column) {
-                $field = $column->getField();
+                $field  = $column->getField();
                 $fields = explode('.', $field);
-                $field = end($fields);
+                $field  = end($fields);
                 $usings = $column->getUsing();
                 if (count($fields) > 1) {
                     array_pop($fields);
@@ -184,24 +193,24 @@ class Model implements GridInterface
             //快捷搜索
             $relationWhereSqls = [];
             foreach ($this->relations as $relationName) {
-                $relations = explode('.', $relationName);
-                $Tmprelations = $relations;
-                $relation = array_pop($Tmprelations);
+                $relations      = explode('.', $relationName);
+                $Tmprelations   = $relations;
+                $relation       = array_pop($Tmprelations);
                 $relationFilter = implode('.', $relations);
-                $model = get_class($this->model);
-                $filter = new Filter(new $model);
+                $model          = get_class($this->model);
+                $filter         = new Filter(new $model);
                 $filter->setIfWhere(false);
                 $db = $this->model;
                 foreach ($relations as $relation) {
                     $db = $db->getModel()->$relation();
                 }
-                $filter->relationLastDb($db,$relation);
-                $relationName = $relation;
+                $filter->relationLastDb($db, $relation);
+                $relationName        = $relation;
                 $relationTableFields = $db->getTableFields();
                 if (isset($relationWhereFields[$relationName])) {
                     $relationWhereFields[$relationName] = array_intersect($relationWhereFields[$relationName], $relationTableFields);
-                    $fields = implode('|', $relationWhereFields[$relationName]);
-                    $relationWhereCondtion = $relationWhereOr[$relationName] ?? [];
+                    $fields                             = implode('|', $relationWhereFields[$relationName]);
+                    $relationWhereCondtion              = $relationWhereOr[$relationName] ?? [];
                     $db->where(function ($q) use ($fields, $keyword, $relationWhereCondtion) {
                         foreach ($relationWhereCondtion as $field => $value) {
                             $q->whereOr($field, $value);
@@ -210,9 +219,9 @@ class Model implements GridInterface
                     });
                     $filter->paseFilter(null, $relationFilter . '.');
                     $wheres = $filter->db()->getOptions('where');
-                    foreach ($wheres['AND'] as $where){
-                        if($where[1] == 'EXISTS'){
-                            $relationWhereSqls[]  = $where[2];
+                    foreach ($wheres['AND'] as $where) {
+                        if ($where[1] == 'EXISTS') {
+                            $relationWhereSqls[] = $where[2];
                             break;
                         }
                     }
@@ -230,17 +239,18 @@ class Model implements GridInterface
             });
         }
     }
+
     /**
      * 更新数据
      * @param array $ids 更新条件id
      * @param array $data 更新数据
      * @return Model
      */
-    public function update(array $ids,array $data)
+    public function update(array $ids, array $data)
     {
         $action = isset($data['action']) ? $data['action'] : '';
         if ($action == 'eadmin_sort') {
-            $field = "id,(@rownum := @rownum+1),case when @rownum = {$data['sort']} then @rownum := @rownum+1 else @rownum := @rownum end AS rownum";
+            $field   = "id,(@rownum := @rownum+1),case when @rownum = {$data['sort']} then @rownum := @rownum+1 else @rownum := @rownum end AS rownum";
             $sortSql = $this->db->table("(SELECT @rownum := -1) r," . $this->model->getTable())
                 ->fieldRaw($field)
                 ->removeOption('order')
@@ -249,7 +259,7 @@ class Model implements GridInterface
                 ->buildSql();
             $this->model->where($this->model->getPk(), $data['id'])->update([$this->sortField => $data['sort']]);
             $res = Db::execute("update {$this->model->getTable()} inner join {$sortSql} a on a.id={$this->model->getTable()}.id set {$this->sortField}=a.rownum");
-            admin_success('操作完成','排序成功');
+            admin_success('操作完成', '排序成功');
         } else {
             $res = $this->model->removeWhereField($this->softDeleteField)->strict(false)->whereIn($this->model->getPk(), $ids)->update($data);
             if ($res) {
@@ -267,13 +277,15 @@ class Model implements GridInterface
     {
         $this->sortField = $sortField;
     }
+
     /**
      * 删除数据
+     * @param bool|array $ids 要删除的id true数据清空
      */
     public function destroy($ids)
     {
         $trueDelete = Request::delete('trueDelete');
-        $res = true;
+        $res        = true;
         Db::startTrans();
         try {
             $this->db->removeWhereField($this->softDeleteField);
@@ -282,18 +294,18 @@ class Model implements GridInterface
                     $res = $this->db->where('1=1')->update([$this->softDeleteField => date('Y-m-d H:i:s')]);
                 } else {
                     if (in_array($this->softDeleteField, $this->tableFields)) {
-                        $deleteDatas = $this->db->field($this->model()->getPk())->whereNotNull($this->softDeleteField)->select();
+                        $deleteData = $this->db->field($this->model()->getPk())->whereNotNull($this->softDeleteField)->select();
                     } else {
-                        $deleteDatas = $this->db->field($this->model()->getPk())->select();
+                        $deleteData = $this->db->field($this->model()->getPk())->select();
                     }
-                    $this->deleteRelationData($deleteDatas);
+                    $this->deleteRelationData($deleteData);
                 }
             } else {
                 if ($this->isSotfDelete && !$trueDelete) {
                     $res = Db::name($this->model->getTable())->whereIn($this->model->getPk(), $ids)->update([$this->softDeleteField => date('Y-m-d H:i:s')]);
                 } else {
-                    $deleteDatas = $this->model->field($this->model()->getPk())->removeOption('where')->whereIn($this->model->getPk(), $ids)->select();
-                    $this->deleteRelationData($deleteDatas);
+                    $deleteData = $this->model->field($this->model()->getPk())->removeOption('where')->whereIn($this->model->getPk(), $ids)->select();
+                    $this->deleteRelationData($deleteData);
                 }
             }
             Db::commit();
@@ -306,32 +318,32 @@ class Model implements GridInterface
 
     /**
      * 删除关联数据
-     * @param $deleteDatas
+     * @param mixed $deleteData
      * @throws \ReflectionException
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    protected function deleteRelationData($deleteDatas)
+    protected function deleteRelationData($deleteData)
     {
 
-        $reflection = new \ReflectionClass($this->model);
-        $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
-        $className = $reflection->getName();
-        $relatonMethod = [];
+        $reflection    = new \ReflectionClass($this->model);
+        $methods       = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
+        $className     = $reflection->getName();
+        $relationMethod = [];
         foreach ($methods as $method) {
             if ($method->class == $className) {
                 $relation = $method->name;
-                $p = new \ReflectionMethod($method->class, $relation);
+                $p        = new \ReflectionMethod($method->class, $relation);
                 if ($p->getNumberOfParameters() == 0 && !$p->isStatic()) {
                     if ($this->model->$relation() instanceof BelongsToMany) {
-                        foreach ($deleteDatas as $deleteData) {
-                            $deleteData->$relation()->detach();
+                        foreach ($deleteData as $data) {
+                            $data->$relation()->detach();
                         }
                     } elseif ($this->model->$relation() instanceof HasOne) {
-                        foreach ($deleteDatas as $deleteData) {
-                            if (!is_null($deleteData->$relation)) {
-                                $deleteData->$relation->delete();
+                        foreach ($deleteData as $data) {
+                            if (!is_null($data->$relation)) {
+                                $data->$relation->delete();
                             }
                         }
                     }
@@ -339,9 +351,10 @@ class Model implements GridInterface
             }
         }
         //模型全局查询影响，这里用db删除
-        $deleteIds = $deleteDatas->column($this->model->getPk());
+        $deleteIds = $deleteData->column($this->model->getPk());
         Db::name($this->model->getTable())->delete($deleteIds);
     }
+
     /**
      * 获取当前模型的数据库查询对象
      * @return Model
@@ -350,6 +363,7 @@ class Model implements GridInterface
     {
         return $this->model;
     }
+
     /**
      * 获取当前模型的数据库查询对象
      * @return \think\Db

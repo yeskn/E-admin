@@ -67,11 +67,11 @@ class SelectTable extends Field
     public function options(\Closure $closure)
     {
         if (Request::has('eadminSelectTable') && Request::get('eadmin_field') == $this->bindAttr('modelValue')) {
-            $datas = call_user_func($closure, Request::get('eadmin_id',[]));
+            $datas   = call_user_func($closure, Request::get('eadmin_id', []));
             $options = [];
             foreach ($datas as $key => $value) {
                 $options[] = [
-                    'id' => $key,
+                    'id'    => $key,
                     'label' => $value
                 ];
             }

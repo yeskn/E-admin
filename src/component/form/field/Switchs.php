@@ -22,6 +22,7 @@ use Eadmin\component\form\Field;
 class Switchs extends Field
 {
     protected $name = 'EadminSwitch';
+
     public function __construct($field = null, $value = '')
     {
         parent::__construct($field, $value);

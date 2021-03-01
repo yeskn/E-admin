@@ -12,9 +12,10 @@ namespace Eadmin\component\basic;
 class Component extends \Eadmin\component\Component
 {
     protected $name = 'component';
+
     public static function create($content)
     {
-        $self =  new static();
+        $self = new static();
         $self->content($content);
         return $self;
     }

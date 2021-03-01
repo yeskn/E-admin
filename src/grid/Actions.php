@@ -85,14 +85,14 @@ class Actions extends Html
     {
         //是否隐藏详情
         if (!$this->hideDetailButton && !is_null($this->grid->detailAction())) {
-            $text = '<i class="el-icon-info"> ' . $this->detailText;
+            $text   = '<i class="el-icon-info"> ' . $this->detailText;
             $detail = $this->grid->detailAction()->detail();
             $action = clone $this->grid->detailAction()->component();
             if ($action instanceof Html) {
                 $button = $action->content($text)->redirect("eadmin/{$this->id}.rest", $detail->getCallMethod());
                 $this->dropdown->item($button);
             } else {
-                $button = $action->title($this->detailText)->bindValue(null, false)->url("/eadmin/{$this->id}.rest")->params(['eadmin_layout' => true] + $detail->getCallMethod());
+                $button  = $action->title($this->detailText)->bindValue(null, false)->url("/eadmin/{$this->id}.rest")->params(['eadmin_layout' => true] + $detail->getCallMethod());
                 $visible = $button->bindAttr('modelValue');
                 $this->dropdown->content($button, 'reference');
                 $item = $this->dropdown->item($text);
@@ -101,14 +101,14 @@ class Actions extends Html
         }
         //是否隐藏编辑
         if (!$this->hideEditButton && !is_null($this->grid->formAction())) {
-            $text = '<i class="el-icon-edit"> ' . $this->editText;
-            $form = $this->grid->formAction()->form()->renderable();
+            $text   = '<i class="el-icon-edit"> ' . $this->editText;
+            $form   = $this->grid->formAction()->form()->renderable();
             $action = clone $this->grid->formAction()->component();
             if ($action instanceof Html) {
                 $button = $action->content($text)->redirect("eadmin/{$this->id}/edit.rest", ['eadmin_description' => $this->editText] + $form->getCallMethod());
                 $this->dropdown->item($button);
             } else {
-                $button = $action->bindValue(null, false)->title($this->editText)->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod());
+                $button  = $action->bindValue(null, false)->title($this->editText)->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod());
                 $visible = $button->bindAttr('modelValue');
                 $this->dropdown->content($button, 'reference');
                 $item = $this->dropdown->item($text);
@@ -118,11 +118,11 @@ class Actions extends Html
         }
         //是否隐藏删除
         if (!$this->hideDelButton) {
-            $text = '<i class="el-icon-help"> ' . $this->delText;
+            $text   = '<i class="el-icon-help"> ' . $this->delText;
             $params = $this->grid->getCallMethod();
             if (request()->has('eadmin_deleted')) {
-                $text = '<i class="el-icon-help"> 恢复数据 ';
-                $url = "/eadmin/batch.rest";
+                $text    = '<i class="el-icon-help"> 恢复数据 ';
+                $url     = "/eadmin/batch.rest";
                 $confirm = Confirm::create($text)->message('确认恢复？')
                     ->url($url)
                     ->type('warning')
@@ -130,9 +130,9 @@ class Actions extends Html
                     ->method('put');
                 $this->dropdown->item($confirm);
                 $params['trueDelete'] = true;
-                $text = '<i class="el-icon-delete"> 彻底删除';
+                $text                 = '<i class="el-icon-delete"> 彻底删除';
             }
-            $url = '/eadmin/' . $this->id . '.rest';
+            $url     = '/eadmin/' . $this->id . '.rest';
             $confirm = Confirm::create($text)->message('确认删除？')
                 ->url($url)
                 ->type('error')
@@ -165,7 +165,7 @@ class Actions extends Html
                 ->type('primary')
                 ->size('small')
                 ->icon('el-icon-edit');
-            $form = $this->grid->formAction()->form();
+            $form   = $this->grid->formAction()->form();
             $action = clone $this->grid->formAction()->component();
             if ($action instanceof Html) {
                 $button = $action->content($button)->redirect("eadmin/{$this->id}/edit.rest", ['eadmin_description' => $this->editText] + $form->getCallMethod());
@@ -176,7 +176,7 @@ class Actions extends Html
         }
         //是否隐藏删除
         if (!$this->hideDelButton) {
-            $text = $this->delText;
+            $text   = $this->delText;
             $params = $this->grid->getCallMethod();
             if (request()->has('eadmin_deleted')) {
                 $this->content(
@@ -186,7 +186,7 @@ class Actions extends Html
                         ->save($params + ['delete_time' => null, 'eadmin_ids' => [$this->id]], "/eadmin/batch.rest", '确认恢复?')->method('put')
                 );
                 $params['trueDelete'] = true;
-                $text = '彻底删除';
+                $text                 = '彻底删除';
             }
             $url = '/eadmin/' . $this->id . '.rest';
             $this->content(

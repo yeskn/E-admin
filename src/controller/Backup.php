@@ -34,24 +34,24 @@ class Backup extends Controller
      * @login true
      * @return $this
      */
-    public function index() : Grid
+    public function index(): Grid
     {
-        $datas = BackupData::instance()->getBackUpList();
-        $grid = new Grid($datas);
+        $data = BackupData::instance()->getBackUpList();
+        $grid  = new Grid($data);
         $grid->title('数据库备份');
         $grid->column('name', '备份名称');
         $grid->column('size', '备份大小');
         $grid->column('create_time', '备份时间');
-        $grid->actions(function (Actions $actions,$data){
+        $grid->actions(function (Actions $actions, $data) {
             $actions->prepend(
                 Button::create('还原')
                     ->typePrimary()
                     ->sizeSmall()
-                    ->save(['id'=>$data['id']],'backup/reduction','确认还原备份？')
+                    ->save(['id' => $data['id']], 'backup/reduction', '确认还原备份？')
             );
         });
-        $grid->deling(function ($ids){
-            foreach ($ids as $id){
+        $grid->deling(function ($ids) {
+            foreach ($ids as $id) {
                 BackupData::instance()->delete($id);
             }
         });
@@ -59,8 +59,6 @@ class Backup extends Controller
         $grid->tools('backup/config');
         return $grid;
     }
-
-
 
 
     /**
@@ -79,8 +77,8 @@ class Backup extends Controller
         ])->default(0)->themeButton();
         $form->number('database_number', '最多保留')->min(1)->append('<span style="padding-left: 12px">份</span>')->required();
         $form->number('database_day', '	数据库每')->min(1)->append('<span style="padding-left: 12px">天自动备份</span>')->required();
-        $form->actions(function (FormAction $action){
-            $action->addRightAction(Button::create('备份数据库')->typeWarning()->sizeMini()->save([],'backup/add'));
+        $form->actions(function (FormAction $action) {
+            $action->addRightAction(Button::create('备份数据库')->typeWarning()->sizeMini()->save([], 'backup/add'));
             $action->hideResetButton();
         });
         return $form;

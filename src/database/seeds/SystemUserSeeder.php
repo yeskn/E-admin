@@ -15,10 +15,10 @@ class SystemUserSeeder extends Seeder
     public function run()
     {
         $data = [
-            'id'=>1,
+            'id'       => 1,
             'username' => 'admin',
             'nickname' => 'admin',
-            'password' => password_hash('admin',PASSWORD_DEFAULT),
+            'password' => password_hash('admin', PASSWORD_DEFAULT),
         ];
         $this->table('system_user')->insert($data)->save();
     }

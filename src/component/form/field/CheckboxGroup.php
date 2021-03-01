@@ -56,8 +56,8 @@ class CheckboxGroup extends Field
                 $disabled = false;
             }
             $options[] = [
-                'value' => $value,
-                'label' => $label,
+                'value'    => $value,
+                'label'    => $label,
                 'disabled' => $disabled,
             ];
         }

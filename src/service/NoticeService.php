@@ -16,111 +16,120 @@ use Eadmin\Service;
 class NoticeService extends Service
 {
     protected $cacheKey = 'eadmin_notice_list';
+
     /**
      * 推送通知(图标)-指定用户
-     * @param $uid 用户id
-     * @param $title 标题
-     * @param $content 内容
-     * @param $icon 图标
-     * @param $iconColor 图标颜色
-     * @param $url 跳转链接
+     * @param int $uid 用户id
+     * @param string $title 标题
+     * @param string $content 内容
+     * @param string $icon 图标
+     * @param string $iconColor 图标颜色
+     * @param string $url 跳转链接
      */
-    public function pushIcon($uid,$title, $content,$icon,$iconColor='',$url='' )
+    public function pushIcon($uid, $title, $content, $icon, $iconColor = '', $url = '')
     {
-        return $this->push($uid,$title, $content,$icon,$iconColor,$url,1);
+        return $this->push($uid, $title, $content, $icon, $iconColor, $url, 1);
     }
+
     /**
      * 推送通知(头像图片)-指定用户
-     * @param $uid 用户id
-     * @param $title 标题
-     * @param $content 内容
-     * @param $avatar 头像图片
-     * @param $iconColor 图标颜色
-     * @param $url 跳转链接
+     * @param int $uid 用户id
+     * @param string $title 标题
+     * @param string $content 内容
+     * @param string $avatar 头像图片
+     * @param string $iconColor 图标颜色
+     * @param string $url 跳转链接
      */
-    public function pushAvatar($uid,$title, $content,$avatar,$iconColor='',$url='' )
+    public function pushAvatar($uid, $title, $content, $avatar, $iconColor = '', $url = '')
     {
-        return $this->push($uid,$title, $content,$avatar,$iconColor,$url,2);
+        return $this->push($uid, $title, $content, $avatar, $iconColor, $url, 2);
     }
+
     /**
      * 推送通知(图标)-全部用户
-     * @param $title 标题
-     * @param $content 内容
-     * @param $icon 图标
-     * @param $iconColor 图标颜色
-     * @param $url 跳转链接
+     * @param string $title 标题
+     * @param string $content 内容
+     * @param string $icon 图标
+     * @param string $iconColor 图标颜色
+     * @param string $url 跳转链接
      */
-    public function pushIconAll($title, $content,$icon,$iconColor='',$url=''){
-        return $this->pushAll($title, $content,$icon,$iconColor,$url,1);
+    public function pushIconAll($title, $content, $icon, $iconColor = '', $url = '')
+    {
+        return $this->pushAll($title, $content, $icon, $iconColor, $url, 1);
     }
+
     /**
      * 推送通知(图标)-全部用户
-     * @param $title 标题
-     * @param $content 内容
-     * @param $avatar 头像图片
-     * @param $iconColor 图标颜色
-     * @param $url 跳转链接
+     * @param string $title 标题
+     * @param string $content 内容
+     * @param string $avatar 头像图片
+     * @param string $iconColor 图标颜色
+     * @param string $url 跳转链接
      */
-    public function pushAvatarAll($title, $content,$avatar,$iconColor='',$url=''){
-        return $this->pushAll($title, $content,$avatar,$iconColor,$url,2);
+    public function pushAvatarAll($title, $content, $avatar, $iconColor = '', $url = '')
+    {
+        return $this->pushAll($title, $content, $avatar, $iconColor, $url, 2);
     }
+
     /**
      * 推送通知(图标)-全部用户
-     * @param $title 标题
-     * @param $content 内容
-     * @param $icon 图标
-     * @param $iconColor 图标颜色
-     * @param $url 跳转链接
-     * @param $type 类型:1图标,2头像
+     * @param string $title 标题
+     * @param string $content 内容
+     * @param string $icon 图标
+     * @param string $iconColor 图标颜色
+     * @param string $url 跳转链接
+     * @param int $type 类型:1图标,2头像
      */
-    public function pushAll($title, $content,$icon,$iconColor='',$url='',$type){
-        $uids = AdminModel::column('id');
-        foreach ($uids as $uid){
-            if($type == 1){
-                $res = $this->pushIcon($uid,$title,$content,$icon,$iconColor,$url);
-            }else{
-                $res = $this->pushAvatar($uid,$title,$content,$icon,$iconColor,$url);
+    public function pushAll($title, $content, $icon, $iconColor = '', $url = '', $type = 1)
+    {
+        $userIds = AdminModel::column('id');
+        foreach ($userIds as $user_id) {
+            if ($type == 1) {
+                $res = $this->pushIcon($user_id, $title, $content, $icon, $iconColor, $url);
+            } else {
+                $res = $this->pushAvatar($user_id, $title, $content, $icon, $iconColor, $url);
             }
 
         }
         return $res;
     }
+
     /**
      * 推送通知(图标)-指定用户
-     * @param $uid 用户id
-     * @param $title 标题
-     * @param $content 内容
-     * @param $avatar 图标
-     * @param $iconColor 图标颜色
-     * @param $url 跳转链接
-     * @param $type 类型:1图标,2头像
+     * @param int $uid 用户id
+     * @param string $title 标题
+     * @param string $content 内容
+     * @param string $avatar 图标
+     * @param string $iconColor 图标颜色
+     * @param string $url 跳转链接
+     * @param int $type 类型:1图标,2头像
      */
-    protected function push($uid,$title, $content,$avatar,$iconColor='',$url='',$type=1)
+    protected function push($uid, $title, $content, $avatar, $iconColor = '', $url = '', $type = 1)
     {
         $cacheKey = $this->cacheKey . $uid;
-        $pushData = [
-            'title' => $title,
-            'content' => $content.PHP_EOL.PHP_EOL.date('Y-m-d H:i'),
-            'url' => $url,
-            'avatar'=>$avatar,
-            'type'=>$type,
+        $data = [
+            'title'   => $title,
+            'content' => $content . PHP_EOL . PHP_EOL . date('Y-m-d H:i'),
+            'url'     => $url,
+            'avatar'  => $avatar,
+            'type'    => $type,
         ];
-        if($this->app->cache->has($cacheKey)){
-            $pushDatas = $this->app->cache->get($cacheKey);
-            array_push($pushDatas,$pushData);
-        }else{
-            $pushDatas[] = $pushData;
+        if ($this->app->cache->has($cacheKey)) {
+            $pushData = $this->app->cache->get($cacheKey);
+            array_push($pushData, $data);
+        } else {
+            $pushData[] = $data;
         }
         SystemNotice::create([
-            'user_id'=>$uid,
-            'title'=>$title,
-            'content'=>$content,
-            'target_url'=>$url,
-            'type'=>$type,
-            'avatar'=>$avatar,
-            'color'=>$iconColor
+            'user_id'    => $uid,
+            'title'      => $title,
+            'content'    => $content,
+            'target_url' => $url,
+            'type'       => $type,
+            'avatar'     => $avatar,
+            'color'      => $iconColor
         ]);
-        return $this->app->cache->set($cacheKey,$pushDatas);
+        return $this->app->cache->set($cacheKey, $pushData);
     }
 
     /**
@@ -129,9 +138,8 @@ class NoticeService extends Service
      */
     public function receive()
     {
-        $uid = Admin::id();
-        $cacheKey = $this->cacheKey . $uid;
-        $pushDatas = $this->app->cache->pull($cacheKey);
-        return $pushDatas;
+        $uid       = Admin::id();
+        $cacheKey  = $this->cacheKey . $uid;
+        return $this->app->cache->pull($cacheKey);
     }
 }

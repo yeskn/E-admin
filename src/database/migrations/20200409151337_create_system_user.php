@@ -28,19 +28,19 @@ class CreateSystemUser extends Migrator
      */
     public function change()
     {
-        $table = $this->table('system_user',['engine'=>'InnoDB','collation'=>'utf8mb4_unicode_ci'])->setComment('系统-用户表');
-        $table->addColumn(Column::string('username',50)->setDefault('')->setComment('用户账号'));
-        $table->addColumn(Column::string('nickname',50)->setDefault('')->setComment('用户昵称'));
+        $table = $this->table('system_user', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_unicode_ci'])->setComment('系统-用户表');
+        $table->addColumn(Column::string('username', 50)->setDefault('')->setComment('用户账号'));
+        $table->addColumn(Column::string('nickname', 50)->setDefault('')->setComment('用户昵称'));
         $table->addColumn(Column::string('avatar')->setDefault('')->setComment('头像'));
-        $table->addColumn(Column::string('password',255)->setDefault('')->setComment('用户密码'));
-        $table->addColumn(Column::string('mail',32)->setDefault('')->setComment('联系邮箱'));
-        $table->addColumn(Column::char('phone',11)->setDefault('')->setComment('联系手机'));
+        $table->addColumn(Column::string('password', 255)->setDefault('')->setComment('用户密码'));
+        $table->addColumn(Column::string('mail', 32)->setDefault('')->setComment('联系邮箱'));
+        $table->addColumn(Column::char('phone', 11)->setDefault('')->setComment('联系手机'));
         $table->addColumn(Column::dateTime('login_at')->setNullable()->setComment('登录时间'));
-        $table->addColumn(Column::string('login_ip',15)->setDefault('')->setComment('登录IP'));
+        $table->addColumn(Column::string('login_ip', 15)->setDefault('')->setComment('登录IP'));
         $table->addColumn(Column::bigInteger('login_num')->setDefault(0)->setComment('登录次数'));
         $table->addColumn(Column::string('desc')->setDefault('')->setComment('备注说明'));
         $table->addColumn(Column::integer('sort')->setDefault(0)->setComment('排序'));
-        $table->addColumn(Column::tinyInteger('status')->setDefault(1)->setComment('状态(0:禁用,1:启用)'));
+        $table->addColumn(Column::boolean('status')->setDefault(1)->setComment('状态(0:禁用,1:启用)'));
         $table->addSoftDelete();
         $table->addTimestamps();
         $table->create();

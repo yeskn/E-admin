@@ -28,15 +28,15 @@ class CreateSystemMenu extends Migrator
      */
     public function change()
     {
-        $table = $this->table('system_menu',['engine'=>'InnoDB','collation'=>'utf8mb4_unicode_ci'])->setComment('系统-菜单表');
+        $table = $this->table('system_menu', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_unicode_ci'])->setComment('系统-菜单表');
         $table->addColumn(Column::bigInteger('pid')->setDefault(0)->setComment('父ID'));
-        $table->addColumn(Column::string('name',100)->setDefault('')->setComment('名称'));
-        $table->addColumn(Column::string('icon',100)->setDefault('')->setComment('菜单图标'));
-        $table->addColumn(Column::string('url',400)->setDefault('')->setComment('链接'));
+        $table->addColumn(Column::string('name', 100)->setDefault('')->setComment('名称'));
+        $table->addColumn(Column::string('icon', 100)->setDefault('')->setComment('菜单图标'));
+        $table->addColumn(Column::string('url', 400)->setDefault('')->setComment('链接'));
         $table->addColumn(Column::string('mark')->setDefault('')->setComment('标记'));
         $table->addColumn(Column::integer('sort')->setDefault(0)->setComment('菜单排序'));
         $table->addColumn(Column::tinyInteger('status')->setDefault(1)->setComment('状态(0:禁用,1:启用)'));
-        $table->addTimestamps('create_at');
+        $table->addTimestamps();
         $table->create();
     }
 }

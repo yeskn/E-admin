@@ -30,6 +30,7 @@ class CaptchaService extends Service
 
     // 背景颜色
     protected $bg = [243, 251, 254];
+
     /**
      * 配置验证码
      * @param string|null $config
@@ -42,6 +43,7 @@ class CaptchaService extends Service
             }
         }
     }
+
     /**
      * 验证验证码是否正确
      * @access public
@@ -49,16 +51,17 @@ class CaptchaService extends Service
      * @param string $hash 验证码hash
      * @return bool 用户验证码是否正确
      */
-    public function check(string $code,$hash): bool
+    public function check(string $code, $hash): bool
     {
         $code = strtolower($code);
-        $res = password_verify($code, $hash);
+        $res  = password_verify($code, $hash);
         return $res;
     }
+
     public function create(array $config = [])
     {
         $this->configure($config);
-        
+
 
         // 图片宽(px)
         $this->imageW || $this->imageW = $this->length * $this->fontSize * 1.5 + $this->length * $this->fontSize / 2;
@@ -88,12 +91,12 @@ class CaptchaService extends Service
         for ($i = 0; $i < $this->length; $i++) {
             $text[] = $characters[rand(0, count($characters) - 1)];
         }
-        $textStr = strtolower(implode('',$text));
-        $hash = password_hash($textStr, PASSWORD_BCRYPT, ['cost' => 10]);
+        $textStr = strtolower(implode('', $text));
+        $hash    = password_hash($textStr, PASSWORD_BCRYPT, ['cost' => 10]);
         // 绘验证码
         $x = $this->imageW / $this->length;
         foreach ($text as $index => $char) {
-            $_x     = $x * $index + mt_rand(3, 5);
+            $_x    = $x * $index + mt_rand(3, 5);
             $y     = $this->fontSize + mt_rand(10, 20);
             $angle = mt_rand(-40, 40);
             imagettftext($this->im, $this->fontSize, $angle, $_x, $y, $this->color, $fontttf, $char);
@@ -104,8 +107,8 @@ class CaptchaService extends Service
         $content = ob_get_clean();
         imagedestroy($this->im);
         return [
-            'image'=>'data:image/png;base64,'.base64_encode($content),
-            'hash'=>$hash
+            'image' => 'data:image/png;base64,' . base64_encode($content),
+            'hash'  => $hash
         ];
     }
 
@@ -124,6 +127,7 @@ class CaptchaService extends Service
             }
         }
     }
+
     /**
      * 画一条由两条连在一起构成的随机正弦函数曲线作干扰线(你可以改成更帅的曲线函数)
      *
@@ -153,7 +157,7 @@ class CaptchaService extends Service
         for ($px = $px1; $px <= $px2; $px = $px + 1) {
             if (0 != $w) {
                 $py = $A * sin($w * $px + $f) + $b + $this->imageH / 2; // y = Asin(ωx+φ) + b
-                $i  = (int) ($this->fontSize / 5);
+                $i  = (int)($this->fontSize / 5);
                 while ($i > 0) {
                     imagesetpixel($this->im, $px + $i, $py + $i, $this->color); // 这里(while)循环画像素点比imagettftext和imagestring用字体大小一次画出（不用这while循环）性能要好很多
                     $i--;
@@ -173,7 +177,7 @@ class CaptchaService extends Service
         for ($px = $px1; $px <= $px2; $px = $px + 1) {
             if (0 != $w) {
                 $py = $A * sin($w * $px + $f) + $b + $this->imageH / 2; // y = Asin(ωx+φ) + b
-                $i  = (int) ($this->fontSize / 5);
+                $i  = (int)($this->fontSize / 5);
                 while ($i > 0) {
                     imagesetpixel($this->im, $px + $i, $py + $i, $this->color);
                     $i--;

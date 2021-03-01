@@ -9,27 +9,33 @@
 namespace Eadmin\form;
 
 use ArrayAccess;
+
 class Watch implements ArrayAccess
 {
     protected $data = [];
     protected $hideField = [];
     protected $showField = [];
+
     public function __construct($data)
     {
         $this->data = $data;
     }
+
     /**
      * 显示
-     * @param $field 字段
+     * @param string $field 字段
      */
-    public function hide($field){
+    public function hide($field)
+    {
         $this->hideField[] = $field;
     }
+
     /**
      * 隐藏
-     * @param $field 字段
+     * @param string $field 字段
      */
-    public function show($field){
+    public function show($field)
+    {
         $this->showField[] = $field;
     }
 
@@ -46,16 +52,21 @@ class Watch implements ArrayAccess
             return $this->data[$field];
         }
     }
-    public function getShowField(){
+
+    public function getShowField()
+    {
         return $this->showField;
     }
-    public function getHideField(){
+
+    public function getHideField()
+    {
         return $this->hideField;
     }
+
     /**
      * 设置值
-     * @param $field 字段
-     * @param $value
+     * @param string $field 字段
+     * @param string $value 值
      */
     public function set($field, $value)
     {
@@ -66,6 +77,7 @@ class Watch implements ArrayAccess
     {
         return $this->data[$name];
     }
+
     // ArrayAccess
     public function offsetSet($name, $value)
     {
@@ -86,6 +98,7 @@ class Watch implements ArrayAccess
     {
         return $this->get($name);
     }
+
     /**
      * 销毁数据对象的值
      * @access public
@@ -96,6 +109,7 @@ class Watch implements ArrayAccess
     {
         unset($this->data[$name]);
     }
+
     /**
      * 检测数据对象的值
      * @access public

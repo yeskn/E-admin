@@ -5,7 +5,9 @@
  * Date: 2020-10-06
  * Time: 10:26
  */
+
 namespace Eadmin\form\traits;
+
 use think\facade\Request;
 use Eadmin\ApiJson;
 
@@ -17,6 +19,7 @@ use Eadmin\ApiJson;
 trait WatchForm
 {
     use ApiJson;
+
     protected $watchs = [];
     protected $watchJs = '';
 
@@ -24,21 +27,26 @@ trait WatchForm
      * 设置监听数据方法
      * @param array $data
      */
-    public function watch(array $data){
+    public function watch(array $data)
+    {
         $this->watchs = $data;
     }
-    protected function initWatchJs(){
+
+    protected function initWatchJs()
+    {
         $fields = array_keys($this->watchs);
-        $js = '';
-        foreach ($fields as $field){
-            $js .= $this->watchRequstJs($field,"this.form.{$field}","this.form.{$field}");
+        $js     = '';
+        foreach ($fields as $field) {
+            $js .= $this->watchRequstJs($field, "this.form.{$field}", "this.form.{$field}");
 
         }
         return $js;
     }
-    protected function watchRequstJs($field,$newVal='newVal',$oldValue='oldValue'){
+
+    protected function watchRequstJs($field, $newVal = 'newVal', $oldValue = 'oldValue')
+    {
         $submitUrl = $this->getRequestUrl();
-        $js = <<<EOF
+        $js        = <<<EOF
             var method,url = '{$submitUrl}'
             if(this.form.id == undefined){
                 url = url+'.rest'
@@ -86,14 +94,16 @@ trait WatchForm
 EOF;
         return $js;
     }
+
     /**
      * 生成监听js
      * @return string
      */
-    protected function createWatchJs(){
+    protected function createWatchJs()
+    {
         $fields = array_keys($this->watchs);
-        foreach ($fields as $field){
-            $requestJs = $this->watchRequstJs($field);
+        foreach ($fields as $field) {
+            $requestJs     = $this->watchRequstJs($field);
             $this->watchJs .= <<<EOF
     'form.{$field}': {
          deep:true,
@@ -105,22 +115,26 @@ EOF;
         }
         return $this->watchJs;
     }
-    public function setWatchData($field,$value){
+
+    public function setWatchData($field, $value)
+    {
         $this->watchData[$field] = $value;
     }
+
     /**
      * 监听数据回调
      */
-    protected function watchCall(){
-        if(Request::has('eadmin_form_watch')){
-            $data = Request::post();
-            $watch = new \Eadmin\form\Watch($data['form']);
+    protected function watchCall()
+    {
+        if (Request::has('eadmin_form_watch')) {
+            $data    = Request::post();
+            $watch   = new \Eadmin\form\Watch($data['form']);
             $closure = $this->watchs[$data['field']];
-            call_user_func_array($closure,[$data['newVal'],$watch,$data['oldValue']]);
+            call_user_func_array($closure, [$data['newVal'], $watch, $data['oldValue']]);
             $this->successCode([
-                'form'=>$watch->get(),
-                'showField'=>$watch->getShowField(),
-                'hideField'=>$watch->getHideField(),
+                'form'      => $watch->get(),
+                'showField' => $watch->getShowField(),
+                'hideField' => $watch->getHideField(),
             ]);
         }
     }

@@ -36,8 +36,9 @@ class Publish extends Command
 
     /**
      * 递归复制目录文件
-     * @param $dir 源目录
-     * @param $src 目标目录
+     * @param string $dir 源目录
+     * @param string $src 目标目录
+     * @param bool $cover 是否覆盖文件
      */
     protected function copyDir($dir, $src,$cover =false)
     {

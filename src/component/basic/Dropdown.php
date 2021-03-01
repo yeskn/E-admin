@@ -30,7 +30,7 @@ class Dropdown extends Component
     /**
      * 创建一个拉菜单
      * @param mixed $content 触发内容
-     * @return Button
+     * @return Button|mixed
      */
     public static function create($content)
     {
@@ -43,9 +43,9 @@ class Dropdown extends Component
      * @param string $icon 图标
      * @return DropdownItem
      */
-    public function prepend($content,$icon = '')
+    public function prepend($content, $icon = '')
     {
-        $item  = $this->itemContent($content,$icon);
+        $item               = $this->itemContent($content, $icon);
         $this->prependArr[] = $item;
         return $item;
     }
@@ -56,21 +56,29 @@ class Dropdown extends Component
      * @param string $icon 图标
      * @return DropdownItem
      */
-    public function append($content,$icon = '')
+    public function append($content, $icon = '')
     {
-        $item  = $this->itemContent($content,$icon);
+        $item              = $this->itemContent($content, $icon);
         $this->appendArr[] = $item;
         return $item;
     }
-    protected function itemContent($content, $icon = ''){
-        if(!empty($icon) && is_string($content)){
-            $content = '<i class="'.$icon.'"> '.$content;
+
+    /**
+     * @param mixed $content 内容
+     * @param string $icon 图标
+     * @return DropdownItem
+     */
+    protected function itemContent($content, $icon = '')
+    {
+        if (!empty($icon) && is_string($content)) {
+            $content = '<i class="' . $icon . '"> ' . $content;
         }
         $item = new DropdownItem($this);
         $item->dropdown($this);
         $item->content($content);
         return $item;
     }
+
     /**
      * 下拉菜单选项
      * @param mixed $content
@@ -79,7 +87,7 @@ class Dropdown extends Component
      */
     public function item($content, $icon = '')
     {
-        $item = $this->itemContent($content,$icon);
+        $item = $this->itemContent($content, $icon);
         $this->menu->content($item);
         return $item;
     }

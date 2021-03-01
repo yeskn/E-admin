@@ -17,5 +17,5 @@ use Eadmin\component\form\Field;
 class Radio extends Field
 {
     protected $name = 'ElRadio';
-    
+
 }

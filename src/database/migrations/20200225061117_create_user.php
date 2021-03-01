@@ -28,18 +28,18 @@ class CreateUser extends Migrator
      */
     public function change()
     {
-        $table = $this->table('user',['engine'=>'InnoDB','collation'=>'utf8mb4_unicode_ci'])->setComment('用户表');
-        $table->addColumn(Column::string('headimg',500)->setComment('头像'));
-        $table->addColumn(Column::string('nickname',50)->setDefault('')->setComment('昵称'));
-        $table->addColumn(Column::char('phone',20)->setDefault('')->setComment('手机号码'));
-        $table->addColumn(Column::string('openid',100)->setDefault('')->setComment('小程序微信openid'));
-        $table->addColumn(Column::char('unionid',100)->setDefault('')->setComment('微信unionid'));
-        $table->addColumn(Column::string('country',100)->setDefault('')->setComment('地区'));
-        $table->addColumn(Column::string('province',100)->setDefault('')->setComment('省份'));
-        $table->addColumn(Column::string('city',100)->setDefault('')->setComment('城市'));
-        $table->addColumn(Column::string('area',100)->setDefault('')->setComment('地区'));
+        $table = $this->table('user', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_unicode_ci'])->setComment('用户表');
+        $table->addColumn(Column::string('headimg', 500)->setDefault('')->setComment('头像'));
+        $table->addColumn(Column::string('nickname', 50)->setDefault('')->setComment('昵称'));
+        $table->addColumn(Column::char('phone', 20)->setDefault('')->setComment('手机号码'));
+        $table->addColumn(Column::string('openid', 100)->setDefault('')->setComment('小程序微信openid'));
+        $table->addColumn(Column::char('unionid', 100)->setDefault('')->setComment('微信unionid'));
+        $table->addColumn(Column::string('country', 100)->setDefault('')->setComment('地区'));
+        $table->addColumn(Column::string('province', 100)->setDefault('')->setComment('省份'));
+        $table->addColumn(Column::string('city', 100)->setDefault('')->setComment('城市'));
+        $table->addColumn(Column::string('area', 100)->setDefault('')->setComment('地区'));
         $table->addColumn(Column::string('address')->setDefault('')->setComment('详情地址'));
-        $table->addColumn(Column::decimal('money',12,2)->setDefault(0)->setComment('钱包金额'));
+        $table->addColumn(Column::decimal('money', 12, 2)->setDefault(0)->setComment('钱包金额'));
         $table->addTimestamps();
         $table->create();
     }

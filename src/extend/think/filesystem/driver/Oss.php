@@ -16,7 +16,7 @@ class Oss extends Driver
             $this->config['accessKey'],
             $this->config['secretKey'],
             $this->config['endpoint'],
-            $this->config['bucket'],
+            $this->config['bucket']
         );
     }
 }

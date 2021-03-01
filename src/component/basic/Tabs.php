@@ -30,7 +30,7 @@ class Tabs extends Field
     public function pane($title, $content)
     {
         $tabPane = new TabPane();
-        $tabPane->content($title,'label');
+        $tabPane->content($title, 'label');
         $tabPane->content($content);
         $this->content($tabPane);
         return $this;

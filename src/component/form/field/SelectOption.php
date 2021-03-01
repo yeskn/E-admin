@@ -14,6 +14,7 @@ use Eadmin\component\Component;
 class SelectOption extends Component
 {
     protected $name = 'ElOption';
+
     public static function create()
     {
         return new static();

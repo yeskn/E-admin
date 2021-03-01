@@ -28,10 +28,18 @@ class ClearDatabase extends Command
 
     }
 
+    /**
+     * 执行命令
+     * @param Input $input
+     * @param Output $output
+     */
     protected function execute(Input $input, Output $output)
     {
         $table = $input->getOption('table');
-        $table =  Str::snake($table);
+        // 判断有没有指定表
+        if (!empty($table)) {
+            $table =  Str::snake($table);
+        }
         //获取表白名单
         $white_table = config('white_table');
 

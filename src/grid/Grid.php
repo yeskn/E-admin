@@ -29,8 +29,8 @@ use think\Model;
  * @package Eadmin\grid
  * @method $this size(string $size) Radio的尺寸，仅在border为真时有效 medium / small / mini
  * @method $this scroll(array $height) {
-x: number | true, y: number
-}
+ * x: number | true, y: number
+ * }
  * @method $this stripe(bool $bool = true) 是否为斑马纹
  * @method $this bordered(bool $bool = true) 是否展示外边框和列边框
  * @method $this fit(bool $bool) 列的宽度是否自撑开
@@ -138,24 +138,30 @@ class Grid extends Component
      * @param \Closure $closure
      * @param bool $defaultExpandAllRow 默认是否展开
      */
-    public function expandRow(\Closure $closure,bool $defaultExpandAllRow = false)
+    public function expandRow(\Closure $closure, bool $defaultExpandAllRow = false)
     {
         $this->expandRow = $closure;
-        $this->attr('expandedRow',true);
-        $this->attr('defaultExpandAllRows',$defaultExpandAllRow);
+        $this->attr('expandedRow', true);
+        $this->attr('defaultExpandAllRows', $defaultExpandAllRow);
     }
 
-    //头像昵称列
-    public function userInfo($headimg = 'headimg', $nickname = 'nickname', $label = '会员信息')
+    /**
+     * 头像昵称咧
+     * @param string $avatar 头像
+     * @param string $nickname 昵称
+     * @param string $label 标签
+     * @return Column
+     */
+    public function userInfo($avatar = 'headimg', $nickname = 'nickname', $label = '会员信息')
     {
         $column = $this->column($nickname, $label);
-        return $column->display(function ($val, $data) use ($column, $headimg) {
-            $headimgValue = $data[$headimg];
-            $image = Image::create()
-                ->src($headimgValue)
+        return $column->display(function ($val, $data) use ($column, $avatar) {
+            $avatarValue = $data[$avatar];
+            $image        = Image::create()
+                ->src($avatarValue)
                 ->fit('cover')
                 ->attr('style', ['width' => '80px', 'height' => '80px', "borderRadius" => '50%'])
-                ->previewSrcList([$headimgValue]);
+                ->previewSrcList([$avatarValue]);
             return Html::create()->content($image)->content("<br>{$val}");
         })->align('center');
     }
@@ -199,7 +205,7 @@ class Grid extends Component
 
     /**
      * 获取当前模型
-     * @return drive\Model|null
+     * @return drive\Model|null|mixed
      */
     public function model()
     {
@@ -208,7 +214,7 @@ class Grid extends Component
 
     /**
      * 查询过滤
-     * @param $callback
+     * @param mixed $callback
      */
     public function filter($callback)
     {
@@ -239,7 +245,7 @@ class Grid extends Component
 
     /**
      * 删除
-     * @param $id 删除的id
+     * @param int $id 删除的id
      * @return bool|int
      */
     public function destroy($id)
@@ -252,8 +258,8 @@ class Grid extends Component
 
     /**
      * 更新
-     * @param $ids
-     * @param $data
+     * @param array $ids 更新的id
+     * @param array $data 更新的数组
      * @return mixed
      */
     public function update($ids, $data)
@@ -266,7 +272,7 @@ class Grid extends Component
 
     /**
      * 开启导出
-     * @param $fileName 导出文件名
+     * @param string $fileName 导出文件名
      */
     public function export($fileName = '')
     {
@@ -306,13 +312,13 @@ class Grid extends Component
 
     /**
      * 开启树形表格
-     * @param string $pid 父级字段
+     * @param string $pidField 父级字段
      * @param bool $expand 是否展开
      */
     public function treeTable($pidField = 'pid', $expand = true)
     {
         $this->treeParent = $pidField;
-        $this->isTree = true;
+        $this->isTree     = true;
         $this->hidePage();
         $this->defaultExpandAllRows($expand);
     }
@@ -360,6 +366,7 @@ class Grid extends Component
 
     /**
      * 关闭分页
+     * @param bool $bool
      */
     public function hidePage(bool $bool = true)
     {
@@ -403,7 +410,7 @@ class Grid extends Component
      */
     public function column(string $field = '', string $label = '')
     {
-        $column = new Column($field, $label, $this);
+        $column         = new Column($field, $label, $this);
         $this->column[] = $column;
         $this->realiton($field);
         return $column;
@@ -411,7 +418,8 @@ class Grid extends Component
 
     /**
      * 解析列返回表格数据
-     * @param $datas 数据源
+     * @param array $datas 数据源
+     * @param bool $export
      * @return array
      */
     protected function parseColumn($datas, $export = false)
@@ -431,7 +439,7 @@ class Grid extends Component
                 $row[$this->treeParent] = $data[$this->treeParent];
             }
             foreach ($this->column as $column) {
-                $field = $column->attr('prop');
+                $field       = $column->attr('prop');
                 $row[$field] = $column->row($data);
                 if ($export) {
                     $row[$field] = $column->getExportData();
@@ -442,8 +450,8 @@ class Grid extends Component
                 $actionColumn->row($data);
                 $row['EadminAction'] = $actionColumn;
             }
-            if(!is_null($this->expandRow)){
-                $expandRow = call_user_func($this->expandRow,$data);
+            if (!is_null($this->expandRow)) {
+                $expandRow              = call_user_func($this->expandRow, $data);
                 $row['EadminExpandRow'] = Html::create($expandRow);
             }
             $tableData[] = $row;
@@ -475,7 +483,7 @@ class Grid extends Component
         if (Request::get('export_type') == 'all') {
             set_time_limit(0);
             if ($excel instanceof Excel) {
-                $data = $this->drive->db()->select()->toArray();
+                $data       = $this->drive->db()->select()->toArray();
                 $exportData = $this->parseColumn($data, true);
                 $excel->rows($exportData)->export();
             } else {

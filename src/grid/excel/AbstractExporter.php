@@ -21,28 +21,33 @@ abstract class AbstractExporter
     protected $only = [];
 
     protected $except = [];
+
     /**
      * 设置表头列
      * @param array $columns
      * @return $this
      */
-    public function columns(array $columns){
+    public function columns(array $columns)
+    {
         $this->columns = $columns;
         return $this;
     }
-    protected function filterColumns(){
+
+    protected function filterColumns()
+    {
         $columns = [];
-        $bool = null;
-        if(count($this->only) > 0){
-            $bool = true;
+        $filterColumns = [];
+        $bool    = null;
+        if (count($this->only) > 0) {
+            $bool          = true;
             $filterColumns = $this->only;
-        }elseif (count($this->except) > 0){
-            $bool = false;
+        } elseif (count($this->except) > 0) {
+            $bool          = false;
             $filterColumns = $this->except;
         }
-        if($bool !== null){
-            foreach ($this->columns as $field=>$title){
-                if(in_array($field,$filterColumnst) === $bool){
+        if ($bool !== null) {
+            foreach ($this->columns as $field => $title) {
+                if (in_array($field, $filterColumns) === $bool) {
                     $columns[$field] = $title;
                 }
             }
@@ -54,7 +59,8 @@ abstract class AbstractExporter
      * 指定显示
      * @param array $columns
      */
-    public function only(array $columns){
+    public function only(array $columns)
+    {
         $this->only = $columns;
     }
 
@@ -62,28 +68,36 @@ abstract class AbstractExporter
      * 排除列
      * @param array $columns
      */
-    public function except(array $columns){
+    public function except(array $columns)
+    {
         $this->except = $columns;
     }
+
     /**
      * 设置文件名
-     * @param $name
+     * @param string $name
      * @return $this
      */
-    public function file($name){
+    public function file($name)
+    {
         $this->fileName = $name;
         return $this;
     }
+
     /**
      * 数据源
-     * @param $data
+     * @param array $data
      */
-    public function rows($data){
+    public function rows($data)
+    {
         $this->data = $data;
         return $this;
     }
-    public function getData(){
+
+    public function getData()
+    {
         return $this->data;
     }
+
     abstract public function export();
 }

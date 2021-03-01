@@ -3,10 +3,11 @@
 use rockySysLog\model\SystemLog;
 use admin\service\TokenService;
 use Eadmin\Admin;
+
 if (!function_exists('sysconf')) {
     function sysconf($name, $value = null)
     {
-        return Admin::sysconf($name,$value);
+        return Admin::sysconf($name, $value);
     }
 }
 if (!function_exists('admin_log')) {
@@ -14,10 +15,10 @@ if (!function_exists('admin_log')) {
     {
         SystemLog::create([
             'username' => TokenService::instance()->user()->nickname ?? 'cli',
-            'geoip' => request()->ip(),
-            'action' => $action,
-            'node' => request()->url(),
-            'content' => $content,
+            'geoip'    => request()->ip(),
+            'action'   => $action,
+            'node'     => request()->url(),
+            'content'  => $content,
         ]);
     }
 }

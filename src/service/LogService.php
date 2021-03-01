@@ -5,6 +5,7 @@
  * Date: 2020-02-21
  * Time: 13:19
  */
+
 namespace Eadmin\service;
 
 
@@ -19,6 +20,7 @@ class LogService extends Service
     protected $limit = 10;
     public $page = 1;
     protected $pageOffset = false;
+
     public function __construct($filePath = null)
     {
         $this->logPathDir = app()->getRootPath() . 'runtime/log/';
@@ -40,37 +42,42 @@ class LogService extends Service
         $filesArr = [];
         foreach ($files as $file => $time) {
             $filesArr[] = [
-                'path' => $file,
-                'file_name' => basename($file),
-                'size' => $this->getSize(filesize($file)),
+                'path'        => $file,
+                'file_name'   => basename($file),
+                'size'        => $this->getSize(filesize($file)),
                 'update_time' => date('Y-m-d H:i:s', $time)
             ];
         }
         return array_slice($filesArr, 0, $count);
     }
 
-    function getSize($filesize)
+    /**
+     * 获取文件大小
+     * @param int $fileSize
+     * @return string
+     */
+    function getSize($fileSize)
     {
 
-        if ($filesize >= 1073741824) {
+        if ($fileSize >= 1073741824) {
 
-            $filesize = round($filesize / 1073741824 * 100) / 100 . ' GB';
+            $fileSize = round($fileSize / 1073741824 * 100) / 100 . ' GB';
 
-        } elseif ($filesize >= 1048576) {
+        } elseif ($fileSize >= 1048576) {
 
-            $filesize = round($filesize / 1048576 * 100) / 100 . ' MB';
+            $fileSize = round($fileSize / 1048576 * 100) / 100 . ' MB';
 
-        } elseif ($filesize >= 1024) {
+        } elseif ($fileSize >= 1024) {
 
-            $filesize = round($filesize / 1024 * 100) / 100 . ' KB';
+            $fileSize = round($fileSize / 1024 * 100) / 100 . ' KB';
 
         } else {
 
-            $filesize = $filesize . ' 字节';
+            $fileSize = $fileSize . ' 字节';
 
         }
 
-        return $filesize;
+        return $fileSize;
 
     }
 
@@ -92,9 +99,9 @@ class LogService extends Service
      *
      * @see http://www.geekality.net/2011/05/28/php-tail-tackling-large-files/
      */
-    public function fetch($seek = 0, $lines = 20, $buffer = 4096,$filterContent='',$filterTime=[])
+    public function fetch($seek = 0, $lines = 20, $buffer = 4096, $filterContent = '', $filterTime = [])
     {
-        if(!file_exists($this->filePath)){
+        if (!file_exists($this->filePath)) {
             return [];
         }
         $f = fopen($this->filePath, 'rb');
@@ -117,15 +124,15 @@ class LogService extends Service
 
             while (!feof($f) && $lines >= 0) {
                 $output = $output . ($chunk = fread($f, $buffer));
-                $lines -= substr_count($chunk, PHP_EOL);
+                $lines  -= substr_count($chunk, PHP_EOL);
             }
 
             $this->pageOffset['end'] = ftell($f);
 
             while ($lines++ < 0) {
-                $strpos = strrpos($output, PHP_EOL) + 1;
-                $_ = mb_strlen($output, '8bit') - $strpos;
-                $output = substr($output, 0, $strpos);
+                $strpos                  = strrpos($output, PHP_EOL) + 1;
+                $_                       = mb_strlen($output, '8bit') - $strpos;
+                $output                  = substr($output, 0, $strpos);
                 $this->pageOffset['end'] -= $_;
             }
 
@@ -149,14 +156,14 @@ class LogService extends Service
             $this->pageOffset['start'] = ftell($f);
 
             while ($lines++ < 0) {
-                $strpos = strpos($output, PHP_EOL) + 1;
-                $output = substr($output, $strpos);
+                $strpos                    = strpos($output, PHP_EOL) + 1;
+                $output                    = substr($output, $strpos);
                 $this->pageOffset['start'] += $strpos;
             }
         }
 
 
-        return $this->parseLog($output,$filterContent,$filterTime);
+        return $this->parseLog($output, $filterContent, $filterTime);
     }
 
     /**
@@ -164,18 +171,18 @@ class LogService extends Service
      *
      * @return bool|string
      */
-    public function getPrevPageUrl($filterContent='',$filterTime='')
+    public function getPrevPageUrl($filterContent = '', $filterTime = '')
     {
 
-        if(!empty($filterContent) || !empty(array_filter($filterTime))){
-            $page = request()->param('page',1);
-            if($page > 1){
-                $this->page = $page-1;
+        if (!empty($filterContent) || !empty(array_filter($filterTime))) {
+            $page = request()->param('page', 1);
+            if ($page > 1) {
+                $this->page = $page - 1;
                 return 0;
-            }else{
+            } else {
                 return false;
             }
-        }else{
+        } else {
             $filesize = $this->getFilesize();
             if ($this->pageOffset['end'] >= $filesize - 1) {
                 return false;
@@ -190,17 +197,17 @@ class LogService extends Service
      *
      * @return bool|string
      */
-    public function getNextPageUrl($filterContent='',$filterTime='')
+    public function getNextPageUrl($filterContent = '', $filterTime = '')
     {
-        if(!empty($filterContent) || !empty(array_filter($filterTime))){
-            $page = request()->param('page',1);
-            if($this->dataCount < $this->limit){
+        if (!empty($filterContent) || !empty(array_filter($filterTime))) {
+            $page = request()->param('page', 1);
+            if ($this->dataCount < $this->limit) {
                 return false;
-            }else{
-                $this->page = $page+1;
+            } else {
+                $this->page = $page + 1;
                 return 0;
             }
-        }else{
+        } else {
             if ($this->pageOffset['start'] == 0) {
                 return false;
             }
@@ -222,47 +229,47 @@ class LogService extends Service
      *
      * @return array
      */
-    protected function parseLog($raw,$filterContent='',$filterTime='')
+    protected function parseLog($raw, $filterContent = '', $filterTime = '')
     {
         $logs = explode(PHP_EOL, $raw);
         if (empty($logs)) {
             return [];
         }
         $parsed = [];
-        foreach ($logs as $key=>$log) {
-            if(!empty(trim($log))){
-                $log = json_decode($log,true);
-                $strtotime = strtotime($log['time']);
-                $log['time'] = date('Y年m月d日 H:i:s',$strtotime);
-                $info = $log['msg'];
-                if(!empty($filterContent) && !empty($filterTime)){
+        foreach ($logs as $key => $log) {
+            if (!empty(trim($log))) {
+                $log         = json_decode($log, true);
+                $strtotime   = strtotime($log['time']);
+                $log['time'] = date('Y年m月d日 H:i:s', $strtotime);
+                $info        = $log['msg'];
+                if (!empty($filterContent) && !empty($filterTime)) {
                     $dates = $filterTime;
-                    $date = date('Y-m-d H:i:s',$strtotime);
-                    if(stristr($info,$filterContent) !== false && ($dates[0] <= $date && $dates[1] >= $date)){
+                    $date  = date('Y-m-d H:i:s', $strtotime);
+                    if (stristr($info, $filterContent) !== false && ($dates[0] <= $date && $dates[1] >= $date)) {
                         $parsed[] = $log;
                     }
-                }elseif (!empty($filterContent)){
-                    if(stristr($info,$filterContent) !== false){
+                } elseif (!empty($filterContent)) {
+                    if (stristr($info, $filterContent) !== false) {
                         $parsed[] = $log;
                     }
-                }elseif (!empty(array_filter($filterTime))){
+                } elseif (!empty(array_filter($filterTime))) {
                     $dates = $filterTime;
-                    $date = date('Y-m-d H:i:s',$strtotime);
-                    if($dates[0] <= $date && $dates[1] >= $date){
+                    $date  = date('Y-m-d H:i:s', $strtotime);
+                    if ($dates[0] <= $date && $dates[1] >= $date) {
                         $parsed[] = $log;
                     }
-                }else{
+                } else {
                     $parsed[] = $log;
                 }
             }
         }
         unset($logs);
-        $this->limit = Request::param('limit',10);
+        $this->limit = Request::param('limit', 10);
         rsort($parsed);
-        if(!empty($filterContent) || !empty($filterTime)){
-            $page = request()->param('page',1);
-            $page = $this->limit * ($page-1);
-            $parsed = array_splice($parsed,$page, $this->limit );
+        if (!empty($filterContent) || !empty($filterTime)) {
+            $page   = request()->param('page', 1);
+            $page   = $this->limit * ($page - 1);
+            $parsed = array_splice($parsed, $page, $this->limit);
         }
         $this->dataCount = count($parsed);
         return $parsed;

@@ -13,10 +13,12 @@ class Arrays implements FormInterface
     //数据源
     protected $data = [];
     protected $originData = [];
+
     public function __construct($data)
     {
         $this->originData = $data;
     }
+
     public function getData(string $field = null, $data = null)
     {
         if (is_null($data)) {
@@ -48,7 +50,7 @@ class Arrays implements FormInterface
 
     public function save(array $data)
     {
-       return true;
+        return true;
     }
 
     public function setPkField(string $field)

@@ -20,8 +20,9 @@ use Eadmin\component\Component;
  * @method $this confirm(string $value) 确认提示框
  */
 class BatchAction extends Component
-{   
+{
     protected $name = 'BatchAction';
+
     public function __construct($content)
     {
         $this->content($content);
@@ -32,7 +33,8 @@ class BatchAction extends Component
      * @param $content
      * @return BatchAction
      */
-    public static function create($content){
+    public static function create($content)
+    {
         return new self($content);
     }
 }

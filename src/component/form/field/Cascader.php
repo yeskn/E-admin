@@ -57,8 +57,8 @@ class Cascader extends Field
 
     /**
      * 配置选项
-     * @param $attribute 属性
-     * @param $value 值
+     * @param string $attribute 属性
+     * @param string $value 值
      */
     public function props($attribute, $value)
     {
@@ -68,11 +68,11 @@ class Cascader extends Field
 
     /**
      * 设置选项数据
-     * @param array $datas
+     * @param array $data
      */
-    public function options(array $datas)
+    public function options(array $data)
     {
-        $options = Admin::tree($datas);
+        $options = Admin::tree($data);
         $this->attr('options', $options);
         return $this;
     }
@@ -99,7 +99,7 @@ class Cascader extends Field
     {
         if (in_array($name, $this->fields)) {
             if (!$this->initDefault) {
-                $this->default = [];
+                $this->default     = [];
                 $this->initDefault = true;
             }
             array_push($this->default, $value);
@@ -122,12 +122,12 @@ class Cascader extends Field
 
     /**
      * 多选
-     * @param $relation 关联方法
+     * @param string $relation 关联方法
      * @return $this
      */
     public function multiple($relation = '')
     {
-        if($relation){
+        if ($relation) {
             foreach ($this->fields as $field) {
                 $this->removeAttrBind($field);
             }

@@ -22,12 +22,12 @@ class Notification
 
     /**
      * 成功提示
-     * @param $title 标题
-     * @param $message 提示信息
+     * @param string $title 标题
+     * @param string $message 提示信息
      * @param string $url 跳转url
      * @return $this
      */
-    public function success($title='操作完成', $message='数据更新成功', $url = '')
+    public function success($title = '操作完成', $message = '数据更新成功', $url = '')
     {
         $this->response($title, $message, 'success', $url);
         return $this;
@@ -35,8 +35,8 @@ class Notification
 
     /**
      * 警告提示
-     * @param $title 标题
-     * @param $message 提示信息
+     * @param string $title 标题
+     * @param string $message 提示信息
      * @param string $url 跳转url
      * @return $this
      */
@@ -48,8 +48,8 @@ class Notification
 
     /**
      * 信息提示
-     * @param $title 标题
-     * @param $message 提示信息
+     * @param string $title 标题
+     * @param string $message 提示信息
      * @param string $url 跳转url
      * @return $this
      */
@@ -61,12 +61,12 @@ class Notification
 
     /**
      * 错误提示
-     * @param $title 标题
-     * @param $message 提示信息
+     * @param string $title 标题
+     * @param string $message 提示信息
      * @param string $url 跳转url
      * @return $this
      */
-    public function error($title='操作失败', $message='数据保存失败', $url = '')
+    public function error($title = '操作失败', $message = '数据保存失败', $url = '')
     {
         $this->response($title, $message, 'error', $url);
         return $this;
@@ -74,7 +74,7 @@ class Notification
 
     /**
      * 跳转url
-     * @param $url
+     * @param string $url
      * @return $this
      */
     public function redirect($url)
@@ -82,6 +82,7 @@ class Notification
         $this->data = array_merge($this->data, ['url' => $url]);
         return $this;
     }
+
     /**
      * 刷新当前页面
      */
@@ -90,17 +91,20 @@ class Notification
         $this->data = array_merge($this->data, ['refresh' => true]);
         return $this;
     }
-    public function data(array $data){
-        $this->data = array_merge($this->data,['data'=>$data]);
+
+    public function data(array $data)
+    {
+        $this->data = array_merge($this->data, ['data' => $data]);
     }
+
     protected function response($title, $message, $type, $url = '')
     {
         $this->data = [
-            'code' => 80021,
-            'type' => $type,
-            'title' => $title,
+            'code'    => 80021,
+            'type'    => $type,
+            'title'   => $title,
             'message' => $message,
-            'url' => $url
+            'url'     => $url
         ];
     }
 

@@ -12,33 +12,40 @@ use Eadmin\component\form\FormItem;
  */
 trait WhenForm
 {
+    /**
+     *
+     * @param $operator
+     * @param $value
+     * @param null $closure
+     * @return $this
+     */
     public function when($operator, $value, $closure = null)
     {
         if (func_num_args() == 2) {
-            $closure = $value;
-            $value = $operator;
+            $closure  = $value;
+            $value    = $operator;
             $operator = '=';
         }
-        if($operator == 'in'){
+        if ($operator == 'in') {
             $operator = '=';
         }
         $formItems = $this->formItem->form()->collectFields($closure);
-        if($this->formItem->form()->manyRelation()){
+        if ($this->formItem->form()->manyRelation()) {
             $formField = '';
-        }else{
-            $formField = $this->formItem->form()->bindAttr('model') .'.';
+        } else {
+            $formField = $this->formItem->form()->bindAttr('model') . '.';
         }
-        $field =  $formField.$this->bindAttr('modelValue');
+        $field = $formField . $this->bindAttr('modelValue');
         foreach ($formItems as $formItem) {
-            if(is_array($value)){
-                foreach ($value as $val){
-                    if($operator == 'notIn'){
+            if (is_array($value)) {
+                foreach ($value as $val) {
+                    if ($operator == 'notIn') {
                         $formItem->where($field, $operator, $val);
-                    }else{
+                    } else {
                         $formItem->whereOr($field, $operator, $val);
                     }
                 }
-            }else{
+            } else {
                 $formItem->where($field, $operator, $value);
             }
             $this->formItem->form()->push($formItem);
