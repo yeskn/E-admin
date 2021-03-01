@@ -46,7 +46,7 @@ class Column extends Component
 
     public function __construct($prop, $label, $grid)
     {
-        $this->attr('slots', ['title' => 'eadmin_'.$prop, 'customRender' => 'default']);
+        $this->attr('slots', ['title' => 'eadmin_' . $prop, 'customRender' => 'default']);
         if (!empty($prop)) {
             $this->prop = $prop;
             $this->prop($prop);
@@ -115,9 +115,9 @@ class Column extends Component
 
     /**
      * 标签显示
-     * @param $color 标签颜色：success，info，warning，danger
-     * @param $theme 主题：dark，light，plain
-     * @param $size 尺寸:medium，small，mini
+     * @param string $color 标签颜色：success，info，warning，danger
+     * @param string $theme 主题：dark，light，plain
+     * @param string $size 尺寸:medium，small，mini
      */
     public function tag($color = '', $theme = 'dark', $size = 'mini')
     {
@@ -137,12 +137,12 @@ class Column extends Component
 
     /**
      * 获取当前列字段数据
-     * @param $data 行数据
+     * @param array $data 行数据
      * @return string
      */
     private function getData($data)
     {
-        $prop = $this->attr('prop');
+        $prop   = $this->attr('prop');
         $fields = explode('.', $prop);
         foreach ($fields as $field) {
             if (isset($data[$field])) {
@@ -153,9 +153,10 @@ class Column extends Component
         }
         return $data;
     }
+
     /**
      * 解析每行数据
-     * @param $data 数据
+     * @param array $data 数据
      * @return Html
      */
     public function row($data)
@@ -175,12 +176,12 @@ class Column extends Component
         }
         //映射内容处理
         if (count($this->usings) > 0 && isset($this->usings[$value])) {
-            $value = $this->usings[$value];
+            $value            = $this->usings[$value];
             $this->exportData = $value;
         }
         //是否显示标签
         if (!is_null($this->tag)) {
-            $tag = clone $this->tag;
+            $tag   = clone $this->tag;
             $value = $tag->content($value);
 
         }
@@ -193,7 +194,7 @@ class Column extends Component
         }
         //自定义导出
         if (!is_null($this->exportClosure)) {
-            $value = call_user_func_array($this->exportClosure, [$originValue, $data]);
+            $value            = call_user_func_array($this->exportClosure, [$originValue, $data]);
             $this->exportData = $value;
         }
         if ($this->tip) {
@@ -231,7 +232,7 @@ class Column extends Component
     {
         $this->tagColor = $tagColor;
         $this->tagTheme = $tagTheme;
-        $this->usings = $usings;
+        $this->usings   = $usings;
         return $this;
     }
 
@@ -250,6 +251,7 @@ class Column extends Component
         });
         return $this;
     }
+
     /**
      * 显示图片
      * @param int $width 宽度
@@ -269,7 +271,7 @@ class Column extends Component
             } elseif (is_array($val)) {
                 $images = $val;
             }
-            $html = '';
+            $html      = '';
             $jsonImage = json_encode($images);
             if ($multi) {
                 foreach ($images as $image) {
@@ -294,16 +296,21 @@ class Column extends Component
     {
         $this->image($width, $height, $radius, true);
     }
+
     /**
      * switch开关
-     * @param array $active 开启状态 [1=>'开启']
-     * @param array $inactive 关闭状态 [0=>'关闭']
+     * @param array $switchArr 二维数组 开启的在下标0 关闭的在下标1
+     *      $arr = [
+     *          [1 => '开启'],
+     *          [0 => '关闭'],
+     *      ];
      */
-    public function switch(array $active = [1 => '开启'], array $inactive = [0 => '关闭'])
+    public function switch($switchArr = [[1 => '开启'], [0 => '关闭']])
     {
-        return $this->display(function ($val, $data) use ($active, $inactive) {
-            $params = $this->grid->getCallMethod();
+        return $this->display(function ($val, $data) use ($switchArr) {
+            $params               = $this->grid->getCallMethod();
             $params['eadmin_ids'] = [$data[$this->grid->drive()->getPk()]];
+            list ($active, $inactive) = $switchArr;
             $switch = Switchs::create(null, $val)
                 ->state($active, $inactive)
                 ->url('/eadmin/batch.rest')
@@ -318,15 +325,17 @@ class Column extends Component
      * 文件显示
      * @return Column
      */
-    public function file(){
-        return $this->display(function ($val){
-           $file = new DownloadFile();
-           return $file->url($val);
+    public function file()
+    {
+        return $this->display(function ($val) {
+            $file = new DownloadFile();
+            return $file->url($val);
         });
     }
+
     /**
      * 追加前面
-     * @param $append
+     * @param mixed $append
      * @return Column
      */
     public function prepend($prepend)
@@ -338,7 +347,7 @@ class Column extends Component
 
     /**
      * 追加末尾
-     * @param $append
+     * @param mixed $append
      * @return Column
      */
     public function append($append)
