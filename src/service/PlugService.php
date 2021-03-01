@@ -113,7 +113,7 @@ class PlugService extends Service
                 $info['title'] = $plug['title'] ?? $plug['name'];
                 $info['web_url'] = $plug['web_url'];
                 $info['description'] = $plug['description'];
-                $info['download'] = "https://gitlab.my8m.com/api/v4/projects/{$plug['id']}/repository/archive.zip";
+                $info['download'] = "https://gitlab.my8m.com/api/v4/projects/{$plug['id']}/repository/archive.zip?sha=eadmin";
                 $this->plugs[] = $info;
                 if(!is_dir($info['path'])){
                     $info['status'] = false;
