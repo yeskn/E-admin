@@ -25,10 +25,7 @@ class Tabs extends Field
 {
     protected $name = 'ElTabs';
     protected $tabPane = null;
-    public static function create()
-    {
-        return new self();
-    }
+
     public function pane($title, $content)
     {
         $tabPane = new TabPane();

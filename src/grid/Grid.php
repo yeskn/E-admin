@@ -19,6 +19,7 @@ use Eadmin\form\Form;
 use Eadmin\grid\excel\Csv;
 use Eadmin\grid\excel\Excel;
 use Eadmin\traits\CallProvide;
+use think\db\Query;
 use think\facade\Request;
 use think\helper\Str;
 use think\Model;
@@ -205,7 +206,7 @@ class Grid extends Component
 
     /**
      * 获取当前模型
-     * @return drive\Model|null|mixed
+     * @return \think\Db
      */
     public function model()
     {

@@ -73,6 +73,7 @@ EOF;
         });
         $grid->actions(function (Actions $actions, $rows) {
             $actions->hideDel();
+            $actions->column()->fixed(false);
             if ($rows['install']) {
                 if ($rows['status']) {
                     $actions->append(

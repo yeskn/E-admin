@@ -9,8 +9,9 @@
         name: "EadminDropdownItem",
         emits: ['gridRefresh'],
         setup(props, ctx) {
+            const {http} = useAjax()
             function clickHandel() {
-                useAjax(ctx)
+                http(ctx)
             }
             return {
                 clickHandel

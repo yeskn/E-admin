@@ -14,7 +14,6 @@ use Eadmin\component\Component;
 /**
  * Class Confirm
  * @package Eadmin\component\basic
- * @method $this title(string $value) 标题
  * @method $this message(string $value) 消息正文内容
  * @method $this type(string $value) 消息类型，用于显示图标 success / info / warning / error
  * @method $this dangerouslyUseHTMLString(bool $value = true) 是否将 message 属性作为 HTML 片段处理

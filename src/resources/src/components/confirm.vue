@@ -1,12 +1,12 @@
 <template>
-    <span @click="opend">
+    <span @click="opend" v-loading="loading" class="confirm">
         <slot></slot>
     </span>
 </template>
 
 <script>
     import {defineComponent} from 'vue'
-    import request from '@/utils/axios'
+    import {useHttp} from '@/hooks'
     import {ElMessageBox} from 'element-plus';
 
     export default defineComponent({
@@ -24,6 +24,7 @@
         },
         emits: ['confirm', 'cancel','gridRefresh'],
         setup(props, ctx) {
+            const {loading,http} = useHttp()
             function opend() {
                 ElMessageBox.confirm(props.message, props.title, ctx.attrs)
                     .then(({value}) => {
@@ -32,7 +33,7 @@
                             if (value) {
                                 params = Object.assign(params, {inputValue: value})
                             }
-                            request({
+                            http({
                                 url: props.url,
                                 method: props.method,
                                 data: params
@@ -50,6 +51,7 @@
             }
 
             return {
+                loading,
                 opend
             }
         }
@@ -57,5 +59,7 @@
 </script>
 
 <style scoped>
-
+.confirm{
+    display: inline-block;
+}
 </style>

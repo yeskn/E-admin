@@ -1,5 +1,5 @@
 <template>
-    <el-button @click="clickHandel"><slot></slot></el-button>
+    <el-button @click="clickHandel" :loading="loading"><slot></slot></el-button>
 </template>
 
 <script>
@@ -9,10 +9,12 @@
         name: "EadminButton",
         emits: ['gridRefresh'],
         setup(props, ctx) {
+            const {loading,http} = useAjax()
             function clickHandel() {
-                useAjax(ctx)
+                http(ctx)
             }
             return {
+                loading,
                 clickHandel
             }
         }
