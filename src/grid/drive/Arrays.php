@@ -89,4 +89,8 @@ class Arrays implements GridInterface
     {
 
     }
+    public function realiton($relation)
+    {
+        // TODO: Implement realiton() method.
+    }
 }

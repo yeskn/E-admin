@@ -19,6 +19,7 @@ abstract class Field extends Component
 {
     use WhenForm;
 
+    protected $name = 'html';
     protected $default = null;
     protected $value = null;
     protected $formItem;
@@ -26,6 +27,7 @@ abstract class Field extends Component
 
     public function __construct($field = null, $value = '')
     {
+        $this->attr('data-tag','component');
         $this->bindValue($field, $value);
     }
 

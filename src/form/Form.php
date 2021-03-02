@@ -24,6 +24,7 @@ use Eadmin\component\form\FormItem;
 use Eadmin\component\form\FormMany;
 use Eadmin\component\layout\Row;
 use Eadmin\contract\FormInterface;
+use Eadmin\form\traits\ComponentForm;
 use Eadmin\traits\CallProvide;
 use Eadmin\traits\FormModel;
 use think\facade\Request;
@@ -70,7 +71,7 @@ use think\Model;
  */
 class Form extends Field
 {
-    use CallProvide;
+    use CallProvide,ComponentForm;
 
     protected $name = 'EadminForm';
     protected $actions;
@@ -486,15 +487,15 @@ class Form extends Field
         if (count($arguments) > 1) {
             $label = array_pop($arguments);
         }
-        $label   = $label ?? '';
-        $class   = "Eadmin\\component\\form\\field\\";
-        $inputs  = [
+        $label = $label ?? '';
+
+        $inputs = [
             'text',
             'textarea',
             'password',
             'hidden',
         ];
-        $dates   = [
+        $dates = [
             'date',
             'dates',
             'year',
@@ -503,35 +504,13 @@ class Form extends Field
             'datetimeRange',
             'dateRange',
         ];
-        $times   = [
+        $times = [
             'time',
             'timeRange',
         ];
-        $uploads = [
-            'file',
-            'image',
-        ];
-        if (in_array($name, $inputs)) {
-            $class .= 'Input';
-        } elseif (in_array($name, $dates)) {
-            $class .= 'DatePicker';
-        } elseif (in_array($name, $times)) {
-            $class .= 'TimePicker';
-        } elseif (in_array($name, $uploads)) {
-            $class .= 'Upload';
-        } elseif ($name == 'radio') {
-            $class .= 'RadioGroup';
-        } elseif ($name == 'checkbox') {
-            $class .= 'CheckboxGroup';
-        } elseif ($name == 'switch') {
-            $class .= 'Switchs';
-        } elseif ($name == 'maps') {
-            $class .= 'Map';
-        } else {
-            $class .= ucfirst($name);
-        }
-        $prop         = $field;
-        $component    = $class::create($field);
+        $class =  self::$component[$name];
+        $prop = $field;
+        $component = $class::create($field);
         $componentArr = array_merge($inputs, $dates, $times);
         if ($name == 'image') {
             //图片组件
@@ -728,7 +707,9 @@ class Form extends Field
         }
         $this->bind($validatorField, $data);
     }
-
+    public static function extend($name,$component){
+        self::$component[$name] = $component;
+    }
     public function jsonSerialize()
     {
         $this->parseComponent();

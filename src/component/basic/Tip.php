@@ -3,6 +3,7 @@
 
 namespace Eadmin\component\basic;
 
+use Eadmin\component\Component;
 use think\helper\Str;
 
 /**

@@ -5,6 +5,7 @@ namespace Eadmin;
 
 
 use Eadmin\component\basic\Component;
+use Eadmin\component\basic\Html;
 use Eadmin\component\basic\Message;
 use Eadmin\component\basic\Notification;
 use Eadmin\controller\ResourceController;
@@ -61,7 +62,7 @@ class Admin
     public static function view($template, $vars = [])
     {
         $content = View::fetch($template, $vars);
-        return Component::create($content);
+        return Html::create($content)->tag('component');
     }
 
     public static function notification()

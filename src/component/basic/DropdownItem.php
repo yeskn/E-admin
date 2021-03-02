@@ -3,6 +3,8 @@
 
 namespace Eadmin\component\basic;
 
+use Eadmin\component\Component;
+
 /**
  * Class DropdownItem
  * @package Eadmin\component\basic
@@ -17,9 +19,15 @@ class DropdownItem extends Component
 {
     protected $name = 'EadminDropdownItem';
     protected $dropdown;
-
-    public function dropdown(Dropdown $dropdown)
+    public function __construct($content)
     {
+        $this->content($content);
+    }
+
+    public static function create($content){
+        return new self($content);
+    }
+    public function dropdown(Dropdown $dropdown){
         $this->dropdown = $dropdown;
         return $this->dropdown;
     }

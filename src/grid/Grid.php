@@ -157,7 +157,7 @@ class Grid extends Component
         $column = $this->column($nickname, $label);
         return $column->display(function ($val, $data) use ($column, $avatar) {
             $avatarValue = $data[$avatar];
-            $image        = Image::create()
+            $image = Image::create()
                 ->src($avatarValue)
                 ->fit('cover')
                 ->attr('style', ['width' => '80px', 'height' => '80px', "borderRadius" => '50%'])
@@ -318,7 +318,7 @@ class Grid extends Component
     public function treeTable($pidField = 'pid', $expand = true)
     {
         $this->treeParent = $pidField;
-        $this->isTree     = true;
+        $this->isTree = true;
         $this->hidePage();
         $this->defaultExpandAllRows($expand);
     }
@@ -410,9 +410,9 @@ class Grid extends Component
      */
     public function column(string $field = '', string $label = '')
     {
-        $column         = new Column($field, $label, $this);
+        $column = new Column($field, $label, $this);
         $this->column[] = $column;
-        $this->realiton($field);
+        $this->drive->realiton($field);
         return $column;
     }
 
@@ -439,7 +439,7 @@ class Grid extends Component
                 $row[$this->treeParent] = $data[$this->treeParent];
             }
             foreach ($this->column as $column) {
-                $field       = $column->attr('prop');
+                $field = $column->attr('prop');
                 $row[$field] = $column->row($data);
                 if ($export) {
                     $row[$field] = $column->getExportData();
@@ -451,7 +451,7 @@ class Grid extends Component
                 $row['EadminAction'] = $actionColumn;
             }
             if (!is_null($this->expandRow)) {
-                $expandRow              = call_user_func($this->expandRow, $data);
+                $expandRow = call_user_func($this->expandRow, $data);
                 $row['EadminExpandRow'] = Html::create($expandRow);
             }
             $tableData[] = $row;
@@ -483,7 +483,7 @@ class Grid extends Component
         if (Request::get('export_type') == 'all') {
             set_time_limit(0);
             if ($excel instanceof Excel) {
-                $data       = $this->drive->db()->select()->toArray();
+                $data = $this->drive->db()->select()->toArray();
                 $exportData = $this->parseColumn($data, true);
                 $excel->rows($exportData)->export();
             } else {

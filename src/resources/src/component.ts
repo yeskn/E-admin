@@ -23,6 +23,7 @@ import echart from './components/echart/echart.vue'
 import echartCard from './components/echart/echartCard.vue'
 import EadminAmap from './components/EadminAmap.vue'
 import selectTable from './components/selectTable.vue'
+
 app.component(form.name,form)
 app.component(manyItem.name,manyItem)
 app.component(dialog.name,dialog)
@@ -47,3 +48,4 @@ app.component(echartCard.name,echartCard)
 app.component(batchAction.name,batchAction)
 app.component(EadminAmap.name,EadminAmap)
 app.component(eadminErrorPage.name,eadminErrorPage)
+

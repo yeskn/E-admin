@@ -1,5 +1,5 @@
 <script>
-    import {defineComponent, toRaw, h, resolveComponent, inject,isProxy,resolveDirective,withDirectives} from 'vue'
+    import {defineComponent, toRaw, h, resolveComponent, inject,isProxy,resolveDirective,withDirectives,getCurrentInstance,KeepAlive} from 'vue'
     import {store} from '@/store'
     import {splitCode} from '@/utils/splitCode'
     import dayjs from 'dayjs'
@@ -137,10 +137,15 @@
                 }
 
                 attribute = {...data.attribute}
-                if(data.name == 'html'){
-                    return _createVnode(attribute['data-tag'] || 'span', attribute, children,data.directive)
-                }else if(data.name == 'component'){
-                    return h(splitCode(data.content.default[0]),attribute)
+                if(data.name === 'html'){
+                    if(attribute['data-tag'] === 'component'){
+                        if(resolveComponent(attribute.key) === attribute.key){
+                            getCurrentInstance().appContext.app.component(attribute.key,splitCode(data.content.default[0]))
+                        }
+                        return h(resolveComponent(attribute.key),attribute)
+                    }else{
+                        return _createVnode(attribute['data-tag'] || 'span', attribute, children,data.directive)
+                    }
                 }
                 name = resolveComponent(data.name)
                 //for 遍历中的 ElFormItem 验证prop error处理

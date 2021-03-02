@@ -2,7 +2,6 @@
 
 namespace Eadmin\controller;
 
-use Eadmin\component\basic\Component;
 use Eadmin\component\basic\DebugLog;
 use Eadmin\Controller;
 use think\facade\Request;

@@ -35,7 +35,7 @@ interface GridInterface
     public function sortField(string $field);
 
     public function trashed();
-
+    public function realiton($relation);
     /**
      * 获取数据
      * @param bool $hidePage 是否分页

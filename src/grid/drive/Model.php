@@ -92,7 +92,7 @@ class Model implements GridInterface
      * 解析关联方法设置
      * @param string $relation 关联方法
      */
-    protected function realiton($relation)
+    public function realiton($relation)
     {
         $fields = explode('.', $relation);
         if (count($fields) > 1) {
@@ -108,6 +108,7 @@ class Model implements GridInterface
 
     public function getData(bool $hidePage, int $page, int $size)
     {
+        $this->withRelations();
         if ($hidePage) {
             return $this->db->select();;
         } else {
