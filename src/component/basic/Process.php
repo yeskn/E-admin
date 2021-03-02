@@ -24,4 +24,8 @@ use Eadmin\component\Component;
 class Process extends Component
 {
     protected $name = 'ElProcess';
+    public static function create()
+    {
+        return new self();
+    }
 }

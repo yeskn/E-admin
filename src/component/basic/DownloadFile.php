@@ -17,4 +17,12 @@ namespace Eadmin\component\basic;
 class DownloadFile extends Component
 {
     protected $name = 'EadminDownloadFile';
+    /**
+     * 创建
+     * @return DownloadFile
+     */
+    public static function create()
+    {
+        return new self();
+    }
 }

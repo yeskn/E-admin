@@ -28,7 +28,7 @@
 </template>
 
 <script>
-    import {defineComponent, ref, watch,triggerRef} from "vue";
+    import {defineComponent, ref, watch} from "vue";
     import {useHttp} from '@/hooks'
     import {unique} from '@/utils'
 
@@ -58,6 +58,9 @@
                 y: window.innerHeight / 2
             }
             submit()
+            watch(() => props.modelValue, val => {
+                value.value = val
+            })
             watch(value, (val) => {
                 if (props.multiple) {
                     selection.value = val

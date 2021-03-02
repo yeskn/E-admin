@@ -28,6 +28,7 @@ use think\helper\Str;
  * @method $this destroyOnClose(bool $value = true) 关闭时销毁 Dialog 中的元素
  * @method $this url(string $value) 异步加载数据url
  * @method $this params(array $value)  异步附加请求数据
+ * @method $this method(string $value) ajax请求method get / post /put / delete
  */
 class Drawer extends Field
 {

@@ -19,7 +19,10 @@ class Video extends Component
 {
     protected $options = [];
     protected $name = 'EadminVideo';
-
+    public static function create()
+    {
+        return new self();
+    }
     /**
      * 视频链接
      * @param string $url  视频链接

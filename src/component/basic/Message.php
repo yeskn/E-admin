@@ -78,7 +78,15 @@ class Message
         $this->data = array_merge($this->data, ['url' => $url]);
         return $this;
     }
-
+    /**
+     * 跳转url
+     * @return $this
+     */
+    public function back()
+    {
+        $this->data = array_merge($this->data, ['url' => 'back']);
+        return $this;
+    }
     /**
      * 刷新当前页面
      */

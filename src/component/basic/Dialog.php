@@ -32,6 +32,7 @@ use think\helper\Str;
  * @method $this center(bool $value = true) 是否对头部和底部采用居中布局
  * @method $this destroyOnClose(bool $value = true) 关闭时销毁 Dialog 中的元素
  * @method $this url(string $value) 异步加载数据url
+ * @method $this method(string $value) ajax请求method get / post /put / delete
  * @method $this params(array $value)  异步附加请求数据
  */
 class Dialog extends Field

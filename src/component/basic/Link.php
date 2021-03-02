@@ -19,4 +19,13 @@ use Eadmin\component\Component;
 class Link extends Component
 {
     protected $name = 'ElLink';
+    public function __construct($content)
+    {
+        $this->content($content);
+    }
+
+    public static function create($content)
+    {
+        return new self($content);
+    }
 }

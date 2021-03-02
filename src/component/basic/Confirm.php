@@ -88,4 +88,14 @@ class Confirm extends Component
             ->inputValue($inputValue);
         return $this;
     }
+
+    /**
+     * 标题
+     * @param string $content
+     * @return Dialog
+     */
+    public function title($content)
+    {
+        return $this->attr('title', $content);
+    }
 }

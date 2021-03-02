@@ -3,7 +3,7 @@
 </template>
 
 <script>
-    import {defineComponent,ref} from "vue";
+    import {defineComponent,ref,watch} from "vue";
     import request from '@/utils/axios'
     export default defineComponent({
         name: "EadminSwitch",
@@ -16,6 +16,9 @@
         emits: ['update:modelValue'],
         setup(props,ctx){
             const value = ref(false)
+            watch(() => props.modelValue, val => {
+                value.value = val
+            })
             if(props.modelValue == ctx.attrs.activeValue) {
                 value.value = true
             }

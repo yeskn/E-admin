@@ -29,6 +29,11 @@
             },
             url: String,
             params:Object,
+            //请求method
+            method: {
+                type: String,
+                default: 'get'
+            },
             slotProps:Object
         },
         emits: ['update:modelValue'],
@@ -46,7 +51,8 @@
                         const {http} = useHttp()
                         http({
                             url: props.url,
-                            params:props.params
+                            params:props.params,
+                            method:props.method
                         }).then(res => {
                             content.value = res
                         })
