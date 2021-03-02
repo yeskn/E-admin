@@ -80,7 +80,9 @@ class AdminService extends Service
         $method = strtolower($method);
         $node = strtolower($node);
         $ext = pathinfo($node, PATHINFO_EXTENSION);
-        if(strpos($node,'edit.rest')){
+        if($node === '#'){
+            return false;
+        }elseif(strpos($node,'edit.rest')){
             $node = preg_replace("/(.+)\/(\w+)\/edit\.rest$/U","\\1/:id/edit.rest",$node);
         }elseif(strpos($node,'create.rest')){
             $node = preg_replace("/(.+)\/create\.rest$/U","\\1/create.rest",$node);
