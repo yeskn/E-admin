@@ -548,7 +548,7 @@ class Filter
                     $betweenStart = $data[$field];
                     $field        = str_replace('__start', '__end', $field);
                     $betweenEnd   = $data[$field];
-                    $this->db->whereBetween($dbField, [$betweenStart, $betweenEnd]);
+                    $sql = $this->db->whereBetweenTime($dbField, $betweenStart, $betweenEnd);
                     break;
                 case 'between':
                     $betweenStart = $data[$field];
