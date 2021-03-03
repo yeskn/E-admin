@@ -432,7 +432,11 @@ class Form extends Field
     {
         $this->batch = true;
         $manyItem =  $this->hasMany('eadmin_batch','',$closure);
-        $manyItem->value($this->drive->getDataAll());
+        $data = $this->drive->getDataAll();
+        if(count($data) == 0){
+            $data[] = $manyItem->attr('manyData');
+        }
+        $manyItem->value($data);
         return $manyItem;
     }
 
