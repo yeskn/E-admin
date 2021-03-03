@@ -41,7 +41,12 @@ class Config implements FormInterface
         }
         return true;
     }
-
+    public function saveAll(array $data){
+        return true;
+    }
+    public function getDataAll(){
+        return [];
+    }
     public function edit($id)
     {
 

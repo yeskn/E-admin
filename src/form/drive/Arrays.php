@@ -37,7 +37,9 @@ class Arrays implements FormInterface
             return $data;
         }
     }
-
+    public function getDataAll(){
+        return [];
+    }
     public function edit($id)
     {
         $this->data = $this->originData;
@@ -52,7 +54,9 @@ class Arrays implements FormInterface
     {
         return true;
     }
-
+    public function saveAll(array $data){
+        return true;
+    }
     public function setPkField(string $field)
     {
         $this->pkField = $field;

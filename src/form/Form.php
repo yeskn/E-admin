@@ -71,7 +71,7 @@ use think\Model;
  */
 class Form extends Field
 {
-    use CallProvide,ComponentForm;
+    use CallProvide, ComponentForm;
 
     protected $name = 'EadminForm';
     protected $actions;
@@ -97,6 +97,7 @@ class Form extends Field
     //保存修改成功后跳转的url
     protected $redirectUrl = '';
 
+    protected $batch = false;
     public function __construct($data)
     {
         if ($data instanceof Model) {
@@ -282,7 +283,7 @@ class Form extends Field
             if (is_null($value) && ($component instanceof DatePicker || $component instanceof TimePicker) && $startField = $component->bindAttr('startField')) {
                 $value = [];
             }
-            $defaultValue   = $component->getDefault();
+            $defaultValue = $component->getDefault();
             $componentValue = $component->getValue();
             //设置default缺省值
             if (empty($value) && $value !== 0 && !is_null($defaultValue)) {
@@ -314,7 +315,7 @@ class Form extends Field
         $value = $componentValue;
         if ($component instanceof DatePicker || $component instanceof TimePicker) {
             $startField = $component->bindAttr('startField');
-            $endField   = $component->bindAttr('endField');
+            $endField = $component->bindAttr('endField');
             if ($field == $startField && isset($componentValue[0])) {
                 $value = $componentValue[0];
             }
@@ -338,7 +339,7 @@ class Form extends Field
             $this->push($this->tab);
         }
         $formItems = $this->collectFields($closure);
-        $tabPane   = new TabPane();
+        $tabPane = new TabPane();
         $tabPane->label($title);
         foreach ($formItems as $item) {
             $tabPane->content($item);
@@ -351,7 +352,7 @@ class Form extends Field
     {
         $offset = count($this->formItem);
         call_user_func($closure, $this);
-        $formItems      = array_slice($this->formItem, $offset);
+        $formItems = array_slice($this->formItem, $offset);
         $this->formItem = array_slice($this->formItem, 0, $offset);
         return $formItems;
     }
@@ -383,7 +384,7 @@ class Form extends Field
     public function row(\Closure $closure, string $title = '')
     {
 
-        $row       = new Row();
+        $row = new Row();
         $formItems = $this->collectFields($closure);
         $this->push("<h4 style='font-size:16px;'>{$title}</h4>");
         foreach ($formItems as $item) {
@@ -414,9 +415,9 @@ class Form extends Field
     public function edit($id)
     {
         $this->drive->edit($id);
-        $pk              = $this->drive->getPk();
+        $pk = $this->drive->getPk();
         $this->data[$pk] = $this->drive->getData($pk);
-        $this->isEdit    = true;
+        $this->isEdit = true;
         $this->attr('editId', $id);
         $this->setAction('/eadmin/' . $id . '.rest', 'PUT');
         return $this;
@@ -425,6 +426,14 @@ class Form extends Field
     public function manyRelation()
     {
         return $this->manyRelation;
+    }
+
+    public function batch(\Closure $closure)
+    {
+        $this->batch = true;
+        $manyItem =  $this->hasMany('eadmin_batch','',$closure);
+        $manyItem->value($this->drive->getDataAll());
+        return $manyItem;
     }
 
     /**
@@ -437,17 +446,17 @@ class Form extends Field
     {
         $this->validatorBind($relation);
 
-        $manyItem       = FormMany::create($relation, []);
+        $manyItem = FormMany::create($relation, []);
         $validatorField = $this->bindAttr('model') . 'Error';
         $manyItem->attr('validator', $validatorField);
         $originItemComponent = $this->itemComponent;
         $this->itemComponent = [];
-        $this->manyRelation  = $relation;
-        $formItems           = $this->collectFields($closure);
-        $this->manyRelation  = '';
-        $itemComponent       = $this->itemComponent;
-        $datas               = $this->drive->getData($relation) ?? [];
-        $manyData            = [];
+        $this->manyRelation = $relation;
+        $formItems = $this->collectFields($closure);
+        $this->manyRelation = '';
+        $itemComponent = $this->itemComponent;
+        $datas = $this->drive->getData($relation) ?? [];
+        $manyData = [];
         foreach ($itemComponent as $component) {
             $componentClone = clone $component;
             $this->valueModel($componentClone, []);
@@ -508,7 +517,7 @@ class Form extends Field
             'time',
             'timeRange',
         ];
-        $class =  self::$component[$name];
+        $class = self::$component[$name];
         $prop = $field;
         $component = $class::create($field);
         $componentArr = array_merge($inputs, $dates, $times);
@@ -533,7 +542,7 @@ class Form extends Field
             $component->bindFields($arguments);
             $prop = $component->bindAttr('modelValue');
         } elseif ($name == 'maps') {
-            $field     = array_pop($arguments);
+            $field = array_pop($arguments);
             $component = $class::create($field);
             $component->bindFields($arguments);
             $prop = $component->bindAttr('modelValue');
@@ -641,7 +650,12 @@ class Form extends Field
                 $data = array_merge($data, $beforeData);
             }
         }
-        $result = $this->drive->save($data);
+        if($this->batch){
+            $result = $this->drive->saveAll($data['eadmin_batch']);
+        }else{
+            $result = $this->drive->save($data);
+        }
+
         //保存回后调
         if (!is_null($this->afterSave)) {
             call_user_func_array($this->afterSave, [$data, $this->drive->getData()]);
@@ -683,7 +697,7 @@ class Form extends Field
             //各个组件绑定值赋值
             $this->valueModel($component);
         }
-        $field      = $this->bindAttr('model');
+        $field = $this->bindAttr('model');
         $this->data = array_merge($this->data, $this->callMethod);
         //将值绑定到form
 
@@ -702,14 +716,17 @@ class Form extends Field
         if (is_null($field)) {
             $data = [];
         } else {
-            $data         = $this->bind($validatorField);
+            $data = $this->bind($validatorField);
             $data[$field] = [];
         }
         $this->bind($validatorField, $data);
     }
-    public static function extend($name,$component){
+
+    public static function extend($name, $component)
+    {
         self::$component[$name] = $component;
     }
+
     public function jsonSerialize()
     {
         $this->parseComponent();

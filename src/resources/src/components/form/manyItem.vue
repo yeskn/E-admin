@@ -1,5 +1,5 @@
 <template>
-    <el-divider content-position='left'>{{title}}</el-divider>
+    <el-divider content-position='left' v-if="title">{{title}}</el-divider>
     <div v-for="(item,index) in value">
         <slot :row="item" :$index="index" :prop-field="field" :validator="$attrs.validator"></slot>
         <el-form-item>

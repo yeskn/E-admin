@@ -3,6 +3,7 @@
 namespace Eadmin\form\drive;
 
 use Eadmin\contract\FormInterface;
+use Eadmin\model\AdminModel;
 use think\exception\HttpResponseException;
 use think\facade\Db;
 use think\facade\Log;
@@ -110,7 +111,26 @@ class Model implements FormInterface
         return $result;
     }
 
-
+    /**
+     * 批量保存
+     * @param array $data
+     * @return bool|\think\Collection
+     */
+    public function saveAll(array $data){
+        $result = true;
+        try {
+            $this->model->where('1=1')->delete();
+            $this->model->saveAll($data);
+        }catch (HttpResponseException $e) {
+            throw $e;
+        }catch (\Exception $e) {
+            $result = false;
+        }
+        return $result;
+    }
+    public function getDataAll(){
+        return $this->model->select();
+    }
     /**
      * 获取字段数据
      * @param string|null $field

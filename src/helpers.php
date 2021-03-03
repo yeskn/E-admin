@@ -3,7 +3,15 @@
 use rockySysLog\model\SystemLog;
 use admin\service\TokenService;
 use Eadmin\Admin;
-
+if (!function_exists('redis')) {
+    /**
+     * @return \Redis
+     */
+    function redis()
+    {
+        return \think\facade\Cache::store('redis');
+    }
+}
 if (!function_exists('sysconf')) {
     function sysconf($name, $value = null)
     {
