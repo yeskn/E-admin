@@ -54,3 +54,21 @@ export function link(url: string) {
         router.push('/' + url)
     }
 }
+
+export function lastName(path:string,filename:string='') {
+    if (filename) {
+        return filename
+    } else {
+        var index = path.lastIndexOf('\/')
+        return path.substring(index + 1, path.length)
+    }
+}
+export function fileIcon(path:string){
+    var index = path.lastIndexOf('\.')
+    var ext = path.substring(index + 1, path.length)
+    try {
+        return require('@/assets/file_icon/' + ext + '.png')
+    } catch (e) {
+        return ''
+    }
+}

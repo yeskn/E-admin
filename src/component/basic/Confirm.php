@@ -91,7 +91,7 @@ class Confirm extends Component
     /**
      * 标题
      * @param string $content
-     * @return Dialog
+     * @return $this
      */
     public function title($content)
     {

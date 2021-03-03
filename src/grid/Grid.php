@@ -29,9 +29,7 @@ use think\Model;
  * Class Grid
  * @package Eadmin\grid
  * @method $this size(string $size) Radio的尺寸，仅在border为真时有效 medium / small / mini
- * @method $this scroll(array $height) {
- * x: number | true, y: number
- * }
+ * @method $this scroll(array $height) { x: number | true, y: number }
  * @method $this stripe(bool $bool = true) 是否为斑马纹
  * @method $this bordered(bool $bool = true) 是否展示外边框和列边框
  * @method $this fit(bool $bool) 列的宽度是否自撑开

@@ -71,7 +71,7 @@
             </el-row>
         </div>
         <!--表格-->
-        <a-table v-else :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" v-loading="loading" v-bind="$attrs" row-key="id" ref="dragTable">
+        <a-table v-else :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" :loading="loading" v-bind="$attrs" row-key="id" ref="dragTable">
             <template v-for="column in tableColumns" v-slot:[column.slots.title]>
                 <render :data="column.header" :slot-props="grid"></render>
             </template>

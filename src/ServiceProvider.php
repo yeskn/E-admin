@@ -11,6 +11,7 @@ namespace Eadmin;
 
 use Eadmin\component\basic\Message;
 use Eadmin\component\basic\Notification;
+use Eadmin\controller\FileSystem;
 use Eadmin\controller\ResourceController;
 use Eadmin\middleware\Response;
 use Eadmin\service\MenuService;
@@ -77,17 +78,9 @@ class ServiceProvider extends Service
         $this->app->route->post('backup/add', Backup::class . '@add');
         $this->app->route->post('backup/reduction', Backup::class . '@reduction');
         $this->app->route->get('backup', Backup::class . '@index');
-
-//        $this->app->route->resource(':controller',':controller')->ext('rest');
-//        $rules = $this->app->route->getGroup()->getRules();
-//        foreach ($rules as $key=>$rule){
-//            if(isset($rule[1]) && $rule[1] instanceof Resource){
-//                if($rule[1]->getRoute() !=':controller'){
-//                    $this->app->route->get($rule[1]->getName(),$rule[1]->getRoute().'@index');
-//                }
-//                $rule[1]->ext('rest');
-//            }
-//        }
+        //文件管理系统
+        $this->app->route->get('filesystem', FileSystem::class . '@index');
+        $this->app->route->post('filesystem/mkdir', FileSystem::class . '@mkdir');
     }
 
     public function boot()

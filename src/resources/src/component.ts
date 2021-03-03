@@ -22,6 +22,7 @@ import debugLog from './components/debugLog.vue'
 import echart from './components/echart/echart.vue'
 import echartCard from './components/echart/echartCard.vue'
 import EadminAmap from './components/EadminAmap.vue'
+import filesystem from './components/filesystem.vue'
 import selectTable from './components/selectTable.vue'
 
 app.component(form.name,form)
@@ -47,5 +48,6 @@ app.component(echart.name,echart)
 app.component(echartCard.name,echartCard)
 app.component(batchAction.name,batchAction)
 app.component(EadminAmap.name,EadminAmap)
+app.component(filesystem.name,filesystem)
 app.component(eadminErrorPage.name,eadminErrorPage)
 
