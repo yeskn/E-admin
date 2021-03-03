@@ -21,6 +21,7 @@ use Eadmin\grid\excel\Excel;
 use Eadmin\traits\CallProvide;
 use think\db\Query;
 use think\facade\Request;
+use think\helper\Arr;
 use think\helper\Str;
 use think\Model;
 
@@ -155,12 +156,11 @@ class Grid extends Component
     {
         $column = $this->column($nickname, $label);
         return $column->display(function ($val, $data) use ($column, $avatar) {
-            $avatarValue = $data[$avatar];
+            $avatarValue = Arr::get($data,$avatar);
             $image = Image::create()
-                ->src($avatarValue)
                 ->fit('cover')
                 ->attr('style', ['width' => '80px', 'height' => '80px', "borderRadius" => '50%'])
-                ->previewSrcList([$avatarValue]);
+                ->previewSrcList([$avatarValue])->src($avatarValue);
             return Html::create()->content($image)->content("<br>{$val}");
         })->align('center');
     }

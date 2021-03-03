@@ -171,7 +171,7 @@ class Column extends Component
         }
         $this->exportData = $value;
         //映射内容颜色处理
-        if (isset($this->tagColor[$value])) {
+        if (!is_array($value) && isset($this->tagColor[$value])) {
             $this->tag($this->tagColor[$value], $this->tagTheme);
         }
         //映射内容处理
