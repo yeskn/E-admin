@@ -28,12 +28,16 @@
         </span>
       </div>
     </span>
-    <label v-if="displayType=='image'" v-show="showUploadBtn" ref="btn" class="uploader-btn" :style="{height: styleHeight,width:styleHeight}" @click="handelBrowse">
-      <el-progress v-show="progressShow" class="progess" type="circle" :width="height" :percentage="percentage" />
-      <i v-show="!progressShow" class="el-icon-plus progess" />
-    </label>
+    <span v-if="displayType=='image'" v-show="showUploadBtn" ref="btn"  @click="handelBrowse">
+      <slot>
+        <label class="uploader-btn" :style="{height: styleHeight,width:styleHeight}">
+          <el-progress v-show="progressShow" class="progess" type="circle" :width="height" :percentage="percentage" />
+          <i v-show="!progressShow" class="el-icon-plus progess" />
+        </label>
+      </slot>
+    </span>
     <span v-if="displayType=='file'" class="fileList">
-      <div v-for="(file,index) in files" :key="index" style="margin-bottom: 10px;">
+      <div v-for="(file,index) in files" :key="index" style="margin-bottom: 10px;" v-if="!foreverShow">
         <div class="el-upload-list__item is-success" :style="{width:styleWidth}" @mouseover="showImgTool(index)" @mouseout="showImgToolIndex = -1">
           <a class="el-upload-list__item-name" target="_blank" :href="file">
             <div v-if="showImgToolIndex == index">
@@ -60,16 +64,20 @@
           <i class="el-icon-close" @click="fileDelete(index)" /><i class="el-icon-close-tip" />
         </div>
       </div>
-      <el-progress v-show="progressShow" style="margin: 13px 0px" :text-inside="true" :stroke-width="15" :percentage="percentage" />
-      <label v-if="displayType == 'file' || displayType=='audio' || displayType=='video'" v-show="showUploadBtn" ref="btn" class="fileButton" @click="handelBrowse">
-        <template v-if="drag">
-          <i class="el-icon-upload" />
-          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-        </template>
-        <template v-else>
-          <i class="el-icon-upload" /> 上传文件
-        </template>
-      </label>
+      <span @click="handelBrowse" v-if="displayType == 'file'" v-show="showUploadBtn || foreverShow" ref="btn" >
+        <slot>
+          <el-progress v-show="progressShow" style="margin: 13px 0px" :text-inside="true" :stroke-width="15" :percentage="percentage" />
+          <label class="fileButton" >
+          <template v-if="drag">
+            <i class="el-icon-upload" />
+            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+          </template>
+          <template v-else>
+            <i class="el-icon-upload" /> 上传文件
+          </template>
+          </label>
+        </slot>
+      </span>
     </span>
 
   </div>
@@ -82,6 +90,7 @@ import * as qiniu from 'qiniu-js'
 
 import {defineComponent, reactive,watch ,nextTick,toRefs,ref} from "vue";
 import {ElMessage} from 'element-plus'
+function noop() {}
 export default defineComponent({
   name: 'EadminUpload',
 
@@ -151,11 +160,17 @@ export default defineComponent({
       type: Boolean,
       default: false
     },
+    foreverShow:Boolean,
+    onProgress: {
+      type: Function,
+      default: noop
+    },
     drag: {
       type: Boolean,
       default: false
     }
   },
+  emits: ['success','update:modelValue'],
   setup(props,ctx){
     const state = reactive({
       styleWdith: '',
@@ -241,10 +256,10 @@ export default defineComponent({
         region: props.region
       })
     }
-
     const uploader = new Uploader(state.options)
-
-
+    watch(()=>props.saveDir,value=>{
+      uploader.opts.query.saveDir = value
+    })
     nextTick(() => {
       uploader.assignDrop(btn.value)
       uploader.assignBrowse(btn.value, false, props.singleFile, state.attrs)
@@ -280,6 +295,7 @@ export default defineComponent({
     })
     // 单个文件上传成功
     uploader.on('fileSuccess', function(rootFile, file, message) {
+
       try {
         const res = JSON.parse(message)
         if (res.code == 200) {
@@ -288,6 +304,7 @@ export default defineComponent({
           if (props.singleFile) {
             state.files = []
           }
+          ctx.emit('success')
           state.files.push(res.data)
         }
       } catch (e) {
@@ -302,6 +319,7 @@ export default defineComponent({
     uploader.on('fileProgress', function(rootFile, file, chunk) {
       state.progressShow = true
       state.percentage = parseInt(uploader.progress() * 100)
+      props.onProgress(state.percentage)
     })
     // 根下的单个文件（文件夹）上传完成
     uploader.on('fileComplete', function(rootFile) {
@@ -398,6 +416,7 @@ export default defineComponent({
         next(res) {
           state.progressShow = true
           state.percentage = parseInt(res.total.percent)
+          props.onProgress(state.percentage)
         },
         error(err) {
           state.progressShow = false
@@ -414,6 +433,7 @@ export default defineComponent({
             state.files = []
           }
           state.files.push(url)
+          ctx.emit('success')
         }
       })
     }
@@ -431,6 +451,7 @@ export default defineComponent({
         progress: function(percentage) {
           state.progressShow = true
           state.percentage = parseInt(percentage * 100)
+          props.onProgress(state.percentage)
         }
       }).then(result => {
         // 生成文件下载地址
@@ -441,6 +462,7 @@ export default defineComponent({
           state.files = []
         }
         state.files.push(url)
+        ctx.emit('success')
       }).catch(err => {
         state.progressShow = false
         ElMessage({

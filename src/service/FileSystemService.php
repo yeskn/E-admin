@@ -38,4 +38,36 @@ class FileSystemService extends Service
         }
         return $datas;
     }
+
+    /**
+     * 删除文件
+     * @param $path
+     * @return bool
+     */
+    public function delFiels($path){
+        if(is_file($path)){
+            unlink($path);
+        }elseif (is_dir($path)){
+            $this->deleteDir($path);
+        }
+        return true;
+    }
+    protected function deleteDir($dirName){
+        //如果是目录，那么我们就遍历下面的文件或者目录
+        //打开目录句柄
+        $dir = opendir($dirName);
+        while($fileName = readdir($dir)){
+            //不运行像上级目录运行
+            if($fileName!="." && $fileName!=".."){
+                $file = $dirName."/".$fileName;
+                if(is_dir($file)){
+                    $this->deleteDir($file);//使用递归删除目录
+                }else{
+                    unlink($file);
+                }
+            }
+        }
+        closedir($dir);//关闭dir
+        rmdir( $dirName );
+    }
 }

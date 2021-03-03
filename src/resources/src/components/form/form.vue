@@ -136,5 +136,6 @@
 .form{
     background: rgb(255, 255, 255);
     border-radius: 4px;
+    white-space:normal;
 }
 </style>

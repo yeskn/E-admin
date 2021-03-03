@@ -1,5 +1,5 @@
 <template>
-    <el-card>
+    <el-card class="filesystem">
         <template #header>
             <div style="display: flex;align-items: center;justify-content: space-between">
                 <el-button-group style="display: flex;align-items: center">
@@ -13,9 +13,9 @@
                         </el-breadcrumb>
                     </div>
                     <el-button icon="el-icon-refresh" size="mini" @click="loading = true"></el-button>
-                    <el-button  size="mini" @click="loading = true">上传</el-button>
+                    <render :data="upload" :save-dir="savePath" :on-progress="uploadProgress" @success="uploadSuccess"></render>
                     <el-button  size="mini" @click="mkdir">新建文件夹</el-button>
-                    <el-button  size="mini" type="danger" @click="loading = true" v-if="selectIds.length > 0">删除选中</el-button>
+                    <el-button  size="mini" type="danger" v-if="selectIds.length > 0" @click="delSelect">删除选中</el-button>
                 </el-button-group>
                 <el-col :md="6" style="display: flex;">
                     <!--快捷搜索-->
@@ -23,36 +23,43 @@
                               size="mini" style="margin-right: 10px;flex: 1" placeholder="请输入关键字" @change="loading = true" ></el-input>
                     <el-button class="hidden-md-and-down" type="primary" size="mini" icon="el-icon-search" @click="loading = true">搜索</el-button>
                 </el-col>
-                <!--                <el-button size="mini">上传</el-button>-->
+
             </div>
         </template>
-        <a-table row-key="path" :row-selection="rowSelection" :columns="tableColumns" :data-source="tableData" :loading="loading">
-            <template #name="{ text , record , index }">
-                <div class="filename" @click="changePath(record.dir ? record.path:initPath)">
-                    <el-image :src="fileIcon(record.dir ? '.dir':text)"
-                              style="width: 32px;height: 32px;margin-right: 10px">
-                        <div slot="error" style="display: flex; align-items: center;"><i class="el-icon-document"
-                                                                                         style="font-size: 32px"/></div>
-                    </el-image>
-                    {{ text }}
-                </div>
-            </template>
-        </a-table>
+        <div>
+            <a-table row-key="path" :row-selection="rowSelection" :columns="tableColumns" :data-source="tableData" :loading="loading">
+                <template #name="{ text , record , index }">
+                    <div class="filename" @click="changePath(record.dir ? record.path:initPath)">
+                        <el-image :src="fileIcon(record.dir ? '.dir':text)"
+                                  style="width: 32px;height: 32px;margin-right: 10px">
+                            <div slot="error" style="display: flex; align-items: center;"><i class="el-icon-document"
+                                                                                             style="font-size: 32px"/></div>
+                        </el-image>
+                        {{ text }}
+                    </div>
+                </template>
+                <template #action="{ record }">
+                    <el-button icon="el-icon-download" size="mini" round>下载</el-button>
+                    <el-button icon="el-icon-delete"  type="danger" size="mini" round @click="del(record.path)">删除</el-button>
+                </template>
+            </a-table>
+        </div>
     </el-card>
 
 </template>
 
 <script>
-    import {computed, defineComponent, reactive, ref, toRefs, triggerRef, unref, watch} from "vue";
+    import {computed, defineComponent, reactive, ref, toRefs, triggerRef, unref, watch,toRef} from "vue";
     import {deleteArr, fileIcon, unique} from '@/utils'
     import {useHttp} from "@/hooks";
-    import {ElMessageBox} from 'element-plus';
+    import {ElMessageBox,ElLoading} from 'element-plus';
     export default defineComponent({
         name: "EadminFileSystem",
         props: {
             data: Array,
             params: Object,
             initPath: String,
+            upload:Object,
         },
         setup(props) {
             const {loading, http} = useHttp()
@@ -78,6 +85,11 @@
                     {
                         title: '所有者',
                         dataIndex: 'author',
+                    },
+                    {
+                        title: '操作',
+                        dataIndex: 'action',
+                        slots: {customRender: 'action'}
                     }
                 ],
                 tableData: props.data,
@@ -110,11 +122,29 @@
                     params: requestParams
                 }).then(res => {
                     state.tableData = res.data
-                }).finally(() => {
-
                 })
             }
+            function delSelect() {
+                del(selectIds.value)
+            }
+            //删除
+            function del(path) {
+                if(!Array.isArray(path)){
+                    path = [path]
+                }
+                ElMessageBox.confirm('确认删除','提示',{type:'error'}).then(()=>{
+                    http({
+                        url:'filesystem/del',
+                        method:'delete',
+                        data:{
+                            paths:path
+                        }
+                    }).then(res=>{
+                        loadData()
+                    })
+                })
 
+            }
             //改变目录
             function changePath(path) {
                 if (path) {
@@ -148,6 +178,30 @@
                         loadData()
                     })
                 })
+            }
+            const savePath = computed(()=>{
+                const path = state.path +'/'
+                console.log(path.replace(props.initPath,''))
+                return path.replace(props.initPath,'')
+            })
+            //上传进度
+            let uploadProgressLoading = null
+            function uploadProgress(progress) {
+                if(uploadProgressLoading){
+                    uploadProgressLoading.setText('上传中 '+progress+'%')
+                }else{
+                    uploadProgressLoading = ElLoading.service({
+                        target:'.filesystem',
+                        text:'上传中 '+progress+'%',
+                    })
+                }
+            }
+            //上传成功
+            function uploadSuccess() {
+                loading.value  = true
+                if(uploadProgressLoading){
+                    uploadProgressLoading.close()
+                }
             }
             const breadcrumb = computed(() => {
                 const arr = state.path.split('/').filter(item => {
@@ -211,6 +265,10 @@
                 }
             })
             return {
+                delSelect,
+                del,
+                uploadProgress,
+                uploadSuccess,
                 back,
                 mkdir,
                 selectIds,
@@ -219,6 +277,7 @@
                 loading,
                 rowSelection,
                 fileIcon,
+                savePath,
                 ...toRefs(state)
             }
         }

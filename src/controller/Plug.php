@@ -64,7 +64,7 @@ class Plug extends Controller
 </div>
 EOF;
             return $html;
-        })->tip();
+        });
         $grid->column('author', '作者')->display(function ($val, $rows) {
             $html = <<<EOF
 {$rows['author']} <el-tag size="mini">{$rows['email']}</el-tag>
@@ -97,7 +97,7 @@ EOF;
         $grid->tools([
             Button::create('创建扩展')
                 ->typeWarning()
-                ->sizeMini()
+                ->sizeSmall()
                 ->dialog()
                 ->form($this->add()),
         ]);

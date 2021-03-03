@@ -129,6 +129,7 @@ class Select extends Field
      */
     public function options(array $data)
     {
+        $options = [];
         foreach ($data as $id => $label) {
             if (in_array($id, $this->disabledData)) {
                 $disabled = true;

@@ -81,6 +81,7 @@ class ServiceProvider extends Service
         //文件管理系统
         $this->app->route->get('filesystem', FileSystem::class . '@index');
         $this->app->route->post('filesystem/mkdir', FileSystem::class . '@mkdir');
+        $this->app->route->delete('filesystem/del', FileSystem::class . '@del');
     }
 
     public function boot()

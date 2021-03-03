@@ -5,6 +5,7 @@ namespace Eadmin\component\basic;
 
 
 use Eadmin\component\Component;
+use Eadmin\component\form\field\Upload;
 use Eadmin\traits\CallProvide;
 
 /**
@@ -17,15 +18,16 @@ class FileSystem extends Component
 {
     use CallProvide;
     protected $name = 'EadminFileSystem';
+
     public function __construct($data)
     {
         $this->data($data);
         $this->getCallMethod();
-        $this->attr('params',$this->getCallMethod());
-        $this->attr('tools',[
-           Button::create('新建文件夹')
-               ->sizeMini()->confirm('文件夹名称','')->title('')->input()
-        ]);
+        $this->attr('params', $this->getCallMethod());
+        $this->attr('upload',Upload::create()->attr('foreverShow',true)->content(
+            Button::create('上传')
+                ->sizeMini()
+        ));
     }
 
     public function jsonSerialize()

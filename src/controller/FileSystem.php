@@ -22,4 +22,10 @@ class FileSystem extends Controller
         mkdir($path);
         admin_success('成功','新建文件夹成功');
     }
+    public function del($paths){
+        foreach ($paths as $path){
+            FileSystemService::instance()->delFiels($path);
+        }
+        admin_success('成功','删除完成');
+    }
 }
