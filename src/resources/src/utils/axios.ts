@@ -5,6 +5,7 @@ import {ElMessage, ElNotification} from 'element-plus'
 import router from '@/router'
 import {action} from '@/store'
 import {refresh, link} from '@/utils'
+
 // create an axios instance
 const service = axios.create({
     // baseURL: window.global_config.VUE_APP_BASE_API, // url = base url + request url

@@ -302,6 +302,11 @@ class FileService extends Service
      */
     public function registerRoute()
     {
+        $this->app->route->get('eadmin/download',function (){
+           $filename = $this->app->request->param('filename');
+           $path = $this->app->request->param('path');
+           return download($path,$filename) ;
+        });
         $this->app->route->any('eadmin/upload', function () {
             $file        = $this->app->request->file('file');
             $filename    = $this->app->request->param('filename');

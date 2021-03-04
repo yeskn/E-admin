@@ -459,7 +459,7 @@ class Form extends Field
         $formItems = $this->collectFields($closure);
         $this->manyRelation = '';
         $itemComponent = $this->itemComponent;
-        $datas = $this->drive->getData($relation) ?? [];
+        $datas = $this->getData($relation) ?? [];
         $manyData = [];
         foreach ($itemComponent as $component) {
             $componentClone = clone $component;

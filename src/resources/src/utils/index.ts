@@ -1,6 +1,6 @@
 import {isExternal} from "./validate";
 import router from '@/router'
-import {useRouter, RouteLocationNormalized} from "vue-router";
+import request from '@/utils/axios'
 
 export function findParent(datas: Array<any>, pid: string) {
     let list = [], find
@@ -38,15 +38,17 @@ export function deleteArr(arr, value) {
     }
 }
 
+//数字去重
 export function unique(arrs) {
     return arrs.filter((value,index,arr)=>arr.indexOf(value)===index)
 }
+//刷新
 export function refresh() {
     setTimeout(()=>{
         router.push({path: '/refresh', replace: true})
     },10)
 }
-
+//跳转
 export function link(url: string) {
     if (isExternal(url)) {
         window.open(url)
@@ -72,3 +74,4 @@ export function fileIcon(path:string){
         return ''
     }
 }
+

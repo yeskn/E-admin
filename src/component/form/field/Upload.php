@@ -17,6 +17,8 @@ use think\facade\Filesystem;
  * @method $this isUniqidmd5(bool $value = true) 唯一文件名
  * @method $this displayType(string $value) 上传显示方式 image图片, file文件
  * @method $this drag(bool $value = true) 是否启用拖拽上传
+ * @method $this multiple(bool $id = true) 多文件上传
+ * @method $this finder(bool $value = true) finer文件管理
  * @package Eadmin\component\form\field
  */
 class Upload extends Field
@@ -31,14 +33,7 @@ class Upload extends Field
         $this->disk(config('admin.uploadDisks'));
     }
 
-    /**
-     * 多文件上传
-     */
-    public function multiple()
-    {
-        $this->attr('singleFile', false);
-        return $this;
-    }
+
 
     /**
      * 上传存储类型
@@ -92,29 +87,16 @@ class Upload extends Field
         $this->attr('height', $height);
         return $this;
     }
-//    /**
-//     * 裁剪尺寸,暂仅支持单文件
-//     * @param $width 宽度
-//     * @param $height 高度
-//     * @param $auto 是否自动居中裁剪,否显示界面手动裁剪
-//     * @return $this
-//     */
-//    public function crop($width,$height,$auto = false){
-//        $this->attr('cropWidth',$width);
-//        $this->attr('cropHeight',$height);
-//        $this->attr('cropperOn',true);
-//        $this->attr('cropperAuto',$auto);
-//        return $this;
-//    }
-//    /**
-//     * 图片建议提示
-//     * @param $width 宽度
-//     * @param $height 高度
-//     */
-//    public function helpSize($width,$height){
-//        $this->help("建议上传图片尺寸 $width * $height");
-//        return $this;
-//    }
+
+    /**
+     * 图片建议提示
+     * @param $width 宽度
+     * @param $height 高度
+     */
+    public function helpSize($width,$height){
+        $this->help("建议上传图片尺寸 $width * $height");
+        return $this;
+    }
     /**
      * 限制上传类型
      * @param string $val
@@ -130,5 +112,12 @@ class Upload extends Field
         $accept = implode(',', $val);
         $this->attr('accept', $accept);
         return $this;
+    }
+    public function jsonSerialize()
+    {
+        if($this->attr('upType') === 'local' && is_null($this->attr('finder'))){
+            $this->attr('finder',Admin::dispatch('/filesystem'));
+        }
+        return parent::jsonSerialize();
     }
 }

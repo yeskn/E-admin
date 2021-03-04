@@ -49,6 +49,7 @@
             function open(){
                 show(()=>{
                     if (props.url) {
+                        content.value = null
                         const {http} = useHttp()
                         http({
                             url: props.url,

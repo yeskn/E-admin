@@ -227,6 +227,7 @@ class Admin
         try {
             if (strpos($url, '/') !== false) {
                 $parse   = parse_url($url);
+
                 $path    = $parse['path'] ?? '';
                 $vars    = [];
                 $request = app()->request;
@@ -246,6 +247,7 @@ class Admin
                 $url = implode('/', $pathinfo);
 
                 $dispatch = Route::getDomains()['-']->check(request(), $url);
+
                 if ($dispatch === false) {
                     $dispatch = Route::url($url);
 
@@ -260,7 +262,7 @@ class Admin
                         $reflect  = new \ReflectionMethod($instance, $action);
                         $data     = app()->invokeReflectMethod($instance, $reflect, $vars);
                     } elseif ($dispatch instanceof Callback) {
-
+                      
                         $data = app()->invoke($dispatch->getDispatch(), $vars);
 
                     }
@@ -270,6 +272,7 @@ class Admin
         } catch (\Exception $exception) {
 
         }
+
         return $data;
     }
 

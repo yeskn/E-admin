@@ -11,20 +11,22 @@
           @mouseover="showImgTool(index)"
           @mouseout="showImgToolIndex = -1"
         >
-          <div
-            slot="error"
-            class="imageslot"
-            :style="{width:styleWidth,height: styleHeight,backgroundColor:'#f5f7fa'}"
-            @mouseover="showImgTool(index)"
-            @mouseout="showImgToolIndex = -1"
-          >
+          <template #error>
+            <div
+                    class="imageslot"
+                    :style="{width:styleWidth,height: styleHeight,backgroundColor:'#f5f7fa'}"
+                    @mouseover="showImgTool(index)"
+                    @mouseout="showImgToolIndex = -1"
+            >
             <span>加载失败</span>
           </div>
+          </template>
+
         </el-image>
         <span v-show="showImgToolIndex == index" class="el-upload-list__item-actions" @mouseout="showImgToolIndex = -1" @mouseover="showImgTool(index)">
-          <span v-if="!singleFile" @click="imgLeft(index)"><i class="el-icon-caret-left" /></span>
+          <span v-if="multiple" @click="imgLeft(index)"><i class="el-icon-caret-left" /></span>
           <span @click="fileDelete(index)"><i class="el-icon-delete" /></span>
-          <span v-if="!singleFile" @click="imgRight(index)"><i class="el-icon-caret-right" /></span>
+          <span v-if="multiple" @click="imgRight(index)"><i class="el-icon-caret-right" /></span>
         </span>
       </div>
     </span>
@@ -44,7 +46,9 @@
               <span style="display: flex;align-items: center;">
                 <i v-show="showImgToolIndex == index" class="el-icon-download" />
                 <el-image v-show="showImgToolIndex != index" :src="fileIcon(file)" style="width: 32px;height: 32px;">
-                  <div slot="error" style="display: flex; align-items: center; top: 3px; position: absolute; left: 10px;"> <i class="el-icon-document" /></div>
+                  <template #error>
+                  <div style="display: flex; align-items: center; top: 3px; position: absolute; left: 10px;"> <i class="el-icon-document" /></div>
+                  </template>
                 </el-image>
                 &nbsp;&nbsp;{{ lastName(file) }}
               </span>
@@ -53,7 +57,9 @@
               <span style="display: flex;align-items: center;top: 3px;position: absolute;left:5px">
                 <i v-show="showImgToolIndex == index" class="el-icon-download" />
                 <el-image v-show="showImgToolIndex != index" :src="fileIcon(file)" style="width: 32px;height: 32px;">
-                  <div slot="error" style="display: flex; align-items: center; top: 3px; position: absolute; left: 10px;"> <i class="el-icon-document" /></div>
+                  <template #error>
+                     <div style="display: flex; align-items: center; top: 3px; position: absolute; left: 10px;"> <i class="el-icon-document" /></div>
+                  </template>
                 </el-image>
                 &nbsp;&nbsp;{{ lastName(file) }}
               </span>
@@ -79,7 +85,20 @@
         </slot>
       </span>
     </span>
-
+    <el-dialog title="资源库" v-model="dialogVisible" :append-to-body="true" width="70%" destroy-on-close>
+        <keep-alive>
+        <render :data="finder" :multiple="multiple" display="menu" :height="height" v-model:selection="selection"></render>
+        </keep-alive>
+        <template #footer>
+          <div :class="multiple && selection.length > 0 ? 'footer':''">
+            <div v-if="multiple && selection.length > 0">已选中: {{selection.length}}</div>
+            <div>
+              <el-button type="primary" @click="submit">确认</el-button>
+              <el-button @click="dialogVisible = false">取消</el-button>
+            </div>
+          </div>
+        </template>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -93,9 +112,12 @@ import {ElMessage} from 'element-plus'
 function noop() {}
 export default defineComponent({
   name: 'EadminUpload',
-
   props: {
     modelValue: [String, Array],
+    finder: {
+      type: [Object, Boolean],
+      default: false
+    },
     token: {
       type: String,
       default: ''
@@ -148,9 +170,9 @@ export default defineComponent({
       type: String,
       default: ''
     },
-    singleFile: {
+    multiple: {
       type: Boolean,
-      default: true
+      default: false
     },
     displayType: {
       type: String,
@@ -173,8 +195,9 @@ export default defineComponent({
   emits: ['success','update:modelValue'],
   setup(props,ctx){
     const state = reactive({
-      styleWdith: '',
+      styleWidth: '',
       styleHeight: '',
+      selection:props.modelValue,
       files: [],
       audio: {},
       audioList: [],
@@ -206,8 +229,13 @@ export default defineComponent({
       showImgToolIndex: -1,
       // 显示隐藏上传按钮
       showUploadBtn: true,
-      oss: null
+      oss: null,
+      height:(window.innerHeight / 2) + 'px'
     })
+    if(!Array.isArray(state.selection)){
+      state.selection = [state.selection]
+    }
+
     watch(()=>props.modelValue,val=>{
       if (typeof val === 'string') {
         state.files = val.split(',')
@@ -221,11 +249,13 @@ export default defineComponent({
 
     const btn = ref('')
     watch(()=>state.files,val=>{
-      if (props.singleFile && val.length == 1) {
+      if (!props.multiple && val.length === 1) {
         state.showUploadBtn = false
-      } else if (val.length == 0) {
+      } else if (val.length === 0) {
         state.showUploadBtn = true
       }
+      state.selection = JSON.parse(JSON.stringify(val))
+
       ctx.emit('update:modelValue', val.join(','))
     },{deep:true})
     if (props.width != 'auto') {
@@ -261,8 +291,10 @@ export default defineComponent({
       uploader.opts.query.saveDir = value
     })
     nextTick(() => {
-      uploader.assignDrop(btn.value)
-      uploader.assignBrowse(btn.value, false, props.singleFile, state.attrs)
+      if(!props.finder){
+        uploader.assignDrop(btn.value)
+        uploader.assignBrowse(btn.value, false, !props.multiple, state.attrs)
+      }
     })
     uploader.on('fileAdded', function(file, event) {
       if (checkExt(file)) {
@@ -301,7 +333,7 @@ export default defineComponent({
         if (res.code == 200) {
           uploader.removeFile(file)
           state.progressShow = false
-          if (props.singleFile) {
+          if (!props.multiple) {
             state.files = []
           }
           ctx.emit('success')
@@ -429,7 +461,7 @@ export default defineComponent({
           uploader.removeFile(file)
           state.progressShow = false
           const url = `${props.domain}/${filename}`
-          if (props.singleFile) {
+          if (!props.multiple) {
             state.files = []
           }
           state.files.push(url)
@@ -458,7 +490,7 @@ export default defineComponent({
         uploader.removeFile(file)
         state.progressShow = false
         const url = `${props.domain}/${filename}`
-        if (props.singleFile) {
+        if (!props.multiple) {
           state.files = []
         }
         state.files.push(url)
@@ -472,10 +504,19 @@ export default defineComponent({
       })
     }
     function handelBrowse() {
+      if(props.finder){
+        state.dialogVisible = true
+      }
       state.percentage = 0
+    }
+    function submit() {
+      state.dialogVisible = false
+      state.files = state.selection
+
     }
     return {
       btn,
+      submit,
       lastName,
       fileIcon,
       handelBrowse,
@@ -616,5 +657,10 @@ export default defineComponent({
   }
   .uploader-btn:hover {
     border: 1px dashed #2d8cf0;
+  }
+  .footer{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 </style>
