@@ -3,13 +3,13 @@
     <span v-if="displayType=='image'">
       <div v-for="(file,index) in files" :key="index" class="imgContainer" :style="{height: styleHeight,width:styleWidth}">
         <el-image
-          class="image"
-          fit="contain"
-          :src="file"
-          :preview-src-list="files"
-          :style="{height: styleHeight,width:styleWidth}"
-          @mouseover="showImgTool(index)"
-          @mouseout="showImgToolIndex = -1"
+                class="image"
+                fit="contain"
+                :src="file"
+                :preview-src-list="files"
+                :style="{height: styleHeight,width:styleWidth}"
+                @mouseover="showImgTool(index)"
+                @mouseout="showImgToolIndex = -1"
         >
           <template #error>
             <div
@@ -86,18 +86,18 @@
       </span>
     </span>
     <el-dialog title="资源库" v-model="dialogVisible" :append-to-body="true" width="70%" destroy-on-close>
-        <keep-alive>
-        <render :data="finder" :multiple="multiple" display="menu" :height="height" v-model:selection="selection"></render>
-        </keep-alive>
-        <template #footer>
-          <div :class="multiple && selection.length > 0 ? 'footer':''">
-            <div v-if="multiple && selection.length > 0">已选中: {{selection.length}}</div>
-            <div>
-              <el-button type="primary" @click="submit">确认</el-button>
-              <el-button @click="dialogVisible = false">取消</el-button>
-            </div>
+      <keep-alive>
+        <render :data="finder" :multiple="multiple" display="menu" :height="finderHeight" v-model:selection="selection"></render>
+      </keep-alive>
+      <template #footer>
+        <div :class="multiple && selection.length > 0 ? 'footer':''">
+          <div v-if="multiple && selection.length > 0">已选中: {{selection.length}}</div>
+          <div>
+            <el-button type="primary" @click="submit">确认</el-button>
+            <el-button @click="dialogVisible = false">取消</el-button>
           </div>
-        </template>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -106,7 +106,7 @@ import Uploader from 'simple-uploader.js'
 import OSS from 'ali-oss'
 import md5 from 'js-md5'
 import * as qiniu from 'qiniu-js'
-
+import {fileIcon, lastName} from '@/utils'
 import {defineComponent, reactive,watch ,nextTick,toRefs,ref} from "vue";
 import {ElMessage} from 'element-plus'
 function noop() {}
@@ -230,7 +230,7 @@ export default defineComponent({
       // 显示隐藏上传按钮
       showUploadBtn: true,
       oss: null,
-      height:(window.innerHeight / 2) + 'px'
+      finderHeight:(window.innerHeight / 2) + 'px'
     })
     if(!Array.isArray(state.selection)){
       state.selection = [state.selection]
@@ -246,8 +246,6 @@ export default defineComponent({
         state.files = val
       }
     })
-
-    const btn = ref('')
     watch(()=>state.files,val=>{
       if (!props.multiple && val.length === 1) {
         state.showUploadBtn = false
@@ -263,6 +261,8 @@ export default defineComponent({
     } else {
       state.styleWidth = '100%'
     }
+    const btn = ref('')
+
     if (props.height != 'auto') {
       state.styleHeight = props.height + 'px'
     } else {
@@ -375,19 +375,7 @@ export default defineComponent({
       }
     })
 
-    function fileIcon(path) {
-      var index = path.lastIndexOf('\.')
-      var ext = path.substring(index + 1, path.length)
-      try {
-        return require('@/assets/file_icon/' + ext + '.png')
-      } catch (e) {
-        return ''
-      }
-    }
-    function lastName(path) {
-      var index = path.lastIndexOf('\/')
-      return path.substring(index + 1, path.length)
-    }
+
     function uniqidMd5() {
       const rand = ('0000' + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4)
       return md5(rand)
