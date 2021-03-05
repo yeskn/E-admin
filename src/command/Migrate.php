@@ -8,6 +8,7 @@ use Phinx\Migration\MigrationInterface;
 use think\console\Input;
 use think\console\input\Option as InputOption;
 use think\console\Output;
+use think\facade\Log;
 use think\migration\command\migrate\Run;
 
 class Migrate extends Run
@@ -72,9 +73,12 @@ class Migrate extends Run
     protected function rollback($version = null, $force = false)
     {
         $migrations = $this->getMigrations();
+
         ksort($migrations);
 
         foreach ($migrations as $key=>$migration) {
+            Log::error('数据:'.$key);
+
             $this->executeMigration($migration, MigrationInterface::DOWN);
         }
     }

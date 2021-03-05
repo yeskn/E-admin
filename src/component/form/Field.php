@@ -27,8 +27,8 @@ abstract class Field extends Component
 
     public function __construct($field = null, $value = '')
     {
-        $this->attr('data-tag','component');
-        $this->bindValue($field, $value);
+        $this->attr('data-tag', 'component');
+        $this->bindValue($value, 'modelValue', $field);
     }
 
     /**
@@ -149,7 +149,7 @@ abstract class Field extends Component
     public function value($value)
     {
         $this->value = $value;
-        $field       = $this->bindAttr('modelValue');
+        $field = $this->bindAttr('modelValue');
         $this->bind($field, $value);
         return $this;
     }
@@ -167,15 +167,15 @@ abstract class Field extends Component
 
     /**
      * 双向绑定值
-     * @param string $field 字段
      * @param mixed $value 值
+     * @param string $attr 属性
+     * @param string $field 字段
      */
-    public function bindValue($field = null, $value = '')
+    public function bindValue($value = '', $attr = 'modelValue', $field = null)
     {
         empty($field) ? $field = Str::random(30, 3) : $field;
         $this->bind($field, $value);
-
-        $this->bindAttr('modelValue', $field, true);
+        $this->bindAttr($attr, $field, true);
         return $this;
     }
 }

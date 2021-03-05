@@ -3,6 +3,8 @@
 
 namespace Eadmin\component\basic;
 
+use Eadmin\component\Component;
+
 /**
  * 下拉菜单
  * Class Dropdown
@@ -24,6 +26,7 @@ class Dropdown extends Component
     public function __construct($content)
     {
         $this->menu = new DropdownMenu();
+
         $this->content(Html::create($content));
     }
 
@@ -73,7 +76,7 @@ class Dropdown extends Component
         if (!empty($icon) && is_string($content)) {
             $content = '<i class="' . $icon . '"> ' . $content;
         }
-        $item = new DropdownItem($this);
+        $item = new DropdownItem('');
         $item->dropdown($this);
         $item->content($content);
         return $item;

@@ -37,29 +37,17 @@
             },
             slotProps:Object
         },
-        emits:['update:modelValue'],
+        emits:['update:modelValue','update:show'],
         setup(props,ctx){
-            const {visible,show,hide} = useVisible(props,ctx)
-            let content = ref(null)
-            watch(()=>props.modelValue,(value)=>{
+            const {visible,hide,useHttp} = useVisible(props,ctx)
+            const {content,http} = useHttp()
+            watch(()=>props.show,(value)=>{
                 if(value){
                     open()
                 }
             })
             function open(){
-                show(()=>{
-                    if (props.url) {
-                        content.value = null
-                        const {http} = useHttp()
-                        http({
-                            url: props.url,
-                            params:props.params,
-                            method:props.method
-                        }).then(res => {
-                            content.value = res
-                        })
-                    }
-                })
+                http(props)
             }
             return {
                 open,

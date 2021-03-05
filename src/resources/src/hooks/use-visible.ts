@@ -1,8 +1,10 @@
 import {ref,watch} from "vue";
+import request from '@/utils/axios'
 const useVisible = function(props:object,ctx:any){
     const visible = ref(false)
     watch(visible,(value)=>{
         ctx.emit('update:modelValue',value)
+        ctx.emit('update:show',value)
     })
     function show(callback:any){
         visible.value = true
@@ -16,8 +18,31 @@ const useVisible = function(props:object,ctx:any){
             callback()
         }
     }
-
-    return {visible,show,hide}
+    function useHttp() {
+        const content = ref('')
+        const http = function (props) {
+            return new Promise((resolve, reject) =>{
+                if (props.url) {
+                    request({
+                        url: props.url,
+                        params:props.params,
+                        method:props.method
+                    }).then((res:any)=> {
+                        resolve(res)
+                        visible.value = true
+                        content.value = res
+                    }).catch((res:any)=>{
+                        reject(res)
+                    })
+                }else{
+                    visible.value = true
+                    resolve()
+                }
+            })
+        }
+        return {content,http}
+    }
+    return {visible,show,hide,useHttp}
 }
 export default useVisible
 

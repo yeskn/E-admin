@@ -21,7 +21,9 @@ class DropdownItem extends Component
     protected $dropdown;
     public function __construct($content)
     {
-        $this->content($content);
+        if($content){
+            $this->content($content);
+        }
     }
 
     public static function create($content){
@@ -39,7 +41,8 @@ class DropdownItem extends Component
     public function dialog()
     {
         $dialog  = Dialog::create();
-        $visible = $dialog->bindAttr('modelValue');
+        $dialog->bindValue(false,'show');
+        $visible = $dialog->bindAttr('show');
         $this->event('click', [$visible => true]);
         $this->dropdown->content($dialog, 'reference');
         return $dialog;

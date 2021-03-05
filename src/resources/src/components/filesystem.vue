@@ -35,7 +35,7 @@
             </el-row>
         </template>
         <div>
-            <a-table v-if="showType === 'grid'" :scroll="{y:height?height:'calc(100vh - 320px)'}"  row-key="url" :pagination="false" :row-selection="rowSelection" :columns="tableColumns" :data-source="tableData" :loading="loading" :custom-row="customRow">
+            <a-table v-if="showType === 'grid'" :scroll="{y:height?height:'calc(100vh - 320px)'}" :locale="{emptyText:'暂无数据'}"  row-key="url" :pagination="false" :row-selection="rowSelection" :columns="tableColumns" :data-source="tableData" :loading="loading" :custom-row="customRow">
                 <template #name="{ text , record , index }">
                     <div class="filename" @click="changePath(  record.path,record.dir)">
                         <el-image :src="record.url" :preview-src-list="[record.url]"

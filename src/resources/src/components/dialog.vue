@@ -6,15 +6,15 @@
         <slot></slot>
         <render :data="content" :slot-props="slotProps" @success="hide"></render>
     </el-dialog>
-    <span @click.stop="visible = true">
+    <span @click.stop="open">
         <slot name="reference"></slot>
     </span>
 </template>
 
 <script>
-    import {defineComponent, ref,watch} from "vue";
+    import {defineComponent, watch} from "vue";
     import render from '@/components/render.vue'
-    import {useVisible, useHttp} from '@/hooks'
+    import {useVisible} from '@/hooks'
 
     export default defineComponent({
         name: "EadminDialog",
@@ -27,6 +27,7 @@
                 type: Boolean,
                 default: false,
             },
+            show:Boolean,
             url: String,
             params:Object,
             //请求method
@@ -36,29 +37,18 @@
             },
             slotProps:Object
         },
-        emits: ['update:modelValue'],
+        emits: ['update:modelValue','update:show'],
         setup(props, ctx) {
-            const {visible,show,hide} = useVisible(props,ctx)
-            let content = ref(null)
-            watch(()=>props.modelValue,(value,old)=>{
+            const {visible,hide,useHttp} = useVisible(props,ctx)
+            const {content,http} = useHttp()
+            watch(()=>props.show,(value)=>{
                 if(value){
                     open()
                 }
+                ctx.emit('update:show',value)
             })
             function open(){
-                show(()=>{
-                    if (props.url) {
-                        content.value = null
-                        const {http} = useHttp()
-                        http({
-                            url: props.url,
-                            params:props.params,
-                            method:props.method
-                        }).then(res => {
-                            content.value = res
-                        })
-                    }
-                })
+                http(props)
             }
             return {
                 hide,

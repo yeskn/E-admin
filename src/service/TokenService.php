@@ -229,6 +229,7 @@ class TokenService
             $user            = new $this->model;
             self::$userModel = $user->lock($lock)->find($this->id());
         }
+       
         return self::$userModel;
     }
 }

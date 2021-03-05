@@ -199,28 +199,7 @@ export default defineComponent({
       styleHeight: '',
       selection:props.modelValue,
       files: [],
-      audio: {},
-      audioList: [],
-      videoList: [],
       dialogVisible: false,
-
-      options: {
-        target: props.url,
-        query: {
-          saveDir: props.saveDir,
-          isUniqidmd5: props.isUniqidmd5,
-          upType: props.upType
-        },
-        testChunks: true,
-        chunkSize: 1 * 1024 * 1024,
-        headers: {
-          Authorization: props.token
-        }
-      },
-
-      attrs: {
-        accept: props.accept
-      },
       // 进度条显示
       progressShow: false,
       // 进度条百分比
@@ -286,14 +265,28 @@ export default defineComponent({
         region: props.region
       })
     }
-    const uploader = new Uploader(state.options)
+    const uploader = new Uploader({
+      target: props.url,
+      query: {
+        saveDir: props.saveDir,
+        isUniqidmd5: props.isUniqidmd5,
+        upType: props.upType
+      },
+      testChunks: true,
+      chunkSize: 1 * 1024 * 1024,
+      headers: {
+        Authorization: props.token
+      }
+    })
     watch(()=>props.saveDir,value=>{
       uploader.opts.query.saveDir = value
     })
     nextTick(() => {
       if(!props.finder){
         uploader.assignDrop(btn.value)
-        uploader.assignBrowse(btn.value, false, !props.multiple, state.attrs)
+        uploader.assignBrowse(btn.value, false, !props.multiple, {
+          accept: props.accept
+        })
       }
     })
     uploader.on('fileAdded', function(file, event) {

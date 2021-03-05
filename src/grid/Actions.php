@@ -83,6 +83,7 @@ class Actions extends Html
 
     protected function actionDropdown()
     {
+
         //是否隐藏详情
         if (!$this->hideDetailButton && !is_null($this->grid->detailAction())) {
             $text   = '<i class="el-icon-info"> ' . $this->detailText;
@@ -92,13 +93,15 @@ class Actions extends Html
                 $button = $action->content($text)->redirect("eadmin/{$this->id}.rest", $detail->getCallMethod());
                 $this->dropdown->item($button);
             } else {
-                $button  = $action->title($this->detailText)->bindValue(null, false)->url("/eadmin/{$this->id}.rest")->params(['eadmin_layout' => true] + $detail->getCallMethod());
-                $visible = $button->bindAttr('modelValue');
+                $button  = $action->title($this->detailText)->bindValue(false)->url("/eadmin/{$this->id}.rest")->params(['eadmin_layout' => true] + $detail->getCallMethod());
+                $button->bindValue(false,'show');
+                $visible = $button->bindAttr('show');
                 $this->dropdown->content($button, 'reference');
                 $item = $this->dropdown->item($text);
                 $item->event('click', [$visible => true]);
             }
         }
+
         //是否隐藏编辑
         if (!$this->hideEditButton && !is_null($this->grid->formAction())) {
             $text   = '<i class="el-icon-edit"> ' . $this->editText;
@@ -108,8 +111,9 @@ class Actions extends Html
                 $button = $action->content($text)->redirect("eadmin/{$this->id}/edit.rest", ['eadmin_description' => $this->editText] + $form->getCallMethod());
                 $this->dropdown->item($button);
             } else {
-                $button  = $action->bindValue(null, false)->title($this->editText)->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod());
-                $visible = $button->bindAttr('modelValue');
+                $button  = $action->bindValue(false)->title($this->editText)->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod());
+                $button->bindValue(false,'show');
+                $visible = $button->bindAttr('show');
                 $this->dropdown->content($button, 'reference');
                 $item = $this->dropdown->item($text);
                 $item->event('click', [$visible => true]);
@@ -155,7 +159,7 @@ class Actions extends Html
             if ($action instanceof Html) {
                 $button = $action->content($button)->redirect("eadmin/{$this->id}.rest", $detail->getCallMethod());
             } else {
-                $button = $action->bindValue(null, false)->title($this->detailText)->reference($button)->url("/eadmin/{$this->id}.rest")->params(['eadmin_layout' => true] + $detail->getCallMethod());
+                $button = $action->bindValue(false)->title($this->detailText)->reference($button)->url("/eadmin/{$this->id}.rest")->params(['eadmin_layout' => true] + $detail->getCallMethod());
             }
             $this->content($button);
         }
@@ -170,7 +174,7 @@ class Actions extends Html
             if ($action instanceof Html) {
                 $button = $action->content($button)->redirect("eadmin/{$this->id}/edit.rest", ['eadmin_description' => $this->editText] + $form->getCallMethod());
             } else {
-                $button = $action->bindValue(null, false)->title($this->editText)->reference($button)->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod());
+                $button = $action->bindValue(false)->title($this->editText)->reference($button)->url("/eadmin/{$this->id}/edit.rest")->params($form->getCallMethod());
             }
             $this->content($button);
         }
