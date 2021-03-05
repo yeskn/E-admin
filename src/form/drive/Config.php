@@ -51,4 +51,7 @@ class Config implements FormInterface
     {
 
     }
+    public function model(){
+        return null;
+    }
 }
