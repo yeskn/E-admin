@@ -211,25 +211,27 @@
             })
             //拖拽排序
             function dragSort(){
-                const el = dragTable.value.$el.querySelectorAll('.ant-table-body > table > tbody')[0]
-                Sortable.create(el, {
-                    handle:'.sortHandel',
-                    ghostClass: 'sortable-ghost', // Class name for the drop placeholder,
-                    onEnd: evt => {
-                        var newIndex = evt.newIndex;
-                        var oldIndex = evt.oldIndex;
-                        var oldItem = tableData.value[oldIndex]
-                        var startPage = (page-1) * size
-                        const targetRow = tableData.value.splice(evt.oldIndex, 1)[0]
-                        tableData.value.splice(evt.newIndex, 0, targetRow)
-                        if(evt.newIndex != evt.oldIndex){
-                            sortRequest(oldItem.id,startPage +newIndex).catch(()=>{
-                                const targetRow = tableData.value.splice(evt.newIndex, 1)[0]
-                                tableData.value.splice(evt.oldIndex, 0, targetRow)
-                            })
+                if(dragTable.value){
+                    const el = dragTable.value.$el.querySelectorAll('.ant-table-body > table > tbody')[0]
+                    Sortable.create(el, {
+                        handle:'.sortHandel',
+                        ghostClass: 'sortable-ghost', // Class name for the drop placeholder,
+                        onEnd: evt => {
+                            var newIndex = evt.newIndex;
+                            var oldIndex = evt.oldIndex;
+                            var oldItem = tableData.value[oldIndex]
+                            var startPage = (page-1) * size
+                            const targetRow = tableData.value.splice(evt.oldIndex, 1)[0]
+                            tableData.value.splice(evt.newIndex, 0, targetRow)
+                            if(evt.newIndex != evt.oldIndex){
+                                sortRequest(oldItem.id,startPage +newIndex).catch(()=>{
+                                    const targetRow = tableData.value.splice(evt.newIndex, 1)[0]
+                                    tableData.value.splice(evt.oldIndex, 0, targetRow)
+                                })
+                            }
                         }
-                    }
-                })
+                    })
+                }
             }
             function sortRequest(id,sort) {
                 return new Promise((resolve, reject) =>{

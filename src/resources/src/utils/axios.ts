@@ -3,7 +3,7 @@ import axios from 'axios'
 // @ts-ignore
 import {ElMessage, ElNotification} from 'element-plus'
 import router from '@/router'
-import {action} from '@/store'
+import {action,state} from '@/store'
 import {refresh, link} from '@/utils'
 
 // create an axios instance
@@ -21,6 +21,10 @@ service.interceptors.request.use(
         // ['X-Token'] is a custom headers key
         // please modify it according to the actual situation
         config.headers['Authorization'] = localStorage.getItem('eadmin_token')
+        // if(config.data){
+        //
+        //     config.data = Object.assign(config.data,{parameters:state.proxyData})
+        // }
         return config
     },
     (error: any) => {

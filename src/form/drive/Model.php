@@ -189,7 +189,9 @@ class Model implements FormInterface
     {
         $this->pkField = $field;
     }
-
+    public function model(){
+        return $this->model;
+    }
     public function edit($id)
     {
         $this->data = $this->model->db(null)->where($this->pkField, $id)->find();

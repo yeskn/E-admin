@@ -21,4 +21,5 @@ interface FormInterface
     public function saveAll(array $data);
 
     public function edit($id);
+    public function model();
 }

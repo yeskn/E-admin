@@ -61,4 +61,7 @@ class Arrays implements FormInterface
     {
         $this->pkField = $field;
     }
+    public function model(){
+        return null;
+    }
 }

@@ -662,7 +662,7 @@ class Form extends Field
 
         //保存回后调
         if (!is_null($this->afterSave)) {
-            call_user_func_array($this->afterSave, [$data, $this->drive->getData()]);
+            call_user_func_array($this->afterSave, [$data, $this->drive->model()]);
         }
         return $result;
     }

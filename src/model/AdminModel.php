@@ -45,6 +45,6 @@ class AdminModel extends BaseModel
     {
         $roleIds = SystemUserAuth::where('user_id', $this->id)->column('auth_id');
         $menuIds = SystemAuthMenu::whereIn('auth_id', $roleIds)->column('menu_id');
-        return Db::name('system_menu')->where('status', 1)->whereIn('id', $menuIds)->order('sort asc,id desc')->select();
+        return Db::name('system_menu')->where('status', 1)->whereIn('id', $menuIds)->order('sort asc,id desc')->select()->toArray();
     }
 }
