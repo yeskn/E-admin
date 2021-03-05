@@ -3,6 +3,7 @@
 namespace Eadmin\chart\echart;
 
 
+use Eadmin\chart\Color;
 use Eadmin\chart\EchartAbstract;
 
 /**
@@ -67,6 +68,7 @@ class FunnelChart extends EchartAbstract
                     'fontSize' => 20
                 ]
             ],
+            'color'=>Color::ECHART,
             'data'      => $data,
         ];
         return $this;

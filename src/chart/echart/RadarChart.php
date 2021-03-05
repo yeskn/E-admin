@@ -2,6 +2,7 @@
 
 namespace Eadmin\chart\echart;
 
+use Eadmin\chart\Color;
 use Eadmin\chart\EchartAbstract;
 
 
@@ -64,6 +65,7 @@ class RadarChart extends EchartAbstract
 
         $this->series[] = [
             'name'    => $name,
+            'color'=>Color::ECHART,
             'type'    => 'radar',
             'tooltip' => [
                 'trigger' => 'item'

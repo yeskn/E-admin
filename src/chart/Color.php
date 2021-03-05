@@ -3,15 +3,16 @@
  * Created by PhpStorm.
  * User: rocky
  * Date: 2021-03-05
- * Time: 22:23
+ * Time: 23:15
  */
 
 namespace Eadmin\chart;
 
 
-class Gradual
+class Color
 {
-    const COLORS = [
+    //渐变色
+    const GRADUAL = [
         ['#CE9FFC', '#7367F0'],
         ['#13f1fc', '#0470dc'],
         ['#0FF0B3', '#036ED9'],
@@ -25,5 +26,18 @@ class Gradual
         ['#11c6f7', '#04dc90'],
         ['#dfaffd', '#4e6ffb'],
         ['#f794a4', '#fdd6bd'],
+    ];
+    const ECHART = [
+      '#63b2ee',
+      '#76da91',
+      '#f8cb7f',
+      '#f89588',
+      '#7cd6cf',
+      '#7898e1',
+      '#efa666',
+      '#eddd86',
+      '#9987ce',
+      '#63b2ee',
+      '#76da91',
     ];
 }

@@ -3,6 +3,7 @@
 namespace Eadmin\chart\echart;
 
 
+use Eadmin\chart\Color;
 use Eadmin\chart\EchartAbstract;
 
 /**
@@ -45,7 +46,6 @@ class PieChart extends EchartAbstract
         $length       = count($this->series);
         $start        = $length * 30 + 10;
         $end          = ($length + 1) * 20;
-
         $this->series[] = [
             'label'             => [
                 'formatter'       => '{b|{b}：}{c}  {per|{d}%}',
@@ -89,6 +89,7 @@ class PieChart extends EchartAbstract
             'animationDuration' => 2600,
             'symbolSize'        => 8,
             'data'              => $data,
+            'color'=>Color::ECHART
         ];
         return $this;
     }

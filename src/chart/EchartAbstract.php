@@ -24,7 +24,7 @@ abstract class EchartAbstract extends Component
     {
         $this->width  = $width;
         $this->height = $height;
-        $this->colors = Gradual::COLORS;
+        $this->colors = Color::GRADUAL;
     }
 
     abstract function series(string $name, array $data);
