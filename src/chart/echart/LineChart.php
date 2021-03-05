@@ -4,7 +4,9 @@ namespace Eadmin\chart\echart;
 
 use Eadmin\chart\EchartAbstract;
 use Eadmin\chart\EchartInterface;
+use Eadmin\chart\Gradual;
 use Eadmin\View;
+use mapleRegion\common\Enum;
 
 /**
  * 折线图表
@@ -19,32 +21,32 @@ class LineChart extends EchartAbstract
     {
         parent::__construct($height, $width);
         $this->options = [
-            'title'   => [
+            'title' => [
                 'text' => '',
             ],
             'tooltip' => [
                 'trigger' => 'axis'
             ],
-            'xAxis'   => [
-                'data'        => [],
-                'type'        => 'category',
+            'xAxis' => [
+                'data' => [],
+                'type' => 'category',
                 'boundaryGap' => false,
             ],
-            'grid'    => [
-                'left'         => '3%',
-                'right'        => '4%',
-                'bottom'       => '3%',
+            'grid' => [
+                'left' => '3%',
+                'right' => '4%',
+                'bottom' => '3%',
                 'containLabel' => true
             ],
-            'yAxis'   => [
+            'yAxis' => [
                 'type' => 'value'
             ],
-            'legend'  => [
+            'legend' => [
                 'data' => [],
             ],
-            'series'  => []
+            'series' => []
         ];
-        $this->type    = $type;
+        $this->type = $type;
     }
 
 
@@ -55,12 +57,31 @@ class LineChart extends EchartAbstract
      */
     public function series(string $name, array $data)
     {
+        $colors = $this->getColors();
         $this->legend[] = $name;
         $this->series[] = [
-            'name'       => $name,
-            'type'       => $this->type,
+            'name' => $name,
+            'type' => $this->type,
             'symbolSize' => 8,
-            'data'       => $data,
+            'color' => [
+                'type' => 'linear',
+                'x' => 0,
+                'y' => 0,
+                'x2' => 0,
+                'y2' => 1,
+                'colorStops' => [
+                    [
+                        'offset' => 0,
+                        'color' => $colors[0],
+                    ],
+                    [
+                        'offset' => 1,
+                        'color' => $colors[1],
+                    ]
+                ],
+                'globalCoord'=>true
+            ],
+            'data' => $data,
         ];
         return $this;
     }
