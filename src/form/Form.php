@@ -68,6 +68,8 @@ use think\Model;
  * @method \Eadmin\component\form\field\Icon icon($field, $label = '') 图标选择器
  * @method \Eadmin\component\form\field\SelectTable selectTable($field, $label = '') 表格选择器  TODO
  * @method \Eadmin\component\form\field\Map maps($lng, $lat, $address, $label = '') 高德地图  TODO
+ * @method \Eadmin\component\form\field\DynamicTag tag($field, $label = '') 动态标签
+ * @method \Eadmin\component\form\field\Spec spec($field, $label = '') 规格
  */
 class Form extends Field
 {

@@ -26,7 +26,9 @@
         },
         emits:['update:modelValue'],
         setup(props,ctx){
+            console.log(props)
             const value = reactive(props.modelValue)
+
             watch(value,(val)=>{
                 ctx.emit('update:modelValue',val)
             })

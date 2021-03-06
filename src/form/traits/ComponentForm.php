@@ -8,6 +8,7 @@ use Eadmin\component\form\field\Cascader;
 use Eadmin\component\form\field\CheckboxGroup;
 use Eadmin\component\form\field\Color;
 use Eadmin\component\form\field\DatePicker;
+use Eadmin\component\form\field\DynamicTag;
 use Eadmin\component\form\field\Editor;
 use Eadmin\component\form\field\Email;
 use Eadmin\component\form\field\Icon;
@@ -20,6 +21,7 @@ use Eadmin\component\form\field\Rate;
 use Eadmin\component\form\field\Select;
 use Eadmin\component\form\field\SelectTable;
 use Eadmin\component\form\field\Slider;
+use Eadmin\component\form\field\Spec;
 use Eadmin\component\form\field\Switchs;
 use Eadmin\component\form\field\TimePicker;
 use Eadmin\component\form\field\Transfer;
@@ -61,5 +63,7 @@ trait ComponentForm
         'icon' => Icon::class,
         'selectTable' => SelectTable::class,
         'maps' => Map::class,
+        'tag' => DynamicTag::class,
+        'spec' => Spec::class,
     ];
 }

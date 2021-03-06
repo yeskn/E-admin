@@ -25,6 +25,8 @@ import EadminAmap from './components/EadminAmap.vue'
 import filesystem from './components/filesystem.vue'
 import selectTable from './components/selectTable.vue'
 import select from './components/select.vue'
+import EadminTag from './components/EadminTag.vue'
+import spec from './components/spec.vue'
 
 app.component(form.name,form)
 app.component(manyItem.name,manyItem)
@@ -51,5 +53,7 @@ app.component(batchAction.name,batchAction)
 app.component(EadminAmap.name,EadminAmap)
 app.component(filesystem.name,filesystem)
 app.component(select.name,select)
+app.component(EadminTag.name,EadminTag)
+app.component(spec.name,spec)
 app.component(eadminErrorPage.name,eadminErrorPage)
 
