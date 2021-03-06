@@ -2,6 +2,7 @@
 
 namespace Eadmin\chart\echart;
 
+use Eadmin\chart\Color;
 use Eadmin\chart\EchartAbstract;
 use Eadmin\chart\EchartInterface;
 use Eadmin\chart\Gradual;
@@ -44,7 +45,8 @@ class LineChart extends EchartAbstract
             'legend' => [
                 'data' => [],
             ],
-            'series' => []
+            'series' => [],
+            'color'=>Color::ECHART,
         ];
         $this->type = $type;
     }
@@ -59,11 +61,9 @@ class LineChart extends EchartAbstract
     {
         $colors = $this->getColors();
         $this->legend[] = $name;
-        $this->series[] = [
-            'name' => $name,
-            'type' => $this->type,
-            'symbolSize' => 8,
-            'color' => [
+        $color = [];
+        if($this->type == 'line'){
+            $color = [
                 'type' => 'linear',
                 'x' => 0,
                 'y' => 0,
@@ -80,7 +80,13 @@ class LineChart extends EchartAbstract
                     ]
                 ],
                 'globalCoord'=>true
-            ],
+            ];
+        }
+        $this->series[] = [
+            'name' => $name,
+            'type' => $this->type,
+            'symbolSize' => 8,
+            'color'=>$color,
             'data' => $data,
         ];
         return $this;

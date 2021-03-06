@@ -20,20 +20,25 @@ abstract class EchartAbstract extends Component
     protected $width;
     protected $height;
     protected $colors = [];
+
     public function __construct($height, $width)
     {
-        $this->width  = $width;
+        $this->width = $width;
         $this->height = $height;
         $this->colors = Color::GRADUAL;
     }
 
     abstract function series(string $name, array $data);
-    public function getColors(){
-        $key = array_rand($this->colors,1);
-        $colors = $this->colors[$key];
-        array_splice($this->colors,$key,1);
+
+    public function getColors()
+    {
+        if (count($this->colors) == 0) {
+            $this->colors = Color::GRADUAL;
+        }
+        $colors = array_shift($this->colors);
         return $colors;
     }
+
     /**
      * 设置标题
      * @param string $text

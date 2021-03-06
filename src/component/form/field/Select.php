@@ -5,6 +5,9 @@ namespace Eadmin\component\form\field;
 
 
 use Eadmin\component\form\Field;
+use Eadmin\component\form\FormItem;
+use Eadmin\traits\ApiJson;
+use think\facade\Request;
 use think\helper\Str;
 
 /**
@@ -35,16 +38,23 @@ use think\helper\Str;
  */
 class Select extends Field
 {
+    use ApiJson;
 
-    protected $name = 'ElSelect';
+    protected $name = 'EadminSelect';
     //禁用数据
     protected $disabledData = [];
+
+    protected $selectOption = null;
+
+    protected $optionBindField = null;
 
     public function __construct($field = null, $id = '')
     {
         parent::__construct($field, $id);
         $this->clearable();
         $this->filterable();
+        $this->selectOption = SelectOption::create();
+        $this->optionBindField = Str::random(30, 3);
     }
 
     /**
@@ -88,8 +98,9 @@ class Select extends Field
             ]
          ];
         */
+
         foreach ($data as $key => $option) {
-            $groups  = [];
+            $groups = [];
             $options = [];
             if (in_array($option['id'], $this->disabledData)) {
                 $disabled = true;
@@ -103,25 +114,55 @@ class Select extends Field
                     $disabled = false;
                 }
                 $options[] = [
-                    'id'       => $item['id'],
-                    'label'    => $item['label'],
+                    'id' => $item['id'],
+                    'label' => $item['label'],
                     'disabled' => $disabled,
                 ];
             }
-            $selectOption = SelectOption::create()
-                ->map($options)
+
+            $this->selectOption->map($options, $this->optionBindField)
                 ->mapAttr('label', 'label')
                 ->mapAttr('key', 'id')
                 ->mapAttr('value', 'id')
                 ->mapAttr('disabled', 'disabled');
-            $selectGroup  = OptionGroup::create()
+            $selectGroup = OptionGroup::create()
                 ->attr('label', $option['label'])
                 ->attr('disabled', $disabled)
-                ->content($selectOption);
+                ->content($this->selectOption);
             $this->content($selectGroup);
         }
     }
 
+    /**
+     * 联动select
+     * @param \Closure $select
+     * @param $closure
+     */
+    public function load(\Closure $select,$closure)
+    {
+
+        $formItems = $this->formItem->form()->collectFields($select);
+        foreach ($formItems as $formItem) {
+            $select = $formItem->content['default'][0];
+            if(is_null($this->bindAttr('loadOptionField'))){
+                $this->bindAttr('loadOptionField', $select->optionBindField, true);
+                $this->bindAttr('loadField', $select->bindAttr('modelValue'), true);
+            }
+            $this->formItem->form()->push($formItem);
+        }
+        if (Request::has('eadminSelectLoad') && Request::get('eadmin_field') == $this->bindAttr('modelValue')) {
+            $datas = call_user_func($closure, Request::get('eadmin_id'));
+            $options = [];
+            foreach ($datas as $key => $value) {
+                $options[] = [
+                    'id' => $key,
+                    'label' => $value
+                ];
+            }
+            $this->successCode($options);
+        }
+        $this->params(['eadmin_field' => $this->bindAttr('modelValue')] + $this->formItem->form()->getCallMethod());
+    }
     /**
      * 设置选项数据
      * @param array $data 选项数据
@@ -137,17 +178,23 @@ class Select extends Field
                 $disabled = false;
             }
             $options[] = [
-                'id'       => $id,
-                'label'    => $label,
+                'id' => $id,
+                'label' => $label,
                 'disabled' => $disabled,
             ];
         }
-        $selectOption = SelectOption::create()
-            ->map($options)
+
+        $this->bindValue($options, 'options', $this->optionBindField);
+        $mapField = $this->optionBindField;
+        if (empty($this->formItem->form()->manyRelation())) {
+            $mapField = $this->formItem->form()->bindAttr('model') . '.' . $this->optionBindField;
+        }
+        $this->selectOption->map($options, $mapField)
             ->mapAttr('label', 'label')
             ->mapAttr('key', 'id')
             ->mapAttr('value', 'id')
             ->mapAttr('disabled', 'disabled');
-        return $this->content($selectOption);
+        return $this->content($this->selectOption);
     }
+
 }

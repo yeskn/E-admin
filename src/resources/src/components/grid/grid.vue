@@ -155,6 +155,7 @@
         inheritAttrs: false,
         emits: ['update:modelValue','update:selection'],
         setup(props, ctx) {
+
             const route = useRoute()
             const state = inject(store)
             const proxyData = state.proxyData

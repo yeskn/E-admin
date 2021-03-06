@@ -38,7 +38,7 @@ trait ForMap
     public function map(array $data, $bindName = null)
     {
         if (is_null($bindName)) {
-            $bindName = Str::random(10, 3);
+            $bindName = Str::random(30, 3);
         }
         $this->bind($bindName, $data);
         $this->map['bindName'] = $bindName;

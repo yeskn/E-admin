@@ -24,6 +24,7 @@ import echartCard from './components/echart/echartCard.vue'
 import EadminAmap from './components/EadminAmap.vue'
 import filesystem from './components/filesystem.vue'
 import selectTable from './components/selectTable.vue'
+import select from './components/select.vue'
 
 app.component(form.name,form)
 app.component(manyItem.name,manyItem)
@@ -49,5 +50,6 @@ app.component(echartCard.name,echartCard)
 app.component(batchAction.name,batchAction)
 app.component(EadminAmap.name,EadminAmap)
 app.component(filesystem.name,filesystem)
+app.component(select.name,select)
 app.component(eadminErrorPage.name,eadminErrorPage)
 

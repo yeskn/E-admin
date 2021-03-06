@@ -161,7 +161,13 @@
                 }
                 if (data.map.bindName) {
                     let field = data.map.bindName
-                    return modelValue[field].map(item => {
+                    let mapData = []
+                    if (slotProps && slotProps.row) {
+                        mapData =  slotProps.row[field] || []
+                    }else{
+                       eval('mapData = modelValue.'+field + ' || []')
+                    }
+                    return mapData.map(item => {
                         for (let attr in data.map.attribute) {
                             attribute[attr] = item[data.map.attribute[attr]]
                         }

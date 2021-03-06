@@ -295,6 +295,9 @@ class Form extends Field
                 $value = $componentValue;
                 $value = $this->getPickerValue($component, $field, $value);
             }
+            if(empty($value) && $component->bind($field)){
+                $value = $component->bind($field);
+            }
             $this->setData($field, $value ?? '');
             if (is_null($data)) {
                 $component->bindAttr($attr, $this->bindAttr('model') . '.' . $field, true);

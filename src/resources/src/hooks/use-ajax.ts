@@ -10,7 +10,6 @@ const useAjax =  function () {
                 method: ctx.attrs.method || 'post',
                 data: ctx.attrs.params
             }).then((res:any) => {
-                console.log(123)
                 ctx.emit('gridRefresh')
             }).finally(()=>{
                 loading.value = false
