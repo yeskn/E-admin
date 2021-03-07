@@ -22,7 +22,7 @@
                 label="商品规格">
         </el-table-column>
         <el-table-column
-                prop="name"
+                prop="value"
                 label="市场价">
         </el-table-column>
     </el-table>
@@ -65,9 +65,19 @@
                                 spec:['红色','绿色']
                             },
                             {
-                                id:2,
+                                id:3,
                                 name:'尺寸',
                                 spec:['L','M','S']
+                            },
+                            {
+                                id:3,
+                                name:'类型',
+                                spec:['正常','超大','迷你']
+                            },
+                            {
+                                id:5,
+                                name:'评价',
+                                spec:['好吧','很好','嗯嗯']
                             }
                         ]
                     },
@@ -77,7 +87,6 @@
             })
             //规格分组
             const specs = computed(()=>{
-                console.log(123)
                 const spec = findTree(state.group,state.specGroup,'id')
                 if(spec){
                     state.selectSpec =  spec.specs.map(item=>{
@@ -89,21 +98,63 @@
                     return []
                 }
             })
+
             //已选择规格
             const specData = computed(()=>{
-                const data = []
+                let data = []
                 let num = 0
+                let selectedArr = []
                 state.selectSpec.forEach(item=>{
-                    if(num === 0){
-                        num = item.selected.length
-                    }else{
-                        if(item.selected.length > 0){
-                            num = item.selected.length * num
-                        }
+                    let arr = []
+                    item.selected.forEach(selected=>{
+                        arr.push(selected)
+                    })
+                    selectedArr.push(arr)
+                })
+                if(selectedArr.length > 0){
+                    data = specParse(selectedArr,data)
+                    if(data.length > 0){
+                        data = data.shift()
+                    }
 
+                }
+                data =  data.map(item=>{
+                    return {
+                        name:item,
+                        value:item,
                     }
                 })
+                return data
             })
+            function specParse(arr1,arr3) {
+
+                if(arr1[0] && arr1[0].length === 0){
+                    arr1.shift()
+                    if(arr1.length > 1) {
+                        return specParse(arr1,arr3)
+                    }else if(arr1.length == 1){
+                        return arr1
+                    }
+                    return arr3
+                }
+                arr1[0].forEach(item1 => {
+                    if(arr1[1].length > 0){
+                        arr1[1].forEach(item2 => {
+                            arr3.push(`${item1} - ${item2}`)
+                        });
+                    }else{
+                        arr3.push(item1)
+                    }
+                });
+                arr1 = arr1.slice(2)
+                arr1.unshift(arr3)
+                arr3 = []
+                if(arr1.length > 1) {
+                    return specParse(arr1,arr3)
+                }else{
+                   return arr1
+                }
+            }
             return {
                 specData,
                 specs,
