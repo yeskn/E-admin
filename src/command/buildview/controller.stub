@@ -36,19 +36,19 @@ class {%className%} extends Controller
         // 自定义搜索
         $grid->filter(function (Filter $filter) {
 
-        }
+        });
         // 操作工具栏
         $grid->actions(function (Actions $action, $data) {
 
-        }
+        });
         // 删除前回调
         $grid->deling(function ($ids) {
 
-        }
+        });
         // 更新前回调
         $grid->updateing(function ($ids, $data) {
 
-        }
+        });
         return $grid;
     }
 

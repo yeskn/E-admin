@@ -65,7 +65,7 @@ class BuildView extends Make
     protected function buildClasses($name,$type,$model='',$model_namespace='',$grid='',$detail='',$form='')
     {
         $stub = file_get_contents($this->getStubs($type));
-        
+
         $namespace = trim(implode('\\', array_slice(explode('\\', $name), 0, -1)), '\\');
         $class = str_replace($namespace . '\\', '', $name);
         return str_replace(['{%className%}', '{%actionSuffix%}', '{%namespace%}', '{%app_namespace%}','{%model%}','{%model_namespace%}','{%grid%}','{%detail%}','{%form%}'], [
@@ -102,7 +102,7 @@ class BuildView extends Make
                 if (in_array($val['Field'], $imgType)) {
                     $grid .= "\t\t" . '$grid->column(\'' . $val['Field'] . '\',\'' . $label . '\')->image();' . PHP_EOL;
                 } elseif(strpos($val['Field'], 'status') !== false) {
-                    $grid .= "\t\t" . '$grid->column(\'' . $val['Field'] . '\',\'' . $label . '\')->switch([1 => \'启用\'], [0 => \'禁用\']);' . PHP_EOL;
+                    $grid .= "\t\t" . '$grid->column(\'' . $val['Field'] . '\',\'' . $label . '\')->switch();' . PHP_EOL;
                 } else {
                     $grid .= "\t\t" . '$grid->column(\'' . $val['Field'] . '\',\'' . $label . '\');' . PHP_EOL;
                 }
@@ -161,7 +161,7 @@ class BuildView extends Make
     protected function execute(Input $input, Output $output)
     {
 
-        
+
         if($input->hasOption('model')){
 
             $model = $input->getOption('model');
@@ -173,9 +173,9 @@ class BuildView extends Make
             }else{
                 $classname_model = $this->getClassNames('','model\\'.$model);
             }
-            
+
             $this->getTableInfo($model);
-           
+
             $pathname = $this->getPathName($classname_model);
             if (is_file($pathname)) {
                 $output->writeln('<error>' . $classname_model . ' already exists!</error>');
@@ -188,9 +188,9 @@ class BuildView extends Make
             if (!is_file($pathname)) {
                 file_put_contents($pathname, $this->buildClasses($classname_model,'model'));
             }
-            
+
         }
-        
+
         $name = trim($input->getArgument('name'));
         $names = explode('/',$name);
         $names = array_filter($names);

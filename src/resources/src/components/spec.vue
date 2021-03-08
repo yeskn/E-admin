@@ -1,8 +1,8 @@
 <template>
-    <el-select v-model="specGroup">
-        <el-option v-for="item in group" :key="item.id"  :value="item.id">{{item.name}}</el-option>
+    <el-select v-model="specGroup" style="width: 100%;margin-bottom: 5px" clearable>
+        <el-option v-for="item in group" :key="item.id"  :value="item.id" :label="item.name"></el-option>
     </el-select>
-    <el-table :data="specs" border size="mini">
+    <el-table :data="specs" border size="mini" v-if="specGroup" style="margin-bottom: 5px">
         <el-table-column
                 prop="name"
                 label="可选规格">
@@ -16,81 +16,64 @@
             </template>
         </el-table-column>
     </el-table>
-    <el-table :data="specData">
+    <el-table :data="specData" size="mini" v-if="specData.length > 0" border>
         <el-table-column
-                prop="name"
-                label="商品规格">
+                prop="group"
+                label="规格">
+            <template #default="scope">
+                <el-breadcrumb separator="|">
+                    <el-breadcrumb-item v-for="item in scope.row.group">
+                        <el-tag size="mini" type="info"  effect="dark" class="tag">{{item.name}}</el-tag>
+                        <el-tag size="mini" effect="dark">{{item.value}}</el-tag>
+                    </el-breadcrumb-item>
+                </el-breadcrumb>
+            </template>
         </el-table-column>
-        <el-table-column
-                prop="value"
-                label="市场价">
+        <el-table-column v-for="column in columns" :label="column.label">
+            <template #default="scope">
+                <render :data="column.component" v-model="scope.row[column.prop]"></render>
+            </template>
         </el-table-column>
     </el-table>
-<!--    <eadmin-many-item v-model="group" :many-data="many">-->
-<!--        <template #default="{row}">-->
-<!--            <el-row>-->
-<!--                <el-col :span="6">-->
-<!--                    分组-->
-<!--                    <el-select v-model="row.id">-->
-<!--                        <el-option></el-option>-->
-<!--                    </el-select>-->
-<!--                </el-col>-->
-<!--                <el-col :span="6">-->
-<!--                    分组-->
-<!--                    <el-select v-model="row.id">-->
-<!--                        <el-option></el-option>-->
-<!--                    </el-select>-->
-<!--                </el-col>-->
-<!--            </el-row>-->
-<!--        </template>-->
-<!--    </eadmin-many-item>-->
 </template>
 
 <script>
-    import {defineComponent,reactive,toRefs,computed} from "vue";
+    import {defineComponent,reactive,toRefs,computed,watch,toRaw} from "vue";
     import {findTree} from "@/utils";
     export default defineComponent({
         name: "EadminSpec",
         inheritAttrs:false,
-        setup(props){
-            const state =reactive({
-                group:[
-                    {
-                        id:1,
-                        name:'衣服',
-                        specs:[
-                            {
-                                id:2,
-                                name:'颜色',
-                                spec:['红色','绿色']
-                            },
-                            {
-                                id:3,
-                                name:'尺寸',
-                                spec:['L','M','S']
-                            },
-                            {
-                                id:3,
-                                name:'类型',
-                                spec:['正常','超大','迷你']
-                            },
-                            {
-                                id:5,
-                                name:'评价',
-                                spec:['好吧','很好','嗯嗯']
-                            }
-                        ]
-                    },
-                ],
-                specGroup:'',
-                selectSpec:[]
+        props:{
+            data:Array,
+            specId:[String,Number],
+            specs:Array,
+            columns:Array,
+            modelValue:[Object,Array,String],
+        },
+        emits:['update:modelValue','update:specs','update:specId'],
+        setup(props,ctx){
+
+            const state = reactive({
+                group:props.data,
+                specGroup:props.specId,
+                selectSpec:[],
+                checkboxSpec:[],
+                value:props.modelValue,
+                selectValue:[],
             })
+            let propsSpecs = props.specs
             //规格分组
             const specs = computed(()=>{
                 const spec = findTree(state.group,state.specGroup,'id')
                 if(spec){
-                    state.selectSpec =  spec.specs.map(item=>{
-                        item.selected = []
+                    state.selectSpec = spec.specs.map((item,index)=>{
+                        item.selected = item.spec.filter(function(num) {
+                            // if(propsSpecs[index]){
+                            //     return propsSpecs[index].indexOf(num) !== -1;
+                            // }
+                            return false
+                        })
+
                         return item
                     })
                     return state.selectSpec
@@ -102,32 +85,53 @@
             //已选择规格
             const specData = computed(()=>{
                 let data = []
-                let num = 0
                 let selectedArr = []
+
                 state.selectSpec.forEach(item=>{
                     let arr = []
                     item.selected.forEach(selected=>{
-                        arr.push(selected)
+                        arr.push({
+                            group:[{name:item.name,value:selected}],
+                            spec:selected
+                        })
                     })
                     selectedArr.push(arr)
                 })
+
                 if(selectedArr.length > 0){
                     data = specParse(selectedArr,data)
                     if(data.length > 0){
                         data = data.shift()
                     }
-
                 }
-                data =  data.map(item=>{
-                    return {
-                        name:item,
-                        value:item,
-                    }
+                data = data.map(item=>{
+                    const spec =null
+                    props.columns.forEach(column=>{
+                        if(spec){
+                            item[column.prop] = spec[column.prop]
+                        }else{
+                            item[column.prop] = ''
+                        }
+                    })
+                    return item
                 })
                 return data
             })
-            function specParse(arr1,arr3) {
 
+            watch(()=>state.specGroup,value=>{
+                ctx.emit('update:specId',value)
+            })
+
+            watch(specData,value=>{
+                state.value = value
+                // const checkboxSpec = state.selectSpec.map(item=>{
+                //     return [...item.selected]
+                // })
+
+                //ctx.emit('update:specs',checkboxSpec)
+                ctx.emit('update:modelValue',value)
+            })
+            function specParse(arr1,arr3) {
                 if(arr1[0] && arr1[0].length === 0){
                     arr1.shift()
                     if(arr1.length > 1) {
@@ -140,10 +144,16 @@
                 arr1[0].forEach(item1 => {
                     if(arr1[1].length > 0){
                         arr1[1].forEach(item2 => {
-                            arr3.push(`${item1} - ${item2}`)
+                            arr3.push({
+                                group:item1.group.concat(item2.group),
+                                spec:`${item1.spec}-${item2.spec}`
+                            })
                         });
                     }else{
-                        arr3.push(item1)
+                        arr3.push({
+                            group:item1.group,
+                            spec:item1.spec,
+                        })
                     }
                 });
                 arr1 = arr1.slice(2)
@@ -165,5 +175,7 @@
 </script>
 
 <style scoped>
-
+.tag{
+    margin-right: 5px;
+}
 </style>
