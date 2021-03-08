@@ -38,6 +38,12 @@
                 value[index - 1] = value[index]
                 value[index] = len
             }
+            // 下移
+            function handleDown (index) {
+                const len = value[index + 1]
+                value[index + 1] = value[index]
+                value[index] = len
+            }
             //添加元素
             function add(){
                 value.push({...props.manyData})
@@ -45,12 +51,6 @@
             //移除元素
             function remove(index){
                 value.splice(index, 1)
-            }
-            // 下移
-            function handleDown (index) {
-                const len = value[index + 1]
-                value[index + 1] = value[index]
-                value[index] = len
             }
             return {
                 value,
