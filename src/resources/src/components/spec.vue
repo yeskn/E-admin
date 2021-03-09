@@ -65,42 +65,8 @@
         setup(props, ctx) {
 
             const state = reactive({
-                //group:props.data,
-                group: [
-                    {
-                        id: 1,
-                        name: '衣服',
-                        specs: [
-                            {
-                                id: 2,
-                                name: '颜色',
-                                spec: ['红色', '绿色']
-                            },
-                            {
-                                id: 2,
-                                name: '尺寸',
-                                spec: ['L', 'M', 'S']
-                            }
-                        ]
-                    },
-                    {
-                        id: 2,
-                        name: '衣服',
-                        specs: [
-                            {
-                                id: 2,
-                                name: '颜1色',
-                                spec: ['红色', '绿色']
-                            },
-                            {
-                                id: 2,
-                                name: '尺寸2',
-                                spec: ['L', 'M', 'S']
-                            }
-                        ]
-                    },
-                ],
-                specGroup: props.specId,
+                group:props.data,
+                specGroup: props.specId === 0 ? '':props.specId,
                 selectSpec: [],
                 hoverIndex:-1,
             })
@@ -111,9 +77,10 @@
                 const spec = findTree(state.group, state.specGroup, 'id')
                 if (spec) {
                     state.selectSpec = spec.specs.map((item, index) => {
+                        const selectSpecs = findTree(propsSpecs, item.name, 'name')
                         item.selected = item.spec.filter(function (num) {
-                            if (propsSpecs[index]) {
-                                return propsSpecs[index].indexOf(num) !== -1;
+                            if(selectSpecs){
+                                return selectSpecs.options.indexOf(num) !== -1;
                             }
                             return false
                         })
@@ -132,7 +99,7 @@
                 let selectedArr = []
                 checkboxSpec = []
                 state.selectSpec.forEach(item => {
-                    checkboxSpec.push(item.selected)
+                    checkboxSpec.push({name: item.name, options: item.selected})
                     let arr = []
                     item.selected.forEach(selected => {
                         arr.push({
@@ -167,7 +134,6 @@
                 ctx.emit('update:specs', checkboxSpec)
                 ctx.emit('update:modelValue', value)
             })
-
             function selectHandel(val) {
                 state.selectSpec = []
                 ctx.emit('update:specId', val)
