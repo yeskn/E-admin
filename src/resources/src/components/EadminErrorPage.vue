@@ -5,84 +5,109 @@
             :fullscreen="true"
             :before-close="close"
     >
-        <div v-if="errorData != null">
+        <div v-if="errorData != null" class="main">
             <div v-for="item in errorData.traces">
-                <p>
-                    <b>错误信息:</b>
-                    <h1 style="color: #000000;">{{ item.message }}</h1>
-                </p>
-                <p>
-                    <b>错误异常:</b> {{ item.name }}
-                    <el-tag type="info" size="mini">{{ item.code }}</el-tag>
-                </p>
-                <p>
-                    <b>错误文件:</b> {{ item.file }}
-                    <el-tag size="mini">{{ item.line }} 行</el-tag>
-                </p>
-
+                <h1 style="color: #000000;">{{ item.message }}</h1>
+                <div style="color: rgba(30, 20, 70, 0.5)">
+                    <b>错误异常:</b> {{ item.name }}&nbsp;<el-tag type="info" size="mini">{{ item.code }}</el-tag>
+                    <p>
+                        <b>错误文件:</b> {{ item.file }}
+                        <el-tag size="mini">{{ item.line }} 行</el-tag>
+                    </p>
+                </div>
                 <div class="source-code">
-                    <pre><ol :start="item.source.first"><li v-for="(sourceItem,key) in item.source.source"
-                                                            :style="{backgroundColor:(item.source.first+key == item.line? '#f8cbcb':'')}"><code>{{ sourceItem }}</code></li></ol></pre>
+                    <pre><ol :start="item.source.first"><li v-for="(sourceItem,key) in item.source.source" :style="{backgroundColor:(item.source.first+key == item.line? '#f8cbcb':'')}"><code>{{ sourceItem }}</code></li></ol></pre>
                 </div>
-                <div class="trace">
-                    <h2>Call Stack</h2>
-                    <ol>
-                        <li v-for="fileItem in item.trace">
-              <span v-if="fileItem.class">{{ getClass(fileItem.class) }}{{ fileItem.type }}{{ fileItem.function }}(<span
-                      v-for="(args,index) in fileItem.args">
-                <span v-if="index == fileItem.args.length-1">'{{ args }}'</span><span v-else>'{{ args }}',</span></span>)</span><span
-                                v-else>{{ fileItem.function }}</span>
-                            <el-tooltip v-if="fileItem.file" class="item" effect="light" :content="fileItem.file"
-                                        placement="top">
-                                <el-tag size="mini" type="info">{{ getFile(fileItem.file) }}</el-tag>
-                            </el-tooltip>
-                            <el-tag v-if="fileItem.line" size="mini">{{ fileItem.line }} 行</el-tag>
-                        </li>
-                    </ol>
+                <div class="exception_card">
+                    <el-tabs type="border-card">
+                        <el-tab-pane label="异常跟踪">
+
+                            <el-container>
+                                <div class="exception">
+                                    <el-aside width="300">
+                                        <ul>
+                                            <li v-for="(trace,index) in item.trace" @click="selectTrace=index" :class="selectTrace === index?'active':''">
+                                                <div v-if="trace.file" class="title">{{trace.file}}</div>
+                                                <div class="desc">{{trace.class}}</div>
+                                            </li>
+                                        </ul>
+
+                                    </el-aside>
+                                </div>
+                                <el-main>
+                                    <div>
+                                        <b v-if="item.trace[selectTrace].class">{{ getClass(item.trace[selectTrace].class) }}{{ item.trace[selectTrace].type }}{{ item.trace[selectTrace].function }}</b>
+                                        <p v-if="item.trace[selectTrace].file">
+                                            <b>错误文件:</b> {{ item.trace[selectTrace].file }}
+                                            <el-tag size="mini">{{ item.trace[selectTrace].line }} 行</el-tag>
+                                        </p>
+                                    </div>
+                                    <div class="source-code">
+                                        <pre><ol :start="item.trace[selectTrace].source.first"><li v-for="(sourceItem,key) in item.trace[selectTrace].source.source" :style="{backgroundColor:(item.trace[selectTrace].source.first+key == item.trace[selectTrace].line? '#f8cbcb':'')}"><code>{{ sourceItem }}</code></li></ol></pre>
+                                    </div>
+                                </el-main>
+                            </el-container>
+
+
+                        </el-tab-pane>
+                        <el-tab-pane label="Server/Request Data">
+                            <div v-for="(item,key) in errorData.tables['Server/Request Data']"
+                                 style="display: flex;line-height: 25px">
+                                <b style="width: 250px">{{ key }}</b>
+                                <div style="flex: 1;">{{ item }}</div>
+                            </div>
+                        </el-tab-pane>
+                        <el-tab-pane label="POST Data">
+                            <div v-for="(item,key) in errorData.tables['POST Data']" style="display: flex;line-height: 25px">
+                                <b style="width: 250px">{{ key }}</b>
+                                <div style="flex: 1;">{{ item }}</div>
+                            </div>
+                        </el-tab-pane>
+                        <el-tab-pane label="GET Data">
+                            <div v-for="(item,key) in errorData.tables['GET Data']" style="display: flex;line-height: 25px">
+                                <b style="width: 250px">{{ key }}</b>
+                                <div style="flex: 1;">{{ item }}</div>
+                            </div>
+                        </el-tab-pane>
+                        <el-tab-pane label="Session">
+                            <div v-for="(item,key) in errorData.tables['Session']" style="display: flex;line-height: 25px">
+                                <b style="width: 250px">{{ key }}</b>
+                                <div style="flex: 1;">{{ item }}</div>
+                            </div>
+                        </el-tab-pane>
+                        <el-tab-pane label="Cookies">
+                            <div v-for="(item,key) in errorData.tables['Cookies']" style="display: flex;line-height: 25px">
+                                <b style="width: 250px">{{ key }}</b>
+                                <div style="flex: 1;">{{ item }}</div>
+                            </div>
+                        </el-tab-pane>
+
+                    </el-tabs>
                 </div>
+
             </div>
-            <div class="exception-var">
-                <div>
-                    <h2 style="color: #2d8cf0">GET Data
-                        <el-tag v-if="errorData.tables['GET Data'].length == 0" type="info" size="mini">空</el-tag>
-                    </h2>
-                    <div v-for="(item,key) in errorData.tables['GET Data']" style="display: flex;line-height: 25px">
-                        <b style="width: 250px">{{ key }}</b>
-                        <div style="flex: 1;">{{ item }}</div>
-                    </div>
-                    <el-divider/>
-                    <h2 style="color: #2d8cf0">POST Data
-                        <el-tag v-if="errorData.tables['POST Data'].length == 0" type="info" size="mini">空</el-tag>
-                    </h2>
-                    <div v-for="(item,key) in errorData.tables['POST Data']" style="display: flex;line-height: 25px">
-                        <b style="width: 250px">{{ key }}</b>
-                        <div style="flex: 1;">{{ item }}</div>
-                    </div>
-                    <el-divider/>
-                    <h2 style="color: #2d8cf0">Session
-                        <el-tag v-if="errorData.tables['Session'].length == 0" type="info" size="mini">空</el-tag>
-                    </h2>
-                    <div v-for="(item,key) in errorData.tables['Session']" style="display: flex;line-height: 25px">
-                        <b style="width: 250px">{{ key }}</b>
-                        <div style="flex: 1;">{{ item }}</div>
-                    </div>
-                    <el-divider/>
-                    <h2 style="color: #2d8cf0">Cookies
-                        <el-tag v-if="errorData.tables['Cookies'].length == 0" type="info" size="mini">空</el-tag>
-                    </h2>
-                    <div v-for="(item,key) in errorData.tables['Cookies']" style="display: flex;line-height: 25px">
-                        <b style="width: 250px">{{ key }}</b>
-                        <div style="flex: 1;">{{ item }}</div>
-                    </div>
-                    <el-divider/>
-                    <h2 style="color: #2d8cf0">Server/Request Data</h2>
-                    <div v-for="(item,key) in errorData.tables['Server/Request Data']"
-                         style="display: flex;line-height: 25px">
-                        <b style="width: 250px">{{ key }}</b>
-                        <div style="flex: 1;">{{ item }}</div>
-                    </div>
-                </div>
-            </div>
+<!--            <div v-for="item in errorData.traces">-->
+
+
+
+<!--                <div class="trace">-->
+<!--                    <h2>Call Stack</h2>-->
+<!--                    <ol>-->
+<!--                        <li v-for="fileItem in item.trace">-->
+<!--              <span v-if="fileItem.class">{{ getClass(fileItem.class) }}{{ fileItem.type }}{{ fileItem.function }}(<span-->
+<!--                      v-for="(args,index) in fileItem.args">-->
+<!--                <span v-if="index == fileItem.args.length-1">'{{ args }}'</span><span v-else>'{{ args }}',</span></span>)</span><span-->
+<!--                                v-else>{{ fileItem.function }}</span>-->
+<!--                            <el-tooltip v-if="fileItem.file" class="item" effect="light" :content="fileItem.file"-->
+<!--                                        placement="top">-->
+<!--                                <el-tag size="mini" type="info">{{ getFile(fileItem.file) }}</el-tag>-->
+<!--                            </el-tooltip>-->
+<!--                            <el-tag v-if="fileItem.line" size="mini">{{ fileItem.line }} 行</el-tag>-->
+<!--                        </li>-->
+<!--                    </ol>-->
+<!--                </div>-->
+<!--            </div>-->
+
         </div>
     </el-dialog>
 </template>
@@ -95,6 +120,7 @@
         name: 'EadminErrorPage',
         setup() {
             const visable = ref(false)
+            const selectTrace = ref(0)
             const state = inject(store)
             let errorData = computed(() => {
                 return state.errorPage.data
@@ -117,6 +143,7 @@
             }
 
             return {
+                selectTrace,
                 visable,
                 errorData,
                 close,
@@ -128,6 +155,39 @@
 </script>
 
 <style scoped>
+
+    .exception ul{
+        list-style-type:none;
+        overflow:auto;
+        white-space:nowrap;
+        width: 300px;
+        height: 600px;
+        padding: 0;
+        margin: 0;
+        border: 1px solid #cccccc;
+        background: #ffffff;
+    }
+    .exception ul .title{
+        line-height: 25px;
+        font-weight: bold;
+    }
+    .exception ul .desc{
+        line-height: 25px;
+    }
+    .exception li{
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        cursor: pointer;
+        padding: 10px;
+        border-bottom: 1px solid #cccccc;
+    }
+    .exception .active{
+        background: #409eff;
+        color: #ffffff;
+    }
+    .exception li:hover{
+        background: #409eff;
+        color: #ffffff;
+    }
     ol {
         display: block;
         list-style-type: decimal;
@@ -163,15 +223,13 @@
     }
 
     .source-code {
-        padding: 6px;
         border: 1px solid #ddd;
-        background: #f9f9f9;
+        background: rgb(247, 247, 252);
         overflow-x: auto;
     }
-
     .source-code pre ol {
         margin: 0;
-        color: #4288ce;
+        color: rgba(30, 20, 70, 0.5);
         min-width: 100%;
         box-sizing: border-box;
         font-size: 14px;
@@ -182,10 +240,12 @@
         margin: 0;
         padding: 0;
         border-left: 1px solid #ddd;
-        height: 18px;
-        line-height: 18px;
+        font-size: 14px;
+        height: 22px;
+        line-height: 22px;
         display: list-item;
         text-align: -webkit-match-parent;
+        background: #ffffff;
     }
 
     .source-code pre code {
@@ -193,7 +253,7 @@
         height: 100%;
         display: inline-block;
         border-left: 1px solid #fff;
-        font-size: 14px;
-        font-family: Consolas, "Liberation Mono", Courier, Verdana, "微软雅黑";
+        font-size: 12px;
+        font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
 </style>
