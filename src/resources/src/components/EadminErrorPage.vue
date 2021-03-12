@@ -19,20 +19,17 @@
                     <pre><ol :start="item.source.first"><li v-for="(sourceItem,key) in item.source.source" :style="{backgroundColor:(item.source.first+key == item.line? '#f8cbcb':'')}"><code>{{ sourceItem }}</code></li></ol></pre>
                 </div>
                 <div class="exception_card">
-                    <el-tabs type="border-card">
+                    <el-tabs>
                         <el-tab-pane label="异常跟踪">
 
                             <el-container>
                                 <div class="exception">
-                                    <el-aside width="300">
-                                        <ul>
-                                            <li v-for="(trace,index) in item.trace" @click="selectTrace=index" :class="selectTrace === index?'active':''">
-                                                <div v-if="trace.file" class="title">{{trace.file}}</div>
-                                                <div class="desc">{{trace.class}}</div>
-                                            </li>
-                                        </ul>
-
-                                    </el-aside>
+                                    <ul>
+                                        <li v-for="(trace,index) in item.trace" @click="selectTrace=index" :class="selectTrace === index?'active':''">
+                                            <div v-if="trace.file" class="title">{{trace.file}}</div>
+                                            <div class="desc">{{trace.class}}</div>
+                                        </li>
+                                    </ul>
                                 </div>
                                 <el-main>
                                     <div>
@@ -86,28 +83,6 @@
                 </div>
 
             </div>
-<!--            <div v-for="item in errorData.traces">-->
-
-
-
-<!--                <div class="trace">-->
-<!--                    <h2>Call Stack</h2>-->
-<!--                    <ol>-->
-<!--                        <li v-for="fileItem in item.trace">-->
-<!--              <span v-if="fileItem.class">{{ getClass(fileItem.class) }}{{ fileItem.type }}{{ fileItem.function }}(<span-->
-<!--                      v-for="(args,index) in fileItem.args">-->
-<!--                <span v-if="index == fileItem.args.length-1">'{{ args }}'</span><span v-else>'{{ args }}',</span></span>)</span><span-->
-<!--                                v-else>{{ fileItem.function }}</span>-->
-<!--                            <el-tooltip v-if="fileItem.file" class="item" effect="light" :content="fileItem.file"-->
-<!--                                        placement="top">-->
-<!--                                <el-tag size="mini" type="info">{{ getFile(fileItem.file) }}</el-tag>-->
-<!--                            </el-tooltip>-->
-<!--                            <el-tag v-if="fileItem.line" size="mini">{{ fileItem.line }} 行</el-tag>-->
-<!--                        </li>-->
-<!--                    </ol>-->
-<!--                </div>-->
-<!--            </div>-->
-
         </div>
     </el-dialog>
 </template>
@@ -155,7 +130,9 @@
 </script>
 
 <style scoped>
-
+    .exception_card{
+        margin-top: 10px;
+    }
     .exception ul{
         list-style-type:none;
         overflow:auto;

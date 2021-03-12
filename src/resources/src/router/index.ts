@@ -5,6 +5,7 @@ import { action,state } from '@/store'
 import md5 from 'js-md5'
 import Layout from '@/layout/index.vue'
 import Login from '@/layout/login.vue'
+import Im from '@/components/im/index.vue'
 let asyncCmponent:any
 const routes = [
     {
@@ -12,9 +13,14 @@ const routes = [
         component: Login,
     },
     {
+        path: '/im',
+        component: Im,
+    },
+    {
         path: '/:pathMatch(.*)',
         component: Layout,
     },
+
 ]
 const router = createRouter({
     history: createWebHashHistory(),
