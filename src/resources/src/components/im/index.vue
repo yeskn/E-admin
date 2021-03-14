@@ -2,46 +2,52 @@
     <!-- 头像消息框 -->
     <div class="miniBox" @click="openIm">
         <el-avatar :src="info.headimg" style="margin-right: 10px"></el-avatar>
-        <el-badge :value="unReadNum" :max="99" v-if="unReadNum > 0">{{info.nickname}}</el-badge>
+        <el-badge :value="unReadNum" type="danger" :max="99" v-if="unReadNum > 0">{{info.nickname}}</el-badge>
         <el-badge :type="online" is-dot v-else>{{info.nickname}}</el-badge>
     </div>
-    <el-dialog
-            v-model="dialogVisible"
-            width="900px"
-            :close-on-click-modal="false"
-            :show-close="false"
-            :fullscreen="fullscreen"
-    >
-        <div class="main">
-            <left-tools v-model="selectTools" :headimg="info.headimg" :unReadFriendNum="unReadFriendNum" :unReadNum="unReadNum" :customerConnNum="customerConnNum"></left-tools>
-            <list :list="recentList" :select-tool="selectTools"></list>
-            <div style="flex: 1">
-                <div style="position: absolute;right: 5px;top:5px;cursor: pointer;">
-                    <i class="el-icon-full-screen rightTools"></i>
-                    <i class="el-icon-close rightTools" @click="dialogVisible=false"></i>
+    <div v-show="dialogShow">
+        <el-dialog
+                v-model="dialogVisible"
+                width="900px"
+                :close-on-click-modal="false"
+                :show-close="false"
+                :fullscreen="fullscreen"
+        >
+            <div class="main">
+                <left-tools :headimg="info.headimg"></left-tools>
+                <list></list>
+                <div class="mainContent">
+                    <div style="position: absolute;right: 5px;top:5px;cursor: pointer;">
+                        <i class="el-icon-full-screen rightTools"></i>
+                        <i class="el-icon-close rightTools" @click="dialogVisible=false"></i>
+                    </div>
+                    <im-message v-show="leftTool === 'message'"></im-message>
+                    <im-friend v-show="leftTool === 'friend'"></im-friend>
                 </div>
-                <im-main :select-tool="selectTools"></im-main>
             </div>
-        </div>
-    </el-dialog>
+        </el-dialog>
+    </div>
 </template>
 
 <script>
-    import {defineComponent,reactive,toRefs} from "vue";
+    import {defineComponent,reactive,toRefs,nextTick,watch,computed} from "vue";
     import leftTools from './leftTools.vue'
     import list from './list/list.vue'
-    import ImMain from './main/main.vue'
+    import ImMessage from './main/message.vue'
+    import ImFriend from './main/friend.vue'
     import im from './websocket/websocket'
     export default defineComponent({
         name: "imIndex",
         components:{
             leftTools,
             list,
-            ImMain
+            ImMessage,
+            ImFriend
         },
         setup(){
             const state = reactive({
-                dialogVisible:false,
+                dialogShow:false,
+                dialogVisible:true,
                 fullscreen:false,
                 info:{
                     id:0,
@@ -49,49 +55,43 @@
                     nickname:'',
                 },
                 online: 'danger',
-                //最近会话
-                recentList:[],
-                //好友列表
-                friendList:[],
-                unReadNum:0,
-                customerConnNum:0,
-                unReadFriendNum:0,
-                selectTools:'message',
             })
-            im.connect()
+
+
+            nextTick(()=>{
+                im.connect()
+                state.dialogVisible = false
+            })
             im.onMessage((action,data)=>{
                 switch (action) {
                     //登录成功
                     case 'login':
                         if(data.code === 0){
-                            state.recentList = []
-                            state.friendList = []
                             state.online = 'success'
                             state.info = data.info
-                            state.unReadFriendNum = data.init.unReadFriendNum
-                            state.customerConnNum = data.init.customerConnNum
-                            //获取会话列表
-                            im.send('recentList')
-                            //获取好友列表
-                            im.send('friendList')
                         }
                         break;
-                    //获取添加好友列表
-                    case 'getAddFriend':
-                        state.unReadFriendNum = 0
-                        break;
-                    //收到好友请求
-                    case 'addFriend':
-                        if(state.selectTools == 'friend'){
-                            im.send('getAddFriend')
-                        }
-                        state.unReadFriendNum = data.num
-                        break
                 }
             })
+            watch(()=>im.state.leftTool,val=>{
+                if(val === 'message'){
 
+                }else if(val === 'friend'){
+                    im.send('getAddFriend')
+                }
+            })
+            // //未读数量
+            // const unReadNum = computed(()=>{
+            //     let unReadNum = 0
+            //     im.state.recentList.forEach(item => {
+            //         unReadNum += parseInt(item.unReadNum)
+            //     })
+            //
+            //     return unReadNum
+            // })
             function openIm(){
-                this.dialogVisible=true
+                state.dialogShow = true
+                state.dialogVisible = true
                 // if(this.nowMsgUid > -1){
                 //     let index = this.getMsgIdKey(this.recentList,this.nowMsgUid, 'from_uid')
                 //     this.selectMsgUser(this.recentList[index], index)
@@ -99,6 +99,7 @@
             }
             return {
                 ...toRefs(state),
+                ...toRefs(im.state),
                 openIm
             }
         }
@@ -133,4 +134,10 @@
     .rightTools {
         margin: 0 5px;
     }
+    .mainContent{
+        height: 100%;
+        background: #ffffff;
+        flex: 1;
+    }
+
 </style>

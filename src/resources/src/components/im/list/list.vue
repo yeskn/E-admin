@@ -5,10 +5,8 @@
                       placeholder="搜索"></el-input>
         </div>
         <div class="list">
-            <el-scrollbar style="height:100%;">
-                <recent-list :list="list" v-if="selectTool === 'mesage'"></recent-list>
-                <friend-list :list="list" v-if="selectTool === 'friend'"></friend-list>
-            </el-scrollbar>
+            <recent-list v-show="leftTool == 'message'" :search="searchKeyWord"></recent-list>
+            <friend-list v-show="leftTool == 'friend'" :search="searchKeyWord"></friend-list>
         </div>
     </div>
 </template>
@@ -17,27 +15,21 @@
     import {defineComponent, reactive, toRefs,watch} from "vue";
     import recentList from './recentList.vue'
     import friendList from './friendList.vue'
-
+    import im from '../websocket/websocket'
     export default defineComponent({
         name: "ImList",
         components: {
             recentList,
             friendList
         },
-        props: {
-            selectTool: String,
-            list: Array,
-        },
         setup() {
             const state = reactive({
                 //搜索关键字
                 searchKeyWord: '',
             })
-            // watch(()=>props.selectTool,val=>{
-            //
-            // })
             return {
-                ...toRefs(state)
+                ...toRefs(state),
+                ...toRefs(im.state)
             }
         }
     })

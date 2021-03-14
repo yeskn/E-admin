@@ -15,7 +15,16 @@ export function findParent(datas: Array<any>, pid: string) {
     } while (find)
     return list
 }
-
+export function findArrKey(arr, uid, field) {
+    var index = null;
+    arr.forEach(function (val, i) {
+        if (uid == val[field]) {
+            index = i;
+            return;
+        }
+    });
+    return index;
+}
 export function findTree(datas: Array<any>, id: any, field: string) {
     for (let key in datas) {
         if (datas[key][field] == id) {

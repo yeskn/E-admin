@@ -1,66 +1,68 @@
 <template>
     <div>
-        <p class="letter">新的朋友</p>
-        <div class="friendMsgItem">
-            <div>
-                <el-avatar class="newFriendImage" shape="square" icon="fa fa-user-circle-o"></el-avatar>
-            </div>
-            <div style="flex:1;margin-left: 10px;">
-                <div class="name">新的朋友</div>
-            </div>
-            <el-popover
-                    placement="bottom"
-                    title="新的朋友"
-                    width="300"
-                    trigger="click">
-                <div style="display: flex;margin-bottom: 10px">
-                    <el-input prefix-icon="el-icon-search" @change="searchNewFriend" v-model="searchFriendKey" clearable
-                              placeholder="好友昵称、账号"></el-input>&nbsp;&nbsp;
-                    <el-button size="small" @click="searchNewFriend">查找</el-button>
+        <div>
+            <p class="letter">新的朋友</p>
+            <div class="friendMsgItem">
+                <div>
+                    <el-avatar class="newFriendImage" shape="square" icon="fa fa-user-circle-o"></el-avatar>
                 </div>
-                <div class="friendMsgItem"
-                     v-for="(item,index) in findFriendList">
-                    <div>
-                        <el-avatar style="margin-left: 10px;" shape="square"
-                                   :src="item.headimg"></el-avatar>
-                    </div>
-                    <div style="flex:1;margin-left: 10px;">
-                        <div class="name">{{item.nickname}}</div>
-                        <div class="content">{{item.username}}</div>
-                    </div>
-                    <el-popover
-                            placement="right"
-                            width="200"
-                            trigger="manual"
-                            v-model:visible="item.visable">
-                        <div style="margin-bottom: 5px">添加好友 <i class="el-icon-close"
-                                                                style="float: right;cursor: pointer"
-                                                                @click="item.visable=false"></i></div>
-                        <el-input type="textarea" :row="3" placeholder="备注" resize="none"
-                                  v-model="newFriendDesc"></el-input>
-                        <br><br>
-                        <el-button type="primary" size="small" @click="sendAddFriend(item.id,index)">确认发送</el-button>
-                        <template #reference>
-                            <el-button type="primary" size="small" style="margin-right: 10px" v-if="!isFriend(item.id)" @click="addFriend(index)">添加</el-button>
-                        </template>
-                    </el-popover>
+                <div style="flex:1;margin-left: 10px;">
+                    <div class="name">新的朋友</div>
                 </div>
-                <template #reference>
-                    <i class="el-icon-plus addButton" ></i>
-                </template>
+                <el-popover
+                        placement="bottom"
+                        title="新的朋友"
+                        width="300"
+                        trigger="click">
+                    <div style="display: flex;margin-bottom: 10px">
+                        <el-input prefix-icon="el-icon-search" @change="searchNewFriend" v-model="searchFriendKey" clearable
+                                  placeholder="好友昵称、账号"></el-input>&nbsp;&nbsp;
+                        <el-button size="small" @click="searchNewFriend">查找</el-button>
+                    </div>
+                    <div class="friendMsgItem"
+                         v-for="(item,index) in findFriendList">
+                        <div>
+                            <el-avatar style="margin-left: 10px;" shape="square"
+                                       :src="item.headimg"></el-avatar>
+                        </div>
+                        <div style="flex:1;margin-left: 10px;">
+                            <div class="name">{{item.nickname}}</div>
+                            <div class="content">{{item.username}}</div>
+                        </div>
+                        <el-popover
+                                placement="right"
+                                width="200"
+                                trigger="manual"
+                                v-model:visible="item.visable">
+                            <div style="margin-bottom: 5px">添加好友 <i class="el-icon-close"
+                                                                    style="float: right;cursor: pointer"
+                                                                    @click="item.visable=false"></i></div>
+                            <el-input type="textarea" :row="3" placeholder="备注" resize="none"
+                                      v-model="newFriendDesc"></el-input>
+                            <br><br>
+                            <el-button type="primary" size="small" @click="sendAddFriend(item.id,index)">确认发送</el-button>
+                            <template #reference>
+                                <el-button type="primary" size="small" style="margin-right: 10px" v-if="!isFriend(item.id)" @click="addFriend(index)">添加</el-button>
+                            </template>
+                        </el-popover>
+                    </div>
+                    <template #reference>
+                        <i class="el-icon-plus addButton" ></i>
+                    </template>
 
-            </el-popover>
+                </el-popover>
 
+            </div>
         </div>
-    </div>
-    <div v-for="(item,index) in friendListFilter">
-        <div class="friendMsgItem" >
-            <div>
-                <el-avatar style="margin-left: 10px;" shape="square"
-                           :src="item.headimg"></el-avatar>
-            </div>
-            <div style="flex:1;margin-left: 10px;">
-                <div class="name">{{item.nickname}}</div>
+        <div v-for="(item,index) in friendListFilter">
+            <div class="friendMsgItem" @click="selectFriendUser(item,index)">
+                <div>
+                    <el-avatar style="margin-left: 10px;" shape="square"
+                               :src="item.headimg"></el-avatar>
+                </div>
+                <div style="flex:1;margin-left: 10px;">
+                    <div class="name">{{item.nickname}}</div>
+                </div>
             </div>
         </div>
     </div>
@@ -69,11 +71,11 @@
 <script>
     import {defineComponent, reactive, toRefs,computed} from "vue";
     import im from '../websocket/websocket'
-
+    import {findArrKey} from '@/utils'
     export default defineComponent({
-        name: "recentList",
+        name: "ImFriendList",
         props: {
-            list: Array
+            search:String,
         },
         setup(props) {
             const state = reactive({
@@ -81,38 +83,41 @@
                 findFriendList: [],
                 //添加好友备注
                 newFriendDesc: '',
-                //添加好友列表
-                addFriendList: [],
                 //新朋友搜索关键字
                 searchFriendKey:'',
-                friendList:[],
             })
             im.onMessage((action,data)=>{
                 switch (action) {
+                    case 'login':
+                        if(data.code === 0){
+                            im.state.friendList = []
+                            //获取好友列表
+                            im.send('friendList')
+                        }
+                        break;
                     //查找新朋友
                     case 'findNewFriend':
                         state.findFriendList = data
                         break;
-                    //获取添加好友列表
-                    case 'getAddFriend':
-                        state.addFriendList = data
+                    //成功添加好友
+                    case 'passFriend':
+                        im.state.friendList = []
+                        im.send('friendList')
                         break;
-
+                    //好友列表
+                    case 'friendList':
+                        im.state.friendList = im.state.friendList.concat(data)
+                        break;
                 }
             })
             //好友列表
             const friendListFilter = computed(()=> {
-                if (state.friendList.length > 0) {
-                    return state.friendList.filter(item => {
-                        return item.nickname.indexOf(state.searchKeyWord) >= 0
+                if (im.state.friendList.length > 0) {
+                    return im.state.friendList.filter(item => {
+                        return item.nickname.indexOf(props.search) >= 0
                     })
                 }
             })
-            //打开新朋友界面
-            function openNewFriend() {
-                im.send('getAddFriend')
-            }
-
             //发送添加好友请求
             function sendAddFriend(uid, index) {
                 im.send('addFriend', {
@@ -136,8 +141,8 @@
                 if (uid == im.uid) {
                     return true
                 }
-                for (let i = 0; i < state.friendList.length; i++) {
-                    if (state.friendList[i].id === uid) {
+                for (let i = 0; i < im.state.friendList.length; i++) {
+                    if (im.state.friendList[i].id === uid) {
                         return true
                     }
 
@@ -151,14 +156,30 @@
                 })
                 state.findFriendList[index].visable = true
             }
+            //选择好友
+            function selectFriendUser(item, index) {
+                im.state.leftTool = 'message'
+                index = findArrKey(im.state.recentList, item.id, 'from_uid')
+                item.from_uid = item.id
+                console.log(index)
+                if (index === null) {
+                    item.msg_type = 'msg'
+                    index = im.state.recentList.push(item)
+                    index--
+                }else{
+                    item = im.state.recentList[index]
+                }
+                im.selectUser(item, index)
+            }
             return {
                 ...toRefs(state),
+                ...toRefs(im.state),
                 friendListFilter,
-                openNewFriend,
                 sendAddFriend,
                 isFriend,
                 addFriend,
-                searchNewFriend
+                searchNewFriend,
+                selectFriendUser
             }
         }
     })
@@ -176,6 +197,10 @@
         display: flex;
         align-items: center;
         border-bottom: solid 1px #EEEEEE;
+    }
+    .friendMsgItem:hover {
+        background: #dedcda;
+        cursor: pointer;
     }
     .newFriendImage{
         margin-left: 10px;color: #409EFF;background: #fff;border: 1px solid #ededed
