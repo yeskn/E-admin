@@ -29,21 +29,24 @@ class FileSystemService extends Service
             return strcmp($b->getATime(), $a->getATime());
         };
         foreach ($finder->in($path)->depth('== 0')->name("*$search*")->sort($sort) as $file) {
-            if($file){
-                $urlPath = str_replace($this->path,'',$file->getPathname());
-                $author = posix_getpwuid($file->getOwner());
-                $datas[] = [
-                    'name'=>$file->getFilename(),
-                    'url'=> FileService::instance()->url($urlPath),
-                    'download'=> app()->request->domain().'/eadmin/download?filename='.$file->getFilename().'&path='.$file->getPathname(),
-                    'path'=>$file->getPathname(),
-                    'dir'=>$file->isDir(),
-                    'size'=>$file->getSize(),
-                    'permission'=>substr(base_convert($file->getPerms(),10,8),-3),
-                    'author'=>$author['name'],
-                    'update_time'=>date('Y-m-d H:i:s',$file->getATime()),
-                ];
-            }
+			if($file){
+				$urlPath = str_replace($this->path,'',$file->getPathname());
+				$author = '';
+				if(function_exists('posix_getpwuid')){
+					$author = posix_getpwuid($file->getOwner())['name'];
+				}
+				$datas[] = [
+					'name'=>$file->getFilename(),
+					'url'=> FileService::instance()->url($urlPath),
+					'download'=> app()->request->domain().'/eadmin/download?filename='.$file->getFilename().'&path='.$file->getPathname(),
+					'path'=>$file->getPathname(),
+					'dir'=>$file->isDir(),
+					'size'=>$file->getSize(),
+					'permission'=>substr(base_convert($file->getPerms(),10,8),-3),
+					'author'=>$author,
+					'update_time'=>date('Y-m-d H:i:s',$file->getATime()),
+				];
+			}
         }
         return $datas;
     }
