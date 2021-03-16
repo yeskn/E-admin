@@ -8,6 +8,7 @@ use Eadmin\Admin;
 use Eadmin\component\form\Field;
 use Eadmin\grid\Grid;
 use Eadmin\traits\ApiJson;
+use think\app\Url;
 use think\facade\Request;
 use think\helper\Str;
 
@@ -59,8 +60,15 @@ class SelectTable extends Field
      */
     public function from($from)
     {
+        $params = [];
+        if(is_string($from) || $from instanceof Url){
+            $parse = parse_url($from);
+            if(isset($parse['query'])){
+                parse_str($parse['query'],$params);
+            }
+        }
         $from = Admin::dispatch($from);
-        $this->params($from->getCallMethod());
+        $this->params(array_merge($params,$from->getCallMethod()));
         return $this;
     }
 
