@@ -49,7 +49,6 @@ class SelectTable extends Field
     {
         parent::__construct($field, $value);
         $this->clearable();
-        $this->filterable();
         $this->remote();
     }
 
