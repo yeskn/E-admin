@@ -4,7 +4,7 @@
         <slot></slot>
         <el-form-item>
             <slot name="leftAction"></slot>
-            <render v-if="action.submit" native-type="submit" :loading="loading" :data="action.submit" @click="sumbitForm"></render>
+            <render v-if="action.submit" native-type="submit" :loading="loading" :data="action.submit"></render>
             <render v-if="action.reset" :data="action.reset" @click="resetForm"></render>
             <slot name="rightAction"></slot>
         </el-form-item>
@@ -33,22 +33,51 @@
                 type:String,
                 default:'post'
             },
-            slotProps:Object
+            slotProps:Object,
+            submit:Boolean,
+            validate:Boolean,
+            step:Number,
         },
-        emits: ['success','gridRefresh'],
+        emits: ['success','gridRefresh','update:submit','update:validate','update:step'],
         setup(props,ctx){
             const eadminForm = ref(null)
             const {loading,http} = useHttp()
             const state = inject(store)
             const proxyData = state.proxyData
+            const validateStatus = ref(false)
             //提交
-            function sumbitForm() {
+            watch(()=>props.submit,val=>{
+                if(val){
+                    sumbitForm()
+                }
+            })
+            //校验
+            watch(()=>props.validate,val=>{
+                if(val){
+                    ctx.emit('update:validate',false)
+                    sumbitForm(true)
+                }
+            })
+            watch(validateStatus,val=>{
+                if(val){
+                    validateStatus.value = false
+                    ctx.emit('update:step',++props.step)
+                }
+            })
+            //提交
+            function sumbitForm(validate=false) {
+                ctx.emit('update:submit',false)
+                let params = {}
+                if(validate){
+                    params.eadmin_validate = true
+                }
                 if(props.setAction){
                     clearValidator()
                     eadminForm.value.validate(bool=>{
                         if(bool){
                             http({
                                 url: props.setAction,
+                                params:params,
                                 method: props.setActionMethod,
                                 data: ctx.attrs.model
                             }).then(res=>{
@@ -70,6 +99,8 @@
                                         }
                                     }
                                     scrollIntoView()
+                                }else  if(res.code === 412){
+                                    validateStatus.value = true
                                 }else{
                                     ctx.emit('success')
                                     ctx.emit('gridRefresh')
@@ -81,6 +112,8 @@
                         }
                     })
                 }else{
+                    validateStatus.value = true
+                    ctx.emit('update:submit',false)
                     ctx.emit('success')
                     ctx.emit('gridRefresh')
                 }

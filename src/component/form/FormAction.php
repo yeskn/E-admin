@@ -28,7 +28,8 @@ class FormAction extends Component
     public function __construct($form)
     {
         $this->form         = $form;
-        $this->submitButton = Button::create('保存')->type('primary');
+        $submitField = $this->form->bindAttr('submit');
+        $this->submitButton = Button::create('保存')->type('primary')->event('click',[$submitField=>true]);
         $this->resetButton  = Button::create('重置');
     }
 
