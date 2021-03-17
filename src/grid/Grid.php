@@ -313,6 +313,7 @@ class Grid extends Component
     /**
      * 开启树形表格
      * @param string $pidField 父级字段
+	 * @param string $idField 下级字段
      * @param bool $expand 是否展开
      */
     public function treeTable($pidField = 'pid', $idField = 'id', $expand = true)
