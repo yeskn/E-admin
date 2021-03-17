@@ -73,6 +73,7 @@ class Grid extends Component
 
     //树形上级id
     protected $treeParent = 'pid';
+    protected $treeId = 'id';
 
     protected $drive;
 
@@ -314,9 +315,10 @@ class Grid extends Component
      * @param string $pidField 父级字段
      * @param bool $expand 是否展开
      */
-    public function treeTable($pidField = 'pid', $expand = true)
+    public function treeTable($pidField = 'pid', $idField = 'id', $expand = true)
     {
         $this->treeParent = $pidField;
+        $this->treeId = $idField;
         $this->isTree = true;
         $this->hidePage();
         $this->defaultExpandAllRows($expand);
@@ -435,6 +437,7 @@ class Grid extends Component
             $row = ['id' => $data[$this->drive->getPk()]];
             //树形父级pid
             if ($this->isTree) {
+                $row[$this->treeId] = $data[$this->treeId];
                 $row[$this->treeParent] = $data[$this->treeParent];
             }
             foreach ($this->column as $column) {
@@ -554,7 +557,7 @@ class Grid extends Component
         $data = $this->parseColumn($data);
         //树形
         if ($this->isTree) {
-            $data = Admin::tree($data, $this->drive->getPk(), $this->treeParent);
+            $data = Admin::tree($data, $this->treeId, $this->treeParent);
         }
         $this->bindAttValue('data', $data);
         if (request()->has('ajax_request_data')) {
