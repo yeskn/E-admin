@@ -10,6 +10,7 @@ namespace Eadmin\form;
 
 
 use think\exception\HttpResponseException;
+use think\facade\Request;
 use think\facade\Validate;
 
 class ValidatorForm
@@ -161,6 +162,13 @@ class ValidatorForm
             }
         }
         $result = $validate->batch(true)->check($data);
+        if(Request::has('eadmin_validate') && $result){
+            throw new HttpResponseException(json([
+                'code'    => 412,
+                'message' => '验证通过',
+                'data'    => []
+            ]));
+        }
         if (!$result) {
             throw new HttpResponseException(json([
                 'code'    => 422,

@@ -16,6 +16,13 @@
             if (this.data) {
                 this.setProxyData(this.data)
                 const jsonRender = toRaw(this.data)
+                if (jsonRender.where.AND.length > 0 || jsonRender.where.OR.length > 0) {
+                    let expression = this.whereCompile(jsonRender.where.AND, jsonRender.where.OR,this.slotProps)
+                    let renderComponent = null
+                    expression = expression + ' ? renderComponent = this.renderComponent(jsonRender,this.slotProps) : null'
+                    eval(expression)
+                    return renderComponent
+                }
                 return this.renderComponent(jsonRender,this.slotProps)
             } else {
                 return null
@@ -310,6 +317,7 @@
                     op = '||'
                 }
                 expression += evals.join(' ' + op + ' ')
+
                 return expression
             }
             //赋值方法
@@ -329,6 +337,7 @@
             }
             return {
                 setProxyData,
+                whereCompile,
                 renderComponent
             }
         },

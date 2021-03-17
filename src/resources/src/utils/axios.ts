@@ -115,8 +115,8 @@ service.interceptors.response.use(
             } else if (res.code === 40021) {
                 link(res.url)
                 return
-            } else if (res.code == 422) {
-                // 表单验证失败
+            } else if (res.code == 422 || res.code == 412) {
+                // 表单验证
                 return res
             } else if (typeof (res) == 'object' && !res.message) {
                 return res

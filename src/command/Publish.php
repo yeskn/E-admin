@@ -21,15 +21,26 @@ class Publish extends Command
         // 指令配置
         $this->setName('eadmin:publish')->setDescription('Publish any publishable assets from vendor packages');
         $this->addOption('force', 'f', Option::VALUE_NONE, 'Force overwrite file');
+        $this->addOption('public', 'p', Option::VALUE_NONE, '前端静态文件 overwrite file');
     }
 
     protected function execute(Input $input, Output $output)
     {
         $force = $input->getOption('force');
-        $assetsDir = __DIR__ . '/../assets/public';
-        $this->copyDir($assetsDir, app()->getRootPath() . 'public/eadmin',$force);
+        $public = $input->getOption('public');
+        if($public){
+            $assetsDir = __DIR__ . '/../assets/public';
+            $this->copyDir($assetsDir, app()->getRootPath() . 'public/eadmin',$force);
+            $assetsDir = __DIR__ . '/../assets/admin/view/index.vue';
+            copy($assetsDir,app()->getAppPath() . 'admin/view/index.vue');
+            return true;
+        }
         $assetsDir = __DIR__ . '/../assets/admin';
         $this->copyDir($assetsDir, app()->getAppPath() . 'admin',$force);
+        $assetsDir = __DIR__ . '/../assets/public';
+        $this->copyDir($assetsDir, app()->getRootPath() . 'public/eadmin',$force);
+        $assetsDir = __DIR__ . '/../assets/admin/view/index.vue';
+        copy($assetsDir,app()->getAppPath() . 'admin/view/index.vue');
         $assetsDir = __DIR__ . '/../database';
         $this->copyDir($assetsDir, app()->getRootPath() . 'database',$force);
     }
