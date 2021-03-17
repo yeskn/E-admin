@@ -71,12 +71,14 @@ class Cascader extends Field
 	 * @param array  $data
 	 * @param string $id 下级字段
 	 * @param string $parent_id 上级字段
+	 * @param string $label 名称字段
 	 * @param string $children 下级数组名
 	 */
-	public function options(array $data, $id = 'id', $parent_id = 'pid', $children = 'children')
+	public function options(array $data, $id = 'id', $parent_id = 'pid', $label = 'label', $children = 'children')
 	{
 		$options = Admin::tree($data, $id, $parent_id, $children);
 		$this->props('value', $id);
+		$this->props('label', $label);
 		$this->props('children', $children);
 		$this->attr('options', $options);
 		return $this;
