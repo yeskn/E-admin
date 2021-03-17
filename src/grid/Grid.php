@@ -243,18 +243,19 @@ class Grid extends Component
         $this->beforeDel = $closure;
     }
 
-    /**
-     * 删除
-     * @param int $id 删除的id
-     * @return bool|int
-     */
-    public function destroy($id)
-    {
-        if (!is_null($this->beforeDel)) {
-            call_user_func($this->beforeDel, $id);
-        }
-        return $this->drive->destroy($id);
-    }
+	/**
+	 * 删除
+	 * @param int $id 删除的id
+	 * @return bool|int
+	 */
+	public function destroy($id)
+	{
+		$trueDelete = Request::delete('trueDelete');
+		if (!is_null($this->beforeDel)) {
+			call_user_func($this->beforeDel, $id, $trueDelete);
+		}
+		return $this->drive->destroy($id);
+	}
 
     /**
      * 更新

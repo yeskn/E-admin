@@ -42,7 +42,7 @@ class {%className%} extends Controller
 
         });
         // 删除前回调
-        $grid->deling(function ($ids) {
+        $grid->deling(function ($ids, $trueDelete) {
 
         });
         // 更新前回调
