@@ -98,6 +98,12 @@ abstract class Field extends Component
     }
 
     /**
+     * @return FormItem
+     */
+    public function getFormItem(){
+        return $this->formItem;
+    }
+    /**
      * 设置缺省默认值
      * @param mixed $value
      */

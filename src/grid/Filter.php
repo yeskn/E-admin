@@ -305,6 +305,7 @@ class Filter
         $requestField = md5(implode(',', $field));
         $cascader->bind($requestField, '');
         $cascader->bindAttr('modelValue', $requestField);
+        $cascader->getFormItem()->prop($requestField);
         array_unshift($field, $requestField);
         array_pop($field);
         $this->parseFilter('cascader', $field);

@@ -4,10 +4,12 @@
 namespace Eadmin\form\traits;
 
 
+use Eadmin\component\basic\Html;
 use Eadmin\component\form\field\Cascader;
 use Eadmin\component\form\field\CheckboxGroup;
 use Eadmin\component\form\field\Color;
 use Eadmin\component\form\field\DatePicker;
+use Eadmin\component\form\field\Display;
 use Eadmin\component\form\field\DynamicTag;
 use Eadmin\component\form\field\Editor;
 use Eadmin\component\form\field\Email;
@@ -65,5 +67,6 @@ trait ComponentForm
         'maps' => Map::class,
         'tag' => DynamicTag::class,
         'spec' => Spec::class,
+        'display' => Display::class,
     ];
 }

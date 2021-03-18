@@ -55,7 +55,16 @@ class Menu extends Controller
         });
         $grid->column('status', '状态')->switch();
         $grid->actions(function (Actions $action, $data) {
+            $action->prepend(
+                Button::create('添加菜单')
+                    ->plain()
+                    ->sizeSmall()
+                    ->typePrimary()
+                    ->dialog()
+                    ->form($this->form($data['id']))
+            );
             $action->hideDetail();
+
         });
         $grid->sortInput();
         $grid->setForm($this->form())->dialog();
@@ -69,11 +78,11 @@ class Menu extends Controller
      * @login true
      * @return Form
      */
-    public function form(): Form
+    public function form($pid=0): Form
     {
         $menus = Admin::menu()->listOptions();
         $form  = new Form(new SystemMenu());
-        $form->select('pid', '上级菜单')
+        $form->select('pid', '上级菜单')->default($pid)
             ->options([0 => '顶级菜单'] + array_column($menus, 'label', 'id'))
             ->required();
         $form->text('name', '菜单名称')->required();
