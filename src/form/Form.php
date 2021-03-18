@@ -74,6 +74,7 @@ use think\Model;
  * @method \Eadmin\component\form\field\Map maps($lng, $lat, $address, $label = '') 高德地图  TODO
  * @method \Eadmin\component\form\field\DynamicTag tag($field, $label = '') 动态标签
  * @method \Eadmin\component\form\field\Spec spec($field, $label = '') 规格
+ * @method \Eadmin\component\form\field\Display display($field, $label = '') 显示
  */
 class Form extends Field
 {
@@ -305,7 +306,7 @@ class Form extends Field
                 $value = $componentValue;
                 $value = $this->getPickerValue($component, $field, $value);
             }
-            if (empty($value) && $component->bind($field)) {
+            if ($attr != 'modelValue' && $component->bind($field)) {
                 $value = $component->bind($field);
             }
             $this->setData($field, $value ?? '');
@@ -771,7 +772,6 @@ class Form extends Field
         $field = $this->bindAttr('model');
         $this->data = array_merge($this->data, $this->callMethod);
         //将值绑定到form
-
         $this->bind($field, $this->data);
     }
 

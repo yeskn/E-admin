@@ -27,6 +27,7 @@ import selectTable from './components/selectTable.vue'
 import select from './components/select.vue'
 import EadminTag from './components/EadminTag.vue'
 import spec from './components/spec.vue'
+import display from './components/display.vue'
 
 app.component(form.name,form)
 app.component(manyItem.name,manyItem)
@@ -55,5 +56,6 @@ app.component(filesystem.name,filesystem)
 app.component(select.name,select)
 app.component(EadminTag.name,EadminTag)
 app.component(spec.name,spec)
+app.component(display.name,display)
 app.component(eadminErrorPage.name,eadminErrorPage)
 
