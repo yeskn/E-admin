@@ -1,5 +1,5 @@
 <template>
-    <el-select v-model="value"><slot></slot></el-select>
+    <el-select v-model="value"><slot>{{a}}</slot></el-select>
 </template>
 
 <script>

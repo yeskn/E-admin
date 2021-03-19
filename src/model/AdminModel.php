@@ -20,7 +20,6 @@ class AdminModel extends BaseModel
         $this->table = config('admin.system_user_table');
         parent::__construct($data);
     }
-
     // 角色组
     public function roles()
     {

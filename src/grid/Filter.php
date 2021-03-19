@@ -64,7 +64,7 @@ class Filter
      */
     public function like($field, $label = '')
     {
-        $this->parseFilter(__FUNCTION__, $field);
+        $field = $this->parseFilter(__FUNCTION__, $field);
         $this->form->text($field, $label)->prefixIcon('el-icon-search');
         return $this;
     }
@@ -79,7 +79,7 @@ class Filter
     public function json($field, $node, $label = '')
     {
         $this->jsonNode = $node;
-        $this->parseFilter(__FUNCTION__, $field);
+        $field = $this->parseFilter(__FUNCTION__, $field);
         $this->form->text($field . '__json_' . $node, $label)->prefixIcon('el-icon-search');
         return $this;
     }
@@ -94,7 +94,7 @@ class Filter
     public function jsonLike($field, $node, $label = '')
     {
         $this->jsonNode = $node;
-        $this->parseFilter(__FUNCTION__, $field);
+        $field = $this->parseFilter(__FUNCTION__, $field);
         $this->form->text($field . '__json_' . $node, $label)->prefixIcon('el-icon-search');
         return $this;
     }
@@ -109,7 +109,7 @@ class Filter
     public function jsonArrLike($field, $node, $label = '')
     {
         $this->jsonNode = $node;
-        $this->parseFilter(__FUNCTION__, $field);
+        $field = $this->parseFilter(__FUNCTION__, $field);
         $this->form->text($field . '__json_' . $node, $label)->prefixIcon('el-icon-search');
         return $this;
     }
@@ -122,7 +122,7 @@ class Filter
      */
     public function in($field, $label = '')
     {
-        $this->parseFilter(__FUNCTION__, $field);
+        $field = $this->parseFilter(__FUNCTION__, $field);
         $this->form->text($field, $label)->prefixIcon('el-icon-search');
         return $this;
     }
@@ -135,7 +135,7 @@ class Filter
      */
     public function notIn($field, $label = '')
     {
-        $this->parseFilter(__FUNCTION__, $field);
+        $field = $this->parseFilter(__FUNCTION__, $field);
         $this->form->text($field, $label)->prefixIcon('el-icon-search');
         return $this;
     }
@@ -148,7 +148,7 @@ class Filter
      */
     public function eq($field, $label = '')
     {
-        $this->parseFilter(__FUNCTION__, $field);
+        $field = $this->parseFilter(__FUNCTION__, $field);
         $this->form->text($field, $label)->prefixIcon('el-icon-search');
         return $this;
     }
@@ -161,7 +161,7 @@ class Filter
      */
     public function findIn($field, $label = '')
     {
-        $this->parseFilter(__FUNCTION__, $field);
+        $field = $this->parseFilter(__FUNCTION__, $field);
         $this->form->text($field, $label)->prefixIcon('el-icon-search');
         return $this;
     }
@@ -174,7 +174,7 @@ class Filter
      */
     public function neq($field, $label = '')
     {
-        $this->parseFilter(__FUNCTION__, $field);
+        $field = $this->parseFilter(__FUNCTION__, $field);
         $this->form->text($field, $label)->prepend('不等于')->prefixIcon('el-icon-search');
         return $this;
     }
@@ -187,7 +187,7 @@ class Filter
      */
     public function egt($field, $label = '')
     {
-        $this->parseFilter(__FUNCTION__, $field);
+        $field = $this->parseFilter(__FUNCTION__, $field);
         $this->form->text($field, $label)->prepend('大于等于')->prefixIcon('el-icon-search');
         return $this;
     }
@@ -200,7 +200,7 @@ class Filter
      */
     public function gt($field, $label = '')
     {
-        $this->parseFilter(__FUNCTION__, $field);
+        $field = $this->parseFilter(__FUNCTION__, $field);
         $this->form->text($field, $label)->prepend('大于')->prefixIcon('el-icon-search');
         return $this;
     }
@@ -213,7 +213,7 @@ class Filter
      */
     public function elt($field, $label = '')
     {
-        $this->parseFilter(__FUNCTION__, $field);
+        $field = $this->parseFilter(__FUNCTION__, $field);
         $this->form->text($field, $label)->prepend('小于等于')->prefixIcon('el-icon-search');
         return $this;
     }
@@ -226,7 +226,7 @@ class Filter
      */
     public function lt($field, $label = '')
     {
-        $this->parseFilter(__FUNCTION__, $field);
+        $field = $this->parseFilter(__FUNCTION__, $field);
         $this->form->text($field, $label)->prepend('小于')->prefixIcon('el-icon-search');
         return $this;
     }
@@ -239,7 +239,7 @@ class Filter
      */
     public function between($field, $label = '')
     {
-        $this->parseFilter(__FUNCTION__, $field);
+        $field = $this->parseFilter(__FUNCTION__, $field);
         $this->form->text($field . '__between_start', $label)->placeholder("请输入开始$label");
         $this->form->text($field . '__between_end', '-')->placeholder("请输入结束$label");
         return $this;
@@ -253,7 +253,7 @@ class Filter
      */
     public function date($field, $label = '')
     {
-        $this->parseFilter('eq', $field);
+        $field = $this->parseFilter('eq', $field);
         return $this->form->date($field, $label);
     }
 
@@ -265,7 +265,7 @@ class Filter
      */
     public function time($field, $label = '')
     {
-        $this->parseFilter('eq', $field);
+        $field = $this->parseFilter('eq', $field);
         return $this->form->time($field, $label);
     }
 
@@ -277,7 +277,7 @@ class Filter
      */
     public function datetime($field, $label = '')
     {
-        $this->parseFilter('eq', $field);
+        $field = $this->parseFilter('eq', $field);
         return $this->form->datetime($field, $label);
     }
 
@@ -289,7 +289,7 @@ class Filter
      */
     public function datetimeRange($field, $label = '')
     {
-        $this->parseFilter('dateBetween', $field);
+        $field = $this->parseFilter('dateBetween', $field);
         return $this->form->datetimeRange($field . '__start', $field . '__end', $label);
     }
 
@@ -320,7 +320,7 @@ class Filter
      */
     public function dateRange($field, $label = '')
     {
-        $this->parseFilter('dateBetween', $field);
+        $field = $this->parseFilter('dateBetween', $field);
         return $this->form->dateRange($field . '__start', $field . '__end', $label);
     }
 
@@ -332,7 +332,7 @@ class Filter
      */
     public function timeRange($field, $label = '')
     {
-        $this->parseFilter('dateBetween', $field);
+        $field = $this->parseFilter('dateBetween', $field);
         return $this->form->timeRange($field . '__start', $field . '__end', $label);
     }
 
@@ -344,7 +344,7 @@ class Filter
      */
     public function year($field, $label = '')
     {
-        $this->parseFilter(__FUNCTION__, $field);
+        $field = $this->parseFilter(__FUNCTION__, $field);
         return $this->form->year($field, $label);
     }
 
@@ -356,7 +356,7 @@ class Filter
      */
     public function month($field, $label = '')
     {
-        $this->parseFilter(__FUNCTION__, $field);
+        $field = $this->parseFilter(__FUNCTION__, $field);
         return $this->form->month($field, $label);
     }
 
@@ -368,7 +368,7 @@ class Filter
      */
     public function notBetween($field, $label = '')
     {
-        $this->parseFilter(__FUNCTION__, $field);
+        $field = $this->parseFilter(__FUNCTION__, $field);
         $this->form->text($field . '__between_start', $label)->placeholder("不存在区间");
         $this->form->text($field . '__between_end', '-')->placeholder("请输入$label");
         return $this;
@@ -434,6 +434,7 @@ class Filter
      */
     public function parseFilter($method, $field)
     {
+        $requestField = $field;
         if ($this->db) {
             if (is_string($field)) {
                 $field   = str_replace('.', '__', $field);
@@ -451,7 +452,8 @@ class Filter
                         };
                     }
                     $relation = array_pop($fields);
-                    return $this->relationWhere($relation, $func);
+                    $this->relationWhere($relation, $func);
+                    return $requestField;
                 }
                 $requestField = $field;
             } elseif (is_array($field)) {
@@ -460,6 +462,7 @@ class Filter
             }
             $this->filterField($method, $dbField, $requestField);
         }
+        return $requestField;
     }
 
     /**
