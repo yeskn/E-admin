@@ -31,7 +31,7 @@ const im = {
     //监听回调
     listens:[],
     connect: function () {
-        this.webSocket = new WebSocket("ws://127.0.0.1:15555/?username=admin&password=b2e472a882c223386ab0fa4c35421467");
+        this.webSocket = new WebSocket("ws://192.168.199.220:15555/?username=admin&password=b2e472a882c223386ab0fa4c35421467");
         this.webSocket.onmessage = e=>{
             const receive = JSON.parse(e.data)
             const action = receive.action
@@ -65,6 +65,7 @@ const im = {
     },
     //选择会话
     selectUser(item,index){
+        this.state.msgList = []
         this.state.leftTool = 'message'
         this.state.recentTitle = item.msg_type === 'customerMsg' ? item.user_nickname : item.nickname
         this.state.recentType = item.msg_type

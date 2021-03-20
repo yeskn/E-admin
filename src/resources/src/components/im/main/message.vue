@@ -108,9 +108,12 @@
                     </template>
 
                 </el-popover>
-                <i class="el-icon-chat-dot-round item" @click="msgRecord" style="float: right"></i>
+                <i class="el-icon-chat-dot-round item" @click="recordDrawer = true" style="float: right"></i>
+                <el-drawer :title="im.state.recentTitle" v-model="recordDrawer" direction="rtl" :destroy-on-close="true">
+                    <message-record></message-record>
+                </el-drawer>
             </div>
-            <el-scrollbar style="height:90px">
+            <el-scrollbar style="height:105px">
                 <div
                         ref="sendInput"
                         contenteditable="true"
@@ -139,8 +142,12 @@
     import {ElNotification} from "element-plus";
     import im from '../websocket/websocket'
     import {findArrKey,findTree} from '@/utils'
+    import messageRecord from "./messageRecord";
     export default defineComponent({
         name: "ImMessage",
+        components:{
+            messageRecord,
+        },
         setup(props){
             let msgRefs = []
 
@@ -159,6 +166,8 @@
                 sendTipvisible:false,
                 //表情
                 emojiArr:['😀','😁','😂','😃','😄','😅','😆','😉','😊','😋','😎','😍','😘','😗','😙','😚','😇','😐','😑','😶','😏','😣','😥','😮','😯','😪','😫','😴','😌','😛','😜','😝','😒','😓','😔','😕','😲','😷','😖','😞','😟','😤','😢','😭','😦','😧','😨','😬','😰','😱','😳','😵','😡','😠','🌹','🍀','🍎','💰','📱','🌙','🍁','🍂','🍃','🌷','💎','🔪','🔫','🏀','👄','👍','🔥','💪','👈','👉','👆','👇','👌','👍','👎','✊'],
+                //聊天记录抽屉
+                recordDrawer:false
             })
 
             im.onMessage((action,data)=>{
@@ -451,10 +460,6 @@
             function recallMsg(item) {
 
             }
-            //聊天记录
-            function msgRecord() {
-
-            }
             //右键打开文字菜单
             function openMenu(index) {
                // this.popoverVisibleClose()
@@ -504,7 +509,6 @@
                 getCursorSelection,
                 pasteSendInput,
                 sendMsg,
-                msgRecord,
                 isDelMsg,
                 openMenu,
                 delMsg,
@@ -528,10 +532,11 @@
     .msgContentBox {
         height: 470px;
         position: relative;
-        background: #f9fafb;
+        line-height: normal;
     }
 
     .msgTime {
+        margin-top: 5px;
         text-align: center;
     }
 
@@ -592,7 +597,7 @@
 
     .leftMsgItemBg {
         border-radius: 5px;
-        background: #FFFFFF;
+        background: #f0f0f0;
         padding: 10px 10px;
         font-size: 14px;
         white-space: pre-line;
@@ -624,6 +629,7 @@
         resize: none;
         padding-left: 10px;
         width: 100%;
-        min-height: 90px;
+        min-height: 105px;
     }
+    .sendTextarea:focus{outline: none;}
 </style>

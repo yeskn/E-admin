@@ -161,7 +161,6 @@
                 im.state.leftTool = 'message'
                 index = findArrKey(im.state.recentList, item.id, 'from_uid')
                 item.from_uid = item.id
-                console.log(index)
                 if (index === null) {
                     item.msg_type = 'msg'
                     index = im.state.recentList.push(item)
