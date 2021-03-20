@@ -60,8 +60,11 @@ class Dialog extends Field
     public function form(Form $form)
     {
         $this->url('/eadmin.rest');
-        $params = array_merge($form->getCallMethod(), $form->getCallParams());
+        $callMethod = $form->getCallMethod();
+        $params = array_merge($callMethod, $form->getCallParams());
         $this->params($params);
+        //权限
+        $this->auth($callMethod['eadmin_class'],$callMethod['eadmin_function']);
         return $this;
     }
 

@@ -217,62 +217,81 @@ class Admin
     }
 
     /**
-     * 解析url并执行返回
-     * @param mixed $url
-     * @return mixed
+     * 解析url返回路由调度
+     * @param $url
+     * @return bool|\think\route\Dispatch|null
      */
-    public static function dispatch($url)
-    {
-        $data = $url;
+    public static function getDispatch($url){
+        $dispatch = null;
         try {
             if (strpos($url, '/') !== false) {
                 $parse   = parse_url($url);
-
                 $path    = $parse['path'] ?? '';
-                $vars    = [];
-                $request = app()->request;
-                if (isset($parse['query'])) {
-                    $querys = explode('&', $parse['query']);
-                    foreach ($querys as $query) {
-
-                        list($name, $value) = explode('=', $query);
-                        $vars[$name] = $value;
-                    }
-                }
                 $pathinfo = array_filter(explode('/', $path));
                 $name     = current($pathinfo);
                 if ($name == app('http')->getName()) {
                     array_shift($pathinfo);
                 }
                 $url = implode('/', $pathinfo);
-
                 $dispatch = Route::getDomains()['-']->check(request(), $url);
-
                 if ($dispatch === false) {
                     $dispatch = Route::url($url);
-
-                }
-                if ($dispatch) {
-                    $dispatch->init(app());
-                    $get = $request->get();
-                    $request->withGet($vars);
-                    if ($dispatch instanceof Controller) {
-                        list($controller, $action) = $dispatch->getDispatch();
-                        $instance = $dispatch->controller($controller);
-                        $reflect  = new \ReflectionMethod($instance, $action);
-                        $data     = app()->invokeReflectMethod($instance, $reflect, $vars);
-                    } elseif ($dispatch instanceof Callback) {
-                      
-                        $data = app()->invoke($dispatch->getDispatch(), $vars);
-
-                    }
-                    $request->withGet($get);
                 }
             }
         } catch (\Exception $exception) {
 
         }
+        return $dispatch;
+    }
+    public static function getDispatchCall($dispatch){
+        $eadmin_class = null;
+        $eadmin_function = null;
+        try {
+            $dispatch->init(app());
+            if ($dispatch instanceof Controller) {
 
+                list($controller, $eadmin_function) = $dispatch->getDispatch();
+                $eadmin_class = get_class($dispatch->controller($controller));
+                if(is_null($eadmin_function)){
+                    $eadmin_function = config('route.default_action');
+                }
+            }elseif ($dispatch instanceof Callback && !($dispatch->getDispatch() instanceof \Closure)){
+                list($eadmin_class, $eadmin_function) = $dispatch->getDispatch();
+            }
+        }catch (\Exception $exception){
+
+        }
+        return [$eadmin_class,$eadmin_function];
+    }
+    /**
+     * 解析url并执行返回
+     * @param mixed $url
+     * @return mixed
+     */
+    public static function dispatch($url)
+    {
+        $dispatch =  Admin::getDispatch($url);
+        $vars    = [];
+        $parse   = parse_url($url);
+        if (isset($parse['query'])) {
+            parse_str($parse['query'],$vars);
+        }
+        $data = $url;
+        if ($dispatch) {
+            $dispatch->init(app());
+            $request = app()->request;
+            $get = $request->get();
+            $request->withGet($vars);
+            if ($dispatch instanceof Controller) {
+                list($controller, $action) = $dispatch->getDispatch();
+                $instance = $dispatch->controller($controller);
+                $reflect  = new \ReflectionMethod($instance, $action);
+                $data     = app()->invokeReflectMethod($instance, $reflect, $vars);
+            } elseif ($dispatch instanceof Callback) {
+                $data = app()->invoke($dispatch->getDispatch(), $vars);
+            }
+            $request->withGet($get);
+        }
         return $data;
     }
 

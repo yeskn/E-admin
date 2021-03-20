@@ -28,16 +28,9 @@ class Permission
 
         if (empty($eadmin_class) || empty($eadmin_function)) {
             $dispatch = app()->route->check();
-            $dispatch->init(app());
-            if ($dispatch instanceof Controller) {
-                list($controller, $eadmin_function) = $dispatch->getDispatch();
-                $eadmin_class = get_class($dispatch->controller($controller));
-            }elseif ($dispatch instanceof Callback && !($dispatch->getDispatch() instanceof \Closure)){
-                list($eadmin_class, $eadmin_function) = $dispatch->getDispatch();
-            }
+            list($eadmin_class, $eadmin_function) = Admin::getDispatchCall($dispatch);
         }
         //验证权限
-
         $authNodules = array_keys(config('admin.authModule'));
         if (in_array($moudel, $authNodules) && !Admin::check($eadmin_class, $eadmin_function, $request->method())) {
             return json(['code' => 44000, 'message' => '没有访问该操作的权限']);

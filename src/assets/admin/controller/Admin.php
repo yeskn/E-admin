@@ -62,7 +62,7 @@ class Admin extends Controller
         $grid->column('create_time', '创建时间');
 
         $grid->actions(function (Actions $action, $data) {
-            if ($data['id'] == config('admin.admin_auth_id')) {
+            if ($data['id'] == config('admin.admin_auth_id') || $data['id'] == \Eadmin\Admin::id()) {
                 $action->hideDel();
             }
 

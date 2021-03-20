@@ -74,7 +74,15 @@ abstract class Component implements \JsonSerializable
         $this->attribute = array_merge($this->attribute, $attrs);
         return $this;
     }
-
+    public function auth($eadmin_class,$eadmin_function,$method='get'){
+        //权限
+        $res = Admin::check($eadmin_class,$eadmin_function,$method);
+       
+        $field = Str::random(30, 3);
+        $this->bind($field,1);
+        $this->where($field,$res ? 1:0);
+        return $this;
+    }
     public function removeAttr($name)
     {
         unset($this->attribute[$name]);

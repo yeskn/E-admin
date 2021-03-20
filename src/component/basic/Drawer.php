@@ -4,6 +4,7 @@
 namespace Eadmin\component\basic;
 
 
+use Eadmin\Admin;
 use Eadmin\component\Component;
 use Eadmin\component\form\Field;
 use Eadmin\component\form\field\Input;
@@ -53,8 +54,12 @@ class Drawer extends Field
     public function form(Form $form)
     {
         $this->url('/eadmin.rest');
-        $oarams = array_merge($form->getCallMethod(), $form->getCallParams());
-        $this->params($oarams);
+        $callMethod = $form->getCallMethod();
+        $params = array_merge($callMethod, $form->getCallParams());
+        $this->params($params);
+
+        //权限
+        $this->auth($callMethod['eadmin_class'],$callMethod['eadmin_function']);
         return $this;
     }
 

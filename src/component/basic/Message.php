@@ -75,7 +75,7 @@ class Message
      */
     public function redirect($url)
     {
-        $this->data = array_merge($this->data, ['url' => $url]);
+        $this->data['url'] = $url;
         return $this;
     }
     /**
@@ -84,7 +84,7 @@ class Message
      */
     public function back()
     {
-        $this->data = array_merge($this->data, ['url' => 'back']);
+        $this->data['url'] = 'back';
         return $this;
     }
     /**
@@ -92,10 +92,19 @@ class Message
      */
     public function refresh()
     {
-        $this->data = array_merge($this->data, ['refresh' => true]);
+        $this->data['refresh'] = true;
         return $this;
     }
 
+    /**
+     * 改变bind字段数据
+     * @param array $data
+     * @return $this
+     */
+    public function bind(array $data){
+        $this->data['proxyData'] = $data;
+        return $this;
+    }
     public function data(array $data)
     {
         $this->data = array_merge($this->data, ['data' => $data]);

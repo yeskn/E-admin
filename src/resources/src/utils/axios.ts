@@ -48,6 +48,11 @@ service.interceptors.response.use(
         */
        response: { data: any }) => {
         const res = response.data
+        if(res.proxyData){
+            for(let field in res.proxyData){
+                action.setProxyData(field,res.proxyData[field])
+            }
+        }
         // if the custom code is not 20000, it is judged as an error.
         if (res.code !== 200) {
             // 登陆验证token判断

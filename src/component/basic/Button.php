@@ -9,7 +9,10 @@
 namespace Eadmin\component\basic;
 
 
+use Eadmin\Admin;
 use Eadmin\component\Component;
+use think\app\Url;
+use think\facade\Route;
 
 /**
  * Class Button
@@ -79,8 +82,14 @@ class Button extends Component
      */
     public function confirm(string $message, string $url = '', array $params = [])
     {
+
         $confirm = Confirm::create($this)
             ->message($message)->url($url)->params($params);
+        $dispatch = Admin::getDispatch($url);
+        if($dispatch){
+            list($eadmin_class, $eadmin_function)  = Admin::getDispatchCall($dispatch);
+            $confirm->auth($eadmin_class,$eadmin_function);
+        }
         return $confirm;
     }
 
@@ -93,6 +102,15 @@ class Button extends Component
      */
     public function save(array $data, $url, $confirm = '')
     {
+        if($url instanceof Url){
+            $url = (string)$url;
+        }
+        $dispatch = Admin::getDispatch($url);
+        if($dispatch){
+            
+            list($eadmin_class, $eadmin_function)  = Admin::getDispatchCall($dispatch);
+            $this->auth($eadmin_class,$eadmin_function);
+        }
         if (empty($confirm)) {
             $this->url($url)->params($data);
         } else {

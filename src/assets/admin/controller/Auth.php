@@ -85,7 +85,7 @@ class Auth extends Controller
      * @login true
      * @return Form
      */
-    public function menu($id): Form
+    public function menu($id)
     {
         $form = new Form(new SystemAuth());
         $form->edit($id);
@@ -119,7 +119,7 @@ class Auth extends Controller
      * @login true
      * @return string
      */
-    public function authNode($id): Form
+    public function authNode($id)
     {
         $form = new Form(new SystemAuth());
         $form->edit($id);

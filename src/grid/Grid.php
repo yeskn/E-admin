@@ -515,7 +515,8 @@ class Grid extends Component
         //添加按钮
         if (!$this->hideAddButton && !is_null($this->formAction)) {
             $form = $this->formAction->form();
-            $form->eventSuccess([$this->bindAttr('modelValue') => true, $form->bindAttr('model') => $form->getCallMethod()]);
+            $callMethod = $form->getCallMethod();
+            $form->eventSuccess([$this->bindAttr('modelValue') => true, $form->bindAttr('model') => $callMethod]);
             $button = Button::create('添加')
                 ->type('primary')
                 ->size('small')
@@ -526,7 +527,14 @@ class Grid extends Component
             } else {
                 $button = $action->bindValue(false)->reference($button)->title('添加')->form($form);
             }
+            //添加权限
+            $action->auth($callMethod['eadmin_class'],$callMethod['eadmin_function'],'post');
             $this->attr('addButton', $button);
+        }
+        //删除权限
+        if(!Admin::check($this->callClass,$this->callFunction,'delete')){
+           $this->hideDeleteButton();
+           $this->hideDeleteSelection();
         }
         //工具栏
         $this->attr('tools', $this->tools);

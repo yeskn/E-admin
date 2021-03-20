@@ -35,8 +35,6 @@ router.beforeEach( async(to:RouteLocationNormalized, from:RouteLocationNormalize
     if(!state.info.id && localStorage.getItem('eadmin_token')){
         await action.getInfo()
     }
-    action.loading(true)
-
     if(to.path === '/refresh'){
         action.clearComponent(from.fullPath)
         await loadComponent(from.fullPath)
@@ -60,6 +58,7 @@ router.afterEach((to:RouteLocationNormalized)=>{
     }
 })
 function loadComponent(url:string){
+    action.loading(true)
     return new Promise((resolve, reject) =>{
         request({
             url:url

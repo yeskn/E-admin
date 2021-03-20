@@ -1,6 +1,6 @@
 import {reactive, toRaw} from "vue";
 import request from '@/utils/axios'
-import {findTree} from '@/utils'
+import {findTree,setObjectValue} from '@/utils'
 
 export const store = Symbol()
 // 使用 reactive 函数完成响应式转换
@@ -54,6 +54,10 @@ const action = {
     //显示隐藏侧边栏
     sidebarVisible: function (bool: boolean) {
         states.sidebar.visible = bool
+    },
+    //设置绑定值
+    setProxyData(path,value){
+        setObjectValue(states.proxyData,path,value)
     },
     //设置加载状态
     loading: function (bool: boolean) {

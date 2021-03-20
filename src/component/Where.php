@@ -43,18 +43,22 @@ trait Where
                 'where' => $where->getWhere()
             ];
         } else {
-            if ($op == '=') {
+
+            if ($op === '=') {
                 $op = '==';
             }
+           
             if (is_null($condition)) {
                 $condition = $op;
                 $op        = '==';
             }
+
             $this->where[$logic][] = [
                 'field'     => $field,
                 'op'        => $op,
                 'condition' => $condition
             ];
+
         }
         return $this;
     }

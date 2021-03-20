@@ -29,7 +29,7 @@
                     <i class="el-icon-caret-bottom" style="line-height: 30px"/>
                 </div>
                 <template #dropdown>
-                    <el-dropdown-menu class="user-dropdown">
+                    <el-dropdown-menu>
                         <render v-for="item in state.info.dropdownMenu" :data="item"></render>
                         <el-dropdown-item divided @click.native="logout">
                             <span style="display:block;">退出登陆</span>

@@ -2,6 +2,7 @@
     import {defineComponent, toRaw, h, resolveComponent, inject,isProxy,resolveDirective,withDirectives,getCurrentInstance,KeepAlive} from 'vue'
     import {store} from '@/store'
     import {splitCode} from '@/utils/splitCode'
+    import {setObjectValue} from '@/utils'
     import dayjs from 'dayjs'
     export default defineComponent({
         name: "render",
@@ -120,6 +121,7 @@
                 }
                 //事件绑定
                 for (let event in data.event) {
+
                     let eventBind = data.event[event]
                     if(event === 'GridRefresh' && slotProps && slotProps.grid){
                         //grid刷新事件绑定
@@ -127,9 +129,10 @@
                             modelValue[slotProps.grid] = true
                         }
                     }else{
+
                         data.attribute['on'+event] = (e)=>{
                             for (let field in eventBind) {
-                                modelValue[field] = eventBind[field]
+                                setObjectValue(modelValue,field,eventBind[field])
                             }
                         }
                     }
@@ -322,7 +325,6 @@
                     op = '||'
                 }
                 expression += evals.join(' ' + op + ' ')
-
                 return expression
             }
             //赋值方法

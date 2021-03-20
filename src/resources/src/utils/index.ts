@@ -83,4 +83,16 @@ export function fileIcon(path:string){
         return ''
     }
 }
+export function setObjectValue(obj,path,value) {
+    const arr = path.split('.')
+    const len = arr.length - 1
+    arr.reduce((cur, key, index) => {
+        if (!cur.hasOwnProperty(key))
+            throw `${key} 不存在!`
+        if (index === len) {
+            cur[key] = value
+        }
+        return cur[key]
+    }, obj)
+}
 
