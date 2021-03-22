@@ -11,7 +11,7 @@
         <el-button icon="el-icon-plus" type="primary" plain style="margin-left: 5px;height: 36px" @click="open"></el-button>
         <el-dialog v-model="visible" :append-to-body="true" width="70%" destroy-on-close>
             <div v-loading="loading">
-                <render  :data="content" v-model:selection="selection" :scroll="height"
+                <render  :data="content" v-model:selection="selection" :scroll="height" :add-params="params"
                         :selection-type="multiple ? 'checkbox':'radio'" style="overflow-x:auto"></render>
             </div>
             <template #footer>

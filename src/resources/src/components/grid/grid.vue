@@ -151,6 +151,7 @@
             addButton: [Object, Boolean],
             filterField:String,
             params:Object,
+            addParams:Object,
         },
         inheritAttrs: false,
         emits: ['update:modelValue','update:selection'],
@@ -347,7 +348,7 @@
                     page: page,
                     size: size,
                 }
-                requestParams = Object.assign(requestParams, proxyData[props.filterField],{quickSearch:quickSearch.value},props.params,route.query,sortableParams)
+                requestParams = Object.assign(requestParams, proxyData[props.filterField],{quickSearch:quickSearch.value},route.query,props.params,props.addParams,sortableParams)
                 if(trashed.value){
                     requestParams = Object.assign(requestParams ,{eadmin_deleted:true})
                 }
