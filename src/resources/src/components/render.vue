@@ -63,7 +63,7 @@
                                 }
                             }else if(data.attribute.bindFields){
                                 data.attribute.bindFields.forEach((field,index)=>{
-                                    slotProps.row[data.bindAttribute.field] = value[index]
+                                    slotProps.row[field] = value[index]
                                 })
                             }
                             slotProps.row[field] = value
