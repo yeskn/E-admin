@@ -89,7 +89,7 @@ class Actions extends Html
         if (!$this->hideDetailButton && !is_null($this->grid->detailAction())) {
             $text = '<i class="el-icon-info" /> ' . $this->detailText;
             $detail = $this->grid->detailAction()->detail();
-            $callMethod = $detail->getCallMethod();
+            $callMethod = $detail->getCallMethod() + $detail->getCallParams();
             if (Admin::check($callMethod['eadmin_class'], $callMethod['eadmin_function'])) {
                 $action = clone $this->grid->detailAction()->component();
                 if ($action instanceof Html) {
@@ -110,7 +110,7 @@ class Actions extends Html
         if (!$this->hideEditButton && !is_null($this->grid->formAction())) {
             $text = '<i class="el-icon-edit" /> ' . $this->editText;
             $form = $this->grid->formAction()->form()->renderable();
-            $callMethod = $form->getCallMethod();
+            $callMethod = $form->getCallMethod() + $form->getCallParams();
             if (Admin::check($callMethod['eadmin_class'], $callMethod['eadmin_function'], 'put')) {
                 $action = clone $this->grid->formAction()->component();
 
@@ -163,7 +163,7 @@ class Actions extends Html
                 ->size('small')
                 ->icon('el-icon-info');
             $detail = $this->grid->detailAction()->detail();
-            $callMethod = $detail->getCallMethod();
+            $callMethod = $detail->getCallMethod() + $detail->getCallParams();
             if (Admin::check($callMethod['eadmin_class'], $callMethod['eadmin_function'])) {
                 $action = clone $this->grid->detailAction()->component();
                 if ($action instanceof Html) {
@@ -181,7 +181,7 @@ class Actions extends Html
                 ->size('small')
                 ->icon('el-icon-edit');
             $form = $this->grid->formAction()->form();
-            $callMethod = $form->getCallMethod();
+            $callMethod = $form->getCallMethod() + $form->getCallParams();
             if (Admin::check($callMethod['eadmin_class'], $callMethod['eadmin_function'], 'put')) {
                 $action = clone $this->grid->formAction()->component();
 
