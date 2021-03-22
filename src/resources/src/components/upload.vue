@@ -107,7 +107,7 @@ import OSS from 'ali-oss'
 import md5 from 'js-md5'
 import * as qiniu from 'qiniu-js'
 import {fileIcon, lastName} from '@/utils'
-import {defineComponent, reactive,watch ,nextTick,toRefs,ref} from "vue";
+import {defineComponent, reactive, watch, nextTick, toRefs, ref} from "vue";
 import {ElMessage} from 'element-plus'
 function noop() {}
 export default defineComponent({
@@ -190,7 +190,8 @@ export default defineComponent({
     drag: {
       type: Boolean,
       default: false
-    }
+    },
+    form:[String,Object]
   },
   emits: ['success','update:modelValue'],
   setup(props,ctx){
@@ -214,7 +215,6 @@ export default defineComponent({
     if(!Array.isArray(state.selection)){
       state.selection = [state.selection]
     }
-
     watch(()=>props.modelValue,val=>{
       if (typeof val === 'string') {
         state.files = val.split(',')
@@ -232,7 +232,9 @@ export default defineComponent({
         state.showUploadBtn = true
       }
       state.selection = JSON.parse(JSON.stringify(val))
-
+      if(props.form){
+        props.form.validate(()=>{})
+      }
       ctx.emit('update:modelValue', val.join(','))
     },{deep:true})
     if (props.width != 'auto') {

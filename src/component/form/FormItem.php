@@ -76,7 +76,7 @@ class FormItem extends Field
     {
         $this->attr('rules', [
                 'required' => true,
-                'trigger'  => 'blur',
+                'trigger'  => 'change',
                 'message'  => $this->attr('label') . '不能为空',
             ]
         );

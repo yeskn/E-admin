@@ -67,10 +67,24 @@
 
 <style scoped>
     .item {
+        line-height:normal;
         height: 60px;
         display: flex;
         align-items: center;
         border-bottom: solid 1px #EEEEEE;
+    }
+    .item .name {
+        font-size: 14px;
+        margin-bottom: 8px;
+        color: #000000
+    }
+    .item .content {
+        font-size: 14px;
+        color: #666;
+        width: 140px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
     }
     .item:hover {
         background: #dedcda;

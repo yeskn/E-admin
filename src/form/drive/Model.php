@@ -68,7 +68,7 @@ class Model implements FormInterface
                         }
                     } elseif ($this->model->$field() instanceof HasOne || $this->model->$field() instanceof BelongsTo || $this->model->$field() instanceof MorphOne) {
                         $relationData = $data[$field];
-                        if (is_null($id) || empty($this->data->$field)) {
+                        if (!isset($data[$this->pkField]) || empty($this->data->$field)) {
                             $this->model->$field()->save($relationData);
                         } else {
                             $this->data->$field->save($relationData);

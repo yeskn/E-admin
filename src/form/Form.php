@@ -118,6 +118,7 @@ class Form extends Field
         }
         $field = Str::random(15, 3);
         $this->bindAttr('model', $field);
+        $this->bindAttValue('eadminForm', '',true);
         $this->bindAttValue('submit', false, true);
         $this->bindAttValue('validate', false, true);
         $this->actions = new FormAction($this);

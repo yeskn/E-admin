@@ -302,7 +302,7 @@ class Filter
     public function cascader(...$field)
     {
         $cascader     = $this->form->cascader(...$field);
-        $requestField = md5(implode(',', $field));
+        $requestField = 'cascader'.md5(implode(',', $field));
         $cascader->bind($requestField, '');
         $cascader->bindAttr('modelValue', $requestField);
         $cascader->getFormItem()->prop($requestField);

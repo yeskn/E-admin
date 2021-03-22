@@ -102,7 +102,6 @@
                                         eval(expression)
                                     })
                                 }else{
-                                    console.log(data.attribute.bindFields)
                                     data.attribute.bindFields.forEach((field,index)=>{
                                         if(value){
                                             expression = 'modelValue.' + data.bindAttribute[field] + ' = value[index]'

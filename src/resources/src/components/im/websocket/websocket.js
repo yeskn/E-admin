@@ -93,7 +93,12 @@ const im = {
     },
     //监听
     onMessage:function (callback) {
-        this.listens.push(callback)
+        const length =  this.listens.push(callback)
+        return length - 1
+    },
+    //移除监听
+    removeMessage(index){
+        this.listens.splice(index,1)
     }
 }
 watchEffect(()=>{

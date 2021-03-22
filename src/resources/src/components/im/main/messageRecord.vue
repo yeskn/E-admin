@@ -61,7 +61,7 @@
 </template>
 
 <script>
-    import {defineComponent, nextTick, reactive, toRefs, watch} from "vue";
+    import {defineComponent, nextTick, reactive, toRefs, watch,onBeforeUnmount} from "vue";
     import im from "../websocket/websocket";
     import {findTree} from "../../../utils";
 
@@ -89,7 +89,7 @@
                 date: null,
                 keyword: null,
             })
-            im.onMessage((action,data)=>{
+            const messageHandel = im.onMessage((action,data)=>{
                 switch (action) {
                     //聊天历史记录
                     case 'msgRecordHistory':
@@ -102,6 +102,7 @@
                                 state.scrollMsgRecordLoading = false
                                 const ref = findTree(msgRefs,state.scrollMsgId,'msgId')
                                 if(ref){
+                                    console.log(state.chatMsgHistoryBox)
                                     const div = state.chatMsgHistoryBox.wrap
                                     const scrollHeight = div.scrollHeight
                                     const msgScrollTop = ref.dom.offsetTop
@@ -119,6 +120,10 @@
                         }
                         break;
                 }
+            })
+
+            onBeforeUnmount(()=>{
+                im.removeMessage(messageHandel)
             })
             //聊天记录滚动
             nextTick(() => {
@@ -138,6 +143,7 @@
                     }
                 }
             })
+
             //聊天记录滚动条置底
             function scrollToBottom(ref) {
                 nextTick(() => {

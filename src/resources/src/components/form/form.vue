@@ -37,14 +37,18 @@
             submit:Boolean,
             validate:Boolean,
             step:Number,
+            eadminForm:[Object,String],
         },
-        emits: ['success','gridRefresh','update:submit','update:validate','update:step'],
+        emits: ['success','gridRefresh','update:submit','update:validate','update:step','update:eadminForm'],
         setup(props,ctx){
             const eadminForm = ref(null)
             const {loading,http} = useHttp()
             const state = inject(store)
             const proxyData = state.proxyData
             const validateStatus = ref(false)
+            nextTick(()=>{
+                ctx.emit('update:eadminForm',eadminForm.value)
+            })
             //提交
             watch(()=>props.submit,val=>{
                 if(val){

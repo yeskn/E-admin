@@ -115,6 +115,10 @@ class Upload extends Field
     }
     public function jsonSerialize()
     {
+        if($this->getFormItem()){
+            $field = $this->getFormItem()->form()->bindAttr('eadminForm');
+            $this->bindAttr('form',$field);
+        }
         if($this->attr('upType') === 'local' && is_null($this->attr('finder'))){
             $this->attr('finder',Admin::dispatch('/filesystem'));
         }
