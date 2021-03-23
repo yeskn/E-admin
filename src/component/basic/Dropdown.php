@@ -74,7 +74,7 @@ class Dropdown extends Component
     protected function itemContent($content, $icon = '')
     {
         if (!empty($icon) && is_string($content)) {
-            $content = '<i class="' . $icon . '"> ' . $content;
+            $content = '<i class="' . $icon . '" /> ' . $content;
         }
         $item = new DropdownItem('');
         $item->dropdown($this);

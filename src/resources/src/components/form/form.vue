@@ -37,7 +37,6 @@
             submit:Boolean,
             validate:Boolean,
             step:Number,
-            eadminForm:[Object,String],
             watch:{
                 type:Array,
                 default:[],
@@ -50,9 +49,7 @@
             const state = inject(store)
             const proxyData = state.proxyData
             const validateStatus = ref(false)
-            nextTick(()=>{
-                ctx.emit('update:eadminForm',eadminForm.value)
-            })
+
             //提交
             watch(()=>props.submit,val=>{
                 if(val){

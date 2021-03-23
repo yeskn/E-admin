@@ -214,7 +214,7 @@ class Field extends Column
             $value = $originValue;
         }
         //映射内容颜色处理
-        if (isset($this->tagColor[$value])) {
+        if (count($this->tagColor) > 0  && isset($this->tagColor[$value])) {
             $this->tag($this->tagColor[$value], $this->tagTheme);
         }
         //映射内容处理
