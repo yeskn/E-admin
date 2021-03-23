@@ -29,6 +29,7 @@ use Eadmin\component\form\FormMany;
 use Eadmin\component\layout\Row;
 use Eadmin\contract\FormInterface;
 use Eadmin\form\traits\ComponentForm;
+use Eadmin\form\traits\WatchForm;
 use Eadmin\traits\CallProvide;
 use Eadmin\traits\FormModel;
 use think\facade\Request;
@@ -78,7 +79,7 @@ use think\Model;
  */
 class Form extends Field
 {
-    use CallProvide, ComponentForm;
+    use CallProvide, ComponentForm,WatchForm;
 
     protected $name = 'EadminForm';
     protected $actions;
@@ -439,7 +440,10 @@ class Form extends Field
      */
     public function item($prop = '', $label = '')
     {
-        $item = FormItem::create($prop, $label, $this);
+        $ifField = str_replace('.','_',$prop);
+        $ifField = $ifField.'Show';
+        $this->bind($ifField,1);
+        $item = FormItem::create($prop, $label, $this)->where($ifField,1);
         $this->push($item);
         return $item;
     }
@@ -713,6 +717,8 @@ class Form extends Field
      */
     public function save(array $data)
     {
+        //监听watch
+        $this->watchCall($data);;
         //验证数据
         $validatorMode = $this->isEdit() ? 2 : 1;
         $this->validator->check($data, $validatorMode);

@@ -27,18 +27,21 @@ class Watch implements ArrayAccess
      */
     public function hide($field)
     {
-        $this->hideField[] = $field;
+        $this->hideField[] = $this->getIfField($field);
     }
-
     /**
      * 隐藏
      * @param string $field 字段
      */
     public function show($field)
     {
-        $this->showField[] = $field;
+        $this->showField[] = $this->getIfField($field);
     }
-
+    protected function getIfField($field){
+        $field = str_replace('.','_',$field);
+        $field = $field.'Show';
+        return $field;
+    }
     /**
      * 获取字段值
      * @param string $field 字段

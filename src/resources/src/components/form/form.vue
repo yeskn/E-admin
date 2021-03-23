@@ -38,6 +38,10 @@
             validate:Boolean,
             step:Number,
             eadminForm:[Object,String],
+            watch:{
+                type:Array,
+                default:[],
+            },
         },
         emits: ['success','gridRefresh','update:submit','update:validate','update:step','update:eadminForm'],
         setup(props,ctx){
@@ -55,6 +59,67 @@
                     sumbitForm()
                 }
             })
+            //watch监听变化
+            const watchData = []
+            props.watch.forEach(field=>{
+                watch(()=>ctx.attrs.model[field],(newValue,oldValue)=>{
+                    const length = watchData.length
+                    watchData.push({
+                        field:field,
+                        newValue:newValue,
+                        oldValue:oldValue,
+                    })
+                    if(length === 0){
+                        watchListen()
+                    }
+                })
+            })
+            //监听watch变化数据队列执行
+            async function watchListen(){
+                const copyData = JSON.parse(JSON.stringify(watchData))
+                const data = copyData.shift()
+                if(data){
+                    await watchAjax(data.field,data.newValue,data.oldValue)
+                    watchData.shift()
+                    watchListen()
+                }
+            }
+            //watch ajax请求
+            function watchAjax(field,newValue,oldValue){
+                return new Promise((resolve,reject) => {
+                    request({
+                        url: props.setAction,
+                        method: props.setActionMethod,
+                        data: {
+                            field:field,
+                            newValue:newValue,
+                            oldValue:oldValue,
+                            form:ctx.attrs.model,
+                            eadmin_form_watch:true,
+                            eadmin_class:ctx.attrs.model['eadmin_class'],
+                            eadmin_function:ctx.attrs.model['eadmin_function']
+                        }
+                    }).then(res=>{
+                        res.data.showField.forEach(field=>{
+                            proxyData[field] = 1
+                        })
+                        res.data.hideField.forEach(field=>{
+                            proxyData[field] = 0
+                        })
+                        let formData = res.data.form
+                        for(let f in formData){
+                            if(f == field && formData[f] != newValue){
+                                ctx.attrs.model[f] = formData[f]
+                            }else if(f != field && ctx.attrs.model[f] != formData[f]){
+                                ctx.attrs.model[f] = formData[f]
+                            }
+                        }
+                        resolve(res)
+                    }).catch(()=>{
+                        reject()
+                    })
+                })
+            }
             //校验
             watch(()=>props.validate,val=>{
                 if(val){
@@ -99,7 +164,8 @@
                                             }
                                             proxyData[ctx.attrs.validator][name][res.index][f] = res.data[field]
                                         }else{
-                                            proxyData[ctx.attrs.validator][field] = res.data[field]
+                                            const validatorField = field.replace('.','_')
+                                            proxyData[ctx.attrs.validator][validatorField] = res.data[field]
                                         }
                                     }
                                     scrollIntoView()
@@ -162,7 +228,6 @@
                 eadminForm,
                 loading,
                 resetForm,
-                sumbitForm,
                 labelPosition,
             }
         }

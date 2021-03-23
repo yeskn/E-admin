@@ -48,8 +48,10 @@ class FormItem extends Field
     public function rules(array $rule, int $mode = 0)
     {
         $prop  = $this->attr('prop');
+        $field = str_replace('.','_',$prop);
         $prop  = $this->form->manyRelation() ? $this->form->manyRelation() . '.' . $prop : $prop;
-        $field = $this->form->bindAttr('model') . 'Error.' . $prop;
+        $field  = $this->form->manyRelation() ? $this->form->manyRelation() . '.' . $field : $field;
+        $field = $this->form->bindAttr('model') . 'Error.' . $field;
         $this->bindAttr('error', $field);
         if ($mode == 1) {
             $this->form->validator()->createRule($prop, $rule);
