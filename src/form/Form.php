@@ -439,10 +439,13 @@ class Form extends Field
      */
     public function item($prop = '', $label = '')
     {
-        $ifField = str_replace('.','_',$prop);
-        $ifField = $ifField.'Show';
-        $this->bind($ifField,1);
-        $item = FormItem::create($prop, $label, $this)->where($ifField,1);
+        $item = FormItem::create($prop, $label, $this);
+        if(empty($this->manyRelation)){
+            $ifField = str_replace('.','_',$prop);
+            $ifField = $ifField.'Show';
+            $this->bind($ifField,1);
+            $item->where($ifField,1);
+        }
         $this->push($item);
         return $item;
     }
