@@ -779,7 +779,7 @@ class Form extends Field
             $this->valueModel($component);
         }
         $field = $this->bindAttr('model');
-        $this->data = array_merge($this->data, $this->callMethod);
+        $this->data = array_merge($this->callParams, $this->callMethod,$this->data);
         //将值绑定到form
         $this->bind($field, $this->data);
     }
