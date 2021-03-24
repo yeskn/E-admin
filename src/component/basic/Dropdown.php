@@ -98,7 +98,11 @@ class Dropdown extends Component
     public function jsonSerialize()
     {
         foreach ($this->prependArr as $prepend) {
-            array_unshift($this->menu->content['default'], $prepend);
+            if(isset($this->menu->content['default'])){
+                array_unshift($this->menu->content['default'], $prepend);
+            }else{
+                $this->menu->content($prepend);
+            }
         }
         foreach ($this->appendArr as $append) {
             $this->menu->content($append);
