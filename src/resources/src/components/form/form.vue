@@ -112,8 +112,8 @@
                             }
                         }
                         resolve(res)
-                    }).catch(()=>{
-                        reject()
+                    }).catch((res)=>{
+                        resolve(res)
                     })
                 })
             }

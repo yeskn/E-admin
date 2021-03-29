@@ -9,6 +9,7 @@
 namespace Eadmin\service;
 
 use Intervention\Image\ImageManagerStatic;
+use think\App;
 use think\facade\Cache;
 use think\facade\Filesystem;
 use Eadmin\Service;
@@ -18,7 +19,11 @@ class FileService extends Service
 
     protected $totalSizeCacheKey;
     public $upType = 'local';
-
+    public function __construct(App $app)
+    {
+        parent::__construct($app);
+        $this->upType = config('admin.uploadDisks','local');
+    }
     /**
      * 本地分片上传
      * @param mixed $file 文件对象
