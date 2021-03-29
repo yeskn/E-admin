@@ -461,7 +461,9 @@ class Form extends Field
 
         $row = new Row();
         $formItems = $this->collectFields($closure);
-        $this->push("<h4 style='font-size:16px;'>{$title}</h4>");
+        if(!empty($title)){
+            $this->push("<h4 style='font-size:16px;'>{$title}</h4>");
+        }
         foreach ($formItems as $item) {
             $row->column($item, $item->md);
         }
