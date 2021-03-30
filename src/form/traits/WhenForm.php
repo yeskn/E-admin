@@ -37,17 +37,20 @@ trait WhenForm
         }
         $field = $formField . $this->bindAttr('modelValue');
         foreach ($formItems as $formItem) {
-            if (is_array($value)) {
-                foreach ($value as $val) {
-                    if ($operator == 'notIn') {
-                        $formItem->where($field, $operator, $val);
-                    } else {
-                        $formItem->whereOr($field, $operator, $val);
+            $formItem->where(function($where) use($value,$operator,$field){
+                if (is_array($value)) {
+                    foreach ($value as $val) {
+                        if ($operator == 'notIn') {
+                            $where->where($field, $operator, $val);
+                        } else {
+                            $where->whereOr($field, $operator, $val);
+                        }
                     }
+
+                } else {
+                    $where->where($field, $operator, $value);
                 }
-            } else {
-                $formItem->where($field, $operator, $value);
-            }
+            });
             $this->formItem->form()->push($formItem);
         }
         return $this;
