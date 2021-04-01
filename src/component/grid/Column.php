@@ -43,6 +43,8 @@ class Column extends Component
     protected $tip = false;
     protected $exportClosure = null;
     protected $exportData;
+    protected $total = 0;
+    protected $totalRow = false;
 
     public function __construct($prop, $label, $grid)
     {
@@ -142,7 +144,7 @@ class Column extends Component
      */
     private function getData($data)
     {
-        $prop   = $this->attr('prop');
+        $prop = $this->attr('prop');
         $fields = explode('.', $prop);
         foreach ($fields as $field) {
             if (isset($data[$field])) {
@@ -176,12 +178,12 @@ class Column extends Component
         }
         //映射内容处理
         if (count($this->usings) > 0 && isset($this->usings[$value])) {
-            $value            = $this->usings[$value];
+            $value = $this->usings[$value];
             $this->exportData = $value;
         }
         //是否显示标签
         if (!is_null($this->tag)) {
-            $tag   = clone $this->tag;
+            $tag = clone $this->tag;
             $value = $tag->content($value);
 
         }
@@ -192,9 +194,13 @@ class Column extends Component
                 $this->exportData = $value;
             }
         }
+        //统计行
+        if ($this->totalRow && is_numeric($value)) {
+            $this->total += $value;
+        }
         //自定义导出
         if (!is_null($this->exportClosure)) {
-            $value            = call_user_func_array($this->exportClosure, [$originValue, $data]);
+            $value = call_user_func_array($this->exportClosure, [$originValue, $data]);
             $this->exportData = $value;
         }
         if ($this->tip) {
@@ -232,7 +238,7 @@ class Column extends Component
     {
         $this->tagColor = $tagColor;
         $this->tagTheme = $tagTheme;
-        $this->usings   = $usings;
+        $this->usings = $usings;
         return $this;
     }
 
@@ -271,7 +277,7 @@ class Column extends Component
             } elseif (is_array($val)) {
                 $images = $val;
             }
-            $html      = '';
+            $html = '';
             $jsonImage = json_encode($images);
             if ($multi) {
                 foreach ($images as $image) {
@@ -308,7 +314,7 @@ class Column extends Component
     public function switch($switchArr = [[1 => '开启'], [0 => '关闭']])
     {
         return $this->display(function ($val, $data) use ($switchArr) {
-            $params               = $this->grid->getCallMethod();
+            $params = $this->grid->getCallMethod();
             $params['eadmin_ids'] = [$data[$this->grid->drive()->getPk()]];
             list ($active, $inactive) = $switchArr;
             $switch = Switchs::create(null, $val)
@@ -319,6 +325,21 @@ class Column extends Component
             return $switch;
 
         });
+    }
+
+    /**
+     * 合计行
+     * @return $this
+     */
+    public function total()
+    {
+        $this->totalRow = true;
+        return $this;
+    }
+
+    public function getTotal()
+    {
+        return $this->totalRow ? $this->total : false;
     }
 
     /**
