@@ -336,7 +336,6 @@ class Column extends Component
         $this->totalRow = true;
         return $this;
     }
-
     public function getTotal()
     {
         return $this->totalRow ? $this->total : false;
