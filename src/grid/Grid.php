@@ -135,6 +135,15 @@ class Grid extends Component
     }
 
     /**
+     * 表格模式
+     */
+    public function tableMode(){
+        $this->hideTools();
+        $this->hideAction();
+        $this->hidePage();
+        $this->hideSelection();
+    }
+    /**
      * 展开行
      * @param \Closure $closure
      * @param bool $defaultExpandAllRow 默认是否展开
