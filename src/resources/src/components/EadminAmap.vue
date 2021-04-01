@@ -28,7 +28,6 @@
   </div>
 </template>
 <script>
-import md5 from 'js-md5'
 import {defineComponent, ref,watch,onMounted} from "vue";
 export default defineComponent({
   name: 'EadminAmap',
@@ -47,6 +46,7 @@ export default defineComponent({
     const searchText = ref('')
     const drawer = ref(false)
     const mapAddress = ref(props.modelValue)
+
     function loadScript(url, id) {
       const jsapi = document.createElement('script')
       jsapi.charset = 'utf-8'
@@ -63,20 +63,24 @@ export default defineComponent({
     watch(mapAddress,(val)=>{
       ctx.emit('update:modelValue',val)
     })
-    function onComplete(data) {
-      // data是具体的定位信息
-      ctx.emit('update:modelValue',data.formattedAddress)
-      ctx.emit('update:lat',data.position.lat)
-      ctx.emit('update:lng',data.position.lng)
-      position()
-    }
+
     let map = null
     let geolocation = null
     let placeSearch = null
     let marker = null
     let geocoder = null
+
     let mapLng = props.lng
     let mapLat = props.lat
+    function onComplete(data) {
+      // data是具体的定位信息
+      mapLat = data.position.lat
+      mapLng = data.position.lng
+      ctx.emit('update:modelValue',data.formattedAddress)
+      ctx.emit('update:lat',mapLat)
+      ctx.emit('update:lng',mapLng)
+      position()
+    }
     function position() {
       map.setCenter([mapLng, mapLat])
       marker = new AMap.Marker({
@@ -161,7 +165,6 @@ export default defineComponent({
       ctx.emit('update:lng',lng)
     }
     function select(e) {
-      console.log(e)
       const poi = e.poi
       placeSearch.setCity(poi.adcode)
       placeSearch.search(poi.name) // 关键字查询查询
@@ -177,15 +180,13 @@ export default defineComponent({
   },
 })
 </script>
-<style scoped>
+<style >
   .amap-sug-result {
     z-index: 10000 !important;
   }
-
-  .auto-item {
+  .amap-sug-result .auto-item {
     font-size: 14px;
     padding: 5px 0px;
     text-indent: 10px;
   }
-
 </style>

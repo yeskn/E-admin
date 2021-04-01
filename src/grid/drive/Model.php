@@ -10,6 +10,7 @@ namespace Eadmin\grid\drive;
 
 
 use Eadmin\contract\GridInterface;
+use Eadmin\grid\Filter;
 use think\facade\Db;
 use think\facade\Request;
 use think\model\relation\BelongsTo;
@@ -218,7 +219,7 @@ class Model implements GridInterface
                         }
                         $q->whereLike($fields, "%{$keyword}%", 'OR');
                     });
-                    $filter->paseFilter(null, $relationFilter . '.');
+                    $filter->parseFilter(null, $relationFilter . '.');
                     $wheres = $filter->db()->getOptions('where');
                     foreach ($wheres['AND'] as $where) {
                         if ($where[1] == 'EXISTS') {

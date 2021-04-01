@@ -461,7 +461,9 @@ class Form extends Field
 
         $row = new Row();
         $formItems = $this->collectFields($closure);
-        $this->push("<h4 style='font-size:16px;'>{$title}</h4>");
+        if(!empty($title)){
+            $this->push("<h4 style='font-size:16px;'>{$title}</h4>");
+        }
         foreach ($formItems as $item) {
             $row->column($item, $item->md);
         }
@@ -626,19 +628,17 @@ class Form extends Field
             $component->bindFields($arguments);
             $prop = $component->bindAttr('modelValue');
         }
-
+        if ($component instanceof Input) {
+            $component->placeholder('请输入' . $label);
+        } elseif ($component instanceof Select || $component instanceof Cascader) {
+            $component->placeholder('请选择' . $label);
+        }
+        $item = $this->item($prop, $label);
+        $item->content($component);
+        $component->setFormItem($item);
         if ($name == 'hidden') {
             //隐藏域
-            $this->push($component);
-        } else {
-            if ($component instanceof Input) {
-                $component->placeholder('请输入' . $label);
-            } elseif ($component instanceof Select || $component instanceof Cascader) {
-                $component->placeholder('请选择' . $label);
-            }
-            $item = $this->item($prop, $label);
-            $item->content($component);
-            $component->setFormItem($item);
+            $item->attr('style',['display'=>'none']);
         }
         return $component;
     }
