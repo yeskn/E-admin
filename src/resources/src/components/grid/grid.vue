@@ -445,7 +445,7 @@
                 for(var params in requestParams){
                     querys.push(params+'='+requestParams[params])
                 }
-                location.href = '/eadmin.test?' +querys.join('&')
+                location.href = '/eadmin.rest?' +querys.join('&')
             }
             const pageLayout = computed(()=>{
                 if(state.device === 'mobile'){
