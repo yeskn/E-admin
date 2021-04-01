@@ -77,7 +77,7 @@ abstract class Component implements \JsonSerializable
     public function auth($eadmin_class,$eadmin_function,$method='get'){
         //权限
         $res = Admin::check($eadmin_class,$eadmin_function,$method);
-       
+
         $field = Str::random(30, 3);
         $this->bind($field,1);
         $this->where($field,$res ? 1:0);
@@ -228,7 +228,23 @@ abstract class Component implements \JsonSerializable
         }
         return $this;
     }
-
+    /**
+     * 条件执行
+     * @param $condition
+     * @param \Closure $closure
+     * @param \Closure|null $other
+     * @return $this
+     */
+    public function when($condition, \Closure $closure, $other = null){
+        if ($condition) {
+            $closure($this,$condition);
+        }else{
+            if ($other instanceof Closure) {
+                $other($this, $condition);
+            }
+        }
+        return $this;
+    }
 
     public function jsonSerialize()
     {
