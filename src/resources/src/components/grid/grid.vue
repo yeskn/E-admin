@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="grid">
         <!--工具栏-->
         <div class="tools" v-if="!hideTools">
             <el-row style="padding-top: 10px">
@@ -72,6 +72,9 @@
         </div>
         <!--表格-->
         <a-table v-else :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" :loading="loading" v-bind="$attrs" row-key="id" ref="dragTable">
+            <template #title v-if="header">
+                <div class="header"><render :data="header"></render></div>
+            </template>
             <template v-for="column in tableColumns" v-slot:[column.slots.title]>
                 <render :data="column.header" :slot-props="grid"></render>
             </template>
@@ -147,6 +150,7 @@
             hideDeleteSelection: Boolean,
             expandedRow: Boolean,
             filter: [Object, Boolean],
+            header: [Object, Boolean],
             expandFilter: Boolean,
             addButton: [Object, Boolean],
             filterField:String,
@@ -502,6 +506,9 @@
 </script>
 
 <style scoped>
+    .header{
+        text-indent: 10px;
+    }
     .sortable-selecte{
         background-color: #EBEEF5 !important;
     }

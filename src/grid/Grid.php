@@ -133,7 +133,23 @@ class Grid extends Component
     {
         return $this->bind('eadmin_title', $title);
     }
-
+    /**
+     * 头部
+     * @param $header
+     */
+    public function header($header){
+        if (is_string($header)) {
+            $header = Html::create()->content($header);
+        } elseif (is_array($header)) {
+            $html = Html::create();
+            foreach ($header as $item) {
+                $html->content($item);
+            }
+            $header = $html;
+        }
+        //头部
+        $this->attr('header', $header);
+    }
     /**
      * 表格模式
      */
