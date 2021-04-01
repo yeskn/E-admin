@@ -58,8 +58,6 @@ trait  ApiJson
 	 */
 	protected function responseJsonData($data = [], $code = 200, $errMsg = '', $http_code = 200)
 	{
-		// 判断是否为空数组
-		$code = $this->validates($data, $code);
 		$return['code'] = (int)$code;
 		if (!empty($errMsg)) {
 			$return['message'] = $errMsg;
