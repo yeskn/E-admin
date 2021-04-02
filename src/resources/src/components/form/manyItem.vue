@@ -2,14 +2,14 @@
     <el-divider content-position='left' v-if="title">{{title}}</el-divider>
     <div v-for="(item,index) in value">
         <slot :row="item" :$index="index" :prop-field="field" :validator="$attrs.validator"></slot>
-        <el-form-item>
+        <el-form-item v-if="!disabled">
             <el-button size="mini" v-if="value.length - 1 == index" type='primary' plain @click="add">新增</el-button>
             <el-button size="mini" type='danger' v-show='value.length > 0' @click="remove(index)">移除</el-button>
             <el-button size="mini" @click="handleUp(index)" v-show='value.length > 1 && index > 0'>上移</el-button>
             <el-button size="mini" v-show='value.length > 1 && index < value.length-1' @click="handleDown(index)">下移</el-button>
         </el-form-item>
     </div>
-    <el-form-item v-if="value.length == 0">
+    <el-form-item v-if="value.length == 0 && !disabled">
          <el-button size="mini" type='primary' plain @click="add">新增</el-button>
     </el-form-item>
 </template>
@@ -23,6 +23,7 @@
             modelValue: Array,
             field:String,
             manyData:Object,
+            disabled:Boolean,
         },
         emits:['update:modelValue'],
         setup(props,ctx){

@@ -59,6 +59,11 @@
             //watch监听变化
             const watchData = []
             props.watch.forEach(field=>{
+                watchData.push({
+                    field:field,
+                    newValue:ctx.attrs.model[field],
+                    oldValue:ctx.attrs.model[field],
+                })
                 watch(()=>ctx.attrs.model[field],(newValue,oldValue)=>{
                     const length = watchData.length
                     watchData.push({
@@ -69,8 +74,9 @@
                     if(length === 0){
                         watchListen()
                     }
-                })
+                },{deep:true})
             })
+            watchListen()
             //监听watch变化数据队列执行
             async function watchListen(){
                 const copyData = JSON.parse(JSON.stringify(watchData))
@@ -105,7 +111,7 @@
                         })
                         let formData = res.data.form
                         for(let f in formData){
-                            if(f == field && formData[f] != newValue){
+                            if(f == field && JSON.stringify(formData[f]) !== JSON.stringify(newValue)){
                                 ctx.attrs.model[f] = formData[f]
                             }else if(f != field && ctx.attrs.model[f] != formData[f]){
                                 ctx.attrs.model[f] = formData[f]

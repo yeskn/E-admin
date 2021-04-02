@@ -86,11 +86,15 @@ class Model implements FormInterface
                                 $result = $this->model->$field()->whereIn($this->pkField, $deleteIds)->delete();
                             }
                         }
+                        $foreignKey = $this->model->$field()->getForeignKey();
+                        $localKey = $this->model->$field()->getLocalKey();
+                        $parent =  $this->model->$field()->getParent();
                         foreach ($value as $key => &$val) {
                             $val['sort'] = $key;
+                            $val[$foreignKey] = $parent->$localKey;
                         }
                         if (!empty($value)) {
-                            $this->model->$field()->saveAll($value);
+                            $this->model->$field()->getModel()->saveAll($value);
                         }
                     }
                 }

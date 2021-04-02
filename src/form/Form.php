@@ -493,8 +493,6 @@ class Form extends Field
     public function edit($id)
     {
         $this->drive->edit($id);
-        $pk = $this->drive->getPk();
-        $this->data[$pk] = $this->drive->getData($pk);
         $this->isEdit = true;
         $this->attr('editId', $id);
         $this->setAction('/eadmin/' . $id . '.rest', 'PUT');
@@ -559,6 +557,10 @@ class Form extends Field
                     $componentClone = clone $component;
                 }
                 $this->valueModel($componentClone, $data);
+            }
+            if($data instanceof Model) {
+                $pk = $data->getPk();
+                $this->data[$pk] = $data[$pk];
             }
             $manyData[] = $this->data;
             $this->data = [];
@@ -781,6 +783,11 @@ class Form extends Field
         }
         $field = $this->bindAttr('model');
         $this->data = array_merge($this->callParams, $this->callMethod,$this->data);
+        //主键值
+        if($this->isEdit){
+            $pk = $this->drive->getPk();
+            $this->data[$pk] = $this->drive->getData($pk);
+        }
         //将值绑定到form
         $this->bind($field, $this->data);
     }

@@ -39,7 +39,7 @@
                 let expression, children = {}, name, attribute
                 //属性绑定
                 for (let bindAttr in data.bindAttribute) {
-                    expression = 'data.attribute[bindAttr] = modelValue.' + data.bindAttribute[bindAttr]
+                    expression = 'try{data.attribute[bindAttr] = modelValue.' + data.bindAttribute[bindAttr]+'}catch(e){}'
                     eval(expression)
                 }
                 //双向绑定值
@@ -47,7 +47,8 @@
                     let field = data.modelBind[modelBind]
                     // 本次渲染是循环属性
                     if (slotProps && slotProps.row) {
-                        data.attribute[modelBind] = slotProps.row[field]
+                        expression = 'data.attribute[modelBind] = slotProps.row.' + field
+                        eval(expression)
                         data.attribute['onUpdate:'+modelBind] = value => {
                             if(data.attribute.valueFormat){
                                 //时间特殊处理
