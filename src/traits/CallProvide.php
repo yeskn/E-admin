@@ -20,10 +20,14 @@ trait CallProvide
             $this->callClass    = $backtrace['class'];
             $this->callFunction = $backtrace['function'];
             $class              = new \ReflectionClass($this->callClass);
-            $params             = $class->getMethod($this->callFunction)->getParameters();
-            foreach ($params as $key => $param) {
-                $name                    = $param->getName();
-                $this->callParams[$name] = isset($backtrace['args'][$key]) ? $backtrace['args'][$key] : $param->getDefaultValue();
+            try {
+                $params = $class->getMethod($this->callFunction)->getParameters();
+                foreach ($params as $key => $param) {
+                    $name                    = $param->getName();
+                    $this->callParams[$name] = isset($backtrace['args'][$key]) ? $backtrace['args'][$key] : $param->getDefaultValue();
+                }
+            }catch (\Exception $exception){
+
             }
             $this->callMethod = [
                 'eadmin_class'    => $this->callClass,

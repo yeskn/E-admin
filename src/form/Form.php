@@ -465,7 +465,8 @@ class Form extends Field
             $this->push("<h4 style='font-size:16px;'>{$title}</h4>");
         }
         foreach ($formItems as $item) {
-            $row->column($item, $item->md);
+            $column = $row->column($item, $item->md);
+            $column->setWhere($item->getWhere());
         }
         $this->push($row);
         return $this;

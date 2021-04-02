@@ -133,7 +133,32 @@ class Grid extends Component
     {
         return $this->bind('eadmin_title', $title);
     }
-
+    /**
+     * 头部
+     * @param $header
+     */
+    public function header($header){
+        if (is_string($header)) {
+            $header = Html::create()->content($header);
+        } elseif (is_array($header)) {
+            $html = Html::create();
+            foreach ($header as $item) {
+                $html->content($item);
+            }
+            $header = $html;
+        }
+        //头部
+        $this->attr('header', $header);
+    }
+    /**
+     * 表格模式
+     */
+    public function tableMode(){
+        $this->hideTools();
+        $this->hideAction();
+        $this->hidePage();
+        $this->hideSelection();
+    }
     /**
      * 展开行
      * @param \Closure $closure
@@ -460,6 +485,21 @@ class Grid extends Component
             }
             $tableData[] = $row;
         }
+        $isTotal  = false;
+        $row = ['id'=>-1];
+        foreach ($this->column as $column) {
+            $total = $column->getTotal();
+            $field = $column->attr('prop');
+            if($total === false){
+                $row[$field] = '';
+            }else{
+                $isTotal = true;
+                $row[$field] = Html::create($total);
+            }
+        }
+        if($isTotal && !$export){
+            $tableData[] = $row;
+        }
         return $tableData;
     }
 
@@ -565,6 +605,7 @@ class Grid extends Component
         $data = $this->drive->getData($this->hidePage, $page, $size);
         //解析列
         $data = $this->parseColumn($data);
+
         //树形
         if ($this->isTree) {
             $data = Admin::tree($data, $this->treeId, $this->treeParent);
