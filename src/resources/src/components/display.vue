@@ -1,6 +1,6 @@
 <template>
     <slot>
-        <div>{{value}}</div>
+        <div v-html="value"></div>
     </slot>
 </template>
 

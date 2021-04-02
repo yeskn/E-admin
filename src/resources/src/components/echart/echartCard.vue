@@ -44,6 +44,7 @@
     import {useHttp} from '@/hooks'
     import dayjs from "dayjs";
     import {store} from '@/store'
+    import {useRoute} from "vue-router";
     export default defineComponent({
         name:'EadminEchartCard',
         props:{
@@ -61,12 +62,13 @@
                     requestData(params.date_type)
                 }
             })
+            const route = useRoute()
             const state = inject(store)
             const proxyData = state.proxyData
             const {loading,http} = useHttp()
             const params = reactive(Object.assign({
                 date_type:'today'
-            },props.params))
+            },route.query,props.params))
             const chart = ref(props.echart)
             const rangeDate = ref([])
             watch(rangeDate,(value)=>{
@@ -83,7 +85,7 @@
                 params.ajax = true
                 http({
                     url: '/eadmin.rest',
-                    params: Object.assign(proxyData[props.filterField] || {},params)
+                    params: Object.assign(proxyData[props.filterField] || {},route.query,params)
                 }).then(res=>{
                     chart.value = res
                 }).finally(() => {
