@@ -178,7 +178,7 @@ class TokenService
         $data = $this->decode($token);
         if ($data === false) {
             $this->errorCode(40001, '授权认证失败');
-        } elseif (Cache::has(md5($token))) {
+        } elseif (Cache::has(md5($token)) && $this->unique) {
             $this->errorCode(40003, '账号已在其他地方登陆');
         } elseif ($data['expire'] < time()) {
             $this->errorCode(40002, '认证身份过期，请重新登陆');
