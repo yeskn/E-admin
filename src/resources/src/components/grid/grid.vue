@@ -201,7 +201,7 @@
                     if(item.prop === 'EadminAction'){
                         item.width = eadminActionWidth.value
                     }
-                    return checkboxColumn.value.indexOf(item.prop) >= 0
+                    return checkboxColumn.value.indexOf(item.prop) >= 0 && !item.hide
                 })
 
             })
@@ -507,7 +507,8 @@
 
 <style scoped>
     .header{
-        text-indent: 10px;
+        margin-left: 10px;
+
     }
     .sortable-selecte{
         background-color: #EBEEF5 !important;

@@ -497,7 +497,7 @@ class Grid extends Component
                 $row[$field] = Html::create($total);
             }
         }
-        if($isTotal){
+        if($isTotal && !$export){
             $tableData[] = $row;
         }
         return $tableData;

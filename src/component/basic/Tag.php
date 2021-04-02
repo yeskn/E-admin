@@ -25,7 +25,7 @@ class Tag extends Component
 
     public function __construct($content)
     {
-        if (!empty($content)) {
+        if (!empty($content) || is_numeric($content)) {
             $this->content($content);
         }
     }

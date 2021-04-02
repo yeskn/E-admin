@@ -41,6 +41,7 @@ class Column extends Component
     protected $tag = null;
     protected $grid;
     protected $tip = false;
+    protected $hide = false;
     protected $exportClosure = null;
     protected $exportData;
     protected $total = 0;
@@ -190,7 +191,7 @@ class Column extends Component
         //自定义内容显示处理
         if (!is_null($this->closure)) {
             $value = call_user_func_array($this->closure, [$originValue, $data]);
-            if (is_string($value)) {
+            if (is_string($value) || is_numeric($value)) {
                 $this->exportData = $value;
             }
         }
@@ -226,7 +227,21 @@ class Column extends Component
         $this->attr('header', Html::create()->content($label));
         return $this;
     }
+    /**
+     * 隐藏
+     * @return \Eadmin\grid\Column
+     */
+    public function hide()
+    {
+        $this->hide = true;
+        $this->attr('hide',true);
+        return $this;
+    }
 
+    public function isHide()
+    {
+        return $this->hide;
+    }
 
     /**
      * 内容映射
