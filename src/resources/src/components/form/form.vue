@@ -112,7 +112,11 @@
                         let formData = res.data.form
                         for(let f in formData){
                             if(f == field && JSON.stringify(formData[f]) !== JSON.stringify(newValue)){
-                                ctx.attrs.model[f] = formData[f]
+                                if(isReactive(ctx.attrs.model[f])){
+                                    Object.assign(ctx.attrs.model[f],formData[f])
+                                }else{
+                                    ctx.attrs.model[f] = formData[f]
+                                }
                             }else if(f != field && ctx.attrs.model[f] != formData[f]){
                                 if(isReactive(ctx.attrs.model[f])){
                                     Object.assign(ctx.attrs.model[f],formData[f])
