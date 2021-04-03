@@ -13,7 +13,7 @@
 </template>
 
 <script>
-    import {defineComponent, inject,nextTick,ref,watch,computed} from 'vue'
+    import {defineComponent, inject,nextTick,ref,watch,computed,isReactive} from 'vue'
     import render from "@/components/render.vue"
     import manyItem from "./manyItem.vue"
     import { store } from '@/store'
@@ -114,7 +114,11 @@
                             if(f == field && JSON.stringify(formData[f]) !== JSON.stringify(newValue)){
                                 ctx.attrs.model[f] = formData[f]
                             }else if(f != field && ctx.attrs.model[f] != formData[f]){
-                                ctx.attrs.model[f] = formData[f]
+                                if(isReactive(ctx.attrs.model[f])){
+                                    Object.assign(ctx.attrs.model[f],formData[f])
+                                }else{
+                                    ctx.attrs.model[f] = formData[f]
+                                }
                             }
                         }
                         resolve(res)

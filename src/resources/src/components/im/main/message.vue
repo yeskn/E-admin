@@ -221,7 +221,7 @@
                        break;
                    //聊天记录
                    case 'msgRecord':
-                       const length = im.state.msgList.length
+                       const length = im.state.msgfList.length
                        im.state.msgList = data.concat(im.state.msgList)
                        if (length == 0) {
                            scrollToBottom('chatMsgBox')
