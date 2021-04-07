@@ -508,6 +508,10 @@ class Grid extends Component
      */
     public function exportData()
     {
+        //快捷搜索
+        $keyword = Request::get('quickSearch', '', ['trim']);
+        $this->drive->quickFilter($keyword, $this->column);
+
         foreach ($this->column as $column) {
             $field = $column->attr('prop');
             $label = $column->attr('label');
