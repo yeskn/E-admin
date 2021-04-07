@@ -108,7 +108,7 @@ class Excel extends AbstractExporter
                 $val = call_user_func($this->mapCallback, $val, $this->sheet);
             }
             foreach ($this->columns as $fkey => $fval) {
-                $this->sheet->setCellValueByColumnAndRow($i, $key + 2, $val[$fkey]);
+                $this->sheet->setCellValueByColumnAndRow($i, $key + 2, $this->filterEmoji($val[$fkey]));
                 $i++;
             }
             if (!is_null($this->mergeCondtionField)) {
@@ -142,7 +142,15 @@ class Excel extends AbstractExporter
         $writer->save('php://output');
         exit;
     }
-
+    private static function filterEmoji($str)
+    {
+        $str = preg_replace_callback('/./u',
+            function (array $match) {
+                return strlen($match[0]) >= 4 ? '' : $match[0];
+            },
+            $str);
+        return $str;
+    }
     public function map(\Closure $closure)
     {
         $this->mapCallback = $closure;

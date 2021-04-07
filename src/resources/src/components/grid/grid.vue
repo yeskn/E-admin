@@ -179,6 +179,7 @@
             let page = 1
             let size = props.pagination.pageSize
             let sortableParams = {}
+            let globalRequestParams = {}
             watch(() => props.modelValue, (value) => {
                 if(value){
                     quickSearch.value = ''
@@ -356,6 +357,7 @@
                 if(trashed.value){
                     requestParams = Object.assign(requestParams ,{eadmin_deleted:true})
                 }
+                globalRequestParams = requestParams
                 http({
                     url: props.loadDataUrl,
                     params: requestParams
@@ -436,15 +438,13 @@
                     ElMessage.warning('暂无数据')
                     return false
                 }
-                let  requestParams = {
+                let requestParams = {
                         eadmin_export:true,
                         export_type:type,
-                        page:page,
-                        size:size,
                         Authorization:ctx.attrs.Authorization,
                         eadmin_ids:selectIds.value
                 }
-                requestParams = Object.assign(requestParams,props.params,route.query)
+                requestParams = Object.assign(globalRequestParams,requestParams)
                 let querys = []
                 for(var params in requestParams){
                     querys.push(params+'='+requestParams[params])
