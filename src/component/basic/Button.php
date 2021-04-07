@@ -107,7 +107,7 @@ class Button extends Component
         }
         $dispatch = Admin::getDispatch($url);
         if($dispatch){
-            
+
             list($eadmin_class, $eadmin_function)  = Admin::getDispatchCall($dispatch);
             $this->auth($eadmin_class,$eadmin_function);
         }
@@ -119,6 +119,15 @@ class Button extends Component
         return $this;
     }
 
+    /**
+     * 复制
+     * @param $content 复制内容
+     * @return $this
+     */
+    public function copy($content){
+        $this->attr('data-clipboard-text',$content);
+        return $this;
+    }
     /**
      * 按钮文字
      * @param string $content 文字

@@ -124,7 +124,6 @@ class Excel extends AbstractExporter
                             } else {
                                 $mergeIndex = $rowIndex - 1;
                             }
-
                             $this->sheet->mergeCells("{$letter}{$tmpMergeIndex}:{$letter}{$mergeIndex}");
                         }
                     }
