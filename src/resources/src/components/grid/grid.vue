@@ -116,7 +116,7 @@
     import {useHttp} from '@/hooks'
     import request from '@/utils/axios'
     import {store} from '@/store'
-    import {unique,deleteArr} from '@/utils'
+    import {unique,deleteArr,buildURL} from '@/utils'
     import {ElMessageBox,ElMessage} from 'element-plus'
     import Sortable from 'sortablejs'
     import {useRoute} from 'vue-router'
@@ -452,11 +452,7 @@
                         eadmin_ids:selectIds.value
                 }
                 requestParams = Object.assign(globalRequestParams.value,requestParams)
-                let querys = []
-                for(var params in requestParams){
-                    querys.push(params+'='+requestParams[params])
-                }
-                location.href = '/eadmin.rest?' +querys.join('&')
+                location.href = buildURL('/eadmin.rest',requestParams)
             }
             const pageLayout = computed(()=>{
                 if(state.device === 'mobile'){
