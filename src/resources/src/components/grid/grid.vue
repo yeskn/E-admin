@@ -57,7 +57,7 @@
             </el-row>
         </div>
         <!--筛选-->
-        <div class="filter" v-if="filter && filterShow">
+        <div class="filter" v-if="filter" v-show="filterShow">
             <render :data="filter" ></render>
         </div>
         <div v-if="isMobile" style="background: #ffffff;overflow: auto" v-loading="loading">
@@ -111,7 +111,7 @@
 </template>
 
 <script>
-    import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed,reactive,unref} from "vue"
+    import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed,unref,toRaw} from "vue"
     import render from "@/components/render.vue"
     import {useHttp} from '@/hooks'
     import request from '@/utils/axios'
@@ -160,7 +160,6 @@
         inheritAttrs: false,
         emits: ['update:modelValue','update:selection'],
         setup(props, ctx) {
-
             const route = useRoute()
             const state = inject(store)
             const proxyData = state.proxyData
@@ -179,7 +178,19 @@
             let page = 1
             let size = props.pagination.pageSize
             let sortableParams = {}
-            let globalRequestParams = {}
+            let filterInitData = null
+            let globalRequestParams = computed(()=>{
+                let requestParams = {
+                    ajax_request_data: 'page',
+                    page: page,
+                    size: size,
+                }
+                requestParams = Object.assign(requestParams, proxyData[props.filterField],{quickSearch:quickSearch.value},route.query,props.params,props.addParams,sortableParams)
+                if(trashed.value){
+                    requestParams = Object.assign(requestParams ,{eadmin_deleted:true})
+                }
+                return requestParams
+            })
             watch(() => props.modelValue, (value) => {
                 if(value){
                     quickSearch.value = ''
@@ -207,6 +218,9 @@
 
             })
             nextTick(()=>{
+                if(proxyData[props.filterField]){
+                    filterInitData = JSON.parse(JSON.stringify(proxyData[props.filterField]))
+                }
                 //操作列宽度自适应
                 document.getElementsByClassName('EadminAction').forEach(item=>{
                     if(eadminActionWidth.value < item.offsetWidth){
@@ -343,24 +357,17 @@
             function handleFilter() {
                 page = 1
                 loading.value = true
-                //清空筛选条件
-                proxyData[props.filterField] = {}
+                //重置筛选条件
+                if(filterInitData){
+                    proxyData[props.filterField] = Object.assign(proxyData[props.filterField],JSON.parse(JSON.stringify(filterInitData)))
+                }
             }
             //请求获取数据
             function loadData() {
-                let requestParams = {
-                    ajax_request_data: 'page',
-                    page: page,
-                    size: size,
-                }
-                requestParams = Object.assign(requestParams, proxyData[props.filterField],{quickSearch:quickSearch.value},route.query,props.params,props.addParams,sortableParams)
-                if(trashed.value){
-                    requestParams = Object.assign(requestParams ,{eadmin_deleted:true})
-                }
-                globalRequestParams = requestParams
+
                 http({
                     url: props.loadDataUrl,
-                    params: requestParams
+                    params: globalRequestParams.value
                 }).then(res => {
                     columns.value = res.columns
                     tableData.value = res.data
@@ -444,7 +451,7 @@
                         Authorization:ctx.attrs.Authorization,
                         eadmin_ids:selectIds.value
                 }
-                requestParams = Object.assign(globalRequestParams,requestParams)
+                requestParams = Object.assign(globalRequestParams.value,requestParams)
                 let querys = []
                 for(var params in requestParams){
                     querys.push(params+'='+requestParams[params])

@@ -11,7 +11,7 @@
     "@vue/cli-plugin-typescript": "^4.5.11",
     "clipboard": "^2.0.8",
     "core-js": "^3.6.5",
-    "element-plus": "^1.0.2-beta.35",
+    "element-plus": "^1.0.2-beta.36",
     "node-sass": "^5.0.0",
     "sass-resources-loader": "^2.1.1",
     "style-loader": "^2.0.0",
