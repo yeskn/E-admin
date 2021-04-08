@@ -64,7 +64,7 @@
             const sidebar = state.sidebar
             const menus = state.menus
             const activeIndex = computed(() => {
-                let menu = findTree(state.menus, route.path.substr(1), 'url'), menuLevels = []
+                let menu = findTree(state.menus, route.fullPath.substr(1), 'url'), menuLevels = []
                 if(route.path === '/' && menus.length > 0){
                     selectMenu(menus[0].id)
                     return state.menuModule + ''

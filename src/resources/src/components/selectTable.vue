@@ -99,7 +99,10 @@
                     if (props.multiple) {
                         value.value = selects
                     } else {
-                        value.value = selects.pop()
+                        let val  = selects.pop()
+                        if(typeof(val) !== 'undefined'){
+                            value.value = val
+                        }
                         select.value.focus()
                     }
                 }).finally(()=>{

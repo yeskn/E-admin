@@ -1,6 +1,7 @@
 import {reactive, toRaw} from "vue";
 import request from '@/utils/axios'
 import {findTree,setObjectValue} from '@/utils'
+import {response} from "express";
 
 export const store = Symbol()
 // 使用 reactive 函数完成响应式转换
@@ -178,6 +179,7 @@ const action = {
                 const info = res.data.info
                 states.menus = res.data.menus
                 if (info) {
+                    states.component = null
                     states.info = info
                     states.info.webLogo = res.data.webLogo
                     states.info.webName = res.data.webName

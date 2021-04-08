@@ -160,7 +160,9 @@
                 this.loading = true
                 this.$action.login(this.loginForm).then(res => {
                     localStorage.setItem('eadmin_token', res.data.token)
-                    this.$router.push(this.redirect || '/' )
+                    this.$action.getInfo().then(response=>{
+                        this.$router.push(this.redirect || '/' )
+                    })
                 }).catch(res=>{
                     this.getVerify()
                 }).finally(() => {

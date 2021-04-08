@@ -37,7 +37,7 @@ class Csv extends AbstractExporter
         foreach ($this->data as $item) {
             $row = [];
             foreach ($fields as $field) {
-                $value = empty($item[$field]) ? '' : $item[$field];
+                $value = is_null($item[$field]) ? '' : $item[$field];
                 $row[] = mb_convert_encoding($value, 'GBK', 'UTF-8');
             }
             fputcsv($fp, $row);

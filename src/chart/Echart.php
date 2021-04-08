@@ -60,8 +60,8 @@ class Echart extends Component
     public function __construct($title, $type = 'line', $height = "350px")
     {
         $this->title = $title;
-        $this->attr('params', $this->getCallMethod());
-        $this->attr('title', $title);
+        $this->attr('params', $this->getCallMethod() + $this->getCallParams());
+        $this->attr('title', $title);   
         $this->chartType = $type;
         $this->date_type = Request::get('date_type', 'today');
         if ($this->chartType == 'line' || $this->chartType == 'bar') {
@@ -182,7 +182,7 @@ class Echart extends Component
         call_user_func($closure, $this);
         if ($this->chart instanceof RadarChart) {
             $this->groupSeries[] = [
-                'name'  => $name,
+                'name' => $name,
                 'value' => $this->seriesData,
             ];
         } else {
@@ -205,16 +205,16 @@ class Echart extends Component
 
     protected function pieAnalyze($type, $field, $name, $closure = null)
     {
-        $value              = $this->parse($type, $field, $closure);
+        $value = $this->parse($type, $field, $closure);
         $this->seriesData[] = [
-            'name'  => $name,
+            'name' => $name,
             'value' => $value
         ];
     }
 
     protected function lineAnalyzeGroup($type, $field, $name, $closure = null)
     {
-        $value         = $this->parse($type, $field, $closure);
+        $value = $this->parse($type, $field, $closure);
         $this->xAxis[] = $name;
         $this->chart->xAxis($this->xAxis);
         $this->seriesData[] = $value;
@@ -224,7 +224,7 @@ class Echart extends Component
     protected function lineAnalyze($type, $field, $name, $closure = null)
     {
         $series = [];
-        $xAxis  = [];
+        $xAxis = [];
         switch ($this->date_type) {
             case 'yesterday':
             case 'today':
@@ -234,10 +234,10 @@ class Echart extends Component
                     $date = date('Y-m-d');
                 }
                 for ($i = 0; $i < 24; $i++) {
-                    $j       = $i + 1;
-                    $hour    = $i < 10 ? '0' . $i : $i;
+                    $j = $i + 1;
+                    $hour = $i < 10 ? '0' . $i : $i;
                     $xAxis[] = "{$i}点到{$j}点";
-                    $db      = clone $this->db;
+                    $db = clone $this->db;
                     if ($closure instanceof \Closure) {
                         call_user_func($closure, $db);
                     }
@@ -248,9 +248,9 @@ class Echart extends Component
             case 'week':
                 $start_week = Carbon::now()->startOfWeek()->addDays(-1)->toDateString();
                 for ($i = 0; $i <= 6; $i++) {
-                    $week    = Carbon::make($start_week)->addDays($i)->toDateString();
+                    $week = Carbon::make($start_week)->addDays($i)->toDateString();
                     $xAxis[] = $week;
-                    $db      = clone $this->db;
+                    $db = clone $this->db;
                     if ($closure instanceof \Closure) {
                         call_user_func($closure, $db);
                     }
@@ -258,11 +258,11 @@ class Echart extends Component
                 }
                 break;
             case 'month':
-                $now    = Carbon::today();
+                $now = Carbon::today();
                 $months = Carbon::parse($now->firstOfMonth()->toDateString())->daysUntil($now->endOfMonth()->toDateString())->toArray();
                 foreach ($months as $month) {
                     $xAxis[] = $month->toDateString();
-                    $db      = clone $this->db;
+                    $db = clone $this->db;
                     if ($closure instanceof \Closure) {
                         call_user_func($closure, $db);
                     }
@@ -272,7 +272,7 @@ class Echart extends Component
             case 'year':
                 for ($i = 1; $i <= 12; $i++) {
                     $xAxis[] = $i . '月';
-                    $db      = clone $this->db;
+                    $db = clone $this->db;
                     if ($closure instanceof \Closure) {
                         call_user_func($closure, $db);
                     }
@@ -281,11 +281,11 @@ class Echart extends Component
                 break;
             case 'range':
                 $start_date = Request::get('start_date');
-                $end_date   = Request::get('end_date');
-                $dates      = Carbon::parse($start_date)->daysUntil($end_date)->toArray();
+                $end_date = Request::get('end_date');
+                $dates = Carbon::parse($start_date)->daysUntil($end_date)->toArray();
                 foreach ($dates as $date) {
                     $xAxis[] = $date->toDateString();
-                    $db      = clone $this->db;
+                    $db = clone $this->db;
                     if ($closure instanceof \Closure) {
                         call_user_func($closure, $db);
                     }
@@ -300,14 +300,14 @@ class Echart extends Component
     public function jsonSerialize()
     {
         if ($this->chart instanceof RadarChart) {
-            $seriesData[]     = [
-                'name'  => $this->title,
+            $seriesData[] = [
+                'name' => $this->title,
                 'value' => $this->seriesData
             ];
             $this->seriesData = $seriesData;
             if (count($this->groupSeries) > 0) {
                 $groupSeries = $this->groupSeries;
-                $series      = [];
+                $series = [];
                 foreach ($groupSeries as $key => $groupSerie) {
                     $series[$key]['name'] = $groupSerie['name'];
                     for ($i = 0; $i <= $this->radarMaxKey; $i++) {
@@ -360,8 +360,8 @@ class Echart extends Component
                 break;
             case 'range':
                 $start_date = Request::get('start_date');
-                $end_date   = Request::get('end_date');
-                $value      = $db->whereBetweenTime($this->dateField, $start_date, $end_date)->$type($field);
+                $end_date = Request::get('end_date');
+                $value = $db->whereBetweenTime($this->dateField, $start_date, $end_date)->$type($field);
                 break;
         }
 
