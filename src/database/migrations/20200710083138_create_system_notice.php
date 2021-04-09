@@ -37,7 +37,8 @@ class CreateSystemNotice extends Migrator
         $table->addColumn(Column::string('content')->setComment('内容'));
         $table->addColumn(Column::string('target_url')->setDefault('')->setComment('跳转链接'));
         $table->addColumn(Column::tinyInteger('is_read')->setDefault(0)->setComment('1:已读,0未读'));
-        $table->addTimestamps();
+		$table->addColumn(Column::dateTime('create_time')->setDefault('CURRENT_TIMESTAMP')->setComment('创建时间'));
+		$table->addColumn(Column::dateTime('update_time')->setNullable()->setComment('更新时间'));
         $table->create();
     }
 }

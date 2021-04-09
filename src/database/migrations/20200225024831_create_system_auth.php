@@ -33,7 +33,8 @@ class CreateSystemAuth extends Migrator
         $table->addColumn(Column::boolean('status')->setDefault(1)->setComment('权限角色状态'));
         $table->addColumn(Column::bigInteger('sort')->setDefault(0)->setComment('排序'));
         $table->addColumn(Column::string('desc')->setDefault('')->setComment('备注说明'));
-        $table->addTimestamps();
+		$table->addColumn(Column::dateTime('create_time')->setDefault('CURRENT_TIMESTAMP')->setComment('创建时间'));
+		$table->addColumn(Column::dateTime('update_time')->setNullable()->setComment('更新时间'));
         $table->create();
     }
 }

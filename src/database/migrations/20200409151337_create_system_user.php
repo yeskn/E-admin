@@ -41,8 +41,9 @@ class CreateSystemUser extends Migrator
         $table->addColumn(Column::string('desc')->setDefault('')->setComment('备注说明'));
         $table->addColumn(Column::integer('sort')->setDefault(0)->setComment('排序'));
         $table->addColumn(Column::boolean('status')->setDefault(1)->setComment('状态(0:禁用,1:启用)'));
-        $table->addSoftDelete();
-        $table->addTimestamps();
+		$table->addColumn(Column::dateTime('create_time')->setDefault('CURRENT_TIMESTAMP')->setComment('创建时间'));
+		$table->addColumn(Column::dateTime('update_time')->setNullable()->setComment('更新时间'));
+		$table->addColumn(Column::dateTime('delete_time')->setNullable()->setComment('删除时间'));
         $table->create();
     }
 }
