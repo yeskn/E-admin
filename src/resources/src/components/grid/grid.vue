@@ -179,7 +179,7 @@
             let size = props.pagination.pageSize
             let sortableParams = {}
             let filterInitData = null
-            let globalRequestParams = computed(()=>{
+            function globalRequestParams(){
                 let requestParams = {
                     ajax_request_data: 'page',
                     page: page,
@@ -190,7 +190,7 @@
                     requestParams = Object.assign(requestParams ,{eadmin_deleted:true})
                 }
                 return requestParams
-            })
+            }
             watch(() => props.modelValue, (value) => {
                 if(value){
                     quickSearch.value = ''
@@ -367,7 +367,7 @@
 
                 http({
                     url: props.loadDataUrl,
-                    params: globalRequestParams.value
+                    params: globalRequestParams()
                 }).then(res => {
                     columns.value = res.columns
                     tableData.value = res.data
@@ -413,7 +413,7 @@
                     }
                     request({
                         url: props.loadDataUrl.replace('.rest','/delete.rest'),
-                        data: Object.assign({eadmin_ids: ids},props.params,params),
+                        data: Object.assign({eadmin_ids: ids},route.query,props.params,params),
                         method:'delete',
                     }).then(res=>{
                         selectIds.value = []
@@ -451,7 +451,7 @@
                         Authorization:ctx.attrs.Authorization,
                         eadmin_ids:selectIds.value
                 }
-                requestParams = Object.assign(globalRequestParams.value,requestParams)
+                requestParams = Object.assign(globalRequestParams(),requestParams)
                 location.href = buildURL('/eadmin.rest',requestParams)
             }
             const pageLayout = computed(()=>{

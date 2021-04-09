@@ -27,11 +27,11 @@ use Eadmin\chart\echart\RadarChart;
 /**
  * Class Echarts
  * @package
- * @method $this count($text, \Closure $query) 统计数量
- * @method $this max($text, $filed, \Closure $query) 统计最大值
- * @method $this avg($text, $field, \Closure $query) 统计平均值
- * @method $this sum($text, $field, \Closure $query) 统计总和
- * @method $this min($text, $field, \Closure $query) 统计最小值
+ * @method $this count($text, \Closure $query = null, \Closure $after = null) 统计数量
+ * @method $this max($text, $filed, \Closure $query = null, \Closure $after = null) 统计最大值
+ * @method $this avg($text, $field, \Closure $query = null, \Closure $after = null) 统计平均值
+ * @method $this sum($text, $field, \Closure $query = null, \Closure $after = null) 统计总和
+ * @method $this min($text, $field, \Closure $query = null, \Closure $after = null) 统计最小值
  */
 class Echart extends Component
 {
@@ -61,7 +61,7 @@ class Echart extends Component
     {
         $this->title = $title;
         $this->attr('params', $this->getCallMethod() + $this->getCallParams());
-        $this->attr('title', $title);   
+        $this->attr('title', $title);
         $this->chartType = $type;
         $this->date_type = Request::get('date_type', 'today');
         if ($this->chartType == 'line' || $this->chartType == 'bar') {
@@ -125,40 +125,45 @@ class Echart extends Component
     {
         if ($name == 'count') {
             $text = array_shift($arguments);
+            $query = array_shift($arguments);
+            $after = array_shift($arguments);
             if ($this->chartType == 'line' || $this->chartType == 'bar') {
                 if ($this->groupMode) {
-                    $this->lineAnalyzeGroup($name, $this->db->getPk(), $text, end($arguments));
+                    $this->lineAnalyzeGroup($name, $this->db->getPk(), $text, $query, $after);
                 } else {
-                    $this->lineAnalyze($name, $this->db->getPk(), $text, end($arguments));
+                    $this->lineAnalyze($name, $this->db->getPk(), $text, $query, $after);
                 }
 
             } elseif ($this->chartType == 'pie' || $this->chartType == 'funnel') {
-                $this->pieAnalyze($name, $this->db->getPk(), $text, end($arguments));
+                $this->pieAnalyze($name, $this->db->getPk(), $text, $query, $after);
             } elseif ($this->chartType == 'radar') {
                 $max = array_shift($arguments);
                 if ($max instanceof \Closure) {
                     $max = 100;
                 }
-                $this->radarAnalyze($name, $this->db->getPk(), $text, $max, end($arguments));
+                $this->radarAnalyze($name, $this->db->getPk(), $text, $max, $query, $after);
             }
 
         } else {
-            list($text, $field) = $arguments;
+            $text = array_shift($arguments);
+            $field = array_shift($arguments);
+            $query = array_shift($arguments);
+            $after = array_shift($arguments);
             if ($this->chartType == 'line' || $this->chartType == 'bar') {
                 if ($this->groupMode) {
-                    $this->lineAnalyzeGroup($name, $field, $text, end($arguments));
+                    $this->lineAnalyzeGroup($name, $field, $text,$query,$after);
                 } else {
-                    $this->lineAnalyze($name, $field, $text, end($arguments));
+                    $this->lineAnalyze($name, $field, $text,$query,$after);
                 }
             } elseif ($this->chartType == 'pie' || $this->chartType == 'funnel') {
-                $this->pieAnalyze($name, $field, $text, end($arguments));
+                $this->pieAnalyze($name, $field, $text, $query, $after);
             } elseif ($this->chartType == 'radar') {
                 if (isset($arguments[2])) {
                     $max = $arguments[2];
                 } else {
                     $max = 100;
                 }
-                $this->radarAnalyze($name, $field, $text, $max, end($arguments));
+                $this->radarAnalyze($name, $field, $text, $max, $query, $after);
             }
         }
         return $this;
@@ -191,9 +196,9 @@ class Echart extends Component
         $this->seriesData = [];
     }
 
-    protected function radarAnalyze($type, $field, $name, $max = 100, $closure = null)
+    protected function radarAnalyze($type, $field, $name, $max = 100, $query = null, $after = null)
     {
-        $value = $this->parse($type, $field, $closure);
+        $value = $this->parse($type, $field, $query, $after);
 
         $this->chart->indicator($name, $max);
         $key = $this->chart()->getIndicatorKey($name);
@@ -203,25 +208,25 @@ class Echart extends Component
         $this->seriesData[$key] = $value;
     }
 
-    protected function pieAnalyze($type, $field, $name, $closure = null)
+    protected function pieAnalyze($type, $field, $name, $query = null, $after = null)
     {
-        $value = $this->parse($type, $field, $closure);
+        $value = $this->parse($type, $field, $query, $after);
         $this->seriesData[] = [
             'name' => $name,
             'value' => $value
         ];
     }
 
-    protected function lineAnalyzeGroup($type, $field, $name, $closure = null)
+    protected function lineAnalyzeGroup($type, $field, $name, $query = null, $after = null)
     {
-        $value = $this->parse($type, $field, $closure);
+        $value = $this->parse($type, $field, $query, $after);
         $this->xAxis[] = $name;
         $this->chart->xAxis($this->xAxis);
         $this->seriesData[] = $value;
     }
 
 
-    protected function lineAnalyze($type, $field, $name, $closure = null)
+    protected function lineAnalyze($type, $field, $name, $query = null, $after = null)
     {
         $series = [];
         $xAxis = [];
@@ -238,10 +243,14 @@ class Echart extends Component
                     $hour = $i < 10 ? '0' . $i : $i;
                     $xAxis[] = "{$i}点到{$j}点";
                     $db = clone $this->db;
-                    if ($closure instanceof \Closure) {
-                        call_user_func($closure, $db);
+                    if ($query instanceof \Closure) {
+                        call_user_func($query, $db);
                     }
-                    $series[] = $db->whereBetween($this->dateField, ["{$date} {$hour}:00:00", "{$date} {$hour}:59:59"])->$type($field);
+                    $value = $db->whereBetween($this->dateField, ["{$date} {$hour}:00:00", "{$date} {$hour}:59:59"])->$type($field);
+                    if ($after instanceof \Closure) {
+                        $value = call_user_func($after, $value);
+                    }
+                    $series[] = $value;
 
                 }
                 break;
@@ -251,10 +260,14 @@ class Echart extends Component
                     $week = Carbon::make($start_week)->addDays($i)->toDateString();
                     $xAxis[] = $week;
                     $db = clone $this->db;
-                    if ($closure instanceof \Closure) {
-                        call_user_func($closure, $db);
+                    if ($query instanceof \Closure) {
+                        call_user_func($query, $db);
                     }
-                    $series[] = $db->whereDay($this->dateField, $week)->$type($field);
+                    $value = $db->whereDay($this->dateField, $week)->$type($field);
+                    if ($after instanceof \Closure) {
+                        $value = call_user_func($after, $value);
+                    }
+                    $series[] = $value;
                 }
                 break;
             case 'month':
@@ -263,20 +276,28 @@ class Echart extends Component
                 foreach ($months as $month) {
                     $xAxis[] = $month->toDateString();
                     $db = clone $this->db;
-                    if ($closure instanceof \Closure) {
-                        call_user_func($closure, $db);
+                    if ($query instanceof \Closure) {
+                        call_user_func($query, $db);
                     }
-                    $series[] = $db->whereDay($this->dateField, $month)->$type($field);
+                    $value = $db->whereDay($this->dateField, $month)->$type($field);
+                    if ($after instanceof \Closure) {
+                        $value = call_user_func($after, $value);
+                    }
+                    $series[] = $value;
                 }
                 break;
             case 'year':
                 for ($i = 1; $i <= 12; $i++) {
                     $xAxis[] = $i . '月';
                     $db = clone $this->db;
-                    if ($closure instanceof \Closure) {
-                        call_user_func($closure, $db);
+                    if ($query instanceof \Closure) {
+                        call_user_func($query, $db);
                     }
-                    $series[] = $db->whereMonth($this->dateField, date("Y-{$i}"))->$type($field);
+                    $value = $db->whereMonth($this->dateField, date("Y-{$i}"))->$type($field);
+                    if ($after instanceof \Closure) {
+                        $value = call_user_func($after, $value);
+                    }
+                    $series[] = $value;
                 }
                 break;
             case 'range':
@@ -286,10 +307,14 @@ class Echart extends Component
                 foreach ($dates as $date) {
                     $xAxis[] = $date->toDateString();
                     $db = clone $this->db;
-                    if ($closure instanceof \Closure) {
-                        call_user_func($closure, $db);
+                    if ($query instanceof \Closure) {
+                        call_user_func($query, $db);
                     }
-                    $series[] = $db->whereDay($this->dateField, $date)->$type($field);
+                    $value = $db->whereDay($this->dateField, $date)->$type($field);
+                    if ($after instanceof \Closure) {
+                        $value = call_user_func($after, $value);
+                    }
+                    $series[] = $value;
                 }
                 break;
         }
@@ -335,14 +360,14 @@ class Echart extends Component
     /**
      * @param string $type
      * @param string $field
-     * @param mixed $closure
+     * @param mixed $query
      * @return mixed
      */
-    protected function parse($type, $field, $closure)
+    protected function parse($type, $field, $query, $after)
     {
         $db = clone $this->db;
-        if ($closure instanceof \Closure) {
-            call_user_func($closure, $db);
+        if ($query instanceof \Closure) {
+            call_user_func($query, $db);
         }
         switch ($this->date_type) {
             case 'yesterday':
@@ -364,7 +389,9 @@ class Echart extends Component
                 $value = $db->whereBetweenTime($this->dateField, $start_date, $end_date)->$type($field);
                 break;
         }
-
+        if ($after instanceof \Closure) {
+            $value = call_user_func($after, $value);
+        }
         return $value;
     }
 }

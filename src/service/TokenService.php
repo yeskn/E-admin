@@ -170,7 +170,7 @@ class TokenService
     public function auth($token = null)
     {
         if (is_null($token)) {
-            $token = self::$token ? self::$token : Request::header('Authorization') ?? Request::param('Authorization');
+            $token = self::$token ? self::$token : Request::header('Authorization') ?? urldecode(Request::param('Authorization'));
         }
         if (empty($token)) {
             $this->errorCode(40000, '请先登陆再访问');
@@ -229,7 +229,7 @@ class TokenService
             $user            = new $this->model;
             self::$userModel = $user->lock($lock)->find($this->id());
         }
-       
+
         return self::$userModel;
     }
 }
