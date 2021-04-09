@@ -29,7 +29,7 @@ class CreateUser extends Migrator
     public function change()
     {
         $table = $this->table('user', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_unicode_ci'])->setComment('用户表');
-        $table->addColumn(Column::string('headimg', 500)->setDefault('')->setComment('头像'));
+        $table->addColumn(Column::string('avatar', 500)->setDefault('')->setComment('头像'));
         $table->addColumn(Column::string('nickname', 50)->setDefault('')->setComment('昵称'));
         $table->addColumn(Column::char('phone', 20)->setDefault('')->setComment('手机号码'));
         $table->addColumn(Column::string('openid', 100)->setDefault('')->setComment('小程序微信openid'));
@@ -40,7 +40,8 @@ class CreateUser extends Migrator
         $table->addColumn(Column::string('area', 100)->setDefault('')->setComment('地区'));
         $table->addColumn(Column::string('address')->setDefault('')->setComment('详情地址'));
         $table->addColumn(Column::decimal('money', 12, 2)->setDefault(0)->setComment('钱包金额'));
-        $table->addTimestamps();
+		$table->addColumn(Column::dateTime('create_time')->setDefault('CURRENT_TIMESTAMP')->setComment('创建时间'));
+		$table->addColumn(Column::dateTime('update_time')->setNullable()->setComment('更新时间'));
         $table->create();
     }
 }

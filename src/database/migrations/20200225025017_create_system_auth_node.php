@@ -34,7 +34,8 @@ class CreateSystemAuthNode extends Migrator
         $table->addColumn(Column::string('class', 50)->setDefault('')->setComment('类名'));
         $table->addColumn(Column::string('action', 50)->setDefault('')->setComment('方法'));
         $table->addColumn(Column::string('method', 50)->setDefault('')->setComment('请求方法'));
-        $table->addTimestamps();
+		$table->addColumn(Column::dateTime('create_time')->setDefault('CURRENT_TIMESTAMP')->setComment('创建时间'));
+		$table->addColumn(Column::dateTime('update_time')->setNullable()->setComment('更新时间'));
         $table->create();
     }
 }
