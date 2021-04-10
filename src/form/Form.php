@@ -107,7 +107,8 @@ class Form extends Field
     protected $redirectUrl = '';
 
     protected $batch = false;
-
+    //排除字段
+    protected $exceptField = [];
     public function __construct($data)
     {
         if ($data instanceof Model) {
@@ -617,6 +618,7 @@ class Form extends Field
                 $component->startPlaceholder('请选择开始' . $label . '时间');
                 $component->endPlaceholder('请选择结束' . $label . '时间');
                 $prop = $component->bindAttr('modelValue');
+                $this->except([$prop]);
             }
             $component->type($name);
         }
@@ -625,11 +627,13 @@ class Form extends Field
             $component->attr('bindFields', $arguments);
             $component->bindFields($arguments);
             $prop = $component->bindAttr('modelValue');
+            $this->except([$prop]);
         } elseif ($name == 'maps') {
             $field = array_pop($arguments);
             $component = $class::create($field);
             $component->bindFields($arguments);
             $prop = $component->bindAttr('modelValue');
+            $this->except([$prop]);
         }
         if ($component instanceof Input) {
             $component->placeholder('请输入' . $label);
@@ -671,6 +675,7 @@ class Form extends Field
      */
     public function setData(string $field, $value)
     {
+
         //数字类型转换处理
         if (is_array($value) && count($value) == count($value, 1)) {
             foreach ($value as &$v) {
@@ -723,7 +728,7 @@ class Form extends Field
     public function save(array $data)
     {
         //监听watch
-        $this->watchCall($data);;
+        $this->watchCall($data);
         //验证数据
         $validatorMode = $this->isEdit() ? 2 : 1;
         $this->validator->check($data, $validatorMode);
@@ -810,6 +815,13 @@ class Form extends Field
         $this->bind($validatorField, $data);
     }
 
+    /**
+     * 排除字段数据
+     * @param array $fields
+     */
+    public function except(array $fields){
+        $this->exceptField =  array_merge($this->exceptField,$fields);
+    }
     public static function extend($name, $component)
     {
         self::$component[$name] = $component;
@@ -817,6 +829,8 @@ class Form extends Field
 
     public function jsonSerialize()
     {
+        //排除字段
+        $this->attr('exceptField',$this->exceptField);
         $this->parseComponent();
         $this->parseSteps();
         $this->actions->render();

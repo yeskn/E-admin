@@ -201,8 +201,7 @@ class Column extends Component
         }
         //自定义导出
         if (!is_null($this->exportClosure)) {
-            $value = call_user_func_array($this->exportClosure, [$originValue, $data]);
-            $this->exportData = $value;
+            $this->exportData = call_user_func_array($this->exportClosure, [$originValue, $data]);
         }
         if ($this->tip) {
             $value = Tip::create($value)->content($value)->placement('right');

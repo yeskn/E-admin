@@ -111,7 +111,7 @@ export function encode(val) {
     replace(/%5B/gi, '[').
     replace(/%5D/gi, ']');
 }
-function forEach(obj, fn) {
+export function forEach(obj, fn) {
     // Don't bother if no value provided
     if (obj === null || typeof obj === 'undefined') {
         return;

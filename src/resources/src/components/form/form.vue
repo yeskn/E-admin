@@ -18,6 +18,7 @@
     import manyItem from "./manyItem.vue"
     import { store } from '@/store'
     import { useHttp } from '@/hooks'
+    import { forEach } from '@/utils'
     import request from '@/utils/axios'
     export default defineComponent({
         components:{
@@ -41,6 +42,7 @@
                 type:Array,
                 default:[],
             },
+            exceptField:[Array,Object]
         },
         emits: ['success','gridRefresh','update:submit','update:validate','update:step','update:eadminForm'],
         setup(props,ctx){
@@ -154,12 +156,18 @@
                 if(props.setAction){
                     clearValidator()
                     eadminForm.value.validate(bool=>{
+                        const submitData = JSON.parse(JSON.stringify(ctx.attrs.model))
+                        forEach(submitData,function (val,key) {
+                            if(props.exceptField.indexOf(key) > -1){
+                                delete submitData[key]
+                            }
+                        })
                         if(bool){
                             http({
                                 url: props.setAction,
                                 params:params,
                                 method: props.setActionMethod,
-                                data: ctx.attrs.model
+                                data: submitData
                             }).then(res=>{
                                 if(res.code === 422){
                                     for (let field in res.data){

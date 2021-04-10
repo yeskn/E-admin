@@ -19,12 +19,13 @@
             const value = ref(props.modelValue)
             watch(()=>props.modelValue,val=>{
                 value.value =val
-                changeHandel(val)
+                changeHandel(val,true)
             })
             watch(value,value=>{
                 ctx.emit('update:modelValue',value)
             })
-            function changeHandel(value) {
+            changeHandel(value.value,false)
+            function changeHandel(value,reset=true) {
                 if(props.params){
                     request({
                         url: '/eadmin.rest',
@@ -32,7 +33,9 @@
                         params: Object.assign(props.params, {eadminSelectLoad: true, eadmin_id: value}),
                     }).then(res=>{
                         ctx.emit('update:loadOptionField',res.data)
-                        ctx.emit('update:loadField','')
+                        if(reset){
+                            ctx.emit('update:loadField','')
+                        }
                     })
                 }
             }
