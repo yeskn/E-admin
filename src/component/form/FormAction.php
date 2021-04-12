@@ -20,17 +20,21 @@ class FormAction extends Component
     protected $submitButton;
     //重置按钮
     protected $resetButton;
+    //取消按钮
+    protected $cancelButton;
     //隐藏重置按钮
     protected $hideResetButton = false;
     //隐藏提交按钮
     protected $hideSubmitButton = false;
+    //隐藏取消按钮
+    protected $hideCancelButton = false;
 
     public function __construct($form)
     {
-        $this->form         = $form;
+        $this->form = $form;
         $submitField = $this->form->bindAttr('submit');
-        $this->submitButton = Button::create('保存')->type('primary')->event('click',[$submitField=>true]);
-        $this->resetButton  = Button::create('重置');
+        $this->submitButton = Button::create('保存')->type('primary')->event('click', [$submitField => true]);
+        $this->resetButton = Button::create('重置');
     }
 
     /**
@@ -51,6 +55,22 @@ class FormAction extends Component
         return $this->resetButton;
     }
 
+    /**
+     * 取消按钮
+     * @return Button
+     */
+    public function cancelButton()
+    {
+        $this->cancelButton = Button::create('取消');
+        return $this->cancelButton;
+    }
+    /**
+     * 隐藏取消按钮
+     */
+    public function hideCancelButton()
+    {
+        $this->hideCancelButton = true;
+    }
     /**
      * 隐藏提交按钮
      */
@@ -93,9 +113,13 @@ class FormAction extends Component
         if ($this->hideSubmitButton) {
             $this->submitButton = null;
         }
+        if ($this->hideSubmitButton) {
+            $this->submitButton = null;
+        }
         $this->form->attr('action', [
             'submit' => $this->submitButton,
-            'reset'  => $this->resetButton,
+            'reset' => $this->resetButton,
+            'cancel' => $this->cancelButton,
         ]);
     }
 }

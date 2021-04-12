@@ -71,6 +71,8 @@ service.interceptors.response.use(
                 // action.refreshToken().catch(result=>{
                 //
                 // })
+            }else if(res.code == 44000){
+                router.replace('/')
             } else if (res.code == 80020) {
                 ElMessage({
                     showClose: true,

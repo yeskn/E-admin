@@ -6,6 +6,7 @@
             <slot name="leftAction"></slot>
             <render v-if="action.submit" native-type="submit" :loading="loading" :data="action.submit"></render>
             <render v-if="action.reset" :data="action.reset" @click="resetForm"></render>
+            <render v-if="action.cancel" :data="action.cancel" @click="cancelForm"></render>
             <slot name="rightAction"></slot>
         </el-form-item>
     </el-form>
@@ -243,10 +244,15 @@
                 clearValidator()
                 eadminForm.value.resetFields();
             }
+            //取消
+            function cancelForm(){
+                ctx.emit('success')
+            }
             return {
                 eadminForm,
                 loading,
                 resetForm,
+                cancelForm,
                 labelPosition,
             }
         }
