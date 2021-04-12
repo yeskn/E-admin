@@ -239,7 +239,7 @@ abstract class Component implements \JsonSerializable
         if ($condition) {
             $closure($this,$condition);
         }else{
-            if ($other instanceof Closure) {
+            if ($other instanceof \Closure) {
                 $other($this, $condition);
             }
         }

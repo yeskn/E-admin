@@ -54,6 +54,7 @@ class Menu extends Controller
             return ' ' . $val;
         });
         $grid->column('status', '状态')->switch();
+        $grid->column('admin_visible', '超级管理员状态')->switch([[1 => '显示'], [0 => '隐藏']]);
         $grid->actions(function (Actions $action, $data) {
             $action->prepend(
                 Button::create('添加菜单')

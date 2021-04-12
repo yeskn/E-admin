@@ -39,7 +39,8 @@ class MenuService
     public function tree()
     {
         if (Admin::id() == config('admin.admin_auth_id')) {
-            $menus = $this->all();
+            $menus = Db::name('system_menu')->where('admin_visible', 1)->where('status', 1)->order('sort asc,id desc')->cache(10)->select()->toArray();
+            ;
         } else {
             $menus = Admin::user()->menus();
         }
