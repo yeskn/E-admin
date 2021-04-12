@@ -18,31 +18,31 @@
         emits:['update:modelValue','update:loadField','update:loadOptionField'],
         setup(props,ctx){
             const value = ref(props.modelValue)
-            let loadFieldValue = props.loadField
+            const loadFieldValue = props.loadField
             watch(()=>props.modelValue,val=>{
-                value.value =val
-                changeHandel(val,true)
+                value.value = val
+                changeHandel(val)
             })
             watch(value,value=>{
                 ctx.emit('update:modelValue',value)
             })
             if(!findTree(props.options,value.value,'id')){
                 value.value = ''
-                loadFieldValue = ''
             }
-            changeHandel(value.value,false)
-            function changeHandel(val,reset=true) {
+            changeHandel(value.value)
+            function changeHandel(val) {
                 if(props.params){
+                    ctx.emit('update:loadField','')
                     request({
                         url: '/eadmin.rest',
                         method:'post',
                         params: Object.assign(props.params, {eadminSelectLoad: true, eadmin_id: val}),
                     }).then(res=>{
                         ctx.emit('update:loadOptionField',res.data)
-                        if(reset){
-                            ctx.emit('update:loadField','')
-                        }else{
+                        if(findTree(res.data,loadFieldValue,'id')){
                             ctx.emit('update:loadField',loadFieldValue)
+                        }else{
+                            ctx.emit('update:loadField','')
                         }
                     })
                 }
