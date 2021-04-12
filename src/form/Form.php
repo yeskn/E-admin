@@ -109,6 +109,8 @@ class Form extends Field
     protected $batch = false;
     //排除字段
     protected $exceptField = [];
+    //初始化
+    protected static $init = null;
     public function __construct($data)
     {
         if ($data instanceof Model) {
@@ -130,9 +132,18 @@ class Form extends Field
         $this->validator = new ValidatorForm();
         $this->validatorBind();
         $this->description(Request::param('eadmin_description'));
-        $this->description(Request::param('eadmin_description'));
+        if (!is_null(self::$init)) {
+            call_user_func(self::$init, $this);
+        }
     }
-
+    /**
+     * 初始化
+     * @param \Closure $closure
+     */
+    public static function init(\Closure $closure)
+    {
+        self::$init = $closure;
+    }
     /**
      * 设置标题
      * @param string $title
