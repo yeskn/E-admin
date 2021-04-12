@@ -26,9 +26,16 @@ class MenuService
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function all()
+    public function all($admin_visible = false)
     {
-        $data = Db::name('system_menu')->where('status', 1)->order('sort asc,id desc')->cache(10)->select()->toArray();
+        $data = Db::name('system_menu')
+            ->where('status', 1)
+            ->when($admin_visible, function ($q) {
+                $q->where('admin_visible', 1);
+            })
+            ->order('sort asc,id desc')
+            ->cache(10)
+            ->select()->toArray();
         return $data;
     }
 
@@ -36,11 +43,10 @@ class MenuService
      * 生成树形菜单
      * @return array
      */
-    public function tree()
+    public function tree($admin_visible = false)
     {
         if (Admin::id() == config('admin.admin_auth_id')) {
-            $menus = Db::name('system_menu')->where('admin_visible', 1)->where('status', 1)->order('sort asc,id desc')->cache(10)->select()->toArray();
-            ;
+            $menus = $this->all($admin_visible);
         } else {
             $menus = Admin::user()->menus();
         }

@@ -195,7 +195,7 @@ class Admin extends Controller
      */
     public function info()
     {
-        $data['menus'] = \Eadmin\Admin::menu()->tree();
+        $data['menus'] = \Eadmin\Admin::menu()->tree(true);
         $data['info'] = \Eadmin\Admin::user();
         $data['webLogo'] = sysconf('web_logo');
         $data['webName'] = sysconf('web_name');
