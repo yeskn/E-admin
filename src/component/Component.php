@@ -236,14 +236,19 @@ abstract class Component implements \JsonSerializable
      * @return $this
      */
     public function when($condition, \Closure $closure, $other = null){
+        $res = null;
         if ($condition) {
-            $closure($this,$condition);
+            $res = $closure($this,$condition);
         }else{
             if ($other instanceof \Closure) {
-                $other($this, $condition);
+                $res = $other($this, $condition);
             }
         }
-        return $this;
+        if($res){
+            return $res;
+        }else{
+            return $this;
+        }
     }
 
     public function jsonSerialize()
