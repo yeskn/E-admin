@@ -4,7 +4,7 @@
         <slot></slot>
         <el-form-item>
             <slot name="leftAction"></slot>
-            <render v-if="action.submit" native-type="submit" :loading="loading" :data="action.submit"></render>
+            <render v-if="action.submit" :loading="loading" :data="action.submit"></render>
             <render v-if="action.reset" :data="action.reset" @click="resetForm"></render>
             <render v-if="action.cancel" :data="action.cancel" @click="cancelForm"></render>
             <slot name="rightAction"></slot>
