@@ -172,7 +172,7 @@
             const eadminActionWidth = ref(0)
             const trashed = ref(false)
             const quickSearchOn = ctx.attrs.quickSearch
-            const quickSearchText = ctx.attrs.quickSearchText
+            const quickSearchText = ctx.attrs.quickSearchText || '请输入关键字'
             const columns = ref(props.columns)
             const tableData = ref(props.data)
             const total = ref(props.pagination.total || 0)
