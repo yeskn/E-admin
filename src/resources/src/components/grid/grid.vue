@@ -6,7 +6,7 @@
                 <el-col :md="6" style="display: flex;margin-bottom: 10px" v-if="quickSearchOn">
                     <!--快捷搜索-->
                     <el-input class="hidden-md-and-down" v-model="quickSearch" clearable prefix-icon="el-icon-search"
-                              size="small" style="margin-right: 10px;flex: 1" placeholder="请输入关键字" @change="handleFilter" ></el-input>
+                              size="small" style="margin-right: 10px;flex: 1" :placeholder="quickSearchText" @change="handleFilter" ></el-input>
                     <el-button class="hidden-md-and-down" type="primary" size="small" icon="el-icon-search" @click="handleFilter">搜索</el-button>
                 </el-col>
                 <el-col :md="quickSearchOn ? 14:20" style="margin-bottom: 10px">
@@ -172,6 +172,7 @@
             const eadminActionWidth = ref(0)
             const trashed = ref(false)
             const quickSearchOn = ctx.attrs.quickSearch
+            const quickSearchText = ctx.attrs.quickSearchText
             const columns = ref(props.columns)
             const tableData = ref(props.data)
             const total = ref(props.pagination.total || 0)
@@ -477,6 +478,7 @@
                 pageLayout,
                 eadminActionWidth,
                 quickSearchOn,
+                quickSearchText,
                 page,
                 size,
                 total,

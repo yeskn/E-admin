@@ -29,7 +29,7 @@
                     <i class="el-icon-caret-bottom" style="line-height: 30px"/>
                 </div>
                 <template #dropdown>
-                    <el-dropdown-menu>
+                    <el-dropdown-menu v-if="state.info.dropdownMenu">
                         <render v-for="item in state.info.dropdownMenu" :data="item"></render>
                         <el-dropdown-item divided @click.native="logout">
                             <span style="display:block;">退出登陆</span>
@@ -46,7 +46,7 @@
     import {useRoute} from 'vue-router'
     import {link, findParent, findTree,refresh} from '@/utils'
     import {defineComponent, watch, inject, computed} from 'vue'
-    import {store, action} from '@/store'
+    import {store, action, state} from '@/store'
     import router from "../router";
     import screenfull from "@/components/screenfull.vue";
     import notice from "@/layout/notice.vue";
@@ -59,15 +59,18 @@
         },
         setup() {
             const route = useRoute()
-
             const state = inject(store)
             const sidebar = state.sidebar
             const menus = state.menus
+            let linkMenuBool = false
             const activeIndex = computed(() => {
+                state.info.dropdownMenu = state.info.dropdownMenu.concat(JSON.parse(JSON.stringify(state.info.dropdownMenu)))
+                state.info.dropdownMenu.splice(0,state.info.dropdownMenu.length / 2)
                 let menu = findTree(state.menus, route.fullPath.substr(1), 'url'), menuLevels = []
                 if(route.path === '/' && menus.length > 0){
+                    action.selectMenuModule('')
                     selectMenu(menus[0].id)
-                    return state.menuModule + ''
+                    return state.menuModule
                 } else if (menu) {
                     menuLevels = findParent(state.menus, menu.pid)
                     let menuId
@@ -77,6 +80,7 @@
                     }
                     menuLevels.push(menu)
                     if (menu.pid === 0) {
+                        action.sidebarVisible(false)
                         action.selectMenuModule(menu.id)
                     }
                     if(menuLevels.length > 1){
@@ -95,15 +99,18 @@
                 }
             })
             function selectMenuModule(val) {
+
                 for (var i = 0; i < menus.length; i++) {
                     if (menus[i].id == val && menus[i].children) {
                         action.sidebarVisible(true)
                         let url = defaultMenu(menus[i].children)
-                        if (url) {
+                        if (url && (action.getComponentIndex(route.fullPath) === -1 || linkMenuBool)) {
+                            linkMenuBool = false
                             link(url)
                         }
                         break;
                     } else {
+
                         action.sidebarVisible(false)
                     }
 
@@ -116,6 +123,7 @@
 
             //选择菜单
             function selectMenu(index, indexPath) {
+                linkMenuBool = true
                 let menu = findTree(menus, index, 'id')
                 if(!state.menuModule){
                     selectMenuModule(index)
@@ -123,6 +131,7 @@
                 action.selectMenuModule(index)
                 if (!menu.children) {
                     link(menu.url)
+
                 }
             }
 

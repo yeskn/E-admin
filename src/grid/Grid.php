@@ -35,6 +35,7 @@ use think\Model;
  * @method $this bordered(bool $bool = true) 是否展示外边框和列边框
  * @method $this fit(bool $bool) 列的宽度是否自撑开
  * @method $this quickSearch(bool $bool = true) 快捷搜索
+ * @method $this quickSearchText(string $string) 快捷提示文本内容
  * @method $this hideDeleteButton(bool $bool = true) 隐藏删除按钮
  * @method $this hideTrashed(bool $bool = true) 隐藏回收站
  * @method $this hideTools(bool $bool = true) 隐藏工具栏

@@ -137,6 +137,7 @@ class Select extends Field
      * 联动select
      * @param \Closure $select
      * @param $closure
+     * @return Select
      */
     public function load(\Closure $select,$closure)
     {
@@ -162,6 +163,7 @@ class Select extends Field
             $this->successCode($options);
         }
         $this->params(['eadmin_field' => $this->bindAttr('modelValue')] + $this->formItem->form()->getCallMethod());
+        return $this;
     }
     /**
      * 设置选项数据

@@ -33,18 +33,21 @@
             function changeHandel(val) {
                 if(props.params){
                     ctx.emit('update:loadField','')
-                    request({
-                        url: '/eadmin.rest',
-                        method:'post',
-                        params: Object.assign(props.params, {eadminSelectLoad: true, eadmin_id: val}),
-                    }).then(res=>{
-                        ctx.emit('update:loadOptionField',res.data)
-                        if(findTree(res.data,loadFieldValue,'id')){
-                            ctx.emit('update:loadField',loadFieldValue)
-                        }else{
-                            ctx.emit('update:loadField','')
-                        }
-                    })
+                    ctx.emit('update:loadOptionField',[])
+                    if(val){
+                        request({
+                            url: '/eadmin.rest',
+                            method:'post',
+                            params: Object.assign(props.params, {eadminSelectLoad: true, eadmin_id: val}),
+                        }).then(res=>{
+                            ctx.emit('update:loadOptionField',res.data)
+                            if(findTree(res.data,loadFieldValue,'id')){
+                                ctx.emit('update:loadField',loadFieldValue)
+                            }else{
+                                ctx.emit('update:loadField','')
+                            }
+                        })
+                    }
                 }
             }
             return {

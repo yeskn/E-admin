@@ -24,13 +24,13 @@
 
 <script>
     import {useRoute} from 'vue-router'
-    import {defineComponent, inject,computed} from 'vue'
+    import {defineComponent, inject} from 'vue'
     import headerTop from './headerTop.vue'
     import Sidebar from './sidebar/sidebar.vue'
     import render from '@/components/render.vue'
     import breadcrumb from '@/components/breadcrumb.vue'
     import tagsView from './tagsView.vue'
-    import { store ,action} from '@/store'
+    import { store} from '@/store'
     export default defineComponent({
         name: "index",
         components: {

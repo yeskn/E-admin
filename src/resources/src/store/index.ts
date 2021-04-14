@@ -1,7 +1,7 @@
 import {reactive, toRaw} from "vue";
 import request from '@/utils/axios'
-import {findTree,setObjectValue} from '@/utils'
-import {response} from "express";
+import {findTree, forEach, setObjectValue} from '@/utils'
+
 
 export const store = Symbol()
 // 使用 reactive 函数完成响应式转换
@@ -90,8 +90,10 @@ const action = {
     },
     //设置主内容组件
     component: function (data: object, url: string) {
+
         state.component = null
         const index = action.getComponentIndex(url)
+
         for (let i in states.proxyData) {
             // @ts-ignore
             delete states.proxyData[i]
@@ -138,6 +140,7 @@ const action = {
             //@ts-ignore
             state.mainDescription = states.mainComponent[index].description || ''
         }
+
         action.loading(false)
     },
     //关闭错误页面
@@ -198,6 +201,7 @@ const action = {
                 method: 'post',
                 data: data
             }).then((res: any) => {
+                states.menuModule = ''
                 states.mainComponent = []
                 states.componentVariable = []
                 resolve(res)
