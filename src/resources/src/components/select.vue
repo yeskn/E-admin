@@ -37,7 +37,6 @@
                     if(val){
                         request({
                             url: '/eadmin.rest',
-                            method:'post',
                             params: Object.assign(props.params, {eadminSelectLoad: true, eadmin_id: val}),
                         }).then(res=>{
                             ctx.emit('update:loadOptionField',res.data)
