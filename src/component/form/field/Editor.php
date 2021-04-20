@@ -74,4 +74,16 @@ class Editor extends Field
         $this->attr('width', $number);
         return $this;
     }
+
+	/**
+	 * 编辑器自定义选项
+	 * @param string $tool
+	 */
+    public function toolbar($tool = 'undo redo | styleselect | bold italic |
+				alignleft | aligncenter | alignright | bullist | numlist | outdent | indent | removeformat | subscript | superscript
+				fontsize_formats | cut | copy | paste | forecolor')
+	{
+		$this->attr('toolbar', $tool);
+		return $this;
+	}
 }
