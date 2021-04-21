@@ -466,7 +466,7 @@ class Form extends Field
      * 添加一行布局
      * @param string $title
      * @param \Closure $closure
-     * @return $this
+     * @return Row
      */
     public function row(\Closure $closure, string $title = '')
     {
@@ -481,7 +481,7 @@ class Form extends Field
             $column->setWhere($item->getWhere());
         }
         $this->push($row);
-        return $this;
+        return $row;
     }
 
     /**
