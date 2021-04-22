@@ -39,15 +39,18 @@ trait WatchForm
     protected function watchCall($data)
     {
         if (Request::has('eadmin_form_watch')) {
-            $watch   = new \Eadmin\form\Watch($data['form']);
-            $closure = $this->watchs[$data['field']];
-            $watch->set($data['field'],$data['newValue']);
-            call_user_func_array($closure, [$data['newValue'], $watch, $data['oldValue']]);
-            $this->successCode([
-                'form'      => $watch->get(),
-                'showField' => $watch->getShowField(),
-                'hideField' => $watch->getHideField(),
-            ]);
+            if (isset($data['newValue'], $data['oldValue'])) {
+				$watch   = new \Eadmin\form\Watch($data['form']);
+				$closure = $this->watchs[$data['field']];
+				$watch->set($data['field'],$data['newValue']);
+				call_user_func_array($closure, [$data['newValue'], $watch, $data['oldValue']]);
+				$this->successCode([
+					'form'      => $watch->get(),
+					'showField' => $watch->getShowField(),
+					'hideField' => $watch->getHideField(),
+				]);
+			}
+
         }
     }
 }
