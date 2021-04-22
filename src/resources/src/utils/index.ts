@@ -1,7 +1,10 @@
 import {isExternal} from "./validate";
 import router from '@/router'
 import request from '@/utils/axios'
-
+import {useRoute} from "vue-router";
+import {action} from "@/store";
+// @ts-ignore
+import md5 from 'js-md5'
 export function findParent(datas: Array<any>, pid: string) {
     let list = [], find
     do {
@@ -89,7 +92,16 @@ export function fileIcon(path: string) {
         return ''
     }
 }
-
+export function appendCss(url,css,cache) {
+    const style = document.createElement('style')
+    style.type = 'text/css'
+    style.innerHTML = css
+    if(cache){
+        action.cacheCss(url,css)
+    }
+    style.setAttribute('data-key', 'eadmin_style_' + md5(url))
+    document.getElementsByTagName('head')[0].appendChild(style)
+}
 export function setObjectValue(obj, path, value) {
     const arr = path.split('.')
     const len = arr.length - 1

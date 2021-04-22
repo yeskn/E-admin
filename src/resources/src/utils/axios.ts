@@ -72,7 +72,16 @@ service.interceptors.response.use(
                 //
                 // })
             }else if(res.code == 44000){
-                router.replace('/')
+                ElMessage({
+                    message: res.message || 'Error',
+                    type: 'error',
+                    duration: 3 * 1000,
+                    onClose: function () {
+                        if(res.method == 'GET') {
+                            router.replace('/')
+                        }
+                    }
+                })
             } else if (res.code == 80020) {
                 ElMessage({
                     showClose: true,

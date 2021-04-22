@@ -1,4 +1,6 @@
 import {useRoute} from 'vue-router'
+import {action} from '@/store'
+import {appendCss} from '@/utils'
 // @ts-ignore
 import md5 from 'js-md5'
 
@@ -21,15 +23,8 @@ export const splitCode = (codeStr: string) => {
     const css = getSource(codeStr, 'style')
     const template = getSource(codeStr, 'template')
     if (css) {
-        const style = document.createElement('style')
-        style.type = 'text/css'
-        // style.id = this.id;
-        style.innerHTML = css
         const route = useRoute()
-        if(route){
-            style.setAttribute('data-key', 'eadmin_style_' + md5(route.path))
-            document.getElementsByTagName('head')[0].appendChild(style)
-        }
+        appendCss(route.path,css,true)
     }
     return {
         ...new Function(script)(), template

@@ -106,7 +106,7 @@ class Detail extends Html
      */
     public function card($title, \Closure $closure, $md = 24)
     {
-        $card   = $this->createCard()->header("<b>{$title}</b>");
+        $card   = $this->createCard()->header(Html::create($title)->tag('b'));
         $fields = $this->collectFields($closure);
         $row    = new Row();
         $row->gutter(5);

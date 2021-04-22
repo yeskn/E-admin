@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import {defineComponent,ref,computed} from "vue";
+import {defineComponent,ref} from "vue";
 import {lastName,fileIcon} from '@/utils'
 export default defineComponent({
   name: 'EadminDownloadFile',
