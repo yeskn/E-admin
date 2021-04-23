@@ -74,15 +74,18 @@ abstract class Component implements \JsonSerializable
         $this->attribute = array_merge($this->attribute, $attrs);
         return $this;
     }
-    public function auth($eadmin_class,$eadmin_function,$method='get'){
+
+    public function auth($eadmin_class, $eadmin_function, $method = 'get')
+    {
         //权限
-        $res = Admin::check($eadmin_class,$eadmin_function,$method);
+        $res = Admin::check($eadmin_class, $eadmin_function, $method);
 
         $field = Str::random(30, 3);
-        $this->bind($field,1);
-        $this->where($field,$res ? 1:0);
+        $this->bind($field, 1);
+        $this->where($field, $res ? 1 : 0);
         return $this;
     }
+
     public function removeAttr($name)
     {
         unset($this->attribute[$name]);
@@ -228,6 +231,19 @@ abstract class Component implements \JsonSerializable
         }
         return $this;
     }
+
+    /**
+     * 条件显示
+     * @param $condition
+     * @return Component
+     */
+    public function whenShow($condition)
+    {
+        $field = Str::random(30, 3);
+        $this->bind($field,  $condition ? 1 : 0);
+        return $this->where($field, $op, 1, $logic);
+    }
+
     /**
      * 条件执行
      * @param $condition
@@ -235,18 +251,19 @@ abstract class Component implements \JsonSerializable
      * @param \Closure|null $other
      * @return $this
      */
-    public function when($condition, \Closure $closure, $other = null){
+    public function when($condition, \Closure $closure, $other = null)
+    {
         $res = null;
         if ($condition) {
-            $res = $closure($this,$condition);
-        }else{
+            $res = $closure($this, $condition);
+        } else {
             if ($other instanceof \Closure) {
                 $res = $other($this, $condition);
             }
         }
-        if($res){
+        if ($res) {
             return $res;
-        }else{
+        } else {
             return $this;
         }
     }
@@ -255,16 +272,16 @@ abstract class Component implements \JsonSerializable
     {
         $this->attribute['key'] = Str::random(30, 3);
         return [
-            'name'          => $this->name,
-            'where'         => $this->where,
-            'map'           => $this->map,
-            'bind'          => $this->bind,
-            'attribute'     => $this->attribute,
-            'modelBind'     => $this->modelBind,
+            'name' => $this->name,
+            'where' => $this->where,
+            'map' => $this->map,
+            'bind' => $this->bind,
+            'attribute' => $this->attribute,
+            'modelBind' => $this->modelBind,
             'bindAttribute' => $this->bindAttribute,
-            'content'       => $this->content,
-            'event'         => $this->event,
-            'directive'     => $this->directive,
+            'content' => $this->content,
+            'event' => $this->event,
+            'directive' => $this->directive,
         ];
     }
 }
