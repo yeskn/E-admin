@@ -33,10 +33,7 @@ class BaseModel extends Model
         } else {
             $query->order("{$id} desc");
         }
-        //默认不包含软删除数据
-        if (in_array('delete_time', $tableFields)) {
-            $query->whereNull('delete_time');
-        }
+       
     }
 
     //分页条件

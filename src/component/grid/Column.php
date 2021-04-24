@@ -194,7 +194,7 @@ class Column extends Component
 			$clone = clone $this;
 			$value = call_user_func_array($this->closure, [$originValue, $data, $clone]);
 			if ($value instanceof self) {
-				$value = call_user_func_array($clone->getClosure(), [$val, $rowData, $clone]);
+				$value = call_user_func_array($clone->getClosure(), [$originValue, $data, $clone]);
 			}
 			if (is_string($value) || is_numeric($value)) {
 				$this->exportData = $value;
@@ -397,18 +397,25 @@ class Column extends Component
 	{
 		return $this->totalRow ? $this->total : false;
 	}
-
-	/**
-	 * 文件显示
-	 * @return Column
-	 */
-	public function file()
-	{
-		return $this->display(function ($val) {
-			$file = new DownloadFile();
-			return $file->url($val);
-		});
-	}
+    /**
+     * 文件显示
+     * @return $this
+     */
+    public function file()
+    {
+        return $this->display(function ($vals) {
+            if(is_string($vals)){
+                $vals = [$vals];
+            }
+            $html = Html::create()->tag('div');
+            foreach ($vals as $val){
+                $file = new DownloadFile();
+                $file->url($val);
+                $html->content($file);
+            }
+            return $html;
+        });
+    }
 
 	/**
 	 * 追加前面

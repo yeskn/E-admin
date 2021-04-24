@@ -8,6 +8,8 @@
 
 namespace Eadmin\component\basic;
 
+use Eadmin\component\Component;
+
 /**
  * Class DownloadFile
  * @package Eadmin\component\basic

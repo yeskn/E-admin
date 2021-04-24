@@ -182,6 +182,9 @@
                     }else{
                        eval('mapData = modelValue.'+field + ' || []')
                     }
+                    if(!Array.isArray(mapData)){
+                        mapData = []
+                    }
                     return mapData.map(item => {
                         for (let attr in data.map.attribute) {
                             attribute[attr] = item[data.map.attribute[attr]]

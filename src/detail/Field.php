@@ -9,6 +9,7 @@
 namespace Eadmin\detail;
 
 
+use Eadmin\component\basic\DownloadFile;
 use Eadmin\component\basic\Html;
 use Eadmin\component\basic\Tag;
 use Eadmin\component\basic\Tip;
@@ -117,6 +118,25 @@ class Field extends Column
             return Rate::create(null, $val)->max($max)->disabled();
         });
         return $this;
+    }
+    /**
+     * 文件显示
+     * @return $this
+     */
+    public function file()
+    {
+        return $this->display(function ($vals) {
+            if(is_string($vals)){
+                $vals = [$vals];
+            }
+            $html = Html::create()->tag('div');
+            foreach ($vals as $val){
+                $file = new DownloadFile();
+                $file->url($val);
+                $html->content($file);
+            }
+            return $html;
+        });
     }
 
     /**

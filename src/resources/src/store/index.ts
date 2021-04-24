@@ -1,6 +1,6 @@
 import {reactive, toRaw} from "vue";
 import request from '@/utils/axios'
-import {findTree, forEach, setObjectValue} from '@/utils'
+import {findTree, appendCss, setObjectValue} from '@/utils'
 
 
 export const store = Symbol()
@@ -18,6 +18,7 @@ const states = reactive({
     //主内容组件渲染
     mainLoading: false,
     mainComponent: [],
+    mainComponentCss: [],
     mainTitle: '',
     mainDescription: '',
     component: null,
@@ -74,13 +75,35 @@ const action = {
 
         }
     },
+    cacheCss(url:string,css){
+        const index = action.getCacheCssIndex(url)
+        if (index === -1) {
+            states.mainComponentCss.push({
+                // @ts-ignore
+                url : url,
+                // @ts-ignore
+                css : [css],
+            })
+        }else{
+            // @ts-ignore
+            states.mainComponentCss[index].css.push(css)
+        }
+    },
+    getCacheCssIndex(url: string) {
+        return states.mainComponentCss.findIndex(item => {
+            // @ts-ignore
+            return item.url === url
+        })
+    },
     device(device:string){
         states.device = device
     },
     clearComponent(url: string) {
-        const index = action.getComponentIndex(url)
+        let index = action.getComponentIndex(url)
         states.mainComponent.splice(index, 1)
         states.componentVariable.splice(index, 1)
+        index = action.getCacheCssIndex(url)
+        states.mainComponentCss.splice(index, 1)
     },
     getComponentIndex(url: string) {
         return states.mainComponent.findIndex(item => {
@@ -99,6 +122,7 @@ const action = {
             delete states.proxyData[i]
         }
         if (index === -1) {
+
             // @ts-ignore
             const menu = findTree(state.menus, url.substr(1), 'url')
             if (menu) {
@@ -130,6 +154,13 @@ const action = {
             // @ts-ignore
             state.mainDescription = data.bind.eadmin_description || ''
         } else {
+            const key = action.getCacheCssIndex(url)
+            if(key > -1){
+                // @ts-ignore
+                states.mainComponentCss[key].css.forEach(css=>{
+                    appendCss(url,css,false)
+                })
+            }
             // @ts-ignore
             for (let field in states.componentVariable[index].proxyData) {
                 // @ts-ignore
@@ -139,6 +170,7 @@ const action = {
             state.mainTitle = states.mainComponent[index].title || ''
             //@ts-ignore
             state.mainDescription = states.mainComponent[index].description || ''
+
         }
 
         action.loading(false)

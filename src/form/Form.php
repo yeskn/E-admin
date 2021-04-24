@@ -466,12 +466,16 @@ class Form extends Field
      * 添加一行布局
      * @param string $title
      * @param \Closure $closure
-     * @return Row
+     * @param int $gutter
+     * @return $this
      */
-    public function row(\Closure $closure, string $title = '')
+    public function row(\Closure $closure, string $title = '',$gutter = 0)
     {
 
         $row = new Row();
+        if($gutter > 0){
+            $row->gutter($gutter);
+        }
         $formItems = $this->collectFields($closure);
         if(!empty($title)){
             $this->push("<h4 style='font-size:16px;'>{$title}</h4>");
@@ -481,7 +485,7 @@ class Form extends Field
             $column->setWhere($item->getWhere());
         }
         $this->push($row);
-        return $row;
+        return $this;
     }
 
     /**
