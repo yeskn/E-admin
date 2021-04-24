@@ -384,7 +384,7 @@ class Form extends Field
     {
         $validateField = $this->bindAttr('validate');
 
-        if ($this->steps) {
+        if ($this->steps && isset($this->steps->content['default'])) {
             $active = $this->steps->bindAttr('active');
             $count = count($this->steps->content['default']);
             for ($i = 1; $i <= $count; $i++) {
