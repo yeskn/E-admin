@@ -24,7 +24,8 @@ const states = reactive({
     component: null,
     componentVariable: [],
     proxyData: {},
-
+    //是否刷新
+    refresh:false,
     //错误信息
     errorPage: {
         visable: false,
@@ -45,6 +46,10 @@ const states = reactive({
 export const state = states
 //操作方法
 const action = {
+    //刷新
+    refresh(bool:boolean){
+        states.refresh = bool
+    },
     //设置面包屑
     setBreadcrumb(data: any) {
         states.breadcrumb = data

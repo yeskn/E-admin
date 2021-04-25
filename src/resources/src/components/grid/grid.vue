@@ -176,6 +176,8 @@
             const columns = ref(props.columns)
             const tableData = ref(props.data)
             const total = ref(props.pagination.total || 0)
+            const tools = ref(props.tools)
+            const header = ref(props.header)
             let page = 1
             let size = props.pagination.pageSize
             let sortableParams = {}
@@ -374,6 +376,8 @@
                     tableData.value = res.data
                     triggerRef(tableData)
                     total.value = res.total
+                    header.value = res.header
+                    tools.value = res.tools
                 }).finally(() => {
                     ctx.emit('update:modelValue', false)
                 })
@@ -504,7 +508,9 @@
                 tableChange,
                 trashedHandel,
                 trashed,
-                exportData
+                exportData,
+                header,
+                tools,
             }
         }
     })

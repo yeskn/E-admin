@@ -91,6 +91,9 @@ service.interceptors.response.use(
                 })
                 if (res.url) {
                     if (res.url == 'back') {
+                        if (res.refresh) {
+                            action.refresh(true)
+                        }
                         router.back()
                     } else {
                         link(res.url)
@@ -115,7 +118,11 @@ service.interceptors.response.use(
                 })
                 if (res.url) {
                     if (res.url == 'back') {
+                        if (res.refresh) {
+                            action.refresh(true)
+                        }
                         router.back()
+                        return
                     } else {
                         link(res.url)
                         return

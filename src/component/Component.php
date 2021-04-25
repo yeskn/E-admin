@@ -241,7 +241,7 @@ abstract class Component implements \JsonSerializable
     {
         $field = Str::random(30, 3);
         $this->bind($field,  $condition ? 1 : 0);
-        return $this->where($field, $op, 1, $logic);
+        return $this->where($field,  1);
     }
 
     /**

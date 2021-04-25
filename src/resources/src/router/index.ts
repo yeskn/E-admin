@@ -6,6 +6,7 @@ import md5 from 'js-md5'
 import Layout from '@/layout/index.vue'
 import Login from '@/layout/login.vue'
 import Im from '@/components/im/index.vue'
+import {refresh} from '@/utils'
 let asyncCmponent:any
 const routes = [
     {
@@ -55,6 +56,10 @@ router.afterEach((to:RouteLocationNormalized)=>{
     }
     if(asyncCmponent && to.fullPath !== '/'){
         action.component(asyncCmponent,to.fullPath)
+    }
+    if(state.refresh){
+        action.refresh(false)
+        refresh()
     }
 })
 function loadComponent(url:string){
