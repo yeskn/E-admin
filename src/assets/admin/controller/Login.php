@@ -90,7 +90,7 @@ class Login extends Controller
                'webName'=>$data['web_name'],
                'webMiitbeian'=>$data['web_miitbeian'],
                'webCopyright'=>$data['web_copyright'],
-               'deBug'=>env('APP_DEBUG')
+               'deBug'=>(bool) env('APP_DEBUG')
            ]);
         }
     }

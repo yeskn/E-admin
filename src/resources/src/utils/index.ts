@@ -1,7 +1,7 @@
 import {isExternal} from "./validate";
 import router from '@/router'
 import request from '@/utils/axios'
-import {useRoute} from "vue-router";
+
 import {action} from "@/store";
 // @ts-ignore
 import md5 from 'js-md5'
@@ -60,9 +60,7 @@ export function unique(arrs) {
 
 //刷新
 export function refresh() {
-    setTimeout(() => {
-        router.push({path: '/refresh', replace: true})
-    }, 10)
+    router.push({path: '/refresh', replace: true})
 }
 
 //跳转

@@ -200,8 +200,8 @@ class Admin extends Controller
         $data['webLogo'] = sysconf('web_logo');
         $data['webName'] = sysconf('web_name');
         $data['dropdownMenu'] = [
-            DropdownItem::create(Dialog::create('个人信息')->title('个人信息')->form($this->editInfo())),
-            DropdownItem::create(Dialog::create('修改密码')->title('修改密码')->form($this->updatePassword())),
+            DropdownItem::create(Dialog::create('个人信息')->title('个人信息')->form($this->editInfo())->appendToBody(true)),
+            DropdownItem::create(Dialog::create('修改密码')->title('修改密码')->form($this->updatePassword())->appendToBody(true)),
         ];
         $this->successCode($data);
     }

@@ -636,6 +636,9 @@ class Form extends Field
                 $this->except([$prop]);
             }
             $component->type($name);
+            if($name === 'password'){
+                $component->showPassword();
+            }
         }
         if ($name == 'cascader') {
             $component = $class::create();
