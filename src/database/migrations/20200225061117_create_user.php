@@ -31,6 +31,7 @@ class CreateUser extends Migrator
         $table = $this->table('user', ['engine' => 'InnoDB', 'collation' => 'utf8mb4_unicode_ci'])->setComment('用户表');
         $table->addColumn(Column::string('avatar', 500)->setDefault('')->setComment('头像'));
         $table->addColumn(Column::string('nickname', 50)->setDefault('')->setComment('昵称'));
+        $table->addColumn(Column::string('password')->setDefault('')->setComment('密码'));
         $table->addColumn(Column::char('phone', 20)->setDefault('')->setComment('手机号码'));
         $table->addColumn(Column::string('openid', 100)->setDefault('')->setComment('小程序微信openid'));
         $table->addColumn(Column::char('unionid', 100)->setDefault('')->setComment('微信unionid'));
