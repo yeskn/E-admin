@@ -132,7 +132,7 @@ class TokenService
         if (empty($token)) {
             $token = Request::header('Authorization');
             if (Request::has('Authorization')) {
-                $token = rawurldecode(Request::get('Authorization'));
+                $token = rawurldecode(Request::param('Authorization'));
             }
         }
         $str = openssl_decrypt($token, 'aes-256-cbc', $this->key, 0, self::IV);
