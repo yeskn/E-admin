@@ -1,6 +1,6 @@
 <template>
     <slot>
-        <div v-html="value"></div>
+        <span v-html="value"></span>
     </slot>
 </template>
 
