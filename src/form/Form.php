@@ -304,9 +304,9 @@ class Form extends Field
 
         foreach ($component->bindAttribute as $attr => $field) {
             $value = $this->drive->getData($field, $data);
-            if (is_null($value) && ($component instanceof DatePicker || $component instanceof TimePicker) && $startField = $component->bindAttr('startField')) {
-                $value = [];
-            }
+//            if (is_null($value) && ($component instanceof DatePicker || $component instanceof TimePicker) && $startField = $component->bindAttr('startField')) {
+//                $value = [];
+//            }
             $defaultValue = $component->getDefault();
             $componentValue = $component->getValue();
             //设置default缺省值
@@ -322,7 +322,7 @@ class Form extends Field
             if ($attr != 'modelValue' && $component->bind($field)) {
                 $value = $component->bind($field);
             }
-            $this->setData($field, $value ?? '');
+            $this->setData($field, $value ?? null);
             if (is_null($data)) {
                 $component->bindAttr($attr, $this->bindAttr('model') . '.' . $field, true);
             }
@@ -340,14 +340,21 @@ class Form extends Field
     private function getPickerValue($component, $field, $componentValue)
     {
         $value = $componentValue;
+
         if ($component instanceof DatePicker || $component instanceof TimePicker) {
+
             $startField = $component->bindAttr('startField');
             $endField = $component->bindAttr('endField');
+
             if ($field == $startField && isset($componentValue[0])) {
                 $value = $componentValue[0];
+
             }
+
+
             if ($field == $endField && isset($componentValue[1])) {
                 $value = $componentValue[1];
+
             }
         }
         return $value;
