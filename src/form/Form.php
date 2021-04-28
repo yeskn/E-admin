@@ -304,9 +304,6 @@ class Form extends Field
 
         foreach ($component->bindAttribute as $attr => $field) {
             $value = $this->drive->getData($field, $data);
-//            if (is_null($value) && ($component instanceof DatePicker || $component instanceof TimePicker) && $startField = $component->bindAttr('startField')) {
-//                $value = [];
-//            }
             $defaultValue = $component->getDefault();
             $componentValue = $component->getValue();
             //设置default缺省值
@@ -321,6 +318,12 @@ class Form extends Field
             }
             if ($attr != 'modelValue' && $component->bind($field)) {
                 $value = $component->bind($field);
+            }
+            //级联relation解析关联数据bind回显
+            if($component instanceof Cascader && $attr == 'relation'){
+                $cascaderField = explode('.',$component->bindAttr('modelValue'));
+                $cascaderField = array_pop($cascaderField);
+                $this->setData($cascaderField, $component->parseRelationData($value));
             }
             $this->setData($field, $value ?? null);
             if (is_null($data)) {
