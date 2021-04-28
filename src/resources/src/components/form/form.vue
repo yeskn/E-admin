@@ -20,7 +20,6 @@
     import { store } from '@/store'
     import { useHttp } from '@/hooks'
     import { forEach } from '@/utils'
-    import request from '@/utils/axios'
     export default defineComponent({
         components:{
             render,manyItem
@@ -93,7 +92,7 @@
             //watch ajax请求
             function watchAjax(field,newValue,oldValue){
                 return new Promise((resolve,reject) => {
-                    request({
+                    http({
                         url: props.setAction,
                         method: props.setActionMethod,
                         data: {
