@@ -20,6 +20,7 @@ use Eadmin\component\basic\Tabs;
 use Eadmin\component\form\Field;
 use Eadmin\component\form\field\Cascader;
 use Eadmin\component\form\field\DatePicker;
+use Eadmin\component\form\field\Display;
 use Eadmin\component\form\field\Input;
 use Eadmin\component\form\field\Select;
 use Eadmin\component\form\field\TimePicker;
@@ -324,6 +325,10 @@ class Form extends Field
                 $cascaderField = explode('.',$component->bindAttr('modelValue'));
                 $cascaderField = array_pop($cascaderField);
                 $this->setData($cascaderField, $component->parseRelationData($value));
+            }
+            //display组件定义显示
+            if($component instanceof Display && $component->getClosure() instanceof \Closure){
+                $value = call_user_func($component->getClosure(),$value,$data);
             }
             $this->setData($field, $value ?? null);
             if (is_null($data)) {
