@@ -532,7 +532,7 @@ class Grid extends Component
         if (Request::get('export_type') == 'all') {
             set_time_limit(0);
             if ($excel instanceof Excel) {
-                $data = $this->drive->db()->select()->toArray();
+                $data = $this->drive->db()->select();
                 $exportData = $this->parseColumn($data, true);
                 $excel->rows($exportData)->export();
             } else {
