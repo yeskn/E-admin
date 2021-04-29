@@ -330,7 +330,11 @@ class Form extends Field
             if($component instanceof Display && $component->getClosure() instanceof \Closure){
                 $value = call_user_func($component->getClosure(),$value,$data);
             }
-            $this->setData($field, $value ?? '');
+            if ($component instanceof DatePicker || $component instanceof TimePicker) {
+                $this->setData($field, $value ?? null);
+            }else{
+                $this->setData($field, $value ?? '');
+            }
             if (is_null($data)) {
                 $component->bindAttr($attr, $this->bindAttr('model') . '.' . $field, true);
             }
