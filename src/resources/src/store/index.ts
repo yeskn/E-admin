@@ -1,4 +1,4 @@
-import {reactive, toRaw} from "vue";
+import {reactive} from "vue";
 import request from '@/utils/axios'
 import {findTree, appendCss, setObjectValue} from '@/utils'
 
@@ -118,14 +118,12 @@ const action = {
     },
     //设置主内容组件
     component: function (data: object, url: string) {
-
         state.component = null
         const index = action.getComponentIndex(url)
-
-        for (let i in states.proxyData) {
-            // @ts-ignore
-            delete states.proxyData[i]
-        }
+        // for (let i in states.proxyData) {
+        //     // @ts-ignore
+        //     delete states.proxyData[i]
+        // }
         if (index === -1) {
 
             // @ts-ignore
