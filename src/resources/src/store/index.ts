@@ -118,14 +118,15 @@ const action = {
     },
     //设置主内容组件
     component: function (data: object, url: string) {
+
         state.component = null
         const index = action.getComponentIndex(url)
-        // for (let i in states.proxyData) {
-        //     // @ts-ignore
-        //     delete states.proxyData[i]
-        // }
-        if (index === -1) {
 
+        if (index === -1) {
+            for (let i in state.proxyData) {
+                // @ts-ignore
+                delete state.proxyData[i]
+            }
             // @ts-ignore
             const menu = findTree(state.menus, url.substr(1), 'url')
             if (menu) {
@@ -136,7 +137,6 @@ const action = {
                     // @ts-ignore
                     proxyData: {}
                 })
-
                 states.mainComponent.push({
                     // @ts-ignore
                     title: menu.name || url,
@@ -175,8 +175,9 @@ const action = {
             state.mainDescription = states.mainComponent[index].description || ''
 
         }
-
+        console.log(state.proxyData)
         action.loading(false)
+
     },
     //关闭错误页面
     errorPageClose() {
