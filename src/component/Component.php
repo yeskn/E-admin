@@ -79,10 +79,7 @@ abstract class Component implements \JsonSerializable
     {
         //权限
         $res = Admin::check($eadmin_class, $eadmin_function, $method);
-
-        $field = Str::random(30, 3);
-        $this->bind($field, 1);
-        $this->where($field, $res ? 1 : 0);
+        $this->whenShow($res);
         return $this;
     }
 
@@ -227,22 +224,18 @@ abstract class Component implements \JsonSerializable
                 $field = $this->bindAttr('modelValue');
                 $content->eventSuccess([$field => false]);
             }
-            $this->content[$name][] = $content;
+            if ($content instanceof Component) {
+                if($content->componentVisible){
+                    $this->content[$name][] = $content;
+                }
+            }else{
+                $this->content[$name][] = $content;
+            }
         }
         return $this;
     }
 
-    /**
-     * 条件显示
-     * @param $condition
-     * @return Component
-     */
-    public function whenShow($condition)
-    {
-        $field = Str::random(30, 3);
-        $this->bind($field,  $condition ? 1 : 0);
-        return $this->where($field,  1);
-    }
+
 
     /**
      * 条件执行
