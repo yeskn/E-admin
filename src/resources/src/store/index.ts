@@ -175,7 +175,7 @@ const action = {
             state.mainDescription = states.mainComponent[index].description || ''
 
         }
-        console.log(state.proxyData)
+       // console.log(state.proxyData)
         action.loading(false)
 
     },

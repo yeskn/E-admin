@@ -233,8 +233,10 @@
                         let expression = whereCompile(item.where.AND, item.where.OR,scope)
                         if (typeof (item) == 'object') {
                             expression = expression + ' ? renderComponent(item,scope) : null'
+                         //   expression =  'renderComponent(item,scope) '
                         } else {
                             expression = expression + ' ? h({setup(){return {...modelValue}},template:item}) : null'
+                         //   expression =   'h({setup(){return {...modelValue}},template:item}) '
                         }
                         return eval(expression)
                     } else {
