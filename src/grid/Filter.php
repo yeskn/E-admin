@@ -440,8 +440,8 @@ class Filter
                 $field   = str_replace('.', '__', $field);
                 $fields  = explode('__', $field);
                 $dbField = array_pop($fields);
+                $requestField = $field;
                 if (count($fields) > 0) {
-
                     $func = function (Filter $filter) use ($dbField, $field, $method) {
                         $filter->filterField($method, $dbField, $field);
                     };
@@ -455,7 +455,6 @@ class Filter
                     $this->relationWhere($relation, $func);
                     return $requestField;
                 }
-                $requestField = $field;
             } elseif (is_array($field)) {
                 $requestField = array_shift($field);
                 $dbField      = $field;

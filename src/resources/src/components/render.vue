@@ -55,14 +55,14 @@
                         data.attribute['onUpdate:'+modelBind] = value => {
                             if(data.attribute.valueFormat){
                                 //时间特殊处理
-                                if(value == null){
+                                if(value == null || value == ''){
                                     slotProps.row[data.bindAttribute.startField] = null
                                     slotProps.row[data.bindAttribute.endField] = null
                                 }else{
-                                    value = dateFormat(value,data.attribute.valueFormat)
+                                    //value = dateFormat(value)
                                     if(data.attribute.hasOwnProperty('startField') && data.attribute.hasOwnProperty('endField')){
-                                        slotProps.row[data.bindAttribute.startField] = value[0]
-                                        slotProps.row[data.bindAttribute.endField] = value[1]
+                                        slotProps.row[data.bindAttribute.startField] = dateFormat(value[0],data.attribute.valueFormat)
+                                        slotProps.row[data.bindAttribute.endField] = dateFormat(value[1],data.attribute.valueFormat)
                                     }
                                 }
                             }else if(data.attribute.bindFields){
@@ -84,11 +84,11 @@
                                     expression = 'modelValue.' + data.bindAttribute.endField + ' = null'
                                     eval(expression)
                                 }else{
-                                    value = dateFormat(value,data.attribute.valueFormat)
+                                    //value = dateFormat(value)
                                     if(data.attribute.hasOwnProperty('startField') && data.attribute.hasOwnProperty('endField')){
-                                        expression = 'modelValue.' + data.bindAttribute.startField + ' = value[0]'
+                                        expression = 'modelValue.' + data.bindAttribute.startField + ' = dateFormat(value[0],data.attribute.valueFormat)'
                                         eval(expression)
-                                        expression = 'modelValue.' + data.bindAttribute.endField + ' = value[1]'
+                                        expression = 'modelValue.' + data.bindAttribute.endField + ' = dateFormat(value[1],data.attribute.valueFormat)'
                                         eval(expression)
                                     }
                                 }
@@ -222,10 +222,19 @@
             function dateFormat(value,format){
                 if(Array.isArray(value)){
                     value = value.map(item=>{
-                        return dayjs(item).format(format)
+                        if(format){
+                            return dayjs(item).format(format)
+                        }else{
+                            return dayjs(item)
+                        }
+
                     })
                 }else{
-                    value = dayjs(value).format(format)
+                    if(format){
+                        value = dayjs(value).format(format)
+                    }else{
+                        value =  dayjs(value)
+                    }
                 }
                 return value
             }

@@ -54,11 +54,11 @@ class TimePicker extends Field
     {
         if (!is_null($value)) {
             $field = $this->bindAttr('startField');
-            if ($field == $name && !isset($this->value[0])) {
+            if ($field == $name && !isset($this->value[0]) && !empty($value)) {
                 $this->default[0] = Carbon::parse($value)->toDateTimeString();
             }
             $field = $this->bindAttr('endField');
-            if ($field == $name && !isset($this->value[1])) {
+            if ($field == $name && !isset($this->value[1]) && !empty($value)) {
                 $this->default[1] = Carbon::parse($value)->toDateTimeString();
             }
         }
@@ -74,11 +74,11 @@ class TimePicker extends Field
         $type = strtolower($type);
         switch ($type) {
             case 'time':
-                $this->valueFormat('YYYY-MM-DD HH:mm:ss');
+                $this->valueFormat('HH:mm:ss');
                 break;
             case 'timerange':
                 $this->isRange();
-                $this->valueFormat('YYYY-MM-DD HH:mm:ss');
+                $this->valueFormat('HH:mm:ss');
                 break;
         }
         return $this;
