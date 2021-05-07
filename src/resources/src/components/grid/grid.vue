@@ -111,7 +111,7 @@
 </template>
 
 <script>
-    import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed,unref,toRaw} from "vue"
+    import {defineComponent, ref, watch, inject,nextTick,computed,unref} from "vue"
     import render from "@/components/render.vue"
     import {useHttp} from '@/hooks'
     import request from '@/utils/axios'
@@ -224,15 +224,18 @@
                 if(proxyData[props.filterField]){
                     filterInitData = JSON.parse(JSON.stringify(proxyData[props.filterField]))
                 }
+                actionAutoWidth()
+                eadminActionWidth.value += 30
+                dragSort()
+            })
+            function actionAutoWidth(){
                 //操作列宽度自适应
                 document.getElementsByClassName('EadminAction').forEach(item=>{
                     if(eadminActionWidth.value < item.offsetWidth){
                         eadminActionWidth.value = item.offsetWidth
                     }
                 })
-                eadminActionWidth.value += 30
-                dragSort()
-            })
+            }
             //拖拽排序
             function dragSort(){
                 if(dragTable.value){
@@ -374,10 +377,12 @@
                 }).then(res => {
                     columns.value = res.columns
                     tableData.value = res.data
-                    triggerRef(tableData)
                     total.value = res.total
                     header.value = res.header
                     tools.value = res.tools
+                    nextTick(()=>{
+                        actionAutoWidth()
+                    })
                 }).finally(() => {
                     ctx.emit('update:modelValue', false)
                 })
