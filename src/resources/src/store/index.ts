@@ -105,10 +105,14 @@ const action = {
     },
     clearComponent(url: string) {
         let index = action.getComponentIndex(url)
-        states.mainComponent.splice(index, 1)
-        states.componentVariable.splice(index, 1)
+        if(index > -1){
+            states.mainComponent.splice(index, 1)
+            states.componentVariable.splice(index, 1)
+        }
         index = action.getCacheCssIndex(url)
-        states.mainComponentCss.splice(index, 1)
+        if(index > -1) {
+            states.mainComponentCss.splice(index, 1)
+        }
     },
     getComponentIndex(url: string) {
         return states.mainComponent.findIndex(item => {
