@@ -1,5 +1,5 @@
 <script>
-    import {defineComponent, toRaw, h, resolveComponent, inject,isProxy,resolveDirective,withDirectives,getCurrentInstance,KeepAlive} from 'vue'
+    import {defineComponent, toRaw, h, resolveComponent, inject,isProxy,resolveDirective,withDirectives,getCurrentInstance,onBeforeUnmount} from 'vue'
     import {store} from '@/store'
     import {splitCode} from '@/utils/splitCode'
     import {setObjectValue} from '@/utils'
@@ -15,7 +15,7 @@
         },
         render() {
             if (this.data) {
-                this.setProxyData(this.data)
+                this.setProxyData(this.data,1)
                 const jsonRender = toRaw(this.data)
                 if (jsonRender.where.AND.length > 0 || jsonRender.where.OR.length > 0) {
                     let expression = this.whereCompile(jsonRender.where.AND, jsonRender.where.OR,this.slotProps)
@@ -30,6 +30,9 @@
             }
         },
         setup(props,ctx) {
+            onBeforeUnmount(()=>{
+                setProxyData(props.data,0)
+            })
             const state = inject(store)
             const modelValue = state.proxyData
             const renderComponent = (data, slotProps) => {
@@ -333,16 +336,19 @@
                 return expression
             }
             //赋值方法
-            function setProxyData(data){
+            function setProxyData(data,type){
                 for(let field in data.bind){
-                    if(!modelValue.hasOwnProperty(field)){
+                    if(!modelValue.hasOwnProperty(field) && type === 1){
                         modelValue[field] = data.bind[field]
+                    }
+                    if(modelValue.hasOwnProperty(field) && type === 0){
+                        delete state.proxyData[field]
                     }
                 }
                 for(let slot in data.content){
                     data.content[slot].forEach(item=>{
                         if(typeof(item) == 'object'){
-                            setProxyData(item)
+                            setProxyData(item,type)
                         }
                     })
                 }
