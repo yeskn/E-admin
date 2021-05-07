@@ -125,6 +125,9 @@ class ResourceController extends Controller
         $action   = request()->param('eadmin_function');
         $instance = app($class);
         $reflect  = new \ReflectionMethod($instance, $action);
+        $class = explode('\\',$class);
+        $controller = end($class);
+        $this->request->setController($controller);
         $data     = app()->invokeReflectMethod($instance, $reflect, $this->request->param());
         return $data;
     }
