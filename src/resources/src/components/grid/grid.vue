@@ -71,7 +71,7 @@
             </el-row>
         </div>
         <!--表格-->
-        <a-table v-else :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" :loading="loading" v-bind="$attrs" row-key="id" ref="dragTable">
+        <a-table v-else :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :expanded-row-keys="expandedRowKeys"	 :pagination="false" :loading="loading" v-bind="$attrs" row-key="id" ref="dragTable">
             <template #title v-if="header">
                 <div class="header"><render :data="header"></render></div>
             </template>
@@ -169,6 +169,7 @@
             const filterShow = ref(props.expandFilter)
             const quickSearch = ref('')
             const selectIds = ref(props.selection || [])
+            const expandedRowKeys = ref([])
             const eadminActionWidth = ref(0)
             const trashed = ref(false)
             const quickSearchOn = ctx.attrs.quickSearch
@@ -375,6 +376,12 @@
                     url: props.loadDataUrl,
                     params: globalRequestParams()
                 }).then(res => {
+                    if(ctx.attrs.defaultExpandAllRows){
+                        expandedRowKeys.value = []
+                        res.data.forEach(item=>{
+                            expandedRowKeys.value.push(item.id)
+                        })
+                    }
                     columns.value = res.columns
                     tableData.value = res.data
                     total.value = res.total
@@ -513,6 +520,7 @@
                 tableChange,
                 trashedHandel,
                 trashed,
+                expandedRowKeys,
                 exportData,
                 header,
                 tools,

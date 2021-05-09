@@ -31,7 +31,9 @@
         },
         setup(props,ctx) {
             onBeforeUnmount(()=>{
-                setProxyData(props.data,0)
+                if(props.data){
+                    setProxyData(props.data,0)
+                }
             })
             const state = inject(store)
             const modelValue = state.proxyData

@@ -26,7 +26,7 @@
             watch(value,value=>{
                 ctx.emit('update:modelValue',value)
             })
-            if(!findTree(props.options,value.value,'id')){
+            if(!ctx.attrs.multiple && !findTree(props.options,value.value,'id')){
                 value.value = ''
             }
             changeHandel(value.value)
