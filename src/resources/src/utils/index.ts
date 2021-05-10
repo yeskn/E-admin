@@ -68,7 +68,11 @@ export function link(url: string) {
     if (isExternal(url)) {
         window.open(url)
     } else {
-        router.push('/' + url)
+        if(url.indexOf('/') === 0){
+            router.push(url)
+        }else{
+            router.push('/' + url)
+        }
     }
 }
 

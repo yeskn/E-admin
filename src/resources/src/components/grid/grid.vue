@@ -115,6 +115,7 @@
     import render from "@/components/render.vue"
     import {useHttp} from '@/hooks'
     import request from '@/utils/axios'
+    import { forEach } from '@/utils'
     import {store} from '@/store'
     import {unique,deleteArr,buildURL} from '@/utils'
     import {ElMessageBox,ElMessage} from 'element-plus'
@@ -154,6 +155,10 @@
             expandFilter: Boolean,
             addButton: [Object, Boolean],
             filterField:String,
+            filterExceptField:{
+                type:Array,
+                default:[]
+            },
             params:Object,
             addParams:Object,
         },
@@ -189,7 +194,13 @@
                     page: page,
                     size: size,
                 }
-                requestParams = Object.assign(requestParams, proxyData[props.filterField],{quickSearch:quickSearch.value},route.query,props.params,props.addParams,sortableParams)
+                const filterData = JSON.parse(JSON.stringify(proxyData[props.filterField]))
+                forEach(filterData,function (val,key) {
+                    if(props.filterExceptField.indexOf(key) > -1){
+                        delete filterData[key]
+                    }
+                })
+                requestParams = Object.assign(requestParams, filterData,{quickSearch:quickSearch.value},route.query,props.params,props.addParams,sortableParams)
                 if(trashed.value){
                     requestParams = Object.assign(requestParams ,{eadmin_deleted:true})
                 }

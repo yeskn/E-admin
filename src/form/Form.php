@@ -852,6 +852,8 @@ class Form extends Field
      */
     public function except(array $fields){
         $this->exceptField =  array_merge($this->exceptField,$fields);
+        //排除字段
+        $this->attr('exceptField',$this->exceptField);
     }
     public static function extend($name, $component)
     {
@@ -860,8 +862,6 @@ class Form extends Field
 
     public function jsonSerialize()
     {
-        //排除字段
-        $this->attr('exceptField',$this->exceptField);
         $this->parseComponent();
         $this->parseSteps();
         $this->actions->render();

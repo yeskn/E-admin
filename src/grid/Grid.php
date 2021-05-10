@@ -590,6 +590,8 @@ class Grid extends Component
         if (!is_null($this->filter)) {
             $form = $this->filter->render();
             $form->eventSuccess([$this->bindAttr('modelValue') => true]);
+            //排除筛选多余字段
+            $this->attr('filterExceptField', $form->attr('exceptField'));
             $this->attr('filter', $form);
             $this->attr('filterField', $form->bindAttr('model'));
         }
