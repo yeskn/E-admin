@@ -52,7 +52,7 @@
                     let field = data.modelBind[modelBind]
                     // 本次渲染是循环属性
                     if (slotProps && slotProps.row) {
-                        expression = 'modelBind == "modelValue" && slotProps.row.'+field+' == null && (data.name === "ElTimePicker" || data.name === "ElDatePicker") ? slotProps.row.' + field + ' = slotProps.row.' + data.bindAttribute.timeValue+':null'
+                        expression = 'modelBind == "modelValue" && slotProps.row.'+field+' === null && (data.name === "ElTimePicker" || data.name === "ElDatePicker") ? slotProps.row.' + field + ' = slotProps.row.' + data.bindAttribute.timeValue+':null'
                         eval(expression)
                         expression = 'data.attribute[modelBind] = slotProps.row.' + field
                         eval(expression)
@@ -78,7 +78,7 @@
                             slotProps.row[field] = value
                         }
                     } else {
-                        expression = 'modelBind == "modelValue" && modelValue.'+field+' == null && (data.name === "ElTimePicker" || data.name === "ElDatePicker") ? modelValue.' + field + ' = modelValue.' + data.bindAttribute.timeValue+':null'
+                        expression = 'modelBind == "modelValue" && modelValue.'+field+' === null && (data.name === "ElTimePicker" || data.name === "ElDatePicker") ? modelValue.' + field + ' = modelValue.' + data.bindAttribute.timeValue+':null'
                         eval(expression)
                         expression = 'data.attribute[modelBind] = modelValue.' + field
                         eval(expression)
@@ -89,6 +89,8 @@
                                     expression = 'modelValue.' + data.bindAttribute.startField + ' = null'
                                     eval(expression)
                                     expression = 'modelValue.' + data.bindAttribute.endField + ' = null'
+                                    eval(expression)
+                                    expression = 'modelValue.' + data.bindAttribute.timeValue + ' = null'
                                     eval(expression)
                                 }else{
                                     expression = 'modelValue.' + data.bindAttribute.timeValue + ' = dateFormat(value,data.attribute.valueFormat)'
