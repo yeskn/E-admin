@@ -52,6 +52,8 @@
                     let field = data.modelBind[modelBind]
                     // 本次渲染是循环属性
                     if (slotProps && slotProps.row) {
+                        expression = 'modelBind == "modelValue" && slotProps.row.'+field+' == null && (data.name === "ElTimePicker" || data.name === "ElDatePicker") ? slotProps.row.' + field + ' = slotProps.row.' + data.bindAttribute.timeValue+':null'
+                        eval(expression)
                         expression = 'data.attribute[modelBind] = slotProps.row.' + field
                         eval(expression)
                         data.attribute['onUpdate:'+modelBind] = value => {
@@ -60,8 +62,9 @@
                                 if(value == null || value == ''){
                                     slotProps.row[data.bindAttribute.startField] = null
                                     slotProps.row[data.bindAttribute.endField] = null
+                                    slotProps.row[data.bindAttribute.timeValue] = null
                                 }else{
-                                    //value = dateFormat(value)
+                                    slotProps.row[data.bindAttribute.timeValue] = dateFormat(value,data.attribute.valueFormat)
                                     if(data.attribute.hasOwnProperty('startField') && data.attribute.hasOwnProperty('endField')){
                                         slotProps.row[data.bindAttribute.startField] = dateFormat(value[0],data.attribute.valueFormat)
                                         slotProps.row[data.bindAttribute.endField] = dateFormat(value[1],data.attribute.valueFormat)
@@ -75,6 +78,8 @@
                             slotProps.row[field] = value
                         }
                     } else {
+                        expression = 'modelBind == "modelValue" && modelValue.'+field+' == null && (data.name === "ElTimePicker" || data.name === "ElDatePicker") ? modelValue.' + field + ' = modelValue.' + data.bindAttribute.timeValue+':null'
+                        eval(expression)
                         expression = 'data.attribute[modelBind] = modelValue.' + field
                         eval(expression)
                         data.attribute['onUpdate:'+modelBind] = value => {
@@ -86,7 +91,8 @@
                                     expression = 'modelValue.' + data.bindAttribute.endField + ' = null'
                                     eval(expression)
                                 }else{
-                                    //value = dateFormat(value)
+                                    expression = 'modelValue.' + data.bindAttribute.timeValue + ' = dateFormat(value,data.attribute.valueFormat)'
+                                    eval(expression)
                                     if(data.attribute.hasOwnProperty('startField') && data.attribute.hasOwnProperty('endField')){
                                         expression = 'modelValue.' + data.bindAttribute.startField + ' = dateFormat(value[0],data.attribute.valueFormat)'
                                         eval(expression)
@@ -247,10 +253,8 @@
                         let expression = whereCompile(item.where.AND, item.where.OR,scope)
                         if (typeof (item) == 'object') {
                             expression = expression + ' ? renderComponent(item,scope) : null'
-                         //   expression =  'renderComponent(item,scope) '
                         } else {
                             expression = expression + ' ? h({setup(){return {...modelValue}},template:item}) : null'
-                         //   expression =   'h({setup(){return {...modelValue}},template:item}) '
                         }
                         return eval(expression)
                     } else {

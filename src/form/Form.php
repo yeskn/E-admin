@@ -309,13 +309,11 @@ class Form extends Field
             $componentValue = $component->getValue();
             //设置default缺省值
             if (empty($value) && $value !== 0 && !is_null($defaultValue)) {
-                $value = $defaultValue;
-                $value = $this->getPickerValue($component, $field, $value);
+                $value = $this->getPickerValue($component, $field, $defaultValue);
             }
             //value固定值
             if (!is_null($componentValue)) {
-                $value = $componentValue;
-                $value = $this->getPickerValue($component, $field, $value);
+                $value = $this->getPickerValue($component, $field, $componentValue);
             }
             if ($attr != 'modelValue' && $component->bind($field)) {
                 $value = $component->bind($field);
@@ -354,19 +352,13 @@ class Form extends Field
         $value = $componentValue;
 
         if ($component instanceof DatePicker || $component instanceof TimePicker) {
-
             $startField = $component->bindAttr('startField');
             $endField = $component->bindAttr('endField');
-
             if ($field == $startField && isset($componentValue[0])) {
                 $value = $componentValue[0];
-
             }
-
-
             if ($field == $endField && isset($componentValue[1])) {
                 $value = $componentValue[1];
-
             }
         }
         return $value;
@@ -645,12 +637,14 @@ class Form extends Field
             $component->displayType('image')->accept('image/*')->size(120, 120)->isUniqidmd5();
         }
         if (in_array($name, $componentArr)) {
-            //由于element时间范围字段返回是一个数组,这里特殊绑定处理成2个字段
-            if ($name == 'dateRange' || $name == 'datetimeRange' || $name == 'timeRange') {
-                $component = $class::create();
-                $component->rangeField($field, $arguments[1]);
-                $component->startPlaceholder('请选择开始' . $label . '时间');
-                $component->endPlaceholder('请选择结束' . $label . '时间');
+            if($component instanceof TimePicker || $component instanceof DatePicker){
+                //由于element时间范围字段返回是一个数组,这里特殊绑定处理成2个字段
+                if ($name == 'dateRange' || $name == 'datetimeRange' || $name == 'timeRange') {
+                    $component = $class::create();
+                    $component->rangeField($field, $arguments[1]);
+                    $component->startPlaceholder('请选择开始' . $label . '时间');
+                    $component->endPlaceholder('请选择结束' . $label . '时间');
+                }
                 $prop = $component->bindAttr('modelValue');
                 $this->except([$prop]);
             }

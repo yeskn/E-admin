@@ -37,8 +37,11 @@ use Eadmin\component\form\Field;
 class DatePicker extends Field
 {
     protected $name = 'ElDatePicker';
-
-
+    public function __construct($field = null, $value = '')
+    {
+        $this->bindValue($value, 'timeValue', $field);
+        parent::__construct(null, $value);
+    }
     /**
      * 时间范围字段绑定
      * @param string $startField

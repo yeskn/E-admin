@@ -32,6 +32,11 @@ use Eadmin\component\form\Field;
 class TimePicker extends Field
 {
     protected $name = 'ElTimePicker';
+    public function __construct($field = null, $value = '')
+    {
+        $this->bindValue($value, 'timeValue', $field);
+        parent::__construct(null, $value);
+    }
 
     /**
      * 时间范围字段绑定
