@@ -122,6 +122,7 @@ class Form extends Field
             $this->drive = new \Eadmin\form\drive\Arrays($data);
         }
         $field = Str::random(15, 3);
+        $this->attr('exceptField',$this->exceptField);
         $this->bindAttr('model', $field);
         $this->bindAttValue('submit', false, true);
         $this->bindAttValue('validate', false, true);
