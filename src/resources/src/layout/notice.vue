@@ -137,7 +137,7 @@
                 }, 15000)
             }
 
-            function showNotification(title, content, type, avatar, link) {
+            function showNotification(title, content, type, avatar, url) {
                 if (window.Notification && window.Notification.permission == 'granted') {
                     const options = {
                         body: content,
@@ -147,13 +147,13 @@
                         options.icon = avatar
                     }
                     if (link) {
-                        options.link = link
+                        options.link = url
                     }
                     var notification = new Notification(title, options)
                     notification.onclick = function () {
                         // 可直接打开通知notification相关联的tab窗口
                         window.focus()
-                        link(link)
+                        link(url)
                     }
                 } else {
                     ElNotification({

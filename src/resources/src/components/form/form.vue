@@ -50,7 +50,6 @@
         },
         emits: ['success','gridRefresh','update:submit','update:validate','update:step','update:eadminForm'],
         setup(props,ctx){
-            console.log(props.exceptField)
             const eadminForm = ref(null)
             const disabled = ref(false)
             const {loading,http} = useHttp()

@@ -41,6 +41,11 @@
         setup(props, ctx) {
             const {visible,hide,useHttp} = useVisible(props,ctx)
             const {content,http} = useHttp()
+            watch(()=>props.modelValue,(value)=>{
+               if(visible.value && !value){
+                   hide()
+               }
+            })
             watch(()=>props.show,(value)=>{
                 if(value){
                     open()
