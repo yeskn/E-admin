@@ -263,18 +263,20 @@ abstract class Component implements \JsonSerializable
 
     public function jsonSerialize()
     {
-        $this->attribute['key'] = Str::random(30, 3);
-        return [
-            'name' => $this->name,
-            'where' => $this->where,
-            'map' => $this->map,
-            'bind' => $this->bind,
-            'attribute' => $this->attribute,
-            'modelBind' => $this->modelBind,
-            'bindAttribute' => $this->bindAttribute,
-            'content' => $this->content,
-            'event' => $this->event,
-            'directive' => $this->directive,
-        ];
+        if($this->componentVisible){
+            return [
+                'name' => $this->name,
+                'where' => $this->where,
+                'map' => $this->map,
+                'bind' => $this->bind,
+                'attribute' => $this->attribute,
+                'modelBind' => $this->modelBind,
+                'bindAttribute' => $this->bindAttribute,
+                'content' => $this->content,
+                'event' => $this->event,
+                'directive' => $this->directive,
+            ];
+        }
+        return null;
     }
 }
