@@ -208,7 +208,7 @@
             }
             watch(() => props.modelValue, (value) => {
                 if(value){
-                    quickSearch.value = ''
+                    //quickSearch.value = ''
                     loading.value = value
                 }
             })
@@ -232,8 +232,8 @@
                 })
 
             })
-            nextTick(()=>{
 
+            nextTick(()=>{
                 if(proxyData[props.filterField]){
                     filterInitData = JSON.parse(JSON.stringify(proxyData[props.filterField]))
                 }

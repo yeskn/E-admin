@@ -1,20 +1,18 @@
 <template>
-    <el-drawer v-model="visible" v-bind="$attrs">
+    <component :is="drawer" v-model="visible" v-bind="$attrs">
         <template #title>
-            <span>
-                <slot name="title"></slot>
-             </span>
+            <slot name="title"></slot>
         </template>
         <slot></slot>
         <render :data="content" :slot-props="slotProps" @success="hide"></render>
-    </el-drawer>
+    </component>
     <span @click="open">
         <slot name="reference"></slot>
     </span>
 </template>
 
 <script>
-    import {defineComponent,ref,watch} from "vue";
+    import {computed, defineComponent, watch} from "vue";
     import {useVisible, useHttp} from '@/hooks'
     import render from '@/components/render.vue'
     export default defineComponent({
@@ -54,7 +52,15 @@
             function open(){
                 http(props)
             }
+            const drawer = computed(()=>{
+                if(visible.value ){
+                    return 'ElDrawer'
+                }else{
+                    return null
+                }
+            })
             return {
+                drawer,
                 open,
                 visible,
                 content,

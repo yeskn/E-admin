@@ -61,7 +61,7 @@ service.interceptors.response.use(
                 ElMessage({
                     message: res.message,
                     type: 'error',
-                    duration: 3 * 1000,
+                    duration: 1000,
                     onClose: function () {
                         if (!localStorage.getItem('eadmin_token') && location.href.indexOf('/#/login') === -1) {
                             location.reload()
@@ -75,7 +75,7 @@ service.interceptors.response.use(
                 ElMessage({
                     message: res.message || 'Error',
                     type: 'error',
-                    duration: 3 * 1000,
+                    duration: 1000,
                     onClose: function () {
                         if(res.method == 'GET') {
                             router.replace('/')
