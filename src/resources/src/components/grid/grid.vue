@@ -71,7 +71,7 @@
             </el-row>
         </div>
         <!--表格-->
-        <a-table v-else :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :expanded-row-keys="expandedRowKeys"	 :pagination="false" :loading="loading" v-bind="$attrs" row-key="id" ref="dragTable">
+        <a-table v-else :row-selection="rowSelection" @expand="expandChange" @change="tableChange" :columns="tableColumns" :data-source="tableData"  :expanded-row-keys="expandedRowKeys"	 :pagination="false" :loading="loading" v-bind="$attrs" row-key="id" ref="dragTable">
             <template #title v-if="header">
                 <div class="header"><render :data="header"></render></div>
             </template>
@@ -114,10 +114,10 @@
     import {defineComponent, ref, watch, inject,nextTick,computed,unref} from "vue"
     import render from "@/components/render.vue"
     import {useHttp} from '@/hooks'
+    import {tableDefer} from '@/hooks/use-defer'
     import request from '@/utils/axios'
-    import { forEach } from '@/utils'
     import {store} from '@/store'
-    import {unique,deleteArr,buildURL} from '@/utils'
+    import {forEach,unique,deleteArr,buildURL} from '@/utils'
     import {ElMessageBox,ElMessage} from 'element-plus'
     import Sortable from 'sortablejs'
     import {useRoute} from 'vue-router'
@@ -161,6 +161,10 @@
             },
             params:Object,
             addParams:Object,
+            defer:{
+                type:Boolean,
+                default:false
+            },
         },
         inheritAttrs: false,
         emits: ['update:modelValue','update:selection'],
@@ -180,7 +184,13 @@
             const quickSearchOn = ctx.attrs.quickSearch
             const quickSearchText = ctx.attrs.quickSearchText || '请输入关键字'
             const columns = ref(props.columns)
-            const tableData = ref(props.data)
+            const tableData = ref([])
+            if(props.defer){
+                tableData.value = []
+                tableDefer(tableData.value,props.data)
+            }else{
+                tableData.value = props.data
+            }
             const total = ref(props.pagination.total || 0)
             const tools = ref(props.tools)
             const header = ref(props.header)
@@ -232,8 +242,10 @@
                 })
 
             })
-
             nextTick(()=>{
+                if(ctx.attrs.defaultExpandAllRows){
+                    expandedRowKeys.value = props.data.map(item=>item.id)
+                }
                 if(proxyData[props.filterField]){
                     filterInitData = JSON.parse(JSON.stringify(proxyData[props.filterField]))
                 }
@@ -389,10 +401,7 @@
                     params: globalRequestParams()
                 }).then(res => {
                     if(ctx.attrs.defaultExpandAllRows){
-                        expandedRowKeys.value = []
-                        res.data.forEach(item=>{
-                            expandedRowKeys.value.push(item.id)
-                        })
+                        expandedRowKeys.value = res.data.map(item=>item.id)
                     }
                     columns.value = res.columns
                     tableData.value = res.data
@@ -497,6 +506,13 @@
                     return false
                 }
             })
+            function expandChange(bool,record) {
+                if(bool){
+                    expandedRowKeys.value.push(record.id)
+                }else{
+                    deleteArr(expandedRowKeys.value,record.id)
+                }
+            }
             function visibleFilter() {
                 filterShow.value = !filterShow.value
             }
@@ -514,6 +530,7 @@
                 tableColumns,
                 checkboxColumn,
                 handleSizeChange,
+                expandChange,
                 handleCurrentChange,
                 loading,
                 tableData,
