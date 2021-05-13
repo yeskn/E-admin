@@ -532,13 +532,16 @@ class Form extends Field
         return $this->manyRelation;
     }
 
-    public function batch(\Closure $closure)
+    public function batch(\Closure $closure,$data = [])
     {
         $this->batch = true;
         $manyItem = $this->hasMany('eadmin_batch', '', $closure);
-        $data = $this->drive->getDataAll();
-        if (count($data) == 0) {
+        if(count($data) == 0){
             $data[] = $manyItem->attr('manyData');
+        }else{
+            foreach ($data as &$row){
+                $row = array_merge($manyItem->attr('manyData'),$row);
+            }
         }
         $manyItem->value($data);
         return $manyItem;
