@@ -466,7 +466,7 @@ class Form extends Field
         $item = FormItem::create($prop, $label, $this);
         if(empty($this->manyRelation)){
             $ifField = str_replace('.','_',$prop);
-            $ifField = $ifField.'Show';
+            $ifField = $this->bindAttr('model').$ifField.'Show';
             $this->bind($ifField,1);
             $item->where($ifField,1);
         }
