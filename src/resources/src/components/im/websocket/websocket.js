@@ -30,8 +30,10 @@ const im = {
     pongHealthTimer: null,
     //监听回调
     listens:[],
-    connect: function () {
-        this.webSocket = new WebSocket("ws://192.168.199.220:15555/?username=admin&password=b2e472a882c223386ab0fa4c35421467");
+    //监听关闭
+    closes:[],
+    connect: function (websocket,username,password) {
+        this.webSocket = new WebSocket(websocket + "/?username="+username+"&password="+password);
         this.webSocket.onmessage = e=>{
             const receive = JSON.parse(e.data)
             const action = receive.action
@@ -47,10 +49,13 @@ const im = {
             })
         }
         this.webSocket.onclose = (e) => {
+            this.closes.forEach(callback=>{
+                callback(e)
+            })
             clearInterval(this.pongHealthTimer)
             ElMessage.error('客服通讯连接失败')
             setTimeout(() => {
-                this.connect()
+                this.connect(websocket ,username,password)
             }, 3000)
         }
     },
@@ -91,9 +96,14 @@ const im = {
             data: data
         }))
     },
-    //监听
+    //添加监听接收
     onMessage:function (callback) {
         const length =  this.listens.push(callback)
+        return length - 1
+    },
+    //添加监听回调
+    onClose:function (callback) {
+        const length =  this.closes.push(callback)
         return length - 1
     },
     //移除监听

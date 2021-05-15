@@ -34,6 +34,7 @@ const states = reactive({
     //个人信息
     info: {
         id: 0,
+        init: [],
         webLogo: '',
         webName: '',
         dropdownMenu: [],
@@ -226,6 +227,7 @@ const action = {
                     states.info.webLogo = res.data.webLogo
                     states.info.webName = res.data.webName
                     states.info.dropdownMenu = res.data.dropdownMenu
+                    states.info.init = res.data.init || []
                 }
                 resolve(res)
             }).catch((res: any) => {

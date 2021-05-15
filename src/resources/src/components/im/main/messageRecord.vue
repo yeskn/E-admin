@@ -33,7 +33,7 @@
                                 :preview-src-list="[item.content]">
                         </el-image>
                         <!-- 语音 -->
-<!--                        <eadmin-audio :mini="true" :url="item.content" v-else-if="item.type == 3"></eadmin-audio>-->
+                        <audio controls :src="item.content" v-else-if="item.type == 3"></audio>
                         <div class="rightTriangle" v-if="item.type == 1"></div>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                                 :preview-src-list="[item.content]">
                         </el-image>
                         <!-- 语音 -->
-<!--                        <eadmin-audio :mini="true" :url="item.content" v-else-if="item.type == 3"></eadmin-audio>-->
+                        <audio controls :src="item.content" v-else-if="item.type == 3"></audio>
                     </div>
                 </div>
             </div>
@@ -102,7 +102,6 @@
                                 state.scrollMsgRecordLoading = false
                                 const ref = findTree(msgRefs,state.scrollMsgId,'msgId')
                                 if(ref){
-                                    console.log(state.chatMsgHistoryBox)
                                     const div = state.chatMsgHistoryBox.wrap
                                     const scrollHeight = div.scrollHeight
                                     const msgScrollTop = ref.dom.offsetTop

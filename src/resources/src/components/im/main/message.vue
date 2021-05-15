@@ -29,13 +29,13 @@
                                         trigger="manual"
                                         v-model:visible="item.popoverVisible">
                                     <div style="display: flex;align-items: center;justify-content: space-between;">
-                                        <el-link :underline="false" v-if="item.recall_id"
+                                        <span v-if="item.recall_id"
                                                  @click="recallMsg(item)"><i
-                                                class="el-icon-refresh-left"></i> 撤回
-                                        </el-link>
-                                        <el-link :underline="false" type="danger" @click="delMsg(item.msg_id,key)"><i
-                                                class="el-icon-error"></i> 删除
-                                        </el-link>
+                                                class="el-icon-refresh-left blue"></i> <span style="cursor: pointer">撤回</span>
+                                        </span>
+                                        <span @click="delMsg(item.msg_id,key)"><i
+                                                class="el-icon-error red"></i> <span style="cursor: pointer">删除</span>
+                                        </span>
                                     </div>
                                     <template #reference>
                                         <div class="rightMsgItemBg" v-if="item.type == 1" @contextmenu.prevent="openMenu(key)" v-html="item.content"></div>
@@ -47,9 +47,10 @@
                                                 :src="item.content"
                                                 :preview-src-list="[item.content]" @contextmenu.prevent="openMenu(key)">
                                         </el-image>
+                                        <!-- 语音 -->
+                                        <audio controls :src="item.content" v-else-if="item.type == 3" @contextmenu.prevent="openMenu(key)"></audio>
                                     </template>
-                                    <!-- 语音 -->
-                                    <!--<eadmin-audio :mini="true" :url="item.content" v-else-if="item.type == 3" slot="reference" @contextmenu.prevent="openMenu(key)"></eadmin-audio>-->
+
                                 </el-popover>
                                 <div class="rightTriangle" v-if="item.type == 1"></div>
                             </div>
@@ -82,10 +83,9 @@
                                                 :src="item.content"
                                                 :preview-src-list="[item.content]">
                                         </el-image>
+                                        <!-- 语音 -->
+                                        <audio controls :src="item.content" v-else-if="item.type == 3" @contextmenu.prevent="openMenu(key)"></audio>
                                     </template>
-
-                                    <!-- 语音 -->
-                                    <!--                                <eadmin-audio :mini="true" :url="item.content" v-else-if="item.type == 3" slot="reference" @contextmenu.prevent="openMenu(key)"></eadmin-audio>-->
                                 </el-popover>
                             </div>
 
@@ -134,6 +134,9 @@
 
             </el-popover>
         </div>
+        <audio id="eadmin_notice_music" controls="controls" style="display:none">
+            <source src="../../../assets/notice.mp3" type="audio/mpeg">
+        </audio>
     </div>
 </template>
 
@@ -212,7 +215,7 @@
                            } else {
                                showNotification(data.nickname,data.content,data.headimg)
                                recent.unReadNum = data.unReadNum
-                               document.getElementById('eadmin_im_music').play()
+                               document.getElementById('eadmin_notice_music').play()
                            }
                            recent.content = getTypeContent(data)
                            recent.time = data.time
@@ -221,7 +224,7 @@
                        break;
                    //聊天记录
                    case 'msgRecord':
-                       const length = im.state.msgfList.length
+                       const length = im.state.msgList.length
                        im.state.msgList = data.concat(im.state.msgList)
                        if (length == 0) {
                            scrollToBottom('chatMsgBox')
@@ -453,18 +456,33 @@
                 return Number(Math.random().toString().substr(3, 10) + Date.now()).toString(36);
             }
             //重发
-            function resend() {
-
+            function resend(item, key) {
+                im.state.msgList[key].sendStatus = 'ing'
+                sendWait(item.msg_id)
+                im.send('recall',{
+                    action: 'msg',
+                    data: item
+                })
             }
             //撤回
             function recallMsg(item) {
-
+                im.send('recall',{
+                    to_uid: im.state.recentId,
+                    recall_id: item.recall_id,
+                })
+            }
+            //关闭文字菜单
+            function popoverVisibleClose() {
+                im.state.msgList.forEach(item => {
+                    item.popoverVisible = false
+                })
             }
             //右键打开文字菜单
             function openMenu(index) {
-               // this.popoverVisibleClose()
-              //  this.msgList[index].popoverVisible = true
+                popoverVisibleClose()
+                im.state.msgList[index].popoverVisible = true
             }
+
             //判断本地是否已删除记录
             function isDelMsg(msg_id){
                 let delMsg = localStorage.getItem('eadmin_del_msg'+im.id)
@@ -485,7 +503,7 @@
                 }
                 delMsg.push(msg_id)
                 localStorage.setItem('eadmin_del_msg'+im.id, JSON.stringify(delMsg))
-                state.msgList.splice(index, 1)
+                im.state.msgList.splice(index, 1)
             }
 
             function setRef (el,msgId){
@@ -630,6 +648,12 @@
         padding-left: 10px;
         width: 100%;
         min-height: 105px;
+    }
+    .blue{
+        color: #2d8cf0;
+    }
+    .red{
+        color: red;
     }
     .sendTextarea:focus{outline: none;}
 </style>

@@ -78,6 +78,9 @@
         margin-bottom: 8px;
         color: #000000
     }
+    .item .notice {
+        margin-top: 10px;
+    }
     .item .content {
         font-size: 14px;
         color: #666;

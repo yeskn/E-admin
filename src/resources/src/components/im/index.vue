@@ -5,7 +5,7 @@
         <el-badge :value="unReadNum" type="danger" :max="99" v-if="unReadNum > 0">{{info.nickname}}</el-badge>
         <el-badge :type="online" is-dot v-else>{{info.nickname}}</el-badge>
     </div>
-    <div v-show="dialogShow">
+    <div v-show="dialogShow" @click.native="popoverVisibleClose">
         <el-dialog
                 v-model="dialogVisible"
                 width="900px"
@@ -13,11 +13,17 @@
                 :show-close="false"
                 :fullscreen="fullscreen"
         >
-            <div class="main">
+            <div class="main" @click="popoverVisibleClose">
                 <left-tools :headimg="info.headimg"></left-tools>
                 <list></list>
                 <div class="mainContent">
                     <div style="position: absolute;right: 5px;top:5px;cursor: pointer;">
+                        <el-tooltip effect="light" content="转接" v-show="recentType == 'customerMsg'">
+                            <i @click="transferVisible = true" class="el-icon-refresh rightTools"></i>
+                        </el-tooltip>
+                        <el-tooltip effect="light" content="结束会话" v-show="recentType == 'customerMsg'">
+                            <i @click="closeCustomer()" class="el-icon-switch-button rightTools"></i>
+                        </el-tooltip>
                         <i class="el-icon-full-screen rightTools"></i>
                         <i class="el-icon-close rightTools" @click="dialogVisible=false"></i>
                     </div>
@@ -30,21 +36,26 @@
 </template>
 
 <script>
-    import {defineComponent,reactive,toRefs,nextTick,watch,computed} from "vue";
+    import {defineComponent,reactive,toRefs,nextTick,watch} from "vue";
     import leftTools from './leftTools.vue'
     import list from './list/list.vue'
     import ImMessage from './main/message.vue'
     import ImFriend from './main/friend.vue'
     import im from './websocket/websocket'
     export default defineComponent({
-        name: "imIndex",
+        name: "EadminIm",
         components:{
             leftTools,
             list,
             ImMessage,
             ImFriend
         },
-        setup(){
+        props:{
+            username:String,
+            password:String,
+            websocket:String,
+        },
+        setup(props){
             const state = reactive({
                 dialogShow:false,
                 dialogVisible:true,
@@ -59,7 +70,7 @@
 
 
             nextTick(()=>{
-                im.connect()
+                im.connect(props.websocket,props.username,props.password)
                 state.dialogVisible = false
             })
             im.onMessage((action,data)=>{
@@ -72,6 +83,9 @@
                         }
                         break;
                 }
+            })
+            im.onClose(e=>{
+                state.online = 'danger'
             })
             watch(()=>im.state.leftTool,val=>{
                 if(val === 'message'){
@@ -97,10 +111,30 @@
                 //     this.selectMsgUser(this.recentList[index], index)
                 // }
             }
+            function popoverVisibleClose() {
+                im.state.msgList.forEach(item => {
+                    item.popoverVisible = false
+                })
+            }
+            //结束客服会话
+            function closeCustomer(groupId){
+                // this.send('会话已结束',1)
+                // const index = this.getMsgIdKey(this.recentList, groupId, 'group_id')
+                // const recent_id = im.state.recentList[index].recent_id || ''
+                // im.state.recentList.splice(index,1)
+                // im.state.msgList = []
+                // setTimeout(()=>{
+                //     im.send('removeRecent',{
+                //         recent_id:recent_id,
+                //     })
+                // },1000)
+            }
             return {
+                closeCustomer,
                 ...toRefs(state),
                 ...toRefs(im.state),
-                openIm
+                openIm,
+                popoverVisibleClose
             }
         }
     })
