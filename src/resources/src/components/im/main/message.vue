@@ -144,7 +144,7 @@
     import {defineComponent, reactive, toRefs,nextTick,watch} from "vue";
     import {ElNotification} from "element-plus";
     import im from '../websocket/websocket'
-    import {findArrKey,findTree} from '@/utils'
+    import {findArrKey,findTree,genId} from '@/utils'
     import messageRecord from "./messageRecord";
     export default defineComponent({
         name: "ImMessage",
@@ -179,7 +179,7 @@
                    //发送信息结果
                    case 'msgResult':
                        const key = findArrKey(im.state.msgList, data.msg_id, 'msg_id')
-                       if(key > -1){
+                       if(key !== null && key > -1){
                            im.state.msgList[key].sendStatus = 'ok'
                            im.state.msgList[key].time = data.time
                            //撤回id
@@ -405,9 +405,10 @@
             //聊天记录滚动条置底
             function scrollToBottom(ref) {
                 nextTick(() => {
-                    let div = state[ref].wrap
-                    div.scrollTop = div.scrollHeight
-
+                    let div = state[ref]
+                    if(div){
+                        div.wrap.scrollTop = div.wrap.scrollHeight
+                    }
                 })
             }
             /**
@@ -452,9 +453,7 @@
                     }
                 }, 5000)
             }
-            function genId() {
-                return Number(Math.random().toString().substr(3, 10) + Date.now()).toString(36);
-            }
+
             //重发
             function resend(item, key) {
                 im.state.msgList[key].sendStatus = 'ing'

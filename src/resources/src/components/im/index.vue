@@ -18,10 +18,10 @@
                 <list></list>
                 <div class="mainContent">
                     <div style="position: absolute;right: 5px;top:5px;cursor: pointer;">
-                        <el-tooltip effect="light" content="转接" v-show="recentType == 'customerMsg'">
-                            <i @click="transferVisible = true" class="el-icon-refresh rightTools"></i>
+                        <el-tooltip effect="light" content="转接" v-if="recentType == 'customerMsg'">
+                            <i @click="customerDialogVisible = true" class="el-icon-refresh rightTools"></i>
                         </el-tooltip>
-                        <el-tooltip effect="light" content="结束会话" v-show="recentType == 'customerMsg'">
+                        <el-tooltip effect="light" content="结束会话" v-if="recentType == 'customerMsg'">
                             <i @click="closeCustomer()" class="el-icon-switch-button rightTools"></i>
                         </el-tooltip>
                         <i class="el-icon-full-screen rightTools"></i>
@@ -32,6 +32,7 @@
                 </div>
             </div>
         </el-dialog>
+        <customer-dialog></customer-dialog>
     </div>
 </template>
 
@@ -41,14 +42,17 @@
     import list from './list/list.vue'
     import ImMessage from './main/message.vue'
     import ImFriend from './main/friend.vue'
+    import customerDialog from './customerDialog.vue'
     import im from './websocket/websocket'
+    import {closeCustomer} from './customer/customer'
     export default defineComponent({
         name: "EadminIm",
         components:{
             leftTools,
             list,
             ImMessage,
-            ImFriend
+            ImFriend,
+            customerDialog
         },
         props:{
             username:String,
@@ -87,22 +91,17 @@
             im.onClose(e=>{
                 state.online = 'danger'
             })
+            //监听工具栏切换
             watch(()=>im.state.leftTool,val=>{
                 if(val === 'message'){
 
                 }else if(val === 'friend'){
                     im.send('getAddFriend')
+                }else if(val === 'customer'){
+                    im.send('getCustomerConnList')
                 }
             })
-            // //未读数量
-            // const unReadNum = computed(()=>{
-            //     let unReadNum = 0
-            //     im.state.recentList.forEach(item => {
-            //         unReadNum += parseInt(item.unReadNum)
-            //     })
-            //
-            //     return unReadNum
-            // })
+
             function openIm(){
                 state.dialogShow = true
                 state.dialogVisible = true
@@ -116,19 +115,7 @@
                     item.popoverVisible = false
                 })
             }
-            //结束客服会话
-            function closeCustomer(groupId){
-                // this.send('会话已结束',1)
-                // const index = this.getMsgIdKey(this.recentList, groupId, 'group_id')
-                // const recent_id = im.state.recentList[index].recent_id || ''
-                // im.state.recentList.splice(index,1)
-                // im.state.msgList = []
-                // setTimeout(()=>{
-                //     im.send('removeRecent',{
-                //         recent_id:recent_id,
-                //     })
-                // },1000)
-            }
+
             return {
                 closeCustomer,
                 ...toRefs(state),

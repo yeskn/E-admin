@@ -23,7 +23,8 @@ const im = {
         msgList:[],
         //未读消息数量
         unReadNum:0,
-
+        //选择客服弹窗dialog
+        customerDialogVisible:false
     }),
     webSocket:null,
     //心跳定时器

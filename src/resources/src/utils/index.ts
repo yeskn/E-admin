@@ -29,7 +29,9 @@ export function findArrKey(arr, uid, field) {
     });
     return index;
 }
-
+export function genId() {
+    return Number(Math.random().toString().substr(3, 10) + Date.now()).toString(36);
+}
 export function findTree(datas: Array<any>, id: any, field: string) {
     for (let key in datas) {
         if (datas[key][field] == id) {

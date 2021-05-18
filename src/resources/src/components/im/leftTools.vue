@@ -66,6 +66,10 @@
                     case 'getAddFriend':
                         state.leftToos[1].num  = 0
                         break;
+                    //获取待接入用户
+                    case 'customerConnList':
+                        state.leftToos[2].num = data.length
+                        break;
                     //收到好友请求
                     case 'addFriend':
                         if(im.state.leftTool == 'friend'){

@@ -1,5 +1,5 @@
 <template>
-    <el-scrollbar style="height:100%;">
+    <el-scrollbar style="height:100%;margin-top: 30px">
         <div class="friendMsgItem" :style="{padding:'0 100px'}"
              v-for="(item,index) in addFriendList">
             <el-avatar style="margin-left: 10px;" shape="square"
