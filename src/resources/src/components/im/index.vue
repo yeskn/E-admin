@@ -1,9 +1,9 @@
 <template>
     <!-- 头像消息框 -->
     <div class="miniBox" @click="openIm">
-        <el-avatar :src="info.headimg" style="margin-right: 10px"></el-avatar>
-        <el-badge :value="unReadNum" type="danger" :max="99" v-if="unReadNum > 0">{{info.nickname}}</el-badge>
-        <el-badge :type="online" is-dot v-else>{{info.nickname}}</el-badge>
+        <el-avatar :src="im.info.avatar" style="margin-right: 10px"></el-avatar>
+        <el-badge :value="unReadNum" type="danger" :max="99" v-if="unReadNum > 0">{{im.info.nickname}}</el-badge>
+        <el-badge :type="online" is-dot v-else>{{im.info.nickname}}</el-badge>
     </div>
     <div v-show="dialogShow" @click.native="popoverVisibleClose">
         <el-dialog
@@ -14,7 +14,7 @@
                 :fullscreen="fullscreen"
         >
             <div class="main" @click="popoverVisibleClose">
-                <left-tools :headimg="info.headimg"></left-tools>
+                <left-tools :avatar="im.info.avatar"></left-tools>
                 <list></list>
                 <div class="mainContent">
                     <div style="position: absolute;right: 5px;top:5px;cursor: pointer;">
@@ -22,9 +22,9 @@
                             <i @click="customerDialogVisible = true" class="el-icon-refresh rightTools"></i>
                         </el-tooltip>
                         <el-tooltip effect="light" content="结束会话" v-if="recentType == 'customerMsg'">
-                            <i @click="closeCustomer()" class="el-icon-switch-button rightTools"></i>
+                            <i @click="closeCustomer(recentId)" class="el-icon-switch-button rightTools"></i>
                         </el-tooltip>
-                        <i class="el-icon-full-screen rightTools"></i>
+<!--                        <i class="el-icon-full-screen rightTools" @click="fullscreen = !fullscreen"></i>-->
                         <i class="el-icon-close rightTools" @click="dialogVisible=false"></i>
                     </div>
                     <im-message v-show="leftTool === 'message'"></im-message>
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-    import {defineComponent,reactive,toRefs,nextTick,watch} from "vue";
+    import {defineComponent,reactive,toRefs,nextTick,watch,onBeforeUnmount} from "vue";
     import leftTools from './leftTools.vue'
     import list from './list/list.vue'
     import ImMessage from './main/message.vue'
@@ -64,15 +64,8 @@
                 dialogShow:false,
                 dialogVisible:true,
                 fullscreen:false,
-                info:{
-                    id:0,
-                    headimg:'',
-                    nickname:'',
-                },
                 online: 'danger',
             })
-
-
             nextTick(()=>{
                 im.connect(props.websocket,props.username,props.password)
                 state.dialogVisible = false
@@ -83,7 +76,7 @@
                     case 'login':
                         if(data.code === 0){
                             state.online = 'success'
-                            state.info = data.info
+                            im.info = data.info
                         }
                         break;
                 }
@@ -115,8 +108,11 @@
                     item.popoverVisible = false
                 })
             }
-
+            onBeforeUnmount(()=>{
+                im.close()
+            })
             return {
+                im,
                 closeCustomer,
                 ...toRefs(state),
                 ...toRefs(im.state),

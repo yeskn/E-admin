@@ -46,14 +46,14 @@
         height: 700px;
         display: flex;
         flex-direction: column;
-        background: #f9fafb;
-        border-right: #f3f4f6 solid 1px;
+        background: #ebebeb;
+        border-right: #dadcdf solid 1px;
     }
 
     .searchBox {
         padding: 5px;
         height: 50px;
-        border-bottom: rgba(0, 0, 0, 0.02) solid 1px;
+        border-bottom: #dadcdf solid 1px;
     }
 
     .list {

@@ -23,7 +23,7 @@
                          v-for="(item,index) in findFriendList">
                         <div>
                             <el-avatar style="margin-left: 10px;" shape="square"
-                                       :src="item.headimg"></el-avatar>
+                                       :src="item.avatar"></el-avatar>
                         </div>
                         <div style="flex:1;margin-left: 10px;">
                             <div class="name">{{item.nickname}}</div>
@@ -58,7 +58,7 @@
             <div class="friendMsgItem" @click="selectFriendUser(item,index)">
                 <div>
                     <el-avatar style="margin-left: 10px;" shape="square"
-                               :src="item.headimg"></el-avatar>
+                               :src="item.avatar"></el-avatar>
                 </div>
                 <div style="flex:1;margin-left: 10px;">
                     <div class="name">{{item.nickname}}</div>
@@ -195,7 +195,7 @@
         height: 60px;
         display: flex;
         align-items: center;
-        border-bottom: solid 1px #EEEEEE;
+        border-bottom: solid 1px #dadcdf;
     }
     .friendMsgItem:hover {
         background: #dedcda;

@@ -28,18 +28,33 @@ im.onMessage((action,data)=>{
         case 'getCustomerList':
             state.customerList = data
             break;
+        //获取客服分组列表
+        case 'getCustomerGroupList':
+            state.customerList = data
+            break;
     }
 })
 watch(()=>im.state.customerDialogVisible,function (val) {
     if(val){
-        if(val =='customer'){
-            im.send('getCustomerList')
-        }else{
-            im.send('getCustomerGroupList')
-        }
+        getCustomerList(state.tabCustomerName)
     }
 })
-
+watch(()=>state.tabCustomerName,value=>{
+    getCustomerList(value)
+})
+//选择客服
+function selectCustomer(id){
+    state.selectCustomerId = id
+}
+//获取客服列表
+function getCustomerList(value) {
+    state.selectCustomerId = null
+    if(value == 'customer'){
+        im.send('getCustomerList')
+    }else{
+        im.send('getCustomerGroupList')
+    }
+}
 //待接入的转接客服
 function customerItemTransfer(data,type){
     im.send('customerTransfer',{
@@ -68,15 +83,14 @@ function selectTransfer(data){
 //转接客服
 function customerTransfer(){
     if(!state.selectCustomerId){
-
         return ElMessage.error('请选择客服')
     }
     let transferType = 'transfer'
     if(state.tabCustomerName == 'customerGroup'){
         transferType = 'transferGroup'
     }
-    if(this.selectTransferData){
-        return customerItemTransfer(this.selectTransferData,transferType)
+    if(state.selectTransferData){
+        return customerItemTransfer(state.selectTransferData,transferType)
     }
     const index = findArrKey(im.state.recentList, im.state.recentId, 'group_id')
     const recent_id = im.state.recentList[index].recent_id
@@ -95,15 +109,6 @@ function customerTransfer(){
     im.state.recentList.splice(index,1)
     im.state.customerDialogVisible = false
     im.state.msgList = []
-}
-//客服选择tabs事件
-function tabCustomerClick(val){
-    state.selectCustomerId = null
-    if(val.name =='customer'){
-        im.send('getCustomerList')
-    }else{
-        im.send('getCustomerGroupList')
-    }
 }
 //关闭会话
 export function closeCustomer(groupId) {
@@ -127,6 +132,7 @@ export function closeCustomer(groupId) {
     }
     data.data.sendStatus = 'ing'
     im.state.msgList = []
+    im.state.recentType = 'msg'
     im.send(data.action,data.data)
     const index = findArrKey(im.state.recentList, groupId, 'group_id')
     const recent_id = im.state.recentList[index].recent_id || ''
@@ -140,10 +146,11 @@ export function closeCustomer(groupId) {
     },1000)
 }
 export default {
-    tabCustomerClick,
+    selectCustomer,
     customerTransfer,
     selectTransfer,
     customerItemTransfer,
+    state,
     ...toRefs(state),
     ...toRefs(im.state),
 }

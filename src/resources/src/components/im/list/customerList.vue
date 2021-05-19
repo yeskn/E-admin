@@ -3,7 +3,7 @@
         <div class="friendMsgItem" v-for="(item,index) in list">
             <div>
                 <el-avatar style="margin-left: 10px;" shape="square"
-                           :src="item.headimg"></el-avatar>
+                           :src="item.avatar"></el-avatar>
             </div>
             <div style="flex:1;margin-left: 10px;">
                 <div class="name" style="display: flex;justify-content: space-between">
@@ -33,8 +33,8 @@
         },
         setup(props) {
             const list = computed(()=> {
-                if (customer.customerConnList.length > 0) {
-                    return customer.customerConnList.filter(item => {
+                if (customer.state.customerConnList.length > 0) {
+                    return customer.state.customerConnList.filter(item => {
                         return item.nickname.indexOf(props.search) >= 0
                     })
                 }
@@ -48,27 +48,32 @@
 </script>
 
 <style scoped>
-    .addButton {
-        margin-right: 20px;
-        background: #ededed;
-        color: #409EFF;padding: 5px;
-        cursor: pointer;
+    .friendMsgItem .name {
+        font-size: 14px;
+        margin-bottom: 4px;
+        color: #000000
+    }
+    .friendMsgItem .content {
+        font-size: 14px;
+        color: #666;
+        width: 140px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
     }
     .friendMsgItem {
         height: 60px;
         display: flex;
         align-items: center;
-        border-bottom: solid 1px #EEEEEE;
+        border-bottom: solid 1px #dadcdf;
     }
     .friendMsgItem:hover {
         background: #dedcda;
         cursor: pointer;
     }
-    .newFriendImage{
-        margin-left: 10px;color: #409EFF;background: #fff;border: 1px solid #ededed
-    }
-    .letter {
-        margin: 11px;
-        color: #999999;
+
+
+    .rightTools {
+        margin: 0 5px;
     }
 </style>

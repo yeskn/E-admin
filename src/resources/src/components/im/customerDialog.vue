@@ -1,13 +1,13 @@
 <template>
     <el-dialog v-model="customerDialogVisible" title="转接">
-        <el-tabs v-model="tabCustomerName" @tab-click="tabCustomerClick">
+        <el-tabs v-model="tabCustomerName">
             <el-tab-pane label="客服" name="customer">
                 <el-row class="customerList">
                     <el-col :span="12" :class="['customerItem',selectCustomerId==item.id?'activate':'']" v-for="item in customerList" @click.native="selectCustomer(item.id)">
                         <div>
                             <el-badge is-dot :type="item.online ? 'success':'info'">
                                 <el-avatar style="margin-left: 10px;"
-                                           :src="item.headimg"></el-avatar>
+                                           :src="item.avatar"></el-avatar>
                             </el-badge>
                         </div>
                         <div style="flex:1;margin-left: 10px;">
@@ -30,10 +30,10 @@
                 </el-row>
             </el-tab-pane>
         </el-tabs>
-        <span slot="footer">
-                <el-button size="small" @click="customerDialogVisible = false">取消</el-button>
-                <el-button size="small" type="primary" @click="customerTransfer">转接</el-button>
-            </span>
+        <template #footer>
+            <el-button size="small" @click="customerDialogVisible = false">取消</el-button>
+            <el-button size="small" type="primary" @click="customerTransfer">转接</el-button>
+        </template>
     </el-dialog>
 </template>
 
@@ -49,5 +49,19 @@
 </script>
 
 <style scoped>
-
+    .customerItem {
+        height: 60px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+    .customerList .activate {
+        background: #1ba8ed;
+        color: #ffffff;
+    }
+    .customerItem:hover {
+        background: #1ba8ed;
+        cursor: pointer;
+        color: #ffffff;
+    }
 </style>

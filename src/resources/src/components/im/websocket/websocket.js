@@ -4,6 +4,10 @@ import { reactive ,watchEffect} from "vue";
 const im = {
     //当前用户id
     id:0,
+    info:{
+        nickname:'',
+        avatar:'',
+    },
     state :reactive({
         //左侧工具栏
         leftTool:'message',
@@ -54,11 +58,21 @@ const im = {
                 callback(e)
             })
             clearInterval(this.pongHealthTimer)
-            ElMessage.error('客服通讯连接失败')
-            setTimeout(() => {
-                this.connect(websocket ,username,password)
-            }, 3000)
+            if(e.code != 1005){
+                ElMessage.error('客服通讯连接失败')
+                setTimeout(() => {
+                    this.connect(websocket ,username,password)
+                }, 3000)
+            }
         }
+    },
+    //关闭
+    close:function(){
+      this.webSocket.close()
+      this.webSocket = null
+      this.pongHealthTimer= null;
+      this.listens= []
+      this.closes= []
     },
     //是否当前选中对象
     isSelectUser(item){
@@ -81,6 +95,7 @@ const im = {
             this.state.recentId = item.group_id
         }
         this.state.recentList[index].unReadNum = 0
+        this.readMsg(item)
         this.send('msgRecord',{
             msg_type:this.state.recentType,
             to_uid:  this.state.recentId,
@@ -88,6 +103,20 @@ const im = {
             size: this.state.recordSize,
             date: null,
             keyword: null,
+        })
+    },
+    //读消息
+     readMsg:function(item){
+        let readAction
+        if(item.msg_type === 'msg'){
+            im.state.recentId = item.from_uid
+            readAction = 'readMsg'
+        }else if(item.msg_type === 'customerMsg'){
+            im.state.recentId = item.group_id
+            readAction = 'readGroupMsg'
+        }
+        im.send(readAction,{
+            uid:  im.state.recentId
         })
     },
     //发送

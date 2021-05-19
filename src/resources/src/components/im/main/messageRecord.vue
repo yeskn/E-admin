@@ -19,7 +19,7 @@
                 </div>
                 <div :ref="e=>{setRef(e,item.msg_id)}" class="rightMsgItem" v-if="item.from_uid == im.id">
                     <el-avatar style="margin-left: 10px;" size="medium" shape="square"
-                               src="{$info.headimg}"></el-avatar>
+                               :src="im.info.avatar"></el-avatar>
                     <div class="msgItemContent">
                         <div style="width: 20px;height: 20px" v-show="item.sendStatus == 'ing'"><i
                                 class="el-icon-loading"></i></div>
@@ -39,7 +39,7 @@
                 </div>
                 <div :ref="e=>{setRef(e,item.msg_id)}" class="leftMsgItem" v-else>
                     <el-avatar style="margin-right: 10px;" size="medium" shape="square"
-                               :src="item.headimg"></el-avatar>
+                               :src="item.avatar"></el-avatar>
                     <div class="msgItemContent">
                         <div class="leftTriangle" v-if="item.type == 1"></div>
                         <div class="leftMsgItemBg" v-if="item.type == 1" v-html="item.content"></div>
@@ -242,7 +242,9 @@
         border-radius: 5px;
         white-space: pre-line;
     }
-
+    .msgImage{
+        width: 120px; height: 100px;border-radius: 5px;border: 1px solid #ededed
+    }
     .leftMsgItemBg {
         border-radius: 5px;
         background: #f0f0f0;

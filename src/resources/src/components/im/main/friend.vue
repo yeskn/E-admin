@@ -3,7 +3,7 @@
         <div class="friendMsgItem" :style="{padding:'0 100px'}"
              v-for="(item,index) in addFriendList">
             <el-avatar style="margin-left: 10px;" shape="square"
-                       :src="item.headimg"></el-avatar>
+                       :src="item.avatar"></el-avatar>
             <div style="flex:1;margin-left: 10px;">
                 <div class="name">{{item.nickname}}</div>
                 <div class="content">{{item.desc}}</div>

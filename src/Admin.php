@@ -272,9 +272,11 @@ class Admin
     {
         $dispatch =  Admin::getDispatch($url);
         $vars    = [];
-        $parse   = parse_url($url);
-        if (isset($parse['query'])) {
-            parse_str($parse['query'],$vars);
+        if(is_string($url)){
+            $parse   = parse_url($url);
+            if (isset($parse['query'])) {
+                parse_str($parse['query'],$vars);
+            }
         }
         $data = $url;
         if ($dispatch) {
