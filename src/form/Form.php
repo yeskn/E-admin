@@ -330,7 +330,8 @@ class Form extends Field
                 $value = call_user_func($component->getClosure(),$value,$data);
             }
             if ($component instanceof DatePicker || $component instanceof TimePicker) {
-                $this->setData($field, $value ?? null);
+                $value = empty($value) ? null:$value;
+                $this->setData($field, $value );
             }else{
                 $this->setData($field, $value ?? '');
             }
@@ -377,6 +378,8 @@ class Form extends Field
     {
         if (!$this->steps) {
             $this->steps = Steps::create();
+            $prop = $this->steps->bindAttr('modelValue');
+            $this->except([$prop]);
             $this->push($this->steps);
             $this->bindAttr('step', $this->steps->bindAttr('active'),true);
         }
@@ -429,6 +432,8 @@ class Form extends Field
     {
         if (!$this->tab) {
             $this->tab = Tabs::create();
+            $prop = $this->tab->bindAttr('modelValue');
+            $this->except([$prop]);
             $this->push($this->tab);
         }
         $formItems = $this->collectFields($closure);
@@ -648,6 +653,8 @@ class Form extends Field
                     $component->rangeField($field, $arguments[1]);
                     $component->startPlaceholder('请选择开始' . $label . '时间');
                     $component->endPlaceholder('请选择结束' . $label . '时间');
+                    $prop = $component->bindAttr('timeValue');
+                    $this->except([$prop]);
                 }
                 $prop = $component->bindAttr('modelValue');
                 $this->except([$prop]);
