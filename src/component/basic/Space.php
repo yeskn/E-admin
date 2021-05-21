@@ -25,10 +25,12 @@ class Space extends Component
     protected $name = 'ElSpace';
     public function __construct($content)
     {
-        $this->content($content);
+        if (!empty($content) || is_numeric($content)) {
+            $this->content($content);
+        }
     }
 
-    public static function create($content)
+    public static function create($content = '')
     {
         return new self($content);
     }
