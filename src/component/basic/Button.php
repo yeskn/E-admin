@@ -11,6 +11,7 @@ namespace Eadmin\component\basic;
 
 use Eadmin\Admin;
 use Eadmin\component\Component;
+use Eadmin\component\form\field\Upload;
 use think\app\Url;
 use think\facade\Route;
 
@@ -118,7 +119,19 @@ class Button extends Component
         }
         return $this;
     }
-
+    /**
+     * 上传
+     * @param string $url 上传url
+     * @return Upload
+     */
+    public function upload($url){
+        return Upload::create()->finder(false)
+            ->attr('foreverShow',true)
+            ->url((string)$url)
+            ->chunk(false)
+            ->disk('local')
+            ->content($this);
+    }
     /**
      * 复制
      * @param $content 复制内容

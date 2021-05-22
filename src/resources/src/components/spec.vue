@@ -115,8 +115,10 @@
                         data = data.shift()
                     }
                 }
+                console.log(data)
                 data = data.map(item => {
                     const spec = findTree(selectValue, item.spec, 'spec')
+                    console.log(spec)
                     props.columns.forEach(column => {
                         if (spec) {
                             item[column.prop] = spec[column.prop]

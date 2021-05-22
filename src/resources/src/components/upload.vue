@@ -1,5 +1,4 @@
 <template>
-  <div>
     <span v-if="displayType=='image'">
       <div v-for="(file,index) in files" :key="index" class="imgContainer" :style="{height: styleHeight,width:styleWidth}">
         <el-image
@@ -99,7 +98,6 @@
         </div>
       </template>
     </el-dialog>
-  </div>
 </template>
 <script>
 import Uploader from 'simple-uploader.js'
@@ -191,6 +189,10 @@ export default defineComponent({
       type: Boolean,
       default: false
     },
+    chunk: {
+      type: Boolean,
+      default: true
+    },
   },
   emits: ['success','update:modelValue'],
   setup(props,ctx){
@@ -274,8 +276,8 @@ export default defineComponent({
         isUniqidmd5: props.isUniqidmd5,
         upType: props.upType
       },
-      testChunks: true,
-      chunkSize: 1 * 1024 * 1024,
+      testChunks: props.chunk,
+      chunkSize: props.chunk ? 1 * 1024 * 1024 : 500 * 1024 * 1024,
       headers: {
         Authorization: props.token
       }
