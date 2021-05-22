@@ -532,9 +532,12 @@ class Form extends Field
         return $this;
     }
 
-    public function manyRelation()
+    public function manyRelation($relation=null)
     {
-        return $this->manyRelation;
+        if(is_null($relation)){
+            return $this->manyRelation;
+        }
+        $this->manyRelation = $relation;
     }
 
     public function batch(\Closure $closure,$data = [])
@@ -755,10 +758,18 @@ class Form extends Field
     {
         call_user_func_array($closure, [$this->actions]);
     }
-
+    public function itemComponent()
+    {
+        return $this->itemComponent;
+    }
     public function setItemComponent($component)
     {
-        $this->itemComponent[] = $component;
+        if(is_array($component)){
+            $this->itemComponent = $component;
+        }else{
+            $this->itemComponent[] = $component;
+        }
+
     }
 
     /**
@@ -843,7 +854,7 @@ class Form extends Field
      * 验证错误字段初始化绑定
      * @param null $field
      */
-    protected function validatorBind($field = null)
+    public function validatorBind($field = null)
     {
         //验证器属性绑定
         $validatorField = $this->bindAttr('model') . 'Error';

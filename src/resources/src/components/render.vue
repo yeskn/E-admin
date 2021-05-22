@@ -75,6 +75,7 @@
                                     slotProps.row[field] = value[index]
                                 })
                             }
+
                             slotProps.row[field] = value
                         }
                     } else {
@@ -179,11 +180,14 @@
                 //for 遍历中的 ElFormItem 验证prop error处理
                 if(data.name == 'ElFormItem'){
                     if(slotProps && slotProps.propField){
+
                         if(!modelValue[slotProps.validator][slotProps.propField][slotProps.$index]){
                             modelValue[slotProps.validator][slotProps.propField][slotProps.$index] = {}
                         }
                         let propField = attribute.prop
+
                         attribute.prop = slotProps.propField + '.' + slotProps.$index+ '.' + propField
+
                         attribute.error = modelValue[slotProps.validator][slotProps.propField][slotProps.$index][propField]
                     }
                 }

@@ -104,9 +104,11 @@ import Uploader from 'simple-uploader.js'
 import OSS from 'ali-oss'
 import md5 from 'js-md5'
 import * as qiniu from 'qiniu-js'
-import {fileIcon, lastName} from '@/utils'
+import {fileIcon, lastName, link, refresh} from '@/utils'
 import {defineComponent, reactive, watch, nextTick, toRefs, ref,getCurrentInstance} from "vue";
-import {ElMessage} from 'element-plus'
+import {ElMessage, ElNotification} from 'element-plus'
+import {action} from "@/store";
+import router from "@/router";
 function noop() {}
 export default defineComponent({
   name: 'EadminUpload',
@@ -335,11 +337,59 @@ export default defineComponent({
           }
           ctx.emit('success')
           state.files.push(res.data)
-        }else{
+        }else if (res.code == 80020) {
           ElMessage({
-            type: 'error',
-            message: res.message
+            showClose: true,
+            dangerouslyUseHTMLString: true,
+            message: res.message,
+            type: res.type
           })
+          if (res.url) {
+            if (res.url == 'back') {
+              if (res.refresh) {
+                action.refresh(true)
+              }
+              router.back()
+            } else {
+              link(res.url)
+              return
+            }
+          }
+          if (res.refresh) {
+            refresh()
+          }
+          if (res.type == 'success') {
+            res.code = 200
+            return res
+          }
+        } else if (res.code == 80021) {
+          ElNotification({
+            showClose: true,
+            dangerouslyUseHTMLString: true,
+            title: res.title,
+            message: res.message,
+            type: res.type,
+            duration: 1500
+          })
+          if (res.url) {
+            if (res.url == 'back') {
+              if (res.refresh) {
+                action.refresh(true)
+              }
+              router.back()
+              return
+            } else {
+              link(res.url)
+              return
+            }
+          }
+          if (res.refresh) {
+            refresh()
+          }
+          if (res.type == 'success') {
+            res.code = 200
+            return res
+          }
         }
       } catch (e) {
         uploader.removeFile(file)
