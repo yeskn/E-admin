@@ -335,6 +335,11 @@ export default defineComponent({
           }
           ctx.emit('success')
           state.files.push(res.data)
+        }else{
+          ElMessage({
+            type: 'error',
+            message: res.message
+          })
         }
       } catch (e) {
         uploader.removeFile(file)
