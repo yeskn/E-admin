@@ -656,8 +656,7 @@ class Form extends Field
                     $component->rangeField($field, $arguments[1]);
                     $component->startPlaceholder('请选择开始' . $label . '时间');
                     $component->endPlaceholder('请选择结束' . $label . '时间');
-                    $prop = $component->bindAttr('timeValue');
-                    $this->except([$prop]);
+                    $this->except([$component->bindAttr('timeValue')]);
                 }
                 $prop = $component->bindAttr('modelValue');
                 $this->except([$prop]);
@@ -686,6 +685,7 @@ class Form extends Field
             $component->placeholder('请选择' . $label);
         }
         $item = $this->item($prop, $label);
+        $item->attr('validateField',$field);
         $item->content($component);
         $component->setFormItem($item);
         if ($name == 'hidden') {
