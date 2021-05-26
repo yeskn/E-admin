@@ -286,9 +286,13 @@ class Admin
             $request->withGet($vars);
             if ($dispatch instanceof Controller) {
                 list($controller, $action) = $dispatch->getDispatch();
-                $instance = $dispatch->controller($controller);
-                $reflect  = new \ReflectionMethod($instance, $action);
-                $data     = app()->invokeReflectMethod($instance, $reflect, $vars);
+                try {
+                    $instance = $dispatch->controller($controller);
+                    $reflect  = new \ReflectionMethod($instance, $action);
+                    $data     = app()->invokeReflectMethod($instance, $reflect, $vars);
+                }catch (\Exception $exception){
+
+                }
             } elseif ($dispatch instanceof Callback) {
                 $data = app()->invoke($dispatch->getDispatch(), $vars);
             }
