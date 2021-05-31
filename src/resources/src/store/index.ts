@@ -1,8 +1,6 @@
 import {reactive} from "vue";
 import request from '@/utils/axios'
 import {findTree, appendCss, setObjectValue} from '@/utils'
-
-
 export const store = Symbol()
 // 使用 reactive 函数完成响应式转换
 const states = reactive({
@@ -126,7 +124,6 @@ const action = {
 
         state.component = null
         const index = action.getComponentIndex(url)
-
         if (index === -1) {
             for (let i in state.proxyData) {
                 // @ts-ignore

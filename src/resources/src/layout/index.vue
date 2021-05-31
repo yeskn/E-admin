@@ -4,7 +4,7 @@
         <div class="main-container">
             <header-top></header-top>
             <tags-view></tags-view>
-            <div class="main-content" v-loading="state.mainLoading">
+            <div class="main-content" v-loading.lock="state.mainLoading">
                 <div class="header-title" v-if="state.mainTitle">
                     <div>
                         <span class="title">{{state.mainTitle}}</span>
@@ -13,8 +13,8 @@
                     <breadcrumb style="margin-right: 5px" v-if="state.device != 'mobile'"></breadcrumb>
                 </div>
                 <el-backtop target=".main-content"></el-backtop>
-                <keep-alive v-for="item in state.mainComponent" :key="item.url">
-                    <render v-if="route.fullPath == item.url" :data="item.component"></render>
+                <keep-alive :include="cacheKeys">
+                    <component :is="mainComponent"></component>
                 </keep-alive>
                 <render :data="state.component"></render>
             </div>
@@ -25,13 +25,14 @@
 
 <script>
     import {useRoute} from 'vue-router'
-    import {defineComponent, inject} from 'vue'
+    import {defineComponent, inject,computed,h,getCurrentInstance,defineAsyncComponent,resolveComponent} from 'vue'
     import headerTop from './headerTop.vue'
     import Sidebar from './sidebar/sidebar.vue'
     import render from '@/components/render.vue'
     import breadcrumb from '@/components/breadcrumb.vue'
     import tagsView from './tagsView.vue'
-    import { store} from '@/store'
+    import { store,action} from '@/store'
+    import {findTree} from '@/utils'
     export default defineComponent({
         name: "index",
         components: {
@@ -45,7 +46,36 @@
             const route = useRoute()
             const state = inject(store)
             let sidebar = state.sidebar
+            const cacheKeys = computed(()=>{
+                return state.mainComponent.map(item=>{
+                    return item.url
+                })
+            })
+            const mainComponent = computed(()=>{
+                const index = action.getComponentIndex(route.fullPath)
+                if(index > -1){
+                    let AsyncComp = defineAsyncComponent(
+                        () =>
+                            new Promise((resolve, reject) => {
+                                resolve(h(resolveComponent('render'),{
+                                    data:state.mainComponent[index].component
+                                }))
+                            })
+                    )
+                    if(!getCurrentInstance().appContext.components[route.fullPath]){
+                        console.log('加载')
+                        AsyncComp.name = route.fullPath
+                        getCurrentInstance().appContext.app.component(route.fullPath,AsyncComp)
+                    }
+                    return route.fullPath
+                }else{
+                    return ''
+                }
+
+            })
             return {
+                cacheKeys,
+                mainComponent,
                 route,
                 state,
                 sidebar,

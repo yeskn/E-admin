@@ -7,6 +7,7 @@ import Layout from '@/layout/index.vue'
 import Login from '@/layout/login.vue'
 import Im from '@/components/im/index.vue'
 import {refresh} from '@/utils'
+import app from "@/app";
 let asyncCmponent:any
 const routes = [
     {
@@ -63,6 +64,7 @@ router.afterEach((to:RouteLocationNormalized)=>{
     }
 })
 function loadComponent(url:string){
+    delete app._context.components[url]
     action.loading(true)
     return new Promise((resolve, reject) =>{
         request({
