@@ -64,6 +64,7 @@ class Select extends Field
     public function disabledData(array $data)
     {
         $this->disabledData = $data;
+        return $this;
     }
 
     /**
@@ -168,10 +169,12 @@ class Select extends Field
     /**
      * 设置选项数据
      * @param array $data 选项数据
+     * @param array $disable 禁用选项数据
      * @return Select
      */
-    public function options(array $data)
+    public function options(array $data,array $disable = [])
     {
+        $this->disabledData = $disable;
         $options = [];
         foreach ($data as $id => $label) {
             if (in_array($id, $this->disabledData)) {
