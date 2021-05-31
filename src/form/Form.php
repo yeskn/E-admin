@@ -697,7 +697,7 @@ class Form extends Field
         //数字类型转换处理
         if (is_array($value) && count($value) == count($value, 1)) {
             foreach ($value as &$v) {
-                if (!is_array($v) && preg_match('/^\d{{19}$/', $v)) {
+                if (!is_array($v) && preg_match('/^\d{19}$/', $v)) {
                     $v = intval($v);
                 } elseif (is_numeric($v) && strpos($v, '.') !== false) {
                     $v = floatval($v);
