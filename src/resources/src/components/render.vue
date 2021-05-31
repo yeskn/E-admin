@@ -1,5 +1,5 @@
 <script>
-    import {defineComponent, toRaw, h, resolveComponent, inject,isProxy,resolveDirective,withDirectives,getCurrentInstance,KeepAlive} from 'vue'
+    import {defineComponent, toRaw, h, resolveComponent, inject,isProxy,resolveDirective,withDirectives,getCurrentInstance,onBeforeUnmount} from 'vue'
     import {store} from '@/store'
     import {splitCode} from '@/utils/splitCode'
     import {setObjectValue} from '@/utils'
@@ -15,7 +15,7 @@
         },
         render() {
             if (this.data) {
-                this.setProxyData(this.data)
+                this.setProxyData(this.data,1)
                 const jsonRender = toRaw(this.data)
                 if (jsonRender.where.AND.length > 0 || jsonRender.where.OR.length > 0) {
                     let expression = this.whereCompile(jsonRender.where.AND, jsonRender.where.OR,this.slotProps)
@@ -30,6 +30,11 @@
             }
         },
         setup(props,ctx) {
+            onBeforeUnmount(()=>{
+                if(props.data){
+                    setProxyData(props.data,0)
+                }
+            })
             const state = inject(store)
             const modelValue = state.proxyData
             const renderComponent = (data, slotProps) => {
@@ -47,19 +52,22 @@
                     let field = data.modelBind[modelBind]
                     // 本次渲染是循环属性
                     if (slotProps && slotProps.row) {
+                        expression = 'modelBind == "modelValue" && slotProps.row.'+field+' === null && (data.name === "ElTimePicker" || data.name === "ElDatePicker") ? slotProps.row.' + field + ' = slotProps.row.' + data.bindAttribute.timeValue+':null'
+                        eval(expression)
                         expression = 'data.attribute[modelBind] = slotProps.row.' + field
                         eval(expression)
                         data.attribute['onUpdate:'+modelBind] = value => {
                             if(data.attribute.valueFormat){
                                 //时间特殊处理
-                                if(value == null){
+                                if(value == null || value == ''){
                                     slotProps.row[data.bindAttribute.startField] = null
                                     slotProps.row[data.bindAttribute.endField] = null
+                                    slotProps.row[data.bindAttribute.timeValue] = null
                                 }else{
-                                    value = dateFormat(value,data.attribute.valueFormat)
+                                    slotProps.row[data.bindAttribute.timeValue] = dateFormat(value,data.attribute.valueFormat)
                                     if(data.attribute.hasOwnProperty('startField') && data.attribute.hasOwnProperty('endField')){
-                                        slotProps.row[data.bindAttribute.startField] = value[0]
-                                        slotProps.row[data.bindAttribute.endField] = value[1]
+                                        slotProps.row[data.bindAttribute.startField] = dateFormat(value[0],data.attribute.valueFormat)
+                                        slotProps.row[data.bindAttribute.endField] = dateFormat(value[1],data.attribute.valueFormat)
                                     }
                                 }
                             }else if(data.attribute.bindFields){
@@ -67,9 +75,12 @@
                                     slotProps.row[field] = value[index]
                                 })
                             }
+
                             slotProps.row[field] = value
                         }
                     } else {
+                        expression = 'modelBind == "modelValue" && modelValue.'+field+' === null && (data.name === "ElTimePicker" || data.name === "ElDatePicker") ? modelValue.' + field + ' = modelValue.' + data.bindAttribute.timeValue+':null'
+                        eval(expression)
                         expression = 'data.attribute[modelBind] = modelValue.' + field
                         eval(expression)
                         data.attribute['onUpdate:'+modelBind] = value => {
@@ -80,12 +91,15 @@
                                     eval(expression)
                                     expression = 'modelValue.' + data.bindAttribute.endField + ' = null'
                                     eval(expression)
+                                    expression = 'modelValue.' + data.bindAttribute.timeValue + ' = null'
+                                    eval(expression)
                                 }else{
-                                    value = dateFormat(value,data.attribute.valueFormat)
+                                    expression = 'modelValue.' + data.bindAttribute.timeValue + ' = dateFormat(value,data.attribute.valueFormat)'
+                                    eval(expression)
                                     if(data.attribute.hasOwnProperty('startField') && data.attribute.hasOwnProperty('endField')){
-                                        expression = 'modelValue.' + data.bindAttribute.startField + ' = value[0]'
+                                        expression = 'modelValue.' + data.bindAttribute.startField + ' = dateFormat(value[0],data.attribute.valueFormat)'
                                         eval(expression)
-                                        expression = 'modelValue.' + data.bindAttribute.endField + ' = value[1]'
+                                        expression = 'modelValue.' + data.bindAttribute.endField + ' = dateFormat(value[1],data.attribute.valueFormat)'
                                         eval(expression)
                                     }
                                 }
@@ -166,11 +180,14 @@
                 //for 遍历中的 ElFormItem 验证prop error处理
                 if(data.name == 'ElFormItem'){
                     if(slotProps && slotProps.propField){
+
                         if(!modelValue[slotProps.validator][slotProps.propField][slotProps.$index]){
                             modelValue[slotProps.validator][slotProps.propField][slotProps.$index] = {}
                         }
                         let propField = attribute.prop
+
                         attribute.prop = slotProps.propField + '.' + slotProps.$index+ '.' + propField
+
                         attribute.error = modelValue[slotProps.validator][slotProps.propField][slotProps.$index][propField]
                     }
                 }
@@ -219,10 +236,19 @@
             function dateFormat(value,format){
                 if(Array.isArray(value)){
                     value = value.map(item=>{
-                        return dayjs(item).format(format)
+                        if(format){
+                            return dayjs(item).format(format)
+                        }else{
+                            return dayjs(item)
+                        }
+
                     })
                 }else{
-                    value = dayjs(value).format(format)
+                    if(format){
+                        value = dayjs(value).format(format)
+                    }else{
+                        value =  dayjs(value)
+                    }
                 }
                 return value
             }
@@ -331,16 +357,19 @@
                 return expression
             }
             //赋值方法
-            function setProxyData(data){
+            function setProxyData(data,type){
                 for(let field in data.bind){
-                    if(!modelValue.hasOwnProperty(field)){
+                    if(!modelValue.hasOwnProperty(field) && type === 1){
                         modelValue[field] = data.bind[field]
+                    }
+                    if(modelValue.hasOwnProperty(field) && type === 0){
+                        delete state.proxyData[field]
                     }
                 }
                 for(let slot in data.content){
                     data.content[slot].forEach(item=>{
                         if(typeof(item) == 'object'){
-                            setProxyData(item)
+                            setProxyData(item,type)
                         }
                     })
                 }

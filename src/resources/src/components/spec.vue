@@ -26,52 +26,65 @@
             </template>
         </el-table-column>
     </el-table>
-    <el-table :data="specData" size="mini" v-if="specData.length > 0" border>
-        <el-table-column
-                prop="group"
-                label="规格">
-            <template #default="scope">
+    <a-table row-key="group" :data-source="tableData" v-if="tableData.length > 0" size="small" bordered :pagination="false">
+        <a-table-column title="规格" data-index="eadminSpecGroup">
+            <template #default="{ record }">
                 <el-breadcrumb separator="|">
-                    <el-breadcrumb-item v-for="item in scope.row.group">
+                    <el-breadcrumb-item v-for="item in record.group">
                         <el-tag size="mini" type="info" effect="dark" class="tag">{{item.name}}</el-tag>
                         <el-tag size="mini" effect="dark">{{item.value}}</el-tag>
                     </el-breadcrumb-item>
                 </el-breadcrumb>
             </template>
-        </el-table-column>
-        <el-table-column v-for="column in columns" :label="column.label">
-            <template #default="scope">
-                <render :data="column.component" v-model="scope.row[column.prop]"></render>
+        </a-table-column>
+        <a-table-column v-for="column in columns" :title="column.title" :data-index="column.prop">
+            <template #default="{ record , index}">
+                <div style="margin: 10px 0">
+                    <render :slot-props="{ row:record ,$index:index ,propField:field,validator:$attrs.validator}" :data="column.component"></render>
+                </div>
             </template>
-        </el-table-column>
-    </el-table>
+        </a-table-column>
+    </a-table>
 </template>
 
 <script>
-    import {defineComponent, reactive, toRefs, computed, watch} from "vue";
+    import {defineComponent, reactive, toRefs, computed, watch,watchEffect,toRaw} from "vue";
     import {findTree} from "@/utils";
 
     export default defineComponent({
         name: "EadminSpec",
         inheritAttrs: false,
         props: {
+            field:String,
             data: Array,
-            specId: [String, Number],
+            specId: {
+                type:[String, Number],
+                default:'',
+            },
             specs: [Array, String],
             columns: Array,
             modelValue: [Object, Array, String],
         },
-        emits: ['update:modelValue', 'update:specs', 'update:specId'],
+        emits: ['update:modelValue', 'update:specs'],
         setup(props, ctx) {
-
             const state = reactive({
-                group:props.data,
-                specGroup: props.specId === 0 ? '':props.specId,
+                group:[],
+                specGroup: props.specId == '' ? '':'select'+props.specId,
                 selectSpec: [],
                 hoverIndex:-1,
+                tableData:[],
             })
             let selectValue = props.modelValue
             let propsSpecs = props.specs
+            if(propsSpecs){
+                props.data.unshift({
+                    id:'select'+props.specId,
+                    name:'当前规格',
+                    specs:toRaw(propsSpecs)
+                })
+
+            }
+            state.group = props.data
             //规格分组
             const specs = computed(() => {
                 const spec = findTree(state.group, state.specGroup, 'id')
@@ -80,7 +93,7 @@
                         const selectSpecs = findTree(propsSpecs, item.name, 'name')
                         item.selected = item.spec.filter(function (num) {
                             if(selectSpecs){
-                                return selectSpecs.options.indexOf(num) !== -1;
+                                return selectSpecs.spec.indexOf(num) !== -1;
                             }
                             return false
                         })
@@ -93,13 +106,13 @@
                 }
             })
             let checkboxSpec = []
-            //已选择规格
-            const specData = computed(() => {
+
+            watchEffect(() => {
                 let data = []
                 let selectedArr = []
                 checkboxSpec = []
                 state.selectSpec.forEach(item => {
-                    checkboxSpec.push({name: item.name, options: item.selected})
+                    checkboxSpec.push({name: item.name, spec: item.selected})
                     let arr = []
                     item.selected.forEach(selected => {
                         arr.push({
@@ -115,30 +128,33 @@
                         data = data.shift()
                     }
                 }
-                data = data.map(item => {
+
+                data =  data.map(item => {
                     const spec = findTree(selectValue, item.spec, 'spec')
                     props.columns.forEach(column => {
                         if (spec) {
-                            item[column.prop] = spec[column.prop]
+                            item[column.dataIndex] = spec[column.dataIndex]
                         } else {
-                            item[column.prop] = ''
+                            item[column.dataIndex] = ''
                         }
                     })
                     return item
                 })
-                return data
+                state.tableData = data
             })
 
-            watch(specData, value => {
+            watch(()=>state.tableData , value => {
                 selectValue = value
-                ctx.emit('update:specs', checkboxSpec)
-                ctx.emit('update:modelValue', value)
-            })
+                try {
+                    ctx.emit('update:specs', checkboxSpec)
+                    ctx.emit('update:modelValue', value)
+                }catch (e) {
+
+                }
+            },{deep:true})
             function selectHandel(val) {
                 state.selectSpec = []
-                ctx.emit('update:specId', val)
             }
-
             function specParse(arr1, arr3) {
                 if (arr1[0] && arr1[0].length === 0) {
                     arr1.shift()
@@ -210,7 +226,6 @@
                 handleUp,
                 handleDown,
                 selectHandel,
-                specData,
                 specs,
                 ...toRefs(state)
             }

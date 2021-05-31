@@ -121,10 +121,8 @@ class Model implements FormInterface
      * @return bool|\think\Collection
      */
     public function saveAll(array $data){
-        $result = true;
         try {
-            $this->model->where('1=1')->delete();
-            $this->model->saveAll($data);
+            $result = $this->model->saveAll($data);
         }catch (HttpResponseException $e) {
             throw $e;
         }catch (\Exception $e) {

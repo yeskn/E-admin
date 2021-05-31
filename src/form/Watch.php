@@ -39,7 +39,7 @@ class Watch implements ArrayAccess
     }
     protected function getIfField($field){
         $field = str_replace('.','_',$field);
-        $field = $field.'Show';
+        $field = $this->bindAttr('model').$field.'Show';
         return $field;
     }
     /**

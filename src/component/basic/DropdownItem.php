@@ -3,7 +3,9 @@
 
 namespace Eadmin\component\basic;
 
+use Eadmin\Admin;
 use Eadmin\component\Component;
+use think\app\Url;
 
 /**
  * Class DropdownItem
@@ -57,6 +59,15 @@ class DropdownItem extends Component
      */
     public function save(array $data, $url, $confirm = '')
     {
+        if($url instanceof Url){
+            $url = (string)$url;
+        }
+        $dispatch = Admin::getDispatch($url);
+        if($dispatch){
+
+            list($eadmin_class, $eadmin_function)  = Admin::getDispatchCall($dispatch);
+            $this->auth($eadmin_class,$eadmin_function);
+        }
         if (empty($confirm)) {
             $this->url($url)->params($data);
         } else {

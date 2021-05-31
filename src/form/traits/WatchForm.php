@@ -38,7 +38,7 @@ trait WatchForm
      */
     protected function watchCall($data)
     {
-        if (Request::has('eadmin_form_watch') && isset($data['newValue'], $data['oldValue'])) {
+        if (Request::has('eadmin_form_watch')) {
 			$watch   = new \Eadmin\form\Watch($data['form']);
 			$closure = $this->watchs[$data['field']];
 			$watch->set($data['field'],$data['newValue']);

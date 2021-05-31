@@ -1,11 +1,11 @@
 <template>
     <!-- 头像消息框 -->
     <div class="miniBox" @click="openIm">
-        <el-avatar :src="info.headimg" style="margin-right: 10px"></el-avatar>
-        <el-badge :value="unReadNum" type="danger" :max="99" v-if="unReadNum > 0">{{info.nickname}}</el-badge>
-        <el-badge :type="online" is-dot v-else>{{info.nickname}}</el-badge>
+        <el-avatar :src="im.info.avatar" style="margin-right: 10px"></el-avatar>
+        <el-badge :value="unReadNum" type="danger" :max="99" v-if="unReadNum > 0">{{im.info.nickname}}</el-badge>
+        <el-badge :type="online" is-dot v-else>{{im.info.nickname}}</el-badge>
     </div>
-    <div v-show="dialogShow">
+    <div v-show="dialogShow" @click.native="popoverVisibleClose">
         <el-dialog
                 v-model="dialogVisible"
                 width="900px"
@@ -13,12 +13,18 @@
                 :show-close="false"
                 :fullscreen="fullscreen"
         >
-            <div class="main">
-                <left-tools :headimg="info.headimg"></left-tools>
+            <div class="main" @click="popoverVisibleClose">
+                <left-tools :avatar="im.info.avatar"></left-tools>
                 <list></list>
                 <div class="mainContent">
                     <div style="position: absolute;right: 5px;top:5px;cursor: pointer;">
-                        <i class="el-icon-full-screen rightTools"></i>
+                        <el-tooltip effect="light" content="转接" v-if="recentType == 'customerMsg'">
+                            <i @click="customerDialogVisible = true" class="el-icon-refresh rightTools"></i>
+                        </el-tooltip>
+                        <el-tooltip effect="light" content="结束会话" v-if="recentType == 'customerMsg'">
+                            <i @click="closeCustomer(recentId)" class="el-icon-switch-button rightTools"></i>
+                        </el-tooltip>
+<!--                        <i class="el-icon-full-screen rightTools" @click="fullscreen = !fullscreen"></i>-->
                         <i class="el-icon-close rightTools" @click="dialogVisible=false"></i>
                     </div>
                     <im-message v-show="leftTool === 'message'"></im-message>
@@ -26,40 +32,42 @@
                 </div>
             </div>
         </el-dialog>
+        <customer-dialog></customer-dialog>
     </div>
 </template>
 
 <script>
-    import {defineComponent,reactive,toRefs,nextTick,watch,computed} from "vue";
+    import {defineComponent,reactive,toRefs,nextTick,watch,onBeforeUnmount} from "vue";
     import leftTools from './leftTools.vue'
     import list from './list/list.vue'
     import ImMessage from './main/message.vue'
     import ImFriend from './main/friend.vue'
+    import customerDialog from './customerDialog.vue'
     import im from './websocket/websocket'
+    import {closeCustomer} from './customer/customer'
     export default defineComponent({
-        name: "imIndex",
+        name: "EadminIm",
         components:{
             leftTools,
             list,
             ImMessage,
-            ImFriend
+            ImFriend,
+            customerDialog
         },
-        setup(){
+        props:{
+            username:String,
+            password:String,
+            websocket:String,
+        },
+        setup(props){
             const state = reactive({
                 dialogShow:false,
                 dialogVisible:true,
                 fullscreen:false,
-                info:{
-                    id:0,
-                    headimg:'',
-                    nickname:'',
-                },
                 online: 'danger',
             })
-
-
             nextTick(()=>{
-                im.connect()
+                im.connect(props.websocket,props.username,props.password)
                 state.dialogVisible = false
             })
             im.onMessage((action,data)=>{
@@ -68,27 +76,25 @@
                     case 'login':
                         if(data.code === 0){
                             state.online = 'success'
-                            state.info = data.info
+                            im.info = data.info
                         }
                         break;
                 }
             })
+            im.onClose(e=>{
+                state.online = 'danger'
+            })
+            //监听工具栏切换
             watch(()=>im.state.leftTool,val=>{
                 if(val === 'message'){
 
                 }else if(val === 'friend'){
                     im.send('getAddFriend')
+                }else if(val === 'customer'){
+                    im.send('getCustomerConnList')
                 }
             })
-            // //未读数量
-            // const unReadNum = computed(()=>{
-            //     let unReadNum = 0
-            //     im.state.recentList.forEach(item => {
-            //         unReadNum += parseInt(item.unReadNum)
-            //     })
-            //
-            //     return unReadNum
-            // })
+
             function openIm(){
                 state.dialogShow = true
                 state.dialogVisible = true
@@ -97,10 +103,21 @@
                 //     this.selectMsgUser(this.recentList[index], index)
                 // }
             }
+            function popoverVisibleClose() {
+                im.state.msgList.forEach(item => {
+                    item.popoverVisible = false
+                })
+            }
+            onBeforeUnmount(()=>{
+                im.close()
+            })
             return {
+                im,
+                closeCustomer,
                 ...toRefs(state),
                 ...toRefs(im.state),
-                openIm
+                openIm,
+                popoverVisibleClose
             }
         }
     })

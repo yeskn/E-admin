@@ -43,6 +43,7 @@ use think\Model;
  * @method $this hideDeleteSelection(bool $bool = true) 隐藏删除选中按钮
  * @method $this expandFilter(bool $bool = true) 展开筛选
  * @method $this defaultExpandAllRows(bool $bool) 是否默认展开所有行
+ * @method $this defer(bool $bool) 延迟渲染表格
  * @method $this expandRowByClick(bool $bool) 通过点击行来展开子行
  * @method $this showHeader(bool $bool = true) 是否显示表头
  * @method $this loadDataUrl(string $value) 设置加载数据url
@@ -532,7 +533,7 @@ class Grid extends Component
         if (Request::get('export_type') == 'all') {
             set_time_limit(0);
             if ($excel instanceof Excel) {
-                $data = $this->drive->db()->select()->toArray();
+                $data = $this->drive->db()->select();
                 $exportData = $this->parseColumn($data, true);
                 $excel->rows($exportData)->export();
             } else {
@@ -590,6 +591,8 @@ class Grid extends Component
         if (!is_null($this->filter)) {
             $form = $this->filter->render();
             $form->eventSuccess([$this->bindAttr('modelValue') => true]);
+            //排除筛选多余字段
+            $this->attr('filterExceptField', $form->attr('exceptField'));
             $this->attr('filter', $form);
             $this->attr('filterField', $form->bindAttr('model'));
         }

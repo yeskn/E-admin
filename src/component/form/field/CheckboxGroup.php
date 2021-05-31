@@ -5,6 +5,7 @@ namespace Eadmin\component\form\field;
 
 
 use Eadmin\component\form\Field;
+use think\helper\Str;
 
 /**
  * 多选框组
@@ -62,15 +63,18 @@ class CheckboxGroup extends Field
             ];
         }
         if ($buttonTheme) {
-            $checkbox = CheckboxButton::create();
+            $checkbox = new CheckboxButton;
         } else {
-            $checkbox = Checkbox::create();
+            $checkbox = new Checkbox;
         }
-        $field = $checkbox->bindAttr('modelValue');
-        $checkbox->removeBind($field);
-        $checkbox->removeAttr('modelValue');
+        $mapField = Str::random(30, 3);
+        $this->bindValue($options, 'options', $mapField);
+        $this->formItem->form()->except([$mapField]);
+        if (empty($this->formItem->form()->manyRelation())) {
+            $mapField = $this->formItem->form()->bindAttr('model') . '.' . $mapField;
+        }
         $checkboxOption = $checkbox
-            ->map($options)
+            ->map($options,$mapField)
             ->mapAttr('label', 'value')
             ->mapAttr('key', 'value')
             ->mapAttr('slotDefault', 'label')

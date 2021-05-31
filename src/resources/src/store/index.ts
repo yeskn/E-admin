@@ -1,4 +1,4 @@
-import {reactive, toRaw} from "vue";
+import {reactive} from "vue";
 import request from '@/utils/axios'
 import {findTree, appendCss, setObjectValue} from '@/utils'
 
@@ -34,6 +34,7 @@ const states = reactive({
     //个人信息
     info: {
         id: 0,
+        init: [],
         webLogo: '',
         webName: '',
         dropdownMenu: [],
@@ -105,10 +106,14 @@ const action = {
     },
     clearComponent(url: string) {
         let index = action.getComponentIndex(url)
-        states.mainComponent.splice(index, 1)
-        states.componentVariable.splice(index, 1)
+        if(index > -1){
+            states.mainComponent.splice(index, 1)
+            states.componentVariable.splice(index, 1)
+        }
         index = action.getCacheCssIndex(url)
-        states.mainComponentCss.splice(index, 1)
+        if(index > -1) {
+            states.mainComponentCss.splice(index, 1)
+        }
     },
     getComponentIndex(url: string) {
         return states.mainComponent.findIndex(item => {
@@ -122,12 +127,11 @@ const action = {
         state.component = null
         const index = action.getComponentIndex(url)
 
-        for (let i in states.proxyData) {
-            // @ts-ignore
-            delete states.proxyData[i]
-        }
         if (index === -1) {
-
+            for (let i in state.proxyData) {
+                // @ts-ignore
+                delete state.proxyData[i]
+            }
             // @ts-ignore
             const menu = findTree(state.menus, url.substr(1), 'url')
             if (menu) {
@@ -138,7 +142,6 @@ const action = {
                     // @ts-ignore
                     proxyData: {}
                 })
-
                 states.mainComponent.push({
                     // @ts-ignore
                     title: menu.name || url,
@@ -177,8 +180,8 @@ const action = {
             state.mainDescription = states.mainComponent[index].description || ''
 
         }
-
         action.loading(false)
+
     },
     //关闭错误页面
     errorPageClose() {
@@ -224,6 +227,7 @@ const action = {
                     states.info.webLogo = res.data.webLogo
                     states.info.webName = res.data.webName
                     states.info.dropdownMenu = res.data.dropdownMenu
+                    states.info.init = res.data.init || []
                 }
                 resolve(res)
             }).catch((res: any) => {

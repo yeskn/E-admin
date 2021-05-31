@@ -15,7 +15,7 @@
                         </div>
                         <div :ref="e=>{setRef(e,item.msg_id)}" class="rightMsgItem" v-if="item.from_uid == im.id">
                             <el-avatar style="margin-left: 10px;" size="medium" shape="square"
-                                       src="{$info.headimg}"></el-avatar>
+                                       :src="im.info.avatar"></el-avatar>
                             <!-- 文字 -->
                             <div class="msgItemContent">
                                 <div style="width: 20px;height: 20px" v-show="item.sendStatus == 'ing'">
@@ -29,27 +29,31 @@
                                         trigger="manual"
                                         v-model:visible="item.popoverVisible">
                                     <div style="display: flex;align-items: center;justify-content: space-between;">
-                                        <el-link :underline="false" v-if="item.recall_id"
+                                        <span v-if="item.recall_id"
                                                  @click="recallMsg(item)"><i
-                                                class="el-icon-refresh-left"></i> 撤回
-                                        </el-link>
-                                        <el-link :underline="false" type="danger" @click="delMsg(item.msg_id,key)"><i
-                                                class="el-icon-error"></i> 删除
-                                        </el-link>
+                                                class="el-icon-refresh-left blue"></i> <span style="cursor: pointer">撤回</span>
+                                        </span>
+                                        <span @click="delMsg(item.msg_id,key)"><i
+                                                class="el-icon-error red"></i> <span style="cursor: pointer">删除</span>
+                                        </span>
                                     </div>
                                     <template #reference>
-                                        <div class="rightMsgItemBg" v-if="item.type == 1" @contextmenu.prevent="openMenu(key)" v-html="item.content"></div>
-                                        <!-- 图片 -->
-                                        <el-image
-                                                fit="contain"
-                                                v-else-if="item.type == 2"
-                                                class="msgImage"
-                                                :src="item.content"
-                                                :preview-src-list="[item.content]" @contextmenu.prevent="openMenu(key)">
-                                        </el-image>
+                                        <div>
+                                            <div class="rightMsgItemBg" v-if="item.type == 1" @contextmenu.prevent="openMenu(key)" v-html="item.content"></div>
+                                            <!-- 图片 -->
+                                            <el-image
+                                                    fit="contain"
+                                                    v-else-if="item.type == 2"
+                                                    class="msgImage"
+                                                    :src="item.content"
+                                                    :preview-src-list="[item.content]" @contextmenu.prevent="openMenu(key)">
+                                            </el-image>
+
+                                            <!-- 语音 -->
+                                            <audio controls :src="item.content" v-else-if="item.type == 3" @contextmenu.prevent="openMenu(key)"></audio>
+                                        </div>
                                     </template>
-                                    <!-- 语音 -->
-                                    <!--<eadmin-audio :mini="true" :url="item.content" v-else-if="item.type == 3" slot="reference" @contextmenu.prevent="openMenu(key)"></eadmin-audio>-->
+
                                 </el-popover>
                                 <div class="rightTriangle" v-if="item.type == 1"></div>
                             </div>
@@ -57,7 +61,7 @@
                         </div>
                         <div :ref="e=>{setRef(e,item.msg_id)}" class="leftMsgItem" v-else>
                             <el-avatar style="margin-right: 10px;" size="medium" shape="square"
-                                       :src="item.headimg"></el-avatar>
+                                       :src="item.avatar"></el-avatar>
                             <!-- 文字 -->
                             <div class="msgItemContent">
                                 <div class="leftTriangle" v-if="item.type == 1"></div>
@@ -72,20 +76,22 @@
                                         </el-link>
                                     </div>
                                     <template #reference>
-                                        <div class="leftMsgItemBg" v-if="item.type == 1" @contextmenu.prevent="openMenu(key)" v-html="item.content"></div>
-                                        <!-- 图片 -->
-                                        <el-image
-                                                fit="contain"
-                                                @contextmenu.prevent="openMenu(key)"
-                                                v-else-if="item.type == 2"
-                                                class="msgImage"
-                                                :src="item.content"
-                                                :preview-src-list="[item.content]">
-                                        </el-image>
-                                    </template>
+                                        <div>
+                                            <div class="leftMsgItemBg" v-if="item.type == 1" @contextmenu.prevent="openMenu(key)" v-html="item.content"></div>
+                                            <!-- 图片 -->
+                                            <el-image
+                                                    fit="contain"
+                                                    @contextmenu.prevent="openMenu(key)"
+                                                    v-else-if="item.type == 2"
+                                                    class="msgImage"
+                                                    :src="item.content"
+                                                    :preview-src-list="[item.content]">
 
-                                    <!-- 语音 -->
-                                    <!--                                <eadmin-audio :mini="true" :url="item.content" v-else-if="item.type == 3" slot="reference" @contextmenu.prevent="openMenu(key)"></eadmin-audio>-->
+                                            </el-image>
+                                            <!-- 语音 -->
+                                            <audio controls :src="item.content" v-else-if="item.type == 3" @contextmenu.prevent="openMenu(key)"></audio>
+                                        </div>
+                                    </template>
                                 </el-popover>
                             </div>
 
@@ -128,20 +134,22 @@
             </el-scrollbar>
             <el-popover placement="top-start" content="发送内容不能为空" v-model:visible="sendTipvisible" trigger="manual">
                 <template #reference>
-                    <el-button size="mini" style="float: right;margin-right: 15px" @click="sendMsg">发送
-                    </el-button>
+                    <el-button size="mini" style="float: right;margin-right: 15px" @click="sendMsg">发送</el-button>
                 </template>
 
             </el-popover>
         </div>
+        <audio id="eadmin_notice_music" controls="controls" style="display:none">
+            <source src="../../../assets/notice.mp3" type="audio/mpeg">
+        </audio>
     </div>
 </template>
 
 <script>
-    import {defineComponent, reactive, toRefs,nextTick,watch} from "vue";
-    import {ElNotification} from "element-plus";
+    import {defineComponent, reactive, toRefs,nextTick,watch,onBeforeUpdate} from "vue";
+    import {ElNotification,ElMessage} from "element-plus";
     import im from '../websocket/websocket'
-    import {findArrKey,findTree} from '@/utils'
+    import {findArrKey,findTree,genId} from '@/utils'
     import messageRecord from "./messageRecord";
     export default defineComponent({
         name: "ImMessage",
@@ -176,13 +184,15 @@
                    //发送信息结果
                    case 'msgResult':
                        const key = findArrKey(im.state.msgList, data.msg_id, 'msg_id')
-                       if(key > -1){
+                       if(key !== null && key > -1){
                            im.state.msgList[key].sendStatus = 'ok'
                            im.state.msgList[key].time = data.time
                            //撤回id
                            im.state.msgList[key].recall_id = data.msg_id
                            setTimeout(() => {
-                               im.state.msgList[key].recall_id = false
+                               if(im.state.msgList[key]){
+                                   im.state.msgList[key].recall_id = false
+                               }
                            }, 120000)
                        }
 
@@ -208,39 +218,56 @@
                        } else {
                            if (im.isSelectUser(data)) {
                                im.state.msgList.push(data)
-                               readMsg(data)
+                               im.readMsg(data)
                            } else {
-                               showNotification(data.nickname,data.content,data.headimg)
+                               showNotification(data.nickname,data.content,data.avatar)
                                recent.unReadNum = data.unReadNum
-                               document.getElementById('eadmin_im_music').play()
+                               document.getElementById('eadmin_notice_music').play()
                            }
                            recent.content = getTypeContent(data)
                            recent.time = data.time
                        }
                        scrollToBottom('chatMsgBox')
                        break;
+                   //撤回成功
+                   case 'recall':
+                       if(data.code == 0){
+                           let index = findArrKey(im.state.msgList, data.msg_id, 'msg_id')
+                           im.state.msgList.splice(index, 1)
+                           if(data.msg_type === 'msg'){
+                               recent = findTree(im.state.recentList, data.from_uid, 'from_uid')
+                           }else if(data.msg_type === 'customerMsg'){
+                               recent = findTree(im.state.recentList, data.from_uid, 'group_id')
+                           }
+                           recent.content = data.content
+                           recent.time = data.time
+                       }
+                       break;
                    //聊天记录
                    case 'msgRecord':
-                       const length = im.state.msgfList.length
+                       const length = im.state.msgList.length
                        im.state.msgList = data.concat(im.state.msgList)
                        if (length == 0) {
                            scrollToBottom('chatMsgBox')
                        } else {
                            nextTick(() => {
                                state.scrollMsgLoading = false
-                               const ref = findTree(msgRefs,state.scrollMsgId,'msgId')
-                               if(ref){
-                                   const div = state.chatMsgBox.wrap
-                                   const scrollHeight = div.scrollHeight
-                                   const msgScrollTop = ref.dom.offsetTop
-                                   const msgScrollHeight = msgScrollTop - 90;
-                                   if(scrollHeight > msgScrollHeight){
-                                       div.scrollTop = msgScrollHeight;
-                                   }else{
-                                       div.scrollTop = msgScrollTop
-                                   }
+                               setTimeout(()=>{
+                                   const ref = findTree(msgRefs,state.scrollMsgId,'msgId')
+                                   if(ref && state.chatMsgBox){
+                                       const div = state.chatMsgBox.wrap
+                                       const scrollHeight = div.scrollHeight
 
-                               }
+                                       const msgScrollTop = ref.dom.offsetTop
+                                       const msgScrollHeight = msgScrollTop - 90;
+                                       if(scrollHeight > msgScrollHeight){
+                                           div.scrollTop = msgScrollHeight;
+                                       }else{
+                                           div.scrollTop = msgScrollTop
+                                       }
+
+                                   }
+                               })
                            })
                        }
                        break;
@@ -264,20 +291,7 @@
                     }
                 }
             })
-            //读消息
-            function readMsg(item){
-                let readAction
-                if(item.msg_type === 'msg'){
-                    im.state.recentId = item.from_uid
-                    readAction = 'readMsg'
-                }else if(item.msg_type === 'customerMsg'){
-                    im.state.recentId = item.group_id
-                    readAction = 'readGroupMsg'
-                }
-                im.send(readAction,{
-                    uid:  im.state.recentId
-                })
-            }
+
             function getTypeContent(data){
                 let content = ''
                 switch (data.type) {
@@ -333,8 +347,57 @@
             function sendContentChange() {
                 state.sendContent = state.sendInput.innerHTML
             }
-            function pasteSendInput() {
+            //粘贴图片处理
+            function pasteSendInput(event) {
 
+                let data = (event.clipboardData || window.clipboardData);
+                let items = data.items;
+                if (items && items.length) {
+                    // 检索剪切板items
+                    for (let i = 0; i < items.length; i++) {
+                        if (items[i].type.indexOf("image") !== -1) {
+                            event.preventDefault()
+                            uploadFile(items[i].getAsFile()).then(function(ret){
+                                document.execCommand("insertHTML",false,"<img class='pasteImage' src='"+ret+"' width='150' height='80'/>")
+                            }).catch(function(ret){});
+                        }
+                    }
+                }
+            }
+            //上传
+            function uploadFile(file) {
+                var filename = file.name
+                var index = filename.lastIndexOf('.')
+                var suffix = filename.substring(index + 1, filename.length)
+                filename = genId() + 'filerand.' + suffix
+                return new Promise(function(resolve,reject){
+                    const xhr = new XMLHttpRequest()
+                    xhr.withCredentials = false
+                    xhr.open('POST', '/eadmin/upload')
+
+                    xhr.onload = function() {
+                        var json
+                        if (xhr.status != 200) {
+                            ElMessage.error('上传失败')
+                            return
+                        }
+                        try {
+                            json = JSON.parse(xhr.responseText)
+                            if (json.code !== 200) {
+                                ElMessage.error('上传失败')
+                                return
+                            }
+                            resolve(json.data)
+                        } catch (e) {
+                            ElMessage.error('上传失败')
+                        }
+                    }
+                    const formData = new FormData()
+                    formData.append('file', file, file.name)
+                    formData.append('filename', filename)
+                    xhr.setRequestHeader('Authorization', localStorage.getItem('eadmin_token'))
+                    xhr.send(formData)
+                })
             }
             /**
              * 消息通知
@@ -402,9 +465,10 @@
             //聊天记录滚动条置底
             function scrollToBottom(ref) {
                 nextTick(() => {
-                    let div = state[ref].wrap
-                    div.scrollTop = div.scrollHeight
-
+                    let div = state[ref]
+                    if(div){
+                        div.wrap.scrollTop = div.wrap.scrollHeight
+                    }
                 })
             }
             /**
@@ -449,22 +513,36 @@
                     }
                 }, 5000)
             }
-            function genId() {
-                return Number(Math.random().toString().substr(3, 10) + Date.now()).toString(36);
-            }
-            //重发
-            function resend() {
 
+            //重发
+            function resend(item, key) {
+                im.state.msgList[key].sendStatus = 'ing'
+                sendWait(item.msg_id)
+                im.send('recall',{
+                    action: 'msg',
+                    data: item
+                })
             }
             //撤回
             function recallMsg(item) {
-
+                im.send('recall',{
+                    type:item.msg_type,
+                    to_uid: im.state.recentId,
+                    recall_id: item.recall_id,
+                })
+            }
+            //关闭文字菜单
+            function popoverVisibleClose() {
+                im.state.msgList.forEach(item => {
+                    item.popoverVisible = false
+                })
             }
             //右键打开文字菜单
             function openMenu(index) {
-               // this.popoverVisibleClose()
-              //  this.msgList[index].popoverVisible = true
+                popoverVisibleClose()
+                im.state.msgList[index].popoverVisible = true
             }
+
             //判断本地是否已删除记录
             function isDelMsg(msg_id){
                 let delMsg = localStorage.getItem('eadmin_del_msg'+im.id)
@@ -485,7 +563,7 @@
                 }
                 delMsg.push(msg_id)
                 localStorage.setItem('eadmin_del_msg'+im.id, JSON.stringify(delMsg))
-                state.msgList.splice(index, 1)
+                im.state.msgList.splice(index, 1)
             }
 
             function setRef (el,msgId){
@@ -494,9 +572,12 @@
                     dom:el
                 })
             }
-            watch(()=>im.state.msgList,val=>{
+            onBeforeUpdate(() => {
                 msgRefs = []
             })
+            // watch(()=>im.state.msgList,val=>{
+            //     msgRefs = []
+            // })
             return {
                 setRef,
                 im,
@@ -525,7 +606,7 @@
         height: 50px;
         text-indent: 20px;
         line-height: 50px;
-        border-bottom: rgba(0,0,0,0.02) solid 1px;
+        border-bottom: #dadcdf solid 1px;
         font-size: 18px;
         color: #000000;
     }
@@ -630,6 +711,15 @@
         padding-left: 10px;
         width: 100%;
         min-height: 105px;
+    }
+    .blue{
+        color: #2d8cf0;
+    }
+    .red{
+        color: red;
+    }
+    .msgImage{
+        width: 120px; height: 100px;border-radius: 5px;border: 1px solid #ededed
     }
     .sendTextarea:focus{outline: none;}
 </style>

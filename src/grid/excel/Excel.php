@@ -13,6 +13,11 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
+/**
+ * Class Excel
+ * @package Eadmin\grid\excel
+ * @mixin \PhpOffice\PhpSpreadsheet\Spreadsheet
+ */
 class Excel extends AbstractExporter
 {
     protected $excel;
@@ -22,7 +27,10 @@ class Excel extends AbstractExporter
     protected $callback = null;
 
     protected $mapCallback = null;
-
+    //数据开始列
+    protected $startColumnIndex = 1;
+    //数据开始行
+    protected $startRowIndex = 2;
     //合并行字段条件
     protected $mergeCondtionField = null;
     //合并列字段
@@ -34,18 +42,17 @@ class Excel extends AbstractExporter
         $this->sheet = $this->excel->getActiveSheet();
     }
 
-    private function getLetter($i)
+    public function getLetter($i)
     {
 
         $letter = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
         if ($i > count($letter) - 1) {
             if ($i > 51) {
-                $num = ceil($i / 25);
+                $num = floor($i / 26);
             } else {
-                $num = round($i / 25);
+                $num = 1;
             }
             $j = $i % 26;
-
             $str = $letter[$num - 1] . $letter[$j];
 
             return $str;
@@ -62,6 +69,17 @@ class Excel extends AbstractExporter
         $this->callback = $closure;
     }
 
+    /**
+     * 设置数据遍历开始行列
+     * @param int $startRowIndex 行
+     * @param int $startColumnIndex 列
+     */
+    public function setDataIndex($startRowIndex = 2, $startColumnIndex = 1)
+    {
+        $this->startRowIndex = $startRowIndex;
+        $this->startColumnIndex = $startColumnIndex;
+    }
+
     public function export()
     {
         if (is_callable($this->callback)) {
@@ -71,17 +89,17 @@ class Excel extends AbstractExporter
         ini_set('memory_limit', '-1');
         $this->filterColumns();
         $rowCount = count($this->data) + 1;
-        $letter   = $this->getLetter(count($this->columns) - 1);
+        $letter = $this->getLetter(count($this->columns) - 1);
         $this->sheet->getStyle("A1:{$letter}{$rowCount}")->applyFromArray([
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
-                'vertical'   => Alignment::VERTICAL_CENTER
+                'vertical' => Alignment::VERTICAL_CENTER
             ],
         ]);
         $i = 0;
         foreach ($this->columns as $field => $val) {
             $values = array_column($this->data, $field);
-            $str    = $val;
+            $str = $val;
             foreach ($values as $v) {
                 if (mb_strlen($v, 'utf-8') > mb_strlen($str, 'utf-8')) {
                     $str = $v;
@@ -91,17 +109,18 @@ class Excel extends AbstractExporter
             $this->sheet->getColumnDimension($this->getLetter($i))->setWidth($width);
             $i++;
         }
-        $i            = 0;
+        $i = 0;
         $fieldCellArr = [];
         foreach ($this->columns as $field => $val) {
             $i++;
             $this->sheet->setCellValueByColumnAndRow($i, 1, $val);
             $fieldCellArr[$field] = $this->getLetter($i - 1);
         }
-        $i                = 1;
+        $i = $this->startColumnIndex;
         $tmpMergeCondition = '';
-        $tmpMergeIndex    = 2;
-        $rowIndex         = 1;
+        $tmpMergeIndex = 2;
+        $rowIndex = $this->startRowIndex - 1;
+
         foreach ($this->data as $key => &$val) {
             $rowIndex++;
             if ($this->mapCallback instanceof \Closure) {
@@ -128,10 +147,10 @@ class Excel extends AbstractExporter
                         }
                     }
                     $tmpMergeCondition = $val[$this->mergeCondtionField];
-                    $tmpMergeIndex    = $rowIndex;
+                    $tmpMergeIndex = $rowIndex;
                 }
             }
-            $i = 1;
+            $i = $this->startColumnIndex;
         }
         ob_end_clean();
         header('Content-Type: application/vnd.ms-excel');
@@ -141,6 +160,7 @@ class Excel extends AbstractExporter
         $writer->save('php://output');
         exit;
     }
+
     private static function filterEmoji($str)
     {
         $str = preg_replace_callback('/./u',
@@ -150,6 +170,7 @@ class Excel extends AbstractExporter
             $str);
         return $str;
     }
+
     public function map(\Closure $closure)
     {
         $this->mapCallback = $closure;
@@ -163,6 +184,11 @@ class Excel extends AbstractExporter
     public function mergeRow(string $conditionField, array $fields)
     {
         $this->mergeCondtionField = $conditionField;
-        $this->mergeRowFields     = $fields;
+        $this->mergeRowFields = $fields;
+    }
+
+    public function __call($name, $arguments)
+    {
+        return call_user_func_array([$this->excel, $name], $arguments);
     }
 }

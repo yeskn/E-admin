@@ -2,7 +2,7 @@
     <div class="header-container">
         <i v-if="sidebar.visible || state.device === 'mobile'" :class="sidebar.opend?'el-icon-s-unfold hamburger':'el-icon-s-fold hamburger'"
            style="font-size: 18px" @click="collapse"/>
-        <el-menu :default-active="activeIndex" @select="selectMenu" class="el-menu-demo" mode="horizontal" v-if="state.device === 'desktop'">
+        <el-menu :default-active="activeIndex" @select="selectMenu" class="menu" mode="horizontal" v-if="state.device === 'desktop'">
             <el-menu-item v-for="item in menus" :index="item.id+''">
                 <i :class="item.icon" v-if="item.icon"></i>
                 <span slot="title">{{item.name}}</span>
@@ -174,6 +174,10 @@
 </script>
 
 <style lang="scss" scoped>
+    .menu{
+        overflow-x: auto;
+        display: flex;
+    }
     .header-container {
         display: flex;
         align-items: center;

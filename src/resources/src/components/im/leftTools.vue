@@ -1,7 +1,7 @@
 <template>
     <div class="leftTools">
         <div class="item">
-            <el-avatar size="medium" shape="square" :src="headimg"></el-avatar>
+            <el-avatar size="medium" shape="square" :src="avatar"></el-avatar>
         </div>
         <div class="item" v-for="item in leftToos">
             <el-tooltip effect="light" :content="item.tip" placement="right">
@@ -25,7 +25,7 @@
         props:{
             modelValue:String,
             //头像
-            headimg:String,
+            avatar:String,
         },
         emits:['update:modelValue'],
         setup(props,ctx){
@@ -66,6 +66,10 @@
                     case 'getAddFriend':
                         state.leftToos[1].num  = 0
                         break;
+                    //获取待接入用户
+                    case 'customerConnList':
+                        state.leftToos[2].num = data.length
+                        break;
                     //收到好友请求
                     case 'addFriend':
                         if(im.state.leftTool == 'friend'){
@@ -95,7 +99,7 @@
 
     .leftTools {
         background-color: #1a1a1a;
-        width: 80px;
+        width: 70px;
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -109,7 +113,5 @@
     .leftTools .item i {
         font-size: 22px;
         cursor: pointer;
-
-
     }
 </style>

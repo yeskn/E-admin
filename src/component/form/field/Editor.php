@@ -21,7 +21,7 @@ class Editor extends Field
     public function __construct($field = null, string $value = '')
     {
         parent::__construct($field, $value);
-        $this->attr('url', request()->domain() . '/eadmin/upload');
+        $this->attr('url',  '/eadmin/upload');
         $this->attr('token', Admin::token()->get());
         $this->disk(config('admin.uploadDisks'));
     }

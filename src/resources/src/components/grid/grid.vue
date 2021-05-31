@@ -29,7 +29,7 @@
                     <el-button plain size="small" icon="el-icon-help" v-if="trashed && selectIds.length > 0" @click="recoverySelect">恢复选中</el-button>
                     <el-button type="danger" size="small" icon="el-icon-delete" v-if="!hideDeleteButton" @click="deleteAll()">{{trashed && !hideTrashed?'清空回收站':'清空数据'}}</el-button>
                     <el-button v-if="filter" type="primary" size="small" icon="el-icon-zoom-in" @click="visibleFilter">筛选</el-button>
-                    <render v-for="tool in tools" :data="tool" :ids="selectIds" :grid-params="params"></render>
+                    <render v-for="tool in tools" :data="tool" :ids="selectIds" :grid-params="params" :slot-props="grid"></render>
                 </el-col>
                 <el-col :md="4" >
                     <div style="float: right;margin-right: 15px">
@@ -71,7 +71,7 @@
             </el-row>
         </div>
         <!--表格-->
-        <a-table v-else :row-selection="rowSelection" @change="tableChange" :columns="tableColumns" :data-source="tableData" :pagination="false" :loading="loading" v-bind="$attrs" row-key="id" ref="dragTable">
+        <a-table v-else :row-selection="rowSelection" @expand="expandChange" @change="tableChange" :columns="tableColumns" :data-source="tableData"  :expanded-row-keys="expandedRowKeys"	 :pagination="false" :loading="loading" v-bind="$attrs" row-key="id" ref="dragTable">
             <template #title v-if="header">
                 <div class="header"><render :data="header"></render></div>
             </template>
@@ -111,12 +111,13 @@
 </template>
 
 <script>
-    import {defineComponent, ref, watch, inject,nextTick,triggerRef,computed,unref,toRaw} from "vue"
+    import {defineComponent, ref, watch, inject,nextTick,computed,unref} from "vue"
     import render from "@/components/render.vue"
     import {useHttp} from '@/hooks'
+    import {tableDefer} from '@/hooks/use-defer'
     import request from '@/utils/axios'
     import {store} from '@/store'
-    import {unique,deleteArr,buildURL} from '@/utils'
+    import {forEach,unique,deleteArr,buildURL} from '@/utils'
     import {ElMessageBox,ElMessage} from 'element-plus'
     import Sortable from 'sortablejs'
     import {useRoute} from 'vue-router'
@@ -154,8 +155,16 @@
             expandFilter: Boolean,
             addButton: [Object, Boolean],
             filterField:String,
+            filterExceptField:{
+                type:Array,
+                default:[]
+            },
             params:Object,
             addParams:Object,
+            defer:{
+                type:Boolean,
+                default:false
+            },
         },
         inheritAttrs: false,
         emits: ['update:modelValue','update:selection'],
@@ -169,12 +178,19 @@
             const filterShow = ref(props.expandFilter)
             const quickSearch = ref('')
             const selectIds = ref(props.selection || [])
+            const expandedRowKeys = ref([])
             const eadminActionWidth = ref(0)
             const trashed = ref(false)
             const quickSearchOn = ctx.attrs.quickSearch
             const quickSearchText = ctx.attrs.quickSearchText || '请输入关键字'
             const columns = ref(props.columns)
-            const tableData = ref(props.data)
+            const tableData = ref([])
+            if(props.defer){
+                tableData.value = []
+                tableDefer(tableData.value,props.data)
+            }else{
+                tableData.value = props.data
+            }
             const total = ref(props.pagination.total || 0)
             const tools = ref(props.tools)
             const header = ref(props.header)
@@ -188,7 +204,13 @@
                     page: page,
                     size: size,
                 }
-                requestParams = Object.assign(requestParams, proxyData[props.filterField],{quickSearch:quickSearch.value},route.query,props.params,props.addParams,sortableParams)
+                const filterData = JSON.parse(JSON.stringify(proxyData[props.filterField] || ''))
+                forEach(filterData,function (val,key) {
+                    if(props.filterExceptField.indexOf(key) > -1){
+                        delete filterData[key]
+                    }
+                })
+                requestParams = Object.assign(requestParams, filterData,{quickSearch:quickSearch.value},route.query,props.params,props.addParams,sortableParams)
                 if(trashed.value){
                     requestParams = Object.assign(requestParams ,{eadmin_deleted:true})
                 }
@@ -196,7 +218,7 @@
             }
             watch(() => props.modelValue, (value) => {
                 if(value){
-                    quickSearch.value = ''
+                    //quickSearch.value = ''
                     loading.value = value
                 }
             })
@@ -221,18 +243,24 @@
 
             })
             nextTick(()=>{
+                if(ctx.attrs.defaultExpandAllRows){
+                    expandedRowKeys.value = props.data.map(item=>item.id)
+                }
                 if(proxyData[props.filterField]){
                     filterInitData = JSON.parse(JSON.stringify(proxyData[props.filterField]))
                 }
+                actionAutoWidth()
+                eadminActionWidth.value += 30
+                dragSort()
+            })
+            function actionAutoWidth(){
                 //操作列宽度自适应
                 document.getElementsByClassName('EadminAction').forEach(item=>{
                     if(eadminActionWidth.value < item.offsetWidth){
                         eadminActionWidth.value = item.offsetWidth
                     }
                 })
-                eadminActionWidth.value += 30
-                dragSort()
-            })
+            }
             //拖拽排序
             function dragSort(){
                 if(dragTable.value){
@@ -372,12 +400,17 @@
                     url: props.loadDataUrl,
                     params: globalRequestParams()
                 }).then(res => {
+                    if(ctx.attrs.defaultExpandAllRows){
+                        expandedRowKeys.value = res.data.map(item=>item.id)
+                    }
                     columns.value = res.columns
                     tableData.value = res.data
-                    triggerRef(tableData)
                     total.value = res.total
                     header.value = res.header
                     tools.value = res.tools
+                    nextTick(()=>{
+                        actionAutoWidth()
+                    })
                 }).finally(() => {
                     ctx.emit('update:modelValue', false)
                 })
@@ -473,6 +506,13 @@
                     return false
                 }
             })
+            function expandChange(bool,record) {
+                if(bool){
+                    expandedRowKeys.value.push(record.id)
+                }else{
+                    deleteArr(expandedRowKeys.value,record.id)
+                }
+            }
             function visibleFilter() {
                 filterShow.value = !filterShow.value
             }
@@ -490,6 +530,7 @@
                 tableColumns,
                 checkboxColumn,
                 handleSizeChange,
+                expandChange,
                 handleCurrentChange,
                 loading,
                 tableData,
@@ -508,6 +549,7 @@
                 tableChange,
                 trashedHandel,
                 trashed,
+                expandedRowKeys,
                 exportData,
                 header,
                 tools,

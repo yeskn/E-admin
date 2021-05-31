@@ -319,7 +319,8 @@ class Echart extends Component
                 break;
         }
         $total = array_sum($series);
-        $this->chart->xAxis($xAxis)->series($name . " ($total)", $series);
+       // $this->chart->xAxis($xAxis)->series($name . " ($total)", $series);
+        $this->chart->xAxis($xAxis)->series($name, $series);
     }
 
     public function jsonSerialize()

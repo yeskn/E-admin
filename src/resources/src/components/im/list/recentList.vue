@@ -1,9 +1,9 @@
 <template>
     <div>
-        <div class="item" :style="{backgroundColor: im.isSelectUser(item)?'#c5c4c4':''}" v-for="(item,index) in list" @click="im.selectUser(item,index)">
+        <div class="item" :style="{backgroundColor: im.isSelectUser(item)?'#d7d9db':''}" v-for="(item,index) in list" @click="im.selectUser(item,index)">
             <div>
                 <el-avatar style="margin-left: 10px;" shape="square"
-                           :src="item.msg_type === 'customerMsg' ? item.user_headimg:item.headimg"></el-avatar>
+                           :src="item.msg_type === 'customerMsg' ? item.user_avatar:item.avatar"></el-avatar>
             </div>
             <div style="flex:1;margin-left: 10px;">
                 <div class="name">{{item.msg_type === 'customerMsg' ? item.user_nickname:item.nickname}}</div>
@@ -71,12 +71,15 @@
         height: 60px;
         display: flex;
         align-items: center;
-        border-bottom: solid 1px #EEEEEE;
+        border-bottom: solid 1px #dadcdf;
     }
     .item .name {
         font-size: 14px;
-        margin-bottom: 8px;
+        margin-bottom: 4px;
         color: #000000
+    }
+    .item .notice {
+        margin-top: 10px;
     }
     .item .content {
         font-size: 14px;

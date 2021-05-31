@@ -4,7 +4,7 @@
         <slot></slot>
         <el-form-item>
             <slot name="leftAction"></slot>
-            <render v-if="action.submit" :loading="loading" :data="action.submit"></render>
+            <render v-if="action.submit" :loading="loading" :data="action.submit" :disabled="disabled"></render>
             <render v-if="action.reset" :data="action.reset" @click="resetForm"></render>
             <render v-if="action.cancel" :data="action.cancel" @click="cancelForm"></render>
             <slot name="rightAction"></slot>
@@ -43,11 +43,15 @@
                 type:Array,
                 default:[],
             },
-            exceptField:[Array,Object]
+            exceptField:{
+                type:Array,
+                default:[],
+            }
         },
         emits: ['success','gridRefresh','update:submit','update:validate','update:step','update:eadminForm'],
         setup(props,ctx){
             const eadminForm = ref(null)
+            const disabled = ref(false)
             const {loading,http} = useHttp()
             const state = inject(store)
             const proxyData = state.proxyData
@@ -84,15 +88,19 @@
             async function watchListen(){
                 const copyData = JSON.parse(JSON.stringify(watchData))
                 const data = copyData.shift()
+                disabled.value = true
                 if(data){
                     await watchAjax(data.field,data.newValue,data.oldValue)
                     watchData.shift()
                     watchListen()
+                }else{
+                    disabled.value = false
                 }
             }
             //watch ajax请求
             function watchAjax(field,newValue,oldValue){
                 return new Promise((resolve,reject) => {
+
                     request({
                         url: props.setAction,
                         method: props.setActionMethod,
@@ -249,6 +257,7 @@
                 ctx.emit('success')
             }
             return {
+                disabled,
                 eadminForm,
                 loading,
                 resetForm,

@@ -47,7 +47,7 @@ class FormItem extends Field
      */
     public function rules(array $rule, int $mode = 0)
     {
-        $prop  = $this->attr('prop');
+        $prop  = $this->attr('validateField');
         $field = str_replace('.','_',$prop);
         $prop  = $this->form->manyRelation() ? $this->form->manyRelation() . '.' . $prop : $prop;
         $field  = $this->form->manyRelation() ? $this->form->manyRelation() . '.' . $field : $field;

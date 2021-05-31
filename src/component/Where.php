@@ -10,6 +10,18 @@ trait Where
         'AND' => [],
         'OR'  => []
     ];
+    //组件显示
+    protected $componentVisible = true;
+    /**
+     * 条件显示
+     * @param bool $condition
+     * @return Component
+     */
+    public function whenShow(bool $condition)
+    {
+        $this->componentVisible = $condition;
+        return $this;
+    }
 
     protected function getWhere()
     {
@@ -47,7 +59,7 @@ trait Where
             if ($op === '=') {
                 $op = '==';
             }
-           
+
             if (is_null($condition)) {
                 $condition = $op;
                 $op        = '==';

@@ -9,7 +9,7 @@ use Eadmin\contract\FormInterface;
 class Arrays implements FormInterface
 {
     //主键字段
-    protected $pkField;
+    protected $pkField ='id';
     //数据源
     protected $data = [];
     protected $originData = [];

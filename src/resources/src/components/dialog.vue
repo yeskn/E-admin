@@ -1,18 +1,18 @@
 <template>
-    <el-dialog v-model="visible" v-bind="$attrs">
+    <component :is="dialog" v-model="visible" v-bind="$attrs">
         <template #title>
-            <slot name="title"></slot>
-        </template>
-        <slot></slot>
-        <render :data="content" :slot-props="slotProps" @success="hide"></render>
-    </el-dialog>
+                        <slot name="title"></slot>
+                    </template>
+                    <slot></slot>
+           <render :data="content" :slot-props="slotProps" @success="hide"></render>
+    </component>
     <span @click.stop="open">
         <slot name="reference"></slot>
     </span>
 </template>
 
 <script>
-    import {defineComponent, watch} from "vue";
+    import {defineComponent, watch,computed} from "vue";
     import render from '@/components/render.vue'
     import {useVisible} from '@/hooks'
 
@@ -41,6 +41,11 @@
         setup(props, ctx) {
             const {visible,hide,useHttp} = useVisible(props,ctx)
             const {content,http} = useHttp()
+            watch(()=>props.modelValue,(value)=>{
+               if(visible.value && !value){
+                   hide()
+               }
+            })
             watch(()=>props.show,(value)=>{
                 if(value){
                     open()
@@ -50,7 +55,15 @@
             function open(){
                 http(props)
             }
+            const dialog = computed(()=>{
+                if(visible.value ){
+                    return 'ElDialog'
+                }else{
+                    return null
+                }
+            })
             return {
+                dialog,
                 hide,
                 content,
                 visible,

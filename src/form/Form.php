@@ -20,6 +20,7 @@ use Eadmin\component\basic\Tabs;
 use Eadmin\component\form\Field;
 use Eadmin\component\form\field\Cascader;
 use Eadmin\component\form\field\DatePicker;
+use Eadmin\component\form\field\Display;
 use Eadmin\component\form\field\Input;
 use Eadmin\component\form\field\Select;
 use Eadmin\component\form\field\TimePicker;
@@ -121,6 +122,7 @@ class Form extends Field
             $this->drive = new \Eadmin\form\drive\Arrays($data);
         }
         $field = Str::random(15, 3);
+        $this->attr('exceptField',$this->exceptField);
         $this->bindAttr('model', $field);
         $this->bindAttValue('submit', false, true);
         $this->bindAttValue('validate', false, true);
@@ -304,25 +306,35 @@ class Form extends Field
 
         foreach ($component->bindAttribute as $attr => $field) {
             $value = $this->drive->getData($field, $data);
-            if (is_null($value) && ($component instanceof DatePicker || $component instanceof TimePicker) && $startField = $component->bindAttr('startField')) {
-                $value = [];
-            }
             $defaultValue = $component->getDefault();
             $componentValue = $component->getValue();
             //设置default缺省值
             if (empty($value) && $value !== 0 && !is_null($defaultValue)) {
-                $value = $defaultValue;
-                $value = $this->getPickerValue($component, $field, $value);
+                $value = $this->getPickerValue($component, $field, $defaultValue);
             }
             //value固定值
             if (!is_null($componentValue)) {
-                $value = $componentValue;
-                $value = $this->getPickerValue($component, $field, $value);
+                $value = $this->getPickerValue($component, $field, $componentValue);
             }
             if ($attr != 'modelValue' && $component->bind($field)) {
                 $value = $component->bind($field);
             }
-            $this->setData($field, $value ?? '');
+            //级联relation解析关联数据bind回显
+            if($component instanceof Cascader && $attr == 'relation'){
+                $cascaderField = explode('.',$component->bindAttr('modelValue'));
+                $cascaderField = array_pop($cascaderField);
+                $this->setData($cascaderField, $component->parseRelationData($value));
+            }
+            //display组件定义显示
+            if($component instanceof Display && $component->getClosure() instanceof \Closure){
+                $value = call_user_func($component->getClosure(),$value,$data);
+            }
+            if ($component instanceof DatePicker || $component instanceof TimePicker) {
+                $value = empty($value) ? null:$value;
+                $this->setData($field, $value );
+            }else{
+                $this->setData($field, $value ?? '');
+            }
             if (is_null($data)) {
                 $component->bindAttr($attr, $this->bindAttr('model') . '.' . $field, true);
             }
@@ -340,6 +352,7 @@ class Form extends Field
     private function getPickerValue($component, $field, $componentValue)
     {
         $value = $componentValue;
+
         if ($component instanceof DatePicker || $component instanceof TimePicker) {
             $startField = $component->bindAttr('startField');
             $endField = $component->bindAttr('endField');
@@ -365,6 +378,8 @@ class Form extends Field
     {
         if (!$this->steps) {
             $this->steps = Steps::create();
+            $prop = $this->steps->bindAttr('modelValue');
+            $this->except([$prop]);
             $this->push($this->steps);
             $this->bindAttr('step', $this->steps->bindAttr('active'),true);
         }
@@ -417,6 +432,8 @@ class Form extends Field
     {
         if (!$this->tab) {
             $this->tab = Tabs::create();
+            $prop = $this->tab->bindAttr('modelValue');
+            $this->except([$prop]);
             $this->push($this->tab);
         }
         $formItems = $this->collectFields($closure);
@@ -454,7 +471,7 @@ class Form extends Field
         $item = FormItem::create($prop, $label, $this);
         if(empty($this->manyRelation)){
             $ifField = str_replace('.','_',$prop);
-            $ifField = $ifField.'Show';
+            $ifField = $this->bindAttr('model').$ifField.'Show';
             $this->bind($ifField,1);
             $item->where($ifField,1);
         }
@@ -515,18 +532,24 @@ class Form extends Field
         return $this;
     }
 
-    public function manyRelation()
+    public function manyRelation($relation=null)
     {
-        return $this->manyRelation;
+        if(is_null($relation)){
+            return $this->manyRelation;
+        }
+        $this->manyRelation = $relation;
     }
 
-    public function batch(\Closure $closure)
+    public function batch(\Closure $closure,$data = [])
     {
         $this->batch = true;
         $manyItem = $this->hasMany('eadmin_batch', '', $closure);
-        $data = $this->drive->getDataAll();
-        if (count($data) == 0) {
+        if(count($data) == 0){
             $data[] = $manyItem->attr('manyData');
+        }else{
+            foreach ($data as &$row){
+                $row = array_merge($manyItem->attr('manyData'),$row);
+            }
         }
         $manyItem->value($data);
         return $manyItem;
@@ -626,12 +649,15 @@ class Form extends Field
             $component->displayType('image')->accept('image/*')->size(120, 120)->isUniqidmd5();
         }
         if (in_array($name, $componentArr)) {
-            //由于element时间范围字段返回是一个数组,这里特殊绑定处理成2个字段
-            if ($name == 'dateRange' || $name == 'datetimeRange' || $name == 'timeRange') {
-                $component = $class::create();
-                $component->rangeField($field, $arguments[1]);
-                $component->startPlaceholder('请选择开始' . $label . '时间');
-                $component->endPlaceholder('请选择结束' . $label . '时间');
+            if($component instanceof TimePicker || $component instanceof DatePicker){
+                //由于element时间范围字段返回是一个数组,这里特殊绑定处理成2个字段
+                if ($name == 'dateRange' || $name == 'datetimeRange' || $name == 'timeRange') {
+                    $component = $class::create();
+                    $component->rangeField($field, $arguments[1]);
+                    $component->startPlaceholder('请选择开始' . $label . '时间');
+                    $component->endPlaceholder('请选择结束' . $label . '时间');
+                    $this->except([$component->bindAttr('timeValue')]);
+                }
                 $prop = $component->bindAttr('modelValue');
                 $this->except([$prop]);
             }
@@ -659,6 +685,7 @@ class Form extends Field
             $component->placeholder('请选择' . $label);
         }
         $item = $this->item($prop, $label);
+        $item->attr('validateField',$field);
         $item->content($component);
         $component->setFormItem($item);
         if ($name == 'hidden') {
@@ -731,10 +758,18 @@ class Form extends Field
     {
         call_user_func_array($closure, [$this->actions]);
     }
-
+    public function itemComponent()
+    {
+        return $this->itemComponent;
+    }
     public function setItemComponent($component)
     {
-        $this->itemComponent[] = $component;
+        if(is_array($component)){
+            $this->itemComponent = $component;
+        }else{
+            $this->itemComponent[] = $component;
+        }
+
     }
 
     /**
@@ -819,7 +854,7 @@ class Form extends Field
      * 验证错误字段初始化绑定
      * @param null $field
      */
-    protected function validatorBind($field = null)
+    public function validatorBind($field = null)
     {
         //验证器属性绑定
         $validatorField = $this->bindAttr('model') . 'Error';
@@ -839,6 +874,8 @@ class Form extends Field
      */
     public function except(array $fields){
         $this->exceptField =  array_merge($this->exceptField,$fields);
+        //排除字段
+        $this->attr('exceptField',$this->exceptField);
     }
     public static function extend($name, $component)
     {
@@ -847,8 +884,6 @@ class Form extends Field
 
     public function jsonSerialize()
     {
-        //排除字段
-        $this->attr('exceptField',$this->exceptField);
         $this->parseComponent();
         $this->parseSteps();
         $this->actions->render();

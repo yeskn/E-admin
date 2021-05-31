@@ -4,6 +4,10 @@ import { reactive ,watchEffect} from "vue";
 const im = {
     //当前用户id
     id:0,
+    info:{
+        nickname:'',
+        avatar:'',
+    },
     state :reactive({
         //左侧工具栏
         leftTool:'message',
@@ -23,15 +27,18 @@ const im = {
         msgList:[],
         //未读消息数量
         unReadNum:0,
-
+        //选择客服弹窗dialog
+        customerDialogVisible:false
     }),
     webSocket:null,
     //心跳定时器
     pongHealthTimer: null,
     //监听回调
     listens:[],
-    connect: function () {
-        this.webSocket = new WebSocket("ws://192.168.199.220:15555/?username=admin&password=b2e472a882c223386ab0fa4c35421467");
+    //监听关闭
+    closes:[],
+    connect: function (websocket,username,password) {
+        this.webSocket = new WebSocket(websocket + "/?username="+username+"&password="+password);
         this.webSocket.onmessage = e=>{
             const receive = JSON.parse(e.data)
             const action = receive.action
@@ -47,12 +54,25 @@ const im = {
             })
         }
         this.webSocket.onclose = (e) => {
+            this.closes.forEach(callback=>{
+                callback(e)
+            })
             clearInterval(this.pongHealthTimer)
-            ElMessage.error('客服通讯连接失败')
-            setTimeout(() => {
-                this.connect()
-            }, 3000)
+            if(e.code != 1005){
+                ElMessage.error('客服通讯连接失败')
+                setTimeout(() => {
+                    this.connect(websocket ,username,password)
+                }, 3000)
+            }
         }
+    },
+    //关闭
+    close:function(){
+      this.webSocket.close()
+      this.webSocket = null
+      this.pongHealthTimer= null;
+      this.listens= []
+      this.closes= []
     },
     //是否当前选中对象
     isSelectUser(item){
@@ -75,6 +95,7 @@ const im = {
             this.state.recentId = item.group_id
         }
         this.state.recentList[index].unReadNum = 0
+        this.readMsg(item)
         this.send('msgRecord',{
             msg_type:this.state.recentType,
             to_uid:  this.state.recentId,
@@ -84,6 +105,20 @@ const im = {
             keyword: null,
         })
     },
+    //读消息
+     readMsg:function(item){
+        let readAction
+        if(item.msg_type === 'msg'){
+            im.state.recentId = item.from_uid
+            readAction = 'readMsg'
+        }else if(item.msg_type === 'customerMsg'){
+            im.state.recentId = item.group_id
+            readAction = 'readGroupMsg'
+        }
+        im.send(readAction,{
+            uid:  im.state.recentId
+        })
+    },
     //发送
     send: function (action, data = []) {
         this.webSocket.send(JSON.stringify({
@@ -91,9 +126,14 @@ const im = {
             data: data
         }))
     },
-    //监听
+    //添加监听接收
     onMessage:function (callback) {
         const length =  this.listens.push(callback)
+        return length - 1
+    },
+    //添加监听回调
+    onClose:function (callback) {
+        const length =  this.closes.push(callback)
         return length - 1
     },
     //移除监听

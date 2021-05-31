@@ -96,6 +96,8 @@ class ServiceProvider extends Service
             'Eadmin\command\Seed',
             'Eadmin\command\Iseed',
             'Eadmin\command\Install',
+            'Eadmin\command\ReplaceData',
+            'Eadmin\command\ClearDatabase',
         ]);
     }
 }

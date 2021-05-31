@@ -4,7 +4,8 @@
 namespace Eadmin\component\form\field;
 
 
-use Eadmin\component\form\Field;
+use Eadmin\component\Component;
+
 
 /**
  * 多选框按钮
@@ -15,7 +16,7 @@ use Eadmin\component\form\Field;
  * @method $this checked(bool $check) 当前是否勾选
  * @package Eadmin\component\form\field
  */
-class CheckboxButton extends Field
+class CheckboxButton extends Component
 {
     protected $name = 'ElCheckboxButton';
 }

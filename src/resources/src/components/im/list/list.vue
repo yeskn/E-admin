@@ -5,8 +5,11 @@
                       placeholder="搜索"></el-input>
         </div>
         <div class="list">
+            <el-scrollbar style="height:100%;">
             <recent-list v-show="leftTool == 'message'" :search="searchKeyWord"></recent-list>
             <friend-list v-show="leftTool == 'friend'" :search="searchKeyWord"></friend-list>
+            <customer-list v-show="leftTool == 'customer'" :search="searchKeyWord"></customer-list>
+            </el-scrollbar>
         </div>
     </div>
 </template>
@@ -15,12 +18,14 @@
     import {defineComponent, reactive, toRefs,watch} from "vue";
     import recentList from './recentList.vue'
     import friendList from './friendList.vue'
+    import customerList from './customerList.vue'
     import im from '../websocket/websocket'
     export default defineComponent({
         name: "ImList",
         components: {
             recentList,
-            friendList
+            friendList,
+            customerList,
         },
         setup() {
             const state = reactive({
@@ -41,17 +46,18 @@
         height: 700px;
         display: flex;
         flex-direction: column;
-        background: #f9fafb;
-        border-right: #f3f4f6 solid 1px;
+        background: #ebebeb;
+        border-right: #dadcdf solid 1px;
     }
 
     .searchBox {
         padding: 5px;
         height: 50px;
-        border-bottom: rgba(0, 0, 0, 0.02) solid 1px;
+        border-bottom: #dadcdf solid 1px;
     }
 
     .list {
         flex: 1;
+        height: 650px;
     }
 </style>

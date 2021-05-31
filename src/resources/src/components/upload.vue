@@ -1,5 +1,4 @@
 <template>
-  <div>
     <span v-if="displayType=='image'">
       <div v-for="(file,index) in files" :key="index" class="imgContainer" :style="{height: styleHeight,width:styleWidth}">
         <el-image
@@ -99,16 +98,17 @@
         </div>
       </template>
     </el-dialog>
-  </div>
 </template>
 <script>
 import Uploader from 'simple-uploader.js'
 import OSS from 'ali-oss'
 import md5 from 'js-md5'
 import * as qiniu from 'qiniu-js'
-import {fileIcon, lastName} from '@/utils'
+import {fileIcon, lastName, link, refresh} from '@/utils'
 import {defineComponent, reactive, watch, nextTick, toRefs, ref,getCurrentInstance} from "vue";
-import {ElMessage} from 'element-plus'
+import {ElMessage, ElNotification} from 'element-plus'
+import {action} from "@/store";
+import router from "@/router";
 function noop() {}
 export default defineComponent({
   name: 'EadminUpload',
@@ -190,6 +190,10 @@ export default defineComponent({
     drag: {
       type: Boolean,
       default: false
+    },
+    chunk: {
+      type: Boolean,
+      default: true
     },
   },
   emits: ['success','update:modelValue'],
@@ -274,8 +278,8 @@ export default defineComponent({
         isUniqidmd5: props.isUniqidmd5,
         upType: props.upType
       },
-      testChunks: true,
-      chunkSize: 1 * 1024 * 1024,
+      testChunks: props.chunk,
+      chunkSize: props.chunk ? 1 * 1024 * 1024 : 500 * 1024 * 1024,
       headers: {
         Authorization: props.token
       }
@@ -333,6 +337,59 @@ export default defineComponent({
           }
           ctx.emit('success')
           state.files.push(res.data)
+        }else if (res.code == 80020) {
+          ElMessage({
+            showClose: true,
+            dangerouslyUseHTMLString: true,
+            message: res.message,
+            type: res.type
+          })
+          if (res.url) {
+            if (res.url == 'back') {
+              if (res.refresh) {
+                action.refresh(true)
+              }
+              router.back()
+            } else {
+              link(res.url)
+              return
+            }
+          }
+          if (res.refresh) {
+            refresh()
+          }
+          if (res.type == 'success') {
+            res.code = 200
+            return res
+          }
+        } else if (res.code == 80021) {
+          ElNotification({
+            showClose: true,
+            dangerouslyUseHTMLString: true,
+            title: res.title,
+            message: res.message,
+            type: res.type,
+            duration: 1500
+          })
+          if (res.url) {
+            if (res.url == 'back') {
+              if (res.refresh) {
+                action.refresh(true)
+              }
+              router.back()
+              return
+            } else {
+              link(res.url)
+              return
+            }
+          }
+          if (res.refresh) {
+            refresh()
+          }
+          if (res.type == 'success') {
+            res.code = 200
+            return res
+          }
         }
       } catch (e) {
         uploader.removeFile(file)

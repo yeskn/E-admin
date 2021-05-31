@@ -19,6 +19,7 @@
                 <render :data="state.component"></render>
             </div>
         </div>
+        <render v-for="init in state.info.init" :data="init"></render>
     </div>
 </template>
 

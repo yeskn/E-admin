@@ -403,14 +403,15 @@ class Filter
     /**
      * 分组下拉框
      * @param array $options 选项值
+     * @param string $name 分组字段名
      * @return \Eadmin\component\form\field\Select
      */
-    public function selectGroup(array $options)
+    public function selectGroup(array $options, $name = 'options')
     {
         $item  = $this->form->popItem();
         $field = $item->attr('prop');
         $label = $item->attr('label');
-        return $this->form->select($field, $label)->groupOptions($options);
+        return $this->form->select($field, $label)->groupOptions($options, $name);
     }
 
     /**
@@ -440,8 +441,8 @@ class Filter
                 $field   = str_replace('.', '__', $field);
                 $fields  = explode('__', $field);
                 $dbField = array_pop($fields);
+                $requestField = $field;
                 if (count($fields) > 0) {
-
                     $func = function (Filter $filter) use ($dbField, $field, $method) {
                         $filter->filterField($method, $dbField, $field);
                     };
@@ -455,7 +456,6 @@ class Filter
                     $this->relationWhere($relation, $func);
                     return $requestField;
                 }
-                $requestField = $field;
             } elseif (is_array($field)) {
                 $requestField = array_shift($field);
                 $dbField      = $field;

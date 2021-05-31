@@ -4,7 +4,8 @@
 namespace Eadmin\component\form\field;
 
 
-use Eadmin\component\form\Field;
+use Eadmin\component\Component;
+
 
 /**
  * 多选框
@@ -18,7 +19,7 @@ use Eadmin\component\form\Field;
  * @method $this indeterminate(bool $value = true) 设置 indeterminate 状态，只负责样式控制
  * @package Eadmin\component\form\field
  */
-class Checkbox extends Field
+class Checkbox extends Component
 {
     protected $name = 'ElCheckbox';
 }

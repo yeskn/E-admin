@@ -7,6 +7,7 @@ namespace Eadmin\command;
 use think\console\Command;
 use think\console\Input;
 use think\console\input\Argument;
+use think\console\input\Option;
 use think\console\Output;
 use think\facade\Db;
 
@@ -24,15 +25,25 @@ class ReplaceData extends Command
         // 设置参数
         $this->addArgument('search', Argument::REQUIRED, "搜索被替换的字符");
         $this->addArgument('replace', Argument::REQUIRED, "替换的字符");
+        $this->addOption('force', 'y', Option::VALUE_NONE, '');
     }
     protected function execute(Input $input, Output $output)
     {
         $search = $input->getArgument('search');
         $replace = $input->getArgument('replace');
+        $force = $input->getOption('force');
         $database = config('database.connections.mysql.database');
         $mark = 'Tables_in_' . $database;
         $tables = Db::query('show tables');
-        if ($this->output->confirm($this->input, "Confirm to replace '$search' '$replace' ? [y]/n")) {
+        $exec = false;
+        if(!$force){
+            if ($this->output->confirm($this->input, "Confirm to replace '$search' '$replace' ? [y]/n")) {
+                $exec = true;
+            }
+        }else{
+            $exec = true;
+        }
+        if ($exec) {
             foreach ($tables as $table){
                 $table = $table[$mark];
                 $fields = Db::name($table)->getFieldsType();
