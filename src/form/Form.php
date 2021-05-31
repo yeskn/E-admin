@@ -697,13 +697,13 @@ class Form extends Field
         //数字类型转换处理
         if (is_array($value) && count($value) == count($value, 1)) {
             foreach ($value as &$v) {
-                if (!is_array($v) && preg_match('/^\d+$/', $v)) {
+                if (!is_array($v) && preg_match('/^\d{{19}$/', $v)) {
                     $v = intval($v);
                 } elseif (is_numeric($v) && strpos($v, '.') !== false) {
                     $v = floatval($v);
                 }
             }
-        } elseif (!is_array($value) && preg_match('/^\d+$/', $value)) {
+        } elseif (!is_array($value) && preg_match('/^\d{19}$/', $value)) {
             $value = intval($value);
         } elseif (is_numeric($value) && strpos($value, '.') !== false) {
             $value = floatval($value);
