@@ -454,11 +454,6 @@ class Grid extends Component
      */
     protected function parseColumn($datas, $export = false)
     {
-
-        //添加操作列
-        if (!$this->hideAction) {
-            $this->column[] = $this->actionColumn->column();
-        }
         $tableData = [];
         //解析行数据
         foreach ($datas as $data) {
@@ -602,6 +597,10 @@ class Grid extends Component
         $size = Request::get('size', $this->pagination->attr('pageSize'));
         if (!$this->hidePage) {
             $this->attr('pagination', $this->pagination->attribute);
+        }
+        //添加操作列
+        if (!$this->hideAction) {
+            $this->column[] = $this->actionColumn->column();
         }
         if (request()->has('ajax_request_data')) {
             //总条数

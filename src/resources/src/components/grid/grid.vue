@@ -248,9 +248,9 @@
 
             })
             nextTick(()=>{
-                if(ctx.attrs.defaultExpandAllRows){
-                    expandedRowKeys.value = props.data.map(item=>item.id)
-                }
+                // if(ctx.attrs.defaultExpandAllRows){
+                //     expandedRowKeys.value = props.data.map(item=>item.id)
+                // }
                 if(proxyData[props.filterField]){
                     filterInitData = JSON.parse(JSON.stringify(proxyData[props.filterField]))
                 }
