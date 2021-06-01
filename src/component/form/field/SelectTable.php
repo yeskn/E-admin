@@ -60,31 +60,34 @@ class SelectTable extends Field
     public function from($from)
     {
         $params = [];
-        if(is_string($from) || $from instanceof Url){
+        if (is_string($from) || $from instanceof Url) {
             $parse = parse_url($from);
-            if(isset($parse['query'])){
-                parse_str($parse['query'],$params);
+            if (isset($parse['query'])) {
+                parse_str($parse['query'], $params);
             }
         }
         $from = Admin::dispatch($from);
-        $this->params(array_merge($params,$from->getCallMethod()));
+        $this->params(array_merge($params, $from->getCallMethod()));
         return $this;
     }
 
     public function options(\Closure $closure)
     {
-        if (Request::has('eadminSelectTable') && Request::get('eadmin_field') == $this->bindAttr('modelValue')) {
-            $datas   = call_user_func($closure, Request::get('eadmin_id', []));
+        $params = json_encode($this->attr('params'));
+        if (Request::has('eadminSelectTable') &&
+            Request::get('eadmin_field') == $this->bindAttr('modelValue') &&
+            Request::get('eadmin_params') == $params) {
+            $datas = call_user_func($closure, Request::get('eadmin_id', []));
             $options = [];
             foreach ($datas as $key => $value) {
                 $options[] = [
-                    'id'    => $key,
+                    'id' => $key,
                     'label' => $value
                 ];
             }
             $this->successCode($options);
         }
-        $this->remoteParams(['eadmin_field' => $this->bindAttr('modelValue')] + $this->formItem->form()->getCallMethod());
+        $this->remoteParams(['eadmin_params' => $params, 'eadmin_field' => $this->bindAttr('modelValue')] + $this->formItem->form()->getCallMethod());
         return $this;
     }
 }
