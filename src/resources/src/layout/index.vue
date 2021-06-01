@@ -32,7 +32,6 @@
     import breadcrumb from '@/components/breadcrumb.vue'
     import tagsView from './tagsView.vue'
     import { store,action} from '@/store'
-    import {findTree} from '@/utils'
     export default defineComponent({
         name: "index",
         components: {

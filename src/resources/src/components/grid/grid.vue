@@ -111,7 +111,7 @@
 </template>
 
 <script>
-    import {defineComponent, ref, watch, inject,nextTick,computed,unref} from "vue"
+    import {defineComponent, ref, watch, inject,nextTick,computed,unref,onActivated} from "vue"
     import render from "@/components/render.vue"
     import {useHttp} from '@/hooks'
     import {tableDefer} from '@/hooks/use-defer'
@@ -186,7 +186,6 @@
             const columns = ref(props.columns)
             const tableData = ref([])
             if(props.defer){
-                tableData.value = []
                 tableDefer(tableData.value,props.data)
             }else{
                 tableData.value = props.data
@@ -216,6 +215,9 @@
                 }
                 return requestParams
             }
+            onActivated((e)=>{
+              //  loading.value = true
+            })
             watch(() => props.modelValue, (value) => {
                 if(value){
                     //quickSearch.value = ''

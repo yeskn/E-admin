@@ -1,6 +1,6 @@
 import {isExternal} from "./validate";
 import router from '@/router'
-import request from '@/utils/axios'
+
 
 import {action} from "@/store";
 // @ts-ignore
@@ -190,3 +190,7 @@ export function buildURL(url, params) {
     return url;
 }
 
+export function uniqidMd5() {
+    const rand = ('0000' + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4)
+    return md5(rand)
+}

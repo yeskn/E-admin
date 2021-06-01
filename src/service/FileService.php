@@ -9,6 +9,7 @@
 namespace Eadmin\service;
 
 use Intervention\Image\ImageManagerStatic;
+use Overtrue\Flysystem\Qiniu\Plugins\UploadToken;
 use think\App;
 use think\facade\Cache;
 use think\facade\Filesystem;
@@ -307,6 +308,20 @@ class FileService extends Service
      */
     public function registerRoute()
     {
+        $this->app->route->get('eadmin/uploadConfig',function (){
+            $diskType = config('admin.uploadDisks');
+            $config   = config('filesystem.disks.' .$diskType);
+            $data = $config;
+            if ($config['type'] == 'qiniu') {
+                $data['bucket']  =  $config['bucket'];
+                $data['domain']  =  $config['domain'];
+                Filesystem::disk('qiniu')->addPlugin(new UploadToken());
+                $data['uploadToken']  =  Filesystem::disk('qiniu')->getUploadToken(null, 3600 * 3);
+            }else{
+                $data['url'] = request()->domain().'/eadmin/upload';
+            }
+            return json($data);
+        });
         $this->app->route->get('eadmin/download',function (){
            $filename = $this->app->request->param('filename');
            $path = $this->app->request->param('path');
