@@ -596,30 +596,28 @@ class Grid extends Component
             $this->attr('filter', $form);
             $this->attr('filterField', $form->bindAttr('model'));
         }
-        //总条数
-        $this->pagination->total($this->drive->getTotal());
+
         //是否分页
         $page = Request::get('page', 1);
         $size = Request::get('size', $this->pagination->attr('pageSize'));
         if (!$this->hidePage) {
             $this->attr('pagination', $this->pagination->attribute);
         }
-        //排序
-        if (Request::has('eadmin_sort_field')) {
-            $this->drive->db()->removeOption('order')->order(Request::get('eadmin_sort_field'), Request::get('eadmin_sort_by'));
-        }
-
-
-        $data = $this->drive->getData($this->hidePage, $page, $size);
-        //解析列
-        $data = $this->parseColumn($data);
-
-        //树形
-        if ($this->isTree) {
-            $data = Admin::tree($data, $this->treeId, $this->treeParent);
-        }
-        $this->bindAttValue('data', $data);
         if (request()->has('ajax_request_data')) {
+            //总条数
+            $this->pagination->total($this->drive->getTotal());
+            //排序
+            if (Request::has('eadmin_sort_field')) {
+                $this->drive->db()->removeOption('order')->order(Request::get('eadmin_sort_field'), Request::get('eadmin_sort_by'));
+            }
+            $data = $this->drive->getData($this->hidePage, $page, $size);
+            //解析列
+            $data = $this->parseColumn($data);
+
+            //树形
+            if ($this->isTree) {
+                $data = Admin::tree($data, $this->treeId, $this->treeParent);
+            }
             return [
                 'code' => 200,
                 'data' => $data,

@@ -35,9 +35,7 @@ class ResourceController extends Controller
         if ($res !== false) {
             $url      = $form->redirectUrl();
             $response = admin_success('操作完成', '数据保存成功')->redirect($url);
-            if ($url == 'back') {
-                $response->refresh();
-            }
+
 
         } else {
             admin_error_message('数据保存失败');
@@ -90,9 +88,6 @@ class ResourceController extends Controller
         }
         if ($res !== false) {
             $response = admin_success('操作完成', '数据保存成功')->redirect($url);
-            if ($url == 'back') {
-                $response->refresh();
-            }
         } else {
             admin_error_message('数据保存失败');
         }

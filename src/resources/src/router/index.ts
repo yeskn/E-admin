@@ -39,6 +39,7 @@ router.beforeEach( async(to:RouteLocationNormalized, from:RouteLocationNormalize
     }
     if(to.path === '/refresh'){
         action.clearComponent(from.fullPath)
+        action.loading(true)
         await loadComponent(from.fullPath)
         return next(from.fullPath)
     }
@@ -65,7 +66,7 @@ router.afterEach((to:RouteLocationNormalized)=>{
 })
 function loadComponent(url:string){
     delete app._context.components[url]
-    action.loading(true)
+
     return new Promise((resolve, reject) =>{
         request({
             url:url

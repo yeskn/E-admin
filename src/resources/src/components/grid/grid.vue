@@ -111,7 +111,7 @@
 </template>
 
 <script>
-    import {defineComponent, ref, watch, inject,nextTick,computed,unref,onActivated} from "vue"
+    import {defineComponent, ref, watch, inject,nextTick,computed,unref,onActivated,onMounted} from "vue"
     import render from "@/components/render.vue"
     import {useHttp} from '@/hooks'
     import {tableDefer} from '@/hooks/use-defer'
@@ -185,11 +185,11 @@
             const quickSearchText = ctx.attrs.quickSearchText || '请输入关键字'
             const columns = ref(props.columns)
             const tableData = ref([])
-            if(props.defer){
-                tableDefer(tableData.value,props.data)
-            }else{
-                tableData.value = props.data
-            }
+            // if(props.defer){
+            //     tableDefer(tableData.value,props.data)
+            // }else{
+            //     tableData.value = props.data
+            // }
             const total = ref(props.pagination.total || 0)
             const tools = ref(props.tools)
             const header = ref(props.header)
@@ -215,8 +215,11 @@
                 }
                 return requestParams
             }
+            onMounted(()=>{
+                loading.value = true
+            })
             onActivated((e)=>{
-              //  loading.value = true
+                loading.value = true
             })
             watch(() => props.modelValue, (value) => {
                 if(value){

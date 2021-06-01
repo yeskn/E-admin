@@ -125,10 +125,6 @@ const action = {
         state.component = null
         const index = action.getComponentIndex(url)
         if (index === -1) {
-            for (let i in state.proxyData) {
-                // @ts-ignore
-                delete state.proxyData[i]
-            }
             // @ts-ignore
             const menu = findTree(state.menus, url.substr(1), 'url')
             if (menu) {
@@ -175,7 +171,6 @@ const action = {
             state.mainTitle = states.mainComponent[index].title || ''
             //@ts-ignore
             state.mainDescription = states.mainComponent[index].description || ''
-
         }
         action.loading(false)
 
