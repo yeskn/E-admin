@@ -60,7 +60,7 @@ class Echart extends Component
     public function __construct($title, $type = 'line', $height = "350px")
     {
         $this->title = $title;
-        $this->attr('params', $this->getCallMethod() + $this->getCallParams());
+        $this->attr('params', $this->getCallMethod());
         $this->attr('title', $title);
         $this->chartType = $type;
         $this->date_type = Request::get('date_type', 'today');

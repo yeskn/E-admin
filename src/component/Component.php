@@ -30,7 +30,6 @@ abstract class Component implements \JsonSerializable
     protected $directive = [];
     //双向绑定
     protected $modelBind = [];
-
     /**
      * 设置标题
      * @param string $title

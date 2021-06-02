@@ -19,25 +19,37 @@ use Eadmin\grid\Grid;
 use Eadmin\traits\CallProvide;
 use think\facade\Request;
 use think\helper\Arr;
+use think\Model;
 
 class Detail extends Html
 {
     use CallProvide;
-
     protected $data = null;
     protected $title = '详情';
     protected $card = null;
     protected $row;
     protected $fields = [];
 
-    public function __construct($data)
+    public function __construct($data, $id = null)
     {
         parent::__construct();
-        $this->data = $data;
+        if ($data instanceof Model && !is_null($id)) {
+            $this->data = $data->find($id);
+        } else {
+            $this->data = $data;
+        }
         $this->getCallMethod();
         $this->title($this->title);
         $this->card = $this->createCard();
         $this->bind('eadmin_description', '详情');
+    }
+
+    public static function create($data, $id, \Closure $closure)
+    {
+        $self = new self($data, $id);
+        $self->getCallMethod(true, 2);
+        $self->setExec($closure);
+        return $self;
     }
 
     /**
@@ -72,7 +84,7 @@ class Detail extends Html
     {
         $offset = count($this->fields);
         call_user_func($closure, $this);
-        $fields       = array_slice($this->fields, $offset);
+        $fields = array_slice($this->fields, $offset);
         $this->fields = array_slice($this->fields, 0, $offset);
         return $fields;
     }
@@ -106,9 +118,9 @@ class Detail extends Html
      */
     public function card($title, \Closure $closure, $md = 24)
     {
-        $card   = $this->createCard()->header(Html::create($title)->tag('b'));
+        $card = $this->createCard()->header(Html::create($title)->tag('b'));
         $fields = $this->collectFields($closure);
-        $row    = new Row();
+        $row = new Row();
         $row->gutter(5);
         foreach ($fields as $field) {
             $row->content($field);
