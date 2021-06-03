@@ -120,8 +120,8 @@ class Select extends Field
                     'disabled' => $disabled,
                 ];
             }
-
-            $this->selectOption->map($options, $this->optionBindField)
+            $selectOption = SelectOption::create();
+            $selectOption->map($options)
                 ->mapAttr('label', 'label')
                 ->mapAttr('key', 'id')
                 ->mapAttr('value', 'id')
@@ -129,7 +129,7 @@ class Select extends Field
             $selectGroup = OptionGroup::create()
                 ->attr('label', $option['label'])
                 ->attr('disabled', $disabled)
-                ->content($this->selectOption);
+                ->content($selectOption);
             $this->content($selectGroup);
         }
     }
