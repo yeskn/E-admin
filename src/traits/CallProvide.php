@@ -10,12 +10,12 @@ trait CallProvide
     protected $callClass;
     protected $callFunction;
     protected $callParams = [];
-
-    public function getCallMethod()
+    protected $execClosure = null;
+    public function getCallMethod($reset = false,$offset = 2)
     {
-        if (empty($this->callMethod)) {
+        if (empty($this->callMethod) || $reset) {
             $backtrace          = debug_backtrace(1, 3);
-            $backtrace          = array_slice($backtrace, 2);
+            $backtrace          = array_slice($backtrace, $offset);
             $backtrace          = $backtrace[0];
             $this->callClass    = $backtrace['class'];
             $this->callFunction = $backtrace['function'];
@@ -34,19 +34,20 @@ trait CallProvide
                 'eadmin_function' => $this->callFunction,
             ];
         }
-        return $this->callMethod;
+        return array_merge($this->callMethod,$this->callParams);
     }
-
-    public function getCallParams()
-    {
-        return $this->callParams;
+    public function setExec(\Closure $closure){
+        $this->execClosure = $closure;
     }
-
+    public function exec(){
+        if(!is_null($this->execClosure)){
+            call_user_func($this->execClosure,$this);
+        }
+        return $this;
+    }
     public function renderable()
     {
         $method = $this->callFunction;
-        $a      = app($this->callClass)->$method();
-
         return app($this->callClass)->$method();
     }
 }

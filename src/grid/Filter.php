@@ -46,8 +46,8 @@ class Filter
         if ($this->db) {
             $this->tableFields = $this->db->getTableFields();
         }
-        $this->form = Form::create()
-            ->inline()
+        $this->form = new Form([]);
+        $this->form->inline()
             ->removeAttr('labelWidth')
             ->removeAttr('setAction')
             ->size('small');

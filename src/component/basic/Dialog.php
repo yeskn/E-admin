@@ -9,7 +9,9 @@ use Eadmin\component\Component;
 use Eadmin\component\form\Field;
 use Eadmin\component\form\field\Input;
 use Eadmin\component\layout\Content;
+use Eadmin\detail\Detail;
 use Eadmin\form\Form;
+use Eadmin\grid\Grid;
 use think\app\Url;
 use think\facade\Route;
 use think\helper\Str;
@@ -54,15 +56,14 @@ class Dialog extends Field
 
     /**
      * 表单异步加载
-     * @param Form $form
+     * @param Form|Detail|Grid $form
      * @return Dialog
      */
-    public function form(Form $form)
+    public function form($form)
     {
         $this->url('/eadmin.rest');
         $callMethod = $form->getCallMethod();
-        $params = array_merge($callMethod, $form->getCallParams());
-        $this->params($params);
+        $this->params($callMethod);
         //权限
         $this->auth($callMethod['eadmin_class'],$callMethod['eadmin_function']);
         return $this;

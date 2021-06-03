@@ -134,7 +134,7 @@ abstract class Field extends Component
      * 获取缺省默认值
      * @return |null
      */
-    protected function getDefault()
+    public function getDefault()
     {
         return $this->default;
     }
@@ -143,7 +143,7 @@ abstract class Field extends Component
      * 获取设置固定值
      * @return |null
      */
-    protected function getValue()
+    public function getValue()
     {
         return $this->value;
     }

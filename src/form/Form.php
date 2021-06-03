@@ -17,6 +17,7 @@ use Eadmin\component\basic\Step;
 use Eadmin\component\basic\Steps;
 use Eadmin\component\basic\TabPane;
 use Eadmin\component\basic\Tabs;
+use Eadmin\component\Component;
 use Eadmin\component\form\Field;
 use Eadmin\component\form\field\Cascader;
 use Eadmin\component\form\field\DatePicker;
@@ -32,6 +33,7 @@ use Eadmin\contract\FormInterface;
 use Eadmin\form\traits\ComponentForm;
 use Eadmin\form\traits\WatchForm;
 use Eadmin\traits\CallProvide;
+use Eadmin\traits\Exec;
 use Eadmin\traits\FormModel;
 use think\facade\Request;
 use think\helper\Str;
@@ -78,9 +80,9 @@ use think\Model;
  * @method \Eadmin\component\form\field\Spec spec($field, $label = '') 规格
  * @method \Eadmin\component\form\field\Display display($field, $label = '') 显示
  */
-class Form extends Field
+class Form extends Component
 {
-    use CallProvide, ComponentForm,WatchForm;
+    use CallProvide,ComponentForm,WatchForm;
 
     protected $name = 'EadminForm';
     protected $actions;
@@ -112,6 +114,7 @@ class Form extends Field
     protected $exceptField = [];
     //初始化
     protected static $init = null;
+
     public function __construct($data)
     {
         if ($data instanceof Model) {
@@ -137,6 +140,12 @@ class Form extends Field
         if (!is_null(self::$init)) {
             call_user_func(self::$init, $this);
         }
+    }
+    public static function create($data,\Closure $closure){
+        $self  = new self($data);
+        $self->getCallMethod(true,2);
+        $self->setExec($closure);
+        return $self;
     }
     /**
      * 初始化
@@ -312,6 +321,7 @@ class Form extends Field
             if (empty($value) && $value !== 0 && !is_null($defaultValue)) {
                 $value = $this->getPickerValue($component, $field, $defaultValue);
             }
+
             //value固定值
             if (!is_null($componentValue)) {
                 $value = $this->getPickerValue($component, $field, $componentValue);
@@ -333,6 +343,7 @@ class Form extends Field
                 $value = empty($value) ? null:$value;
                 $this->setData($field, $value );
             }else{
+
                 $this->setData($field, $value ?? '');
             }
             if (is_null($data)) {
@@ -352,7 +363,6 @@ class Form extends Field
     private function getPickerValue($component, $field, $componentValue)
     {
         $value = $componentValue;
-
         if ($component instanceof DatePicker || $component instanceof TimePicker) {
             $startField = $component->bindAttr('startField');
             $endField = $component->bindAttr('endField');

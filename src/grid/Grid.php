@@ -53,7 +53,6 @@ use think\Model;
 class Grid extends Component
 {
     use CallProvide;
-
     protected $name = 'EadminGrid';
 
     protected $column = [];
@@ -98,6 +97,7 @@ class Grid extends Component
 
     public function __construct($data)
     {
+
         if ($data instanceof Model) {
             $this->drive = new \Eadmin\grid\drive\Model($data);
         } elseif ($data instanceof GridInterface) {
@@ -113,19 +113,24 @@ class Grid extends Component
         $this->pagination->pageSize(20)->background();
         //操作列
         $this->actionColumn = new Actions($this);
+
         $this->bindAttValue('modelValue', false, true);
         $this->attr('eadmin_grid', $this->bindAttr('modelValue'));
         $this->scroll(['x' => true]);
         $this->attr('locale', ['emptyText' => '暂无数据']);
         $this->loadDataUrl('eadmin.rest');
         $this->getCallMethod();
-        $this->params($this->getCallParams());
         $this->bind('eadmin_description', '列表');
         if (!is_null(self::$init)) {
             call_user_func(self::$init, $this);
         }
     }
-
+    public static function create($data,\Closure $closure){
+        $self  = new self($data);
+        $self->getCallMethod(true,2);
+        $self->setExec($closure);
+        return $self;
+    }
     /**
      * 设置标题
      * @param string $title
@@ -556,7 +561,7 @@ class Grid extends Component
         //添加按钮
         if (!$this->hideAddButton && !is_null($this->formAction)) {
             $form = $this->formAction->form();
-			$callMethod = $form->getCallMethod() + $form->getCallParams();
+			$callMethod = $form->getCallMethod();
             $form->eventSuccess([$this->bindAttr('modelValue') => true, $form->bindAttr('model') => $callMethod]);
             $button = Button::create('添加')
                 ->type('primary')
@@ -566,7 +571,7 @@ class Grid extends Component
             if ($action instanceof Html) {
                 $button = $action->content($button)->redirect("eadmin/create.rest", ['eadmin_description' => '添加'] + $callMethod);
             } else {
-                $button = $action->bindValue(false)->reference($button)->title('添加')->form($form);
+                $button = $action->bindValue(false)->reference($button)->title('添加')->form($form)->url('/eadmin/create.rest');
             }
             //添加权限
             $action->auth($callMethod['eadmin_class'],$callMethod['eadmin_function'],'post');

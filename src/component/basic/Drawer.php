@@ -55,8 +55,7 @@ class Drawer extends Field
     {
         $this->url('/eadmin.rest');
         $callMethod = $form->getCallMethod();
-        $params = array_merge($callMethod, $form->getCallParams());
-        $this->params($params);
+        $this->params($callMethod);
 
         //权限
         $this->auth($callMethod['eadmin_class'],$callMethod['eadmin_function']);
