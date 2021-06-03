@@ -131,7 +131,7 @@ class Form extends Component
         $this->bindAttValue('validate', false, true);
         $this->actions = new FormAction($this);
         $this->labelWidth('100px');
-        $this->getCallMethod();
+        $this->parseCallMethod();
         $this->setAction('/eadmin.rest');
         $this->event('gridRefresh', []);
         $this->validator = new ValidatorForm();
@@ -143,7 +143,7 @@ class Form extends Component
     }
     public static function create($data,\Closure $closure){
         $self  = new self($data);
-        $self->getCallMethod(true,2);
+        $self->parseCallMethod(true,2);
         $self->setExec($closure);
         return $self;
     }
@@ -894,6 +894,7 @@ class Form extends Component
 
     public function jsonSerialize()
     {
+        $this->exec();
         $this->parseComponent();
         $this->parseSteps();
         $this->actions->render();

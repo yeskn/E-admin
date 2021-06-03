@@ -44,6 +44,7 @@ use think\Model;
  * @method $this expandFilter(bool $bool = true) 展开筛选
  * @method $this defaultExpandAllRows(bool $bool) 是否默认展开所有行
  * @method $this defer(bool $bool) 延迟渲染表格
+ * @method $this static(bool $bool) 静态表格
  * @method $this expandRowByClick(bool $bool) 通过点击行来展开子行
  * @method $this showHeader(bool $bool = true) 是否显示表头
  * @method $this loadDataUrl(string $value) 设置加载数据url
@@ -119,7 +120,7 @@ class Grid extends Component
         $this->scroll(['x' => true]);
         $this->attr('locale', ['emptyText' => '暂无数据']);
         $this->loadDataUrl('eadmin.rest');
-        $this->getCallMethod();
+        $this->parseCallMethod();
         $this->bind('eadmin_description', '列表');
         if (!is_null(self::$init)) {
             call_user_func(self::$init, $this);
@@ -127,7 +128,7 @@ class Grid extends Component
     }
     public static function create($data,\Closure $closure){
         $self  = new self($data);
-        $self->getCallMethod(true,2);
+        $self->parseCallMethod(true,2);
         $self->setExec($closure);
         return $self;
     }
@@ -165,6 +166,7 @@ class Grid extends Component
         $this->hideAction();
         $this->hidePage();
         $this->hideSelection();
+        $this->static();
     }
     /**
      * 展开行
@@ -558,6 +560,7 @@ class Grid extends Component
 
     public function jsonSerialize()
     {
+        $this->exec();
         //添加按钮
         if (!$this->hideAddButton && !is_null($this->formAction)) {
             $form = $this->formAction->form();

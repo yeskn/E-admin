@@ -117,7 +117,7 @@
     import {tableDefer} from '@/hooks/use-defer'
     import request from '@/utils/axios'
     import {store} from '@/store'
-    import {forEach,unique,deleteArr,buildURL} from '@/utils'
+    import {forEach, unique, deleteArr, buildURL, findTree,treeMap} from '@/utils'
     import {ElMessageBox,ElMessage} from 'element-plus'
     import Sortable from 'sortablejs'
     import {useRoute} from 'vue-router'
@@ -134,6 +134,7 @@
             loadDataUrl: String,
             hideTools: Boolean,
             export: Boolean,
+            static: Boolean,
             sortDrag: Boolean,
             sortInput: Boolean,
             tools:[Object,Array],
@@ -185,6 +186,9 @@
             const quickSearchText = ctx.attrs.quickSearchText || '请输入关键字'
             const columns = ref(props.columns)
             const tableData = ref([])
+            if(props.static){
+                tableData.value = props.data
+            }
             // if(props.defer){
             //     tableDefer(tableData.value,props.data)
             // }else{
@@ -216,10 +220,14 @@
                 return requestParams
             }
             onMounted(()=>{
-                loading.value = true
+                if(!props.static){
+                    loading.value = true
+                }
             })
             onActivated((e)=>{
-                loading.value = true
+                if(!props.static){
+                    loading.value = true
+                }
             })
             watch(() => props.modelValue, (value) => {
                 if(value){
@@ -254,18 +262,9 @@
                 if(proxyData[props.filterField]){
                     filterInitData = JSON.parse(JSON.stringify(proxyData[props.filterField]))
                 }
-                actionAutoWidth()
                 eadminActionWidth.value += 30
                 dragSort()
             })
-            function actionAutoWidth(){
-                //操作列宽度自适应
-                document.getElementsByClassName('EadminAction').forEach(item=>{
-                    if(eadminActionWidth.value < item.offsetWidth){
-                        eadminActionWidth.value = item.offsetWidth
-                    }
-                })
-            }
             //拖拽排序
             function dragSort(){
                 if(dragTable.value){
@@ -406,16 +405,14 @@
                     params: globalRequestParams()
                 }).then(res => {
                     if(ctx.attrs.defaultExpandAllRows){
-                        expandedRowKeys.value = res.data.map(item=>item.id)
+                        findTree()
+                        expandedRowKeys.value = treeMap(res.data,'id')
                     }
                     columns.value = res.columns
                     tableData.value = res.data
                     total.value = res.total
                     header.value = res.header
                     tools.value = res.tools
-                    nextTick(()=>{
-                        actionAutoWidth()
-                    })
                 }).finally(() => {
                     ctx.emit('update:modelValue', false)
                 })

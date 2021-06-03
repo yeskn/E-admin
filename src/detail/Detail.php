@@ -21,24 +21,22 @@ use think\facade\Request;
 use think\helper\Arr;
 use think\Model;
 
-class Detail extends Html
+class Detail extends Component
 {
     use CallProvide;
     protected $data = null;
+    protected $id = null;
     protected $title = '详情';
     protected $card = null;
     protected $row;
     protected $fields = [];
-
+    protected $name = 'html';
     public function __construct($data, $id = null)
     {
-        parent::__construct();
-        if ($data instanceof Model && !is_null($id)) {
-            $this->data = $data->find($id);
-        } else {
-            $this->data = $data;
-        }
-        $this->getCallMethod();
+
+        $this->data = $data;
+        $this->id = $id;
+        $this->parseCallMethod();
         $this->title($this->title);
         $this->card = $this->createCard();
         $this->bind('eadmin_description', '详情');
@@ -47,7 +45,7 @@ class Detail extends Html
     public static function create($data, $id, \Closure $closure)
     {
         $self = new self($data, $id);
-        $self->getCallMethod(true, 2);
+        $self->parseCallMethod(true, 2);
         $self->setExec($closure);
         return $self;
     }
@@ -72,7 +70,7 @@ class Detail extends Html
     {
         $row = new Row();
         $row->gutter(10);
-        $fields = $this->collectFields($closure);
+        $fields = $this->collectFields($closure,$row);
         foreach ($fields as $field) {
             $row->content($field);
         }
@@ -80,10 +78,11 @@ class Detail extends Html
         return $this;
     }
 
-    public function collectFields(\Closure $closure)
+    public function collectFields(\Closure $closure,...$params)
     {
+        array_push($params,$this);
         $offset = count($this->fields);
-        call_user_func($closure, $this);
+        call_user_func_array($closure,$params);
         $fields = array_slice($this->fields, $offset);
         $this->fields = array_slice($this->fields, 0, $offset);
         return $fields;
@@ -92,16 +91,12 @@ class Detail extends Html
     public function grid($relation, $title, \Closure $closure)
     {
         $grid = new Grid($this->getData($relation));
-        $grid->hideTools();
-        $grid->hideAction();
-        $grid->hidePage();
-        $grid->hideSelection();
+        $grid->tableMode();
         call_user_func($closure, $grid);
         $card = $this->createCard()->header("<b>{$title}</b>");
         $card->attr('bodyStyle', ['padding' => '0px']);
         $card->content($grid);
-        $this->push($card);
-        return $this;
+        return $card;
     }
 
     protected function createCard()
@@ -110,13 +105,12 @@ class Detail extends Html
     }
 
     /**
-     * 卡片布局
+     * 卡片
      * @param string $title 标题
      * @param \Closure $closure
-     * @param int $md
      * @return $this
      */
-    public function card($title, \Closure $closure, $md = 24)
+    public function card($title, \Closure $closure)
     {
         $card = $this->createCard()->header(Html::create($title)->tag('b'));
         $fields = $this->collectFields($closure);
@@ -126,11 +120,7 @@ class Detail extends Html
             $row->content($field);
         }
         $card->content($row);
-        $column = new Column();
-        $column->span($md);
-        $column->content($card);
-        $this->push($column);
-        return $this;
+        return $card;
     }
 
     /**
@@ -182,6 +172,12 @@ class Detail extends Html
 
     public function jsonSerialize()
     {
+        if($this->exec){
+            if ($this->data instanceof Model && !is_null($this->id)) {
+                $this->data = $this->data->find($this->id);
+            }
+        }
+        $this->exec();
         foreach ($this->fields as $field) {
             if ($field instanceof Field) {
                 if (is_null($this->row)) {

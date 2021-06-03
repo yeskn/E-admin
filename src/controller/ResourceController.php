@@ -15,7 +15,7 @@ class ResourceController extends Controller
      */
     public function index()
     {
-        $call = $this->call()->exec();
+        $call = $this->call();
         if (request()->has('eadmin_export')) {
             return $call->exportData();
         }
@@ -30,7 +30,7 @@ class ResourceController extends Controller
      */
     public function save(Request $request)
     {
-        $form = $this->call()->exec();
+        $form = $this->call();
         $res  = $form->save($request->post());
         if ($res !== false) {
             $url      = $form->redirectUrl();
@@ -44,7 +44,7 @@ class ResourceController extends Controller
 
     public function create()
     {
-        return $this->call()->exec();
+        return $this->call();
     }
 
     /**
@@ -55,7 +55,7 @@ class ResourceController extends Controller
      */
     public function edit($id)
     {
-        return $this->call()->exec()->edit($id);
+        return $this->call()->edit($id);
     }
 
     /**
@@ -66,7 +66,7 @@ class ResourceController extends Controller
      */
     public function read($id)
     {
-        return $this->call()->exec();
+        return $this->call();
     }
 
     /**
@@ -80,9 +80,9 @@ class ResourceController extends Controller
     {
         $url = '';
         if ($id == 'batch') {
-            $res = $this->call()->exec()->update($this->request->put('eadmin_ids'), $request->put());
+            $res = $this->call()->update($this->request->put('eadmin_ids'), $request->put());
         } else {
-            $form = $this->call()->exec();
+            $form = $this->call();
             $url  = $form->redirectUrl();
             $res  = $form->save($request->put());
         }
@@ -106,7 +106,7 @@ class ResourceController extends Controller
         } else {
             $ids = explode(',', $id);
         }
-        $res = $this->call()->exec()->destroy($ids);
+        $res = $this->call()->destroy($ids);
         if ($res !== false) {
             admin_success('操作完成', '删除成功');
         } else {

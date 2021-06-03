@@ -44,33 +44,33 @@ class Menu extends Controller
      */
     public function index()
     {
-        $grid = new Grid(new SystemMenu());
-        $grid->treeTable();
-        $grid->title('系统菜单管理');
-        $grid->column('name', '菜单名称')->display(function ($val, $data) {
-            return "<i class='{$data['icon']}'></i> " . $val;
-        });
-        $grid->column('url', '菜单链接')->display(function ($val) {
-            return ' ' . $val;
-        });
-        $grid->column('status', '状态')->switch();
-        $grid->column('admin_visible', '超级管理员状态')->switch([[1 => '显示'], [0 => '隐藏']]);
-        $grid->actions(function (Actions $action, $data) {
-            $action->prepend(
-                Button::create('添加菜单')
-                    ->plain()
-                    ->sizeSmall()
-                    ->typePrimary()
-                    ->dialog()
-                    ->form($this->form($data['id']))
-            );
-            $action->hideDetail();
+        return Grid::create(new SystemMenu(),function (Grid $grid){
+            $grid->treeTable();
+            $grid->title('系统菜单管理');
+            $grid->column('name', '菜单名称')->display(function ($val, $data) {
+                return "<i class='{$data['icon']}'></i> " . $val;
+            });
+            $grid->column('url', '菜单链接')->display(function ($val) {
+                return ' ' . $val;
+            });
+            $grid->column('status', '状态')->switch();
+            $grid->column('admin_visible', '超级管理员状态')->switch([[1 => '显示'], [0 => '隐藏']]);
+            $grid->actions(function (Actions $action, $data) {
+                $action->prepend(
+                    Button::create('添加菜单')
+                        ->plain()
+                        ->sizeSmall()
+                        ->typePrimary()
+                        ->dialog()
+                        ->form($this->form($data['id']))
+                );
+                $action->hideDetail();
 
+            });
+            $grid->sortInput();
+            $grid->setForm($this->form())->dialog();
+            $grid->quickSearch();
         });
-        $grid->sortInput();
-        $grid->setForm($this->form())->dialog();
-        $grid->quickSearch();
-        return $grid;
     }
 
     /**
@@ -81,14 +81,14 @@ class Menu extends Controller
      */
     public function form($pid=0): Form
     {
-        $menus = Admin::menu()->listOptions();
-        $form  = new Form(new SystemMenu());
-        $form->select('pid', '上级菜单')->default($pid)
-            ->options([0 => '顶级菜单'] + array_column($menus, 'label', 'id'))
-            ->required();
-        $form->text('name', '菜单名称')->required();
-        $form->text('url', '菜单链接');
-        $form->icon('icon', '菜单图标');
-        return $form;
+        return Form::create(new SystemMenu(),function (Form $form) use($pid){
+            $menus = Admin::menu()->listOptions();
+            $form->select('pid', '上级菜单')->default($pid)
+                ->options([0 => '顶级菜单'] + array_column($menus, 'label', 'id'))
+                ->required();
+            $form->text('name', '菜单名称')->required();
+            $form->text('url', '菜单链接');
+            $form->icon('icon', '菜单图标');
+        });
     }
 }

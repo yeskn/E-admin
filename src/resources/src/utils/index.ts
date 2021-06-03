@@ -32,6 +32,18 @@ export function findArrKey(arr, uid, field) {
 export function genId() {
     return Number(Math.random().toString().substr(3, 10) + Date.now()).toString(36);
 }
+export function treeMap(datas: Array<any>,  field: string) {
+    let keys = [];
+    const mapKey = datas.map(item => {
+        if (item.children) {
+            // @ts-ignore
+            keys = keys.concat(treeMap(item.children, field))
+        }
+        return item[field]
+    });
+    // @ts-ignore
+    return keys = keys.concat(mapKey)
+}
 export function findTree(datas: Array<any>, id: any, field: string) {
     for (let key in datas) {
         if (datas[key][field] == id) {

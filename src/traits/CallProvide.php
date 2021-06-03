@@ -11,9 +11,11 @@ trait CallProvide
     protected $callFunction;
     protected $callParams = [];
     protected $execClosure = null;
-    public function getCallMethod($reset = false,$offset = 2)
+    protected $exec = true;
+    public function parseCallMethod($reset = false,$offset = 2)
     {
         if (empty($this->callMethod) || $reset) {
+            $this->callParams = [];
             $backtrace          = debug_backtrace(1, 3);
             $backtrace          = array_slice($backtrace, $offset);
             $backtrace          = $backtrace[0];
@@ -33,14 +35,19 @@ trait CallProvide
                 'eadmin_class'    => $this->callClass,
                 'eadmin_function' => $this->callFunction,
             ];
+            $this->callMethod = array_merge($this->callMethod,$this->callParams);
         }
-        return array_merge($this->callMethod,$this->callParams);
+    }
+    public function getCallMethod(){
+        $this->exec = false;
+        return $this->callMethod;
     }
     public function setExec(\Closure $closure){
         $this->execClosure = $closure;
     }
     public function exec(){
-        if(!is_null($this->execClosure)){
+
+        if(!is_null($this->execClosure) && $this->exec){
             call_user_func($this->execClosure,$this);
         }
         return $this;

@@ -7,7 +7,9 @@ use Eadmin\component\basic\Dialog;
 use Eadmin\component\basic\Drawer;
 use Eadmin\component\layout\Column;
 use Eadmin\component\layout\Content;
+use Eadmin\detail\Detail;
 use Eadmin\form\Form;
+use Eadmin\grid\Grid;
 use think\helper\Str;
 
 abstract class Component implements \JsonSerializable

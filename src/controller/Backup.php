@@ -37,27 +37,27 @@ class Backup extends Controller
     public function index(): Grid
     {
         $data = BackupData::instance()->getBackUpList();
-        $grid  = new Grid($data);
-        $grid->title('数据库备份');
-        $grid->column('name', '备份名称');
-        $grid->column('size', '备份大小');
-        $grid->column('create_time', '备份时间');
-        $grid->actions(function (Actions $actions, $data) {
-            $actions->prepend(
-                Button::create('还原')
-                    ->typePrimary()
-                    ->sizeSmall()
-                    ->save(['id' => $data['id']], 'backup/reduction', '确认还原备份？')
-            );
+        return Grid::create($data,function (Grid $grid){
+            $grid->title('数据库备份');
+            $grid->column('name', '备份名称');
+            $grid->column('size', '备份大小');
+            $grid->column('create_time', '备份时间');
+            $grid->actions(function (Actions $actions, $data) {
+                $actions->prepend(
+                    Button::create('还原')
+                        ->typePrimary()
+                        ->sizeSmall()
+                        ->save(['id' => $data['id']], 'backup/reduction', '确认还原备份？')
+                );
+            });
+            $grid->deling(function ($ids) {
+                foreach ($ids as $id) {
+                    BackupData::instance()->delete($id);
+                }
+            });
+            $grid->hideDeleteButton();
+            $grid->tools('backup/config');
         });
-        $grid->deling(function ($ids) {
-            foreach ($ids as $id) {
-                BackupData::instance()->delete($id);
-            }
-        });
-        $grid->hideDeleteButton();
-        $grid->tools('backup/config');
-        return $grid;
     }
 
 
@@ -68,20 +68,20 @@ class Backup extends Controller
      */
     public function config()
     {
-        $form = new Form(new Config());
-        $form->inline();
-        $form->size('mini');
-        $form->radio('databackup_on', '自动备份')->options([
-            1 => '开启',
-            0 => '关闭',
-        ])->default(0)->themeButton();
-        $form->number('database_number', '最多保留')->min(1)->append('<span style="padding-left: 12px">份</span>')->required();
-        $form->number('database_day', '	数据库每')->min(1)->append('<span style="padding-left: 12px">天自动备份</span>')->required();
-        $form->actions(function (FormAction $action) {
-            $action->addRightAction(Button::create('备份数据库')->typeWarning()->sizeMini()->save([], 'backup/add'));
-            $action->hideResetButton();
+        return Form::create(new Config(),function (Form $form){
+            $form->inline();
+            $form->size('mini');
+            $form->radio('databackup_on', '自动备份')->options([
+                1 => '开启',
+                0 => '关闭',
+            ])->default(0)->themeButton();
+            $form->number('database_number', '最多保留')->min(1)->append('<span style="padding-left: 12px">份</span>')->required();
+            $form->number('database_day', '	数据库每')->min(1)->append('<span style="padding-left: 12px">天自动备份</span>')->required();
+            $form->actions(function (FormAction $action) {
+                $action->addRightAction(Button::create('备份数据库')->typeWarning()->sizeMini()->save([], 'backup/add'));
+                $action->hideResetButton();
+            });
         });
-        return $form;
     }
 
     /**
@@ -111,8 +111,5 @@ class Backup extends Controller
         } else {
             admin_error_message($res);
         }
-
     }
-
-
 }
