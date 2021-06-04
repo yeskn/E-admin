@@ -35,7 +35,6 @@
                 type:String,
                 default:'post'
             },
-            slotProps:Object,
             submit:Boolean,
             validate:Boolean,
             step:Number,

@@ -11,14 +11,21 @@ use Eadmin\model\AdminModel;
 return [
     //超级管理员id
     'admin_auth_id' => 1,
-    //令牌key
-    'token_key' => 'QsoYEClMJsgOSWUBkSCq26yWkApqSuH3',
-    //令牌过期时间
-    'token_expire' => 7200,
-    //是否唯一登陆
-    'token_unique' => true,
-    //系统用户模型
-    'token_model' => AdminModel::class,
+    //token
+    'token'=>[
+        //令牌key
+        'key' => 'QsoYEClMJsgOSWUBkSCq26yWkApqSuH3',
+        //令牌过期时间
+        'expire' => 7200,
+        //是否唯一登陆
+        'unique' => true,
+        //系统用户模型
+        'model' => AdminModel::class,
+        //验证字段
+        'auth_field'=>[
+            'password'
+        ]
+    ],
     //系统用户表
     'system_user_table' => 'system_user',
     //权限模块

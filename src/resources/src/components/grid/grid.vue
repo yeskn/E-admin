@@ -162,10 +162,10 @@
             },
             params:Object,
             addParams:Object,
-            defer:{
-                type:Boolean,
-                default:false
-            },
+            // defer:{
+            //     type:Boolean,
+            //     default:false
+            // },
         },
         inheritAttrs: false,
         emits: ['update:modelValue','update:selection'],
@@ -256,15 +256,21 @@
 
             })
             nextTick(()=>{
-                // if(ctx.attrs.defaultExpandAllRows){
-                //     expandedRowKeys.value = props.data.map(item=>item.id)
-                // }
                 if(proxyData[props.filterField]){
                     filterInitData = JSON.parse(JSON.stringify(proxyData[props.filterField]))
                 }
-                eadminActionWidth.value += 30
+                actionAutoWidth()
                 dragSort()
             })
+            function actionAutoWidth(){
+                //操作列宽度自适应
+                document.getElementsByClassName('EadminAction').forEach(item=>{
+                    if(eadminActionWidth.value < item.offsetWidth){
+                        eadminActionWidth.value = item.offsetWidth
+                    }
+                })
+                eadminActionWidth.value += 30
+            }
             //拖拽排序
             function dragSort(){
                 if(dragTable.value){
@@ -413,6 +419,9 @@
                     total.value = res.total
                     header.value = res.header
                     tools.value = res.tools
+                    nextTick(()=>{
+                        actionAutoWidth()
+                    })
                 }).finally(() => {
                     ctx.emit('update:modelValue', false)
                 })

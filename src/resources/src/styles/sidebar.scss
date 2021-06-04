@@ -81,6 +81,13 @@
     }
   }
 }
+.collapse{
+  & .nest-menu .el-submenu>.el-submenu__title,
+  &  .el-menu-item.is-active {
+    margin: 0!important;
+    border-radius: 0 !important;
+  }
+}
 .mobile .sidebar-container {
   position: fixed;
   z-index: 9999;

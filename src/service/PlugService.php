@@ -70,13 +70,23 @@ class PlugService extends Service
     public function register()
     {
         $loader = $this->loader();
+        $plugs = [];
+        foreach ($this->plugPaths as $plugPaths) {
+            $file = $plugPaths . DIRECTORY_SEPARATOR . 'composer.json';
+            if (is_file($file)) {
+                $arr  = json_decode(file_get_contents($file), true);
+                $plugs[]  = $arr;
+            }
+        }
+        $names = array_column($plugs,'name');
+        $plugNames = Db::name('system_plugs')->whereIn('name', $names)->where('status',1)->column('name');
         foreach ($this->plugPaths as $plugPaths) {
             $file = $plugPaths . DIRECTORY_SEPARATOR . 'composer.json';
             if (is_file($file)) {
                 $arr  = json_decode(file_get_contents($file), true);
                 $psr4 = Arr::get($arr, 'autoload.psr-4');
                 $name = Arr::get($arr, 'name');
-                if ($this->status($name)) {
+                if (in_array($name,$plugNames)) {
                     if ($psr4) {
                         foreach ($psr4 as $namespace => $path) {
                             $path = $plugPaths . '/' . trim($path, '/') . '/';

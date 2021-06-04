@@ -3717,7 +3717,7 @@ electron-to-chromium@^1.3.723:
 
 element-plus@1.0.2-beta.36:
   version "1.0.2-beta.36"
-  resolved "https://registry.nlark.com/element-plus/download/element-plus-1.0.2-beta.36.tgz#78a7e1be10b9622c4fc342fdce0801650f30bb01"
+  resolved "https://registry.nlark.com/element-plus/download/element-plus-1.0.2-beta.36.tgz?cache=0&sync_timestamp=1622703503930&other_urls=https%3A%2F%2Fregistry.nlark.com%2Felement-plus%2Fdownload%2Felement-plus-1.0.2-beta.36.tgz#78a7e1be10b9622c4fc342fdce0801650f30bb01"
   integrity sha1-eKfhvhC5YixPw0L9zggBZQ8wuwE=
   dependencies:
     "@popperjs/core" "^2.4.4"

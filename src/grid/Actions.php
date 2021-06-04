@@ -50,6 +50,7 @@ class Actions extends Html
     {
         parent::__construct();
         $this->grid = $grid;
+        $this->attr('class', 'EadminAction');
         $this->column = new Column('EadminAction', '', $grid);
         $this->column->fixed('right');
     }

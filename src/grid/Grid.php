@@ -43,7 +43,6 @@ use think\Model;
  * @method $this hideDeleteSelection(bool $bool = true) 隐藏删除选中按钮
  * @method $this expandFilter(bool $bool = true) 展开筛选
  * @method $this defaultExpandAllRows(bool $bool) 是否默认展开所有行
- * @method $this defer(bool $bool) 延迟渲染表格
  * @method $this static(bool $bool) 静态表格
  * @method $this expandRowByClick(bool $bool) 通过点击行来展开子行
  * @method $this showHeader(bool $bool = true) 是否显示表头

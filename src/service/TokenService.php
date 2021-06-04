@@ -9,6 +9,7 @@
 namespace Eadmin\service;
 
 use Eadmin\traits\ApiJson;
+use think\db\Query;
 use think\facade\Cache;
 use think\facade\Request;
 use Eadmin\model\AdminModel;
@@ -30,14 +31,16 @@ class TokenService
     protected $model = '';
     protected static $userModel = null;
     protected $unique = false;
+    protected $authFields = [];
 
     public function __construct()
     {
-        $key          = config('admin.token_key', 'QoYEClMJsgOSWUBkSCq26yWkApqSuH3');
-        $this->model  = config('admin.token_model');
-        $this->unique = config('admin.token_unique', false);
-        $this->key    = substr(md5($key), 8, 16);
-        $this->expire = config('admin.token_expire', 7200);
+        $key = config('admin.token.key', 'QoYEClMJsgOSWUBkSCq26yWkApqSuH3');
+        $this->model = config('admin.token.model');
+        $this->unique = config('admin.token.unique', false);
+        $this->key = substr(md5($key), 8, 16);
+        $this->expire = config('admin.token.expire', 7200);
+        $this->authFields = config('admin.token.auth_field', []);
     }
 
     /**
@@ -101,8 +104,8 @@ class TokenService
     public function encode($data)
     {
         $data['expire'] = time() + $this->expire;
-        $str            = json_encode($data);
-        $token          = openssl_encrypt($str, 'aes-256-cbc', $this->key, 0, self::IV);
+        $str = json_encode($data);
+        $token = openssl_encrypt($str, 'aes-256-cbc', $this->key, 0, self::IV);
         if (isset($data['id'])) {
             $cacheKey = 'last_auth_token_' . $data['id'];
             //开启唯一登录就将上次token加入黑名单
@@ -115,7 +118,7 @@ class TokenService
         }
         $this->set($token);
         return [
-            'token'  => $token,
+            'token' => $token,
             'expire' => (int)$this->expire
         ];
     }
@@ -151,7 +154,7 @@ class TokenService
     public function refresh($token = '')
     {
         $token = $token ? $token : Request::header('Authorization');
-        $data  = $this->decode($token);
+        $data = $this->decode($token);
         if ($data) {
             $this->logout($token);
             return $this->encode($data);
@@ -183,6 +186,22 @@ class TokenService
         } elseif ($data['expire'] < time()) {
             $this->errorCode(40002, '认证身份过期，请重新登陆');
         }
+        $model = new $this->model;
+        $pk = $model->getPk();
+        //验证用户表信息
+        if (isset($data[$pk])) {
+            if ($this->user()) {
+                foreach ($this->authFields as $field) {
+                    if (isset($data[$field]) && $data[$field] != $this->user()[$field]) {
+                        $this->errorCode(40002, '认证身份过期，请重新登陆');
+                    }
+                }
+            } else {
+                $this->errorCode(40002, '认证身份过期，请重新登陆');
+            }
+        } else {
+            $this->errorCode(40001, '授权认证失败');
+        }
         return true;
     }
 
@@ -196,7 +215,7 @@ class TokenService
     public function getVar($name)
     {
         $token = self::$token ? self::$token : rawurldecode(Request::header('Authorization'));
-        $data  = $this->decode($token);
+        $data = $this->decode($token);
         if (isset($data[$name])) {
             return $data[$name];
         } else {
@@ -221,15 +240,17 @@ class TokenService
      */
     public function user($lock = false)
     {
-
         if (is_null($this->id())) {
             return null;
         }
         if (is_null(self::$userModel)) {
-            $user            = new $this->model;
-            self::$userModel = $user->lock($lock)->find($this->id());
+            $user = new $this->model;
+            $tableFields = $user->getTableFields();
+            self::$userModel = $user->lock($lock)
+                ->when(in_array('delete_time', $tableFields), function (Query $query) {
+                    $query->whereNull('delete_time');
+                })->find($this->id());
         }
-
         return self::$userModel;
     }
 }

@@ -1,5 +1,5 @@
 <template>
-    <div :class="[sidebar.opend ? '':'collapse',sidebar.opend ? '':'collapse','sidebar-container']">
+    <div :class="[sidebar.opend ? '':'collapse','sidebar-container']">
         <logo :collapse="sidebar.opend"></logo>
         <el-scrollbar>
             <el-menu :default-active="activeIndex"

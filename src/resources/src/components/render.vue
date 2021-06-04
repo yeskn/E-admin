@@ -160,6 +160,8 @@
                     children[slot] = (scope) => {
                         if (!isProxy(scope) && (JSON.stringify(scope) === '{}' || scope === undefined)) {
                             scope = slotProps
+                        }else{
+                            scope = Object.assign(scope,slotProps)
                         }
                         return userRender(data.content[slot], scope)
                     }

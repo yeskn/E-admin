@@ -122,7 +122,10 @@ class ResourceController extends Controller
         $reflect  = new \ReflectionMethod($instance, $action);
         $class = explode('\\',$class);
         $controller = end($class);
+
         $this->request->setController($controller);
+        $actionName = $reflect->getName();
+        $this->request->setAction($actionName);
         $data     = app()->invokeReflectMethod($instance, $reflect, $this->request->param());
         return $data;
     }
