@@ -27,25 +27,25 @@ class {%className%} extends Controller
      */
     public function index() : Grid
     {
-        $grid = new Grid(new {%model%});
-        $grid->title($this->title);
+        return Grid::create(new {%model%}, function (Grid $grid){
+            $grid->title($this->title);
 {%grid%}
-        $grid->quickSearch();
-        $grid->setForm($this->form())->dialog();
-        $grid->setDetail($this->detail());
-        // 操作工具栏
-        $grid->actions(function (Actions $action, $data) {
+            $grid->quickSearch();
+            $grid->setForm($this->form())->dialog();
+            $grid->setDetail($this->detail());
+            // 操作工具栏
+            $grid->actions(function (Actions $action, $data) {
 
-        });
-        // 删除前回调
-        $grid->deling(function ($ids, $trueDelete) {
+            });
+            // 删除前回调
+            $grid->deling(function ($ids, $trueDelete) {
 
-        });
-        // 更新前回调
-        $grid->updateing(function ($ids, $data) {
+            });
+            // 更新前回调
+            $grid->updateing(function ($ids, $data) {
 
+            });
         });
-        return $grid;
     }
 
     /**
@@ -56,10 +56,10 @@ class {%className%} extends Controller
      */
     public function form() : Form
     {
-        $form = new Form(new {%model%});
-        $form->title($this->title);
+         return Form::create(new {%model%},function (Form $form){
+            $form->title($this->title);
 {%form%}
-        return $form;
+         });
     }
 
     /**
@@ -71,9 +71,9 @@ class {%className%} extends Controller
      */
      public function detail($id=0) : Detail
      {
-        $detail = new Detail({%model%}::find($id));
-        $detail->title($this->title);
+        return Detail::create(new {%model%},$id,function (Detail $detail){
+            $detail->title($this->title);
 {%detail%}
-        return $detail;
+        });
      }
 }
