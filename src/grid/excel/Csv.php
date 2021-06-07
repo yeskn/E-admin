@@ -15,14 +15,17 @@ namespace Eadmin\grid\excel;
  */
 class Csv extends AbstractExporter
 {
+    static $fp = null;
     public function export()
     {
-        set_time_limit(0);
         static $nums = 0;
-        ini_set('memory_limit', '128M');
-        header('Content-Type: application/vnd.ms-execl');
-        header('Content-Disposition: attachment;filename="' . $this->fileName . '.csv"');
-        $fp = fopen('php://output', 'a');
+        if(is_null(self::$fp)){
+            set_time_limit(0);
+            ini_set('memory_limit', '128M');
+            header('Content-Type: application/vnd.ms-execl');
+            header('Content-Disposition: attachment;filename="' . $this->fileName . '.csv"');
+            self::$fp = fopen('php://output', 'a');
+        }
         $this->filterColumns();
         //设置标题
         $title  = array_values($this->columns);
@@ -32,7 +35,7 @@ class Csv extends AbstractExporter
         }
         //将标题写到标准输出中
         if ($nums == 0) {
-            fputcsv($fp, $title);
+            fputcsv(self::$fp, $title);
         }
         foreach ($this->data as $item) {
             $row = [];
@@ -40,14 +43,13 @@ class Csv extends AbstractExporter
                 $value = is_null($item[$field]) ? '' : $item[$field];
                 $row[] = mb_convert_encoding($value, 'GBK', 'UTF-8');
             }
-            fputcsv($fp, $row);
+            fputcsv(self::$fp, $row);
             $nums++;
             if ($nums == 5000) {
-                $nums = 0;
+                $nums = 1;
                 ob_flush();
                 flush();
             }
         }
-        fclose($fp);
     }
 }

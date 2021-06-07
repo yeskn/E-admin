@@ -20,6 +20,7 @@ use Eadmin\grid\excel\Csv;
 use Eadmin\grid\excel\Excel;
 use Eadmin\traits\CallProvide;
 use think\db\Query;
+use think\facade\Filesystem;
 use think\facade\Request;
 use think\helper\Arr;
 use think\helper\Str;
@@ -511,6 +512,7 @@ class Grid extends Component
      */
     public function exportData()
     {
+        $this->exec();
         //快捷搜索
         $keyword = Request::get('quickSearch', '', ['trim']);
         $this->drive->quickFilter($keyword, $this->column);
@@ -532,19 +534,16 @@ class Grid extends Component
         }
         $excel->columns($columnTitle);
         if (Request::get('export_type') == 'all') {
-            set_time_limit(0);
-            if ($excel instanceof Excel) {
-                $data = $this->drive->db()->select();
-                $exportData = $this->parseColumn($data, true);
-                $excel->rows($exportData)->export();
-            } else {
-                $this->drive->db()->chunk(500, function ($datas) use ($excel) {
-                    $exportData = $this->parseColumn($datas, true);
+            $count = $this->drive->getTotal();
+            $this->drive->db()->chunk(500, function ($datas) use ($excel,$count) {
+                $exportData = $this->parseColumn($datas, true);
+                if($count > 500){
+                    $excel->rows($exportData)->queueExport($count);
+                }else{
                     $excel->rows($exportData)->export();
-                    $this->exportData = [];
-                });
-                exit;
-            }
+                }
+                $this->exportData = [];
+            });
         } elseif (Request::get('export_type') == 'select') {
             $data = $this->drive->model()->whereIn($this->drive->getPk(), Request::get('eadmin_ids'))->select();
         } else {

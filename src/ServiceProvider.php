@@ -13,8 +13,10 @@ use Eadmin\component\basic\Message;
 use Eadmin\component\basic\Notification;
 use Eadmin\controller\FileSystem;
 use Eadmin\controller\ResourceController;
+use Eadmin\controller\Queue;
 use Eadmin\middleware\Response;
 use Eadmin\service\MenuService;
+use Eadmin\service\QueueService;
 use think\facade\Db;
 use think\route\Resource;
 use think\Service;
@@ -83,7 +85,13 @@ class ServiceProvider extends Service
         $this->app->route->post('filesystem/mkdir', FileSystem::class . '@mkdir');
         $this->app->route->post('filesystem/rename', FileSystem::class . '@rename');
         $this->app->route->delete('filesystem/del', FileSystem::class . '@del');
-
+        //系统队列
+        $this->app->route->get('queue/progress',function (){
+            $queue = new QueueService($this->app->request->get('id'));
+            return json(['code'=>200,'data'=>$queue->progress()]);
+        });
+        $this->app->route->get('queue', Queue::class . '@index');
+        $this->app->route->post('queue/retry', Queue::class . '@retry');
     }
 
     public function boot()
@@ -98,6 +106,7 @@ class ServiceProvider extends Service
             'Eadmin\command\Install',
             'Eadmin\command\ReplaceData',
             'Eadmin\command\ClearDatabase',
+            'Eadmin\command\Queue',
         ]);
     }
 }

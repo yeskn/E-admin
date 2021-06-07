@@ -11,6 +11,7 @@ use Eadmin\component\basic\Notification;
 use Eadmin\controller\ResourceController;
 use Eadmin\service\MenuService;
 use Eadmin\service\NodeService;
+use Eadmin\service\QueueService;
 use Eadmin\service\TokenService;
 use think\app\Url;
 use think\facade\Cache;
@@ -46,7 +47,7 @@ class Admin
                 return Db::name('SystemConfig')->where('name', $name)->update(['value' => $value]);
             } else {
                 return Db::name('SystemConfig')->insert([
-                    'name'  => $name,
+                    'name' => $name,
                     'value' => $value,
                 ]);
             }
@@ -111,7 +112,7 @@ class Admin
      */
     public static function check($class, $function, $method = 'get')
     {
-        $nodeId      = md5($class . $function . strtolower($method));
+        $nodeId = md5($class . $function . strtolower($method));
         $permissions = self::permissions();
         foreach ($permissions as $permission) {
             if ($permission['id'] == $nodeId) {
@@ -135,7 +136,7 @@ class Admin
     {
 
         $permissionsKey = 'eadmin_permissions' . self::id();
-        $nodes          = Cache::get($permissionsKey);
+        $nodes = Cache::get($permissionsKey);
         if ($nodes) {
             return $nodes;
         }
@@ -143,7 +144,7 @@ class Admin
 
         if (self::id()) {
             $permissions = self::user()->permissions();
-            $nodeIds     = array_column($permissions, 'node_id');
+            $nodeIds = array_column($permissions, 'node_id');
         } else {
             $nodeIds = [];
         }
@@ -221,14 +222,15 @@ class Admin
      * @param $url
      * @return bool|\think\route\Dispatch|null
      */
-    public static function getDispatch($url){
+    public static function getDispatch($url)
+    {
         $dispatch = null;
         try {
             if (strpos($url, '/') !== false) {
-                $parse   = parse_url($url);
-                $path    = $parse['path'] ?? '';
+                $parse = parse_url($url);
+                $path = $parse['path'] ?? '';
                 $pathinfo = array_filter(explode('/', $path));
-                $name     = current($pathinfo);
+                $name = current($pathinfo);
                 if ($name == app('http')->getName()) {
                     array_shift($pathinfo);
                 }
@@ -243,7 +245,9 @@ class Admin
         }
         return $dispatch;
     }
-    public static function getDispatchCall($dispatch){
+
+    public static function getDispatchCall($dispatch)
+    {
         $eadmin_class = null;
         $eadmin_function = null;
         try {
@@ -252,17 +256,31 @@ class Admin
 
                 list($controller, $eadmin_function) = $dispatch->getDispatch();
                 $eadmin_class = get_class($dispatch->controller($controller));
-                if(is_null($eadmin_function)){
+                if (is_null($eadmin_function)) {
                     $eadmin_function = config('route.default_action');
                 }
-            }elseif ($dispatch instanceof Callback && !($dispatch->getDispatch() instanceof \Closure)){
+            } elseif ($dispatch instanceof Callback && !($dispatch->getDispatch() instanceof \Closure)) {
                 list($eadmin_class, $eadmin_function) = $dispatch->getDispatch();
             }
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
 
         }
-        return [$eadmin_class,$eadmin_function];
+        return [$eadmin_class, $eadmin_function];
     }
+
+    /**
+     * 添加队列任务
+     * @param string $title 标题
+     * @param string $job 任务
+     * @param array $data 数据
+     * @param int $delay 延迟时间
+     */
+    public static function queue($title, $job, array $data, $delay = 0)
+    {
+        $queue = new QueueService();
+        $queue->queue($title, $job, $data, $delay);
+    }
+
     /**
      * 解析url并执行返回
      * @param mixed $url
@@ -270,12 +288,12 @@ class Admin
      */
     public static function dispatch($url)
     {
-        $dispatch =  Admin::getDispatch($url);
-        $vars    = [];
-        if(is_string($url)){
-            $parse   = parse_url($url);
+        $dispatch = Admin::getDispatch($url);
+        $vars = [];
+        if (is_string($url)) {
+            $parse = parse_url($url);
             if (isset($parse['query'])) {
-                parse_str($parse['query'],$vars);
+                parse_str($parse['query'], $vars);
             }
         }
         $data = $url;
@@ -288,9 +306,9 @@ class Admin
                 list($controller, $action) = $dispatch->getDispatch();
                 try {
                     $instance = $dispatch->controller($controller);
-                    $reflect  = new \ReflectionMethod($instance, $action);
-                    $data     = app()->invokeReflectMethod($instance, $reflect, $vars);
-                }catch (\Exception $exception){
+                    $reflect = new \ReflectionMethod($instance, $action);
+                    $data = app()->invokeReflectMethod($instance, $reflect, $vars);
+                } catch (\Exception $exception) {
 
                 }
             } elseif ($dispatch instanceof Callback) {

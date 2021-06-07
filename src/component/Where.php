@@ -20,6 +20,7 @@ trait Where
     public function whenShow(bool $condition)
     {
         $this->componentVisible = $condition;
+       
         return $this;
     }
 

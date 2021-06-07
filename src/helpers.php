@@ -12,6 +12,18 @@ if (!function_exists('redis')) {
         return \think\facade\Cache::store('redis');
     }
 }
+if (!function_exists('sysqueue')) {
+    /**
+     * @param string $title 标题
+     * @param string $job 任务
+     * @param array $data 数据
+     * @param int $delay 延迟时间
+     */
+    function sysqueue($title,$job, array $data,$delay = 0)
+    {
+        Admin::queue($title,$job,$data,$delay);
+    }
+}
 if (!function_exists('sysconf')) {
     function sysconf($name, $value = null)
     {

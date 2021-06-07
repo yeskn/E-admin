@@ -12,6 +12,7 @@ namespace Eadmin\grid\excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use think\facade\Filesystem;
 
 /**
  * Class Excel
@@ -31,11 +32,13 @@ class Excel extends AbstractExporter
     protected $startColumnIndex = 1;
     //数据开始行
     protected $startRowIndex = 2;
+    protected $rowIndex = 0;
     //合并行字段条件
     protected $mergeCondtionField = null;
     //合并列字段
     protected $mergeRowFields = [];
-
+    protected $fieldCellArr = [];
+    protected $init = false;
     public function __construct()
     {
         $this->excel = new Spreadsheet();
@@ -79,79 +82,60 @@ class Excel extends AbstractExporter
         $this->startRowIndex = $startRowIndex;
         $this->startColumnIndex = $startColumnIndex;
     }
-
-    public function export()
-    {
-        if (is_callable($this->callback)) {
-            call_user_func($this->callback, $this);
-        }
-        set_time_limit(0);
-        ini_set('memory_limit', '-1');
-        $this->filterColumns();
-        $rowCount = count($this->data) + 1;
-        $letter = $this->getLetter(count($this->columns) - 1);
-        $this->sheet->getStyle("A1:{$letter}{$rowCount}")->applyFromArray([
-            'alignment' => [
-                'horizontal' => Alignment::HORIZONTAL_CENTER,
-                'vertical' => Alignment::VERTICAL_CENTER
-            ],
-        ]);
-        $i = 0;
-        foreach ($this->columns as $field => $val) {
-            $values = array_column($this->data, $field);
-            $str = $val;
-            foreach ($values as $v) {
-                if (mb_strlen($v, 'utf-8') > mb_strlen($str, 'utf-8')) {
-                    $str = $v;
+    protected function init(){
+        if(!$this->init){
+            if (is_callable($this->callback)) {
+                call_user_func($this->callback, $this);
+            }
+            set_time_limit(0);
+            ini_set('memory_limit', '-1');
+            $this->filterColumns();
+            $rowCount = count($this->data) + 1;
+            $letter = $this->getLetter(count($this->columns) - 1);
+            $this->sheet->getStyle("A1:{$letter}{$rowCount}")->applyFromArray([
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER
+                ],
+            ]);
+            $i = 0;
+            foreach ($this->columns as $field => $val) {
+                $values = array_column($this->data, $field);
+                $str = $val;
+                foreach ($values as $v) {
+                    if (mb_strlen($v, 'utf-8') > mb_strlen($str, 'utf-8')) {
+                        $str = $v;
+                    }
                 }
-            }
-            $width = ceil(mb_strlen($str, 'utf-8') * 2);
-            $this->sheet->getColumnDimension($this->getLetter($i))->setWidth($width);
-            $i++;
-        }
-        $i = 0;
-        $fieldCellArr = [];
-        foreach ($this->columns as $field => $val) {
-            $i++;
-            $this->sheet->setCellValueByColumnAndRow($i, 1, $val);
-            $fieldCellArr[$field] = $this->getLetter($i - 1);
-        }
-        $i = $this->startColumnIndex;
-        $tmpMergeCondition = '';
-        $tmpMergeIndex = 2;
-        $rowIndex = $this->startRowIndex - 1;
-
-        foreach ($this->data as $key => &$val) {
-            $rowIndex++;
-            if ($this->mapCallback instanceof \Closure) {
-                $val = call_user_func($this->mapCallback, $val, $this->sheet);
-            }
-            foreach ($this->columns as $fkey => $fval) {
-                $this->sheet->setCellValueByColumnAndRow($i, $key + 2, $this->filterEmoji($val[$fkey]));
+                $width = ceil(mb_strlen($str, 'utf-8') * 2);
+                $this->sheet->getColumnDimension($this->getLetter($i))->setWidth($width);
                 $i++;
             }
-            if (!is_null($this->mergeCondtionField)) {
-                if ($tmpMergeCondition != $val[$this->mergeCondtionField] || $rowIndex == $rowCount) {
-                    if (!empty($tmpMergeCondition)) {
-                        foreach ($this->mergeRowFields as $field) {
-                            $letter = $fieldCellArr[$field];
-                            if ($rowIndex == $rowCount) {
-                                if ($tmpMergeCondition != $val[$this->mergeCondtionField]) {
-                                    break;
-                                }
-                                $mergeIndex = $rowIndex;
-                            } else {
-                                $mergeIndex = $rowIndex - 1;
-                            }
-                            $this->sheet->mergeCells("{$letter}{$tmpMergeIndex}:{$letter}{$mergeIndex}");
-                        }
-                    }
-                    $tmpMergeCondition = $val[$this->mergeCondtionField];
-                    $tmpMergeIndex = $rowIndex;
-                }
+            $i = 0;
+            foreach ($this->columns as $field => $val) {
+                $i++;
+                $this->sheet->setCellValueByColumnAndRow($i, 1, $val);
+                $this->fieldCellArr[$field] = $this->getLetter($i - 1);
             }
-            $i = $this->startColumnIndex;
+            $this->rowIndex = $this->startRowIndex - 1;
+            $this->init = true;
         }
+    }
+    public function queueExport($count){
+        $this->init();
+        $this->writeRowData();
+        if($this->rowIndex > $count){
+            $writer = IOFactory::createWriter($this->excel, 'Xls');
+            $path = Filesystem::path('excel');
+            $filesystem = new \Symfony\Component\Filesystem\Filesystem;
+            $filesystem->mkdir($path);
+            $writer->save($path.DIRECTORY_SEPARATOR.$this->fileName . '.xls');
+        }
+    }
+    public function export()
+    {
+        $this->init();
+        $this->writeRowData();
         ob_end_clean();
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="' . $this->fileName . '.xls"');
@@ -190,5 +174,46 @@ class Excel extends AbstractExporter
     public function __call($name, $arguments)
     {
         return call_user_func_array([$this->excel, $name], $arguments);
+    }
+    /**
+     * 设置数据到excel
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     */
+    protected function writeRowData()
+    {
+        $tmpMergeIndex = $this->rowIndex +1;
+        $rowCount = count($this->data) + 1;
+        $tmpMergeCondition = '';
+        foreach ($this->data as $key => &$val) {
+            $this->rowIndex++;
+            if ($this->mapCallback instanceof \Closure) {
+                $val = call_user_func($this->mapCallback, $val, $this->sheet);
+            }
+            $startColumnIndex = $this->startColumnIndex;
+            foreach ($this->columns as $fkey => $fval) {
+                $this->sheet->setCellValueByColumnAndRow($startColumnIndex, $this->rowIndex, $this->filterEmoji($val[$fkey]));
+                $startColumnIndex++;
+            }
+            if (!is_null($this->mergeCondtionField)) {
+                if ($tmpMergeCondition != $val[$this->mergeCondtionField] || $this->rowIndex == $rowCount) {
+                    if (!empty($tmpMergeCondition)) {
+                        foreach ($this->mergeRowFields as $field) {
+                            $letter = $this->fieldCellArr[$field];
+                            if ( $this->rowIndex == $rowCount) {
+                                if ($tmpMergeCondition != $val[$this->mergeCondtionField]) {
+                                    break;
+                                }
+                                $mergeIndex =  $this->rowIndex;
+                            } else {
+                                $mergeIndex =  $this->rowIndex - 1;
+                            }
+                            $this->sheet->mergeCells("{$letter}{$tmpMergeIndex}:{$letter}{$mergeIndex}");
+                        }
+                    }
+                    $tmpMergeCondition = $val[$this->mergeCondtionField];
+                    $tmpMergeIndex =  $this->rowIndex;
+                }
+            }
+        }
     }
 }
