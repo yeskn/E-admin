@@ -18,10 +18,11 @@ if (!function_exists('sysqueue')) {
      * @param string $job 任务
      * @param array $data 数据
      * @param int $delay 延迟时间
+     * @return mixed
      */
     function sysqueue($title,$job, array $data,$delay = 0)
     {
-        Admin::queue($title,$job,$data,$delay);
+        return Admin::queue($title,$job,$data,$delay);
     }
 }
 if (!function_exists('sysconf')) {

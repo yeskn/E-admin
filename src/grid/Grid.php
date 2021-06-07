@@ -18,6 +18,7 @@ use Eadmin\detail\Detail;
 use Eadmin\form\Form;
 use Eadmin\grid\excel\Csv;
 use Eadmin\grid\excel\Excel;
+use Eadmin\grid\excel\ExcelQueue;
 use Eadmin\traits\CallProvide;
 use think\db\Query;
 use think\facade\Filesystem;
@@ -461,11 +462,12 @@ class Grid extends Component
      */
     protected function parseColumn($datas, $export = false)
     {
+
         $tableData = [];
         //解析行数据
         foreach ($datas as $data) {
             //主键
-            $row = ['id' => $data[$this->drive->getPk()]];
+            $row = ['eadmin_id' => $data[$this->drive->getPk()]];
             //树形父级pid
             if ($this->isTree) {
                 $row[$this->treeId] = $data[$this->treeId];
@@ -478,7 +480,7 @@ class Grid extends Component
                     $row[$field] = $column->getExportData();
                 }
             }
-            if (!$this->hideAction) {
+            if (!$this->hideAction && !$export) {
                 $actionColumn = clone $this->actionColumn;
                 $actionColumn->row($data);
                 $row['EadminAction'] = $actionColumn;
@@ -490,7 +492,7 @@ class Grid extends Component
             $tableData[] = $row;
         }
         $isTotal  = false;
-        $row = ['id'=>-1];
+        $row = ['eadmin_id'=>-1];
         foreach ($this->column as $column) {
             $total = $column->getTotal();
             $field = $column->attr('prop');
@@ -534,16 +536,21 @@ class Grid extends Component
         }
         $excel->columns($columnTitle);
         if (Request::get('export_type') == 'all') {
-            $count = $this->drive->getTotal();
-            $this->drive->db()->chunk(500, function ($datas) use ($excel,$count) {
-                $exportData = $this->parseColumn($datas, true);
-                if($count > 500){
+            if(Request::has('eadmin_queue')){
+                $id = sysqueue('导出excel',ExcelQueue::class,Request::get());
+                return [
+                    'code' => 200,
+                    'data' => $id,
+                ];
+            }else{
+                $count = $this->drive->getTotal();
+                $this->drive->db()->chunk(500, function ($datas) use ($excel,$count) {
+                    $exportData = $this->parseColumn($datas, true);
                     $excel->rows($exportData)->queueExport($count);
-                }else{
-                    $excel->rows($exportData)->export();
-                }
-                $this->exportData = [];
-            });
+                    $this->exportData = [];
+                });
+                return true;
+            }
         } elseif (Request::get('export_type') == 'select') {
             $data = $this->drive->model()->whereIn($this->drive->getPk(), Request::get('eadmin_ids'))->select();
         } else {

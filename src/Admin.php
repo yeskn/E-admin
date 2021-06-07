@@ -62,7 +62,12 @@ class Admin
      */
     public static function view($template, $vars = [])
     {
-        $content = View::fetch($template, $vars);
+        if (is_file($template)) {
+          
+            $content = View::display(file_get_contents($template), $vars);
+        } else {
+            $content = View::fetch($template, $vars);
+        }
         return Html::create($content)->tag('component');
     }
 
@@ -274,11 +279,12 @@ class Admin
      * @param string $job 任务
      * @param array $data 数据
      * @param int $delay 延迟时间
+     * @return mixed
      */
     public static function queue($title, $job, array $data, $delay = 0)
     {
         $queue = new QueueService();
-        $queue->queue($title, $job, $data, $delay);
+        return $queue->queue($title, $job, $data, $delay);
     }
 
     /**

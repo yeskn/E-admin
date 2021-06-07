@@ -46,7 +46,7 @@
                                 <el-dropdown-menu>
                                     <el-checkbox-group v-model="checkboxColumn">
                                         <el-dropdown-item v-for="item in columns">
-                                            <el-checkbox :label="item.prop" v-if="item.label">{{item.label}}</el-checkbox>
+                                            <el-checkbox :label="item.prop" v-if="item.label && !item.hide">{{item.label}}</el-checkbox>
                                         </el-dropdown-item>
                                     </el-checkbox-group>
                                 </el-dropdown-menu>
@@ -61,7 +61,7 @@
             <render :data="filter" ></render>
         </div>
         <div v-if="isMobile" style="background: #ffffff;overflow: auto" v-loading="loading">
-            <el-row v-for="row in tableData" :key="row.id" style="border-top: 1px solid rgb(240, 240, 240);">
+            <el-row v-for="row in tableData" :key="row.eadmin_id" style="border-top: 1px solid rgb(240, 240, 240);">
                 <el-col :span="24" >
                         <div v-for="column in tableColumns" style="padding: 15px 10px;font-size: 14px;display: flex">
                             <div v-if="column.label" style="margin-right: 5px;color: #888888">{{column.label}}<span>:</span></div>
@@ -71,7 +71,7 @@
             </el-row>
         </div>
         <!--表格-->
-        <a-table v-else :row-selection="rowSelection" @expand="expandChange" @change="tableChange" :columns="tableColumns" :data-source="tableData"  :expanded-row-keys="expandedRowKeys"	 :pagination="false" :loading="loading" v-bind="$attrs" row-key="id" ref="dragTable">
+        <a-table v-else :row-selection="rowSelection" @expand="expandChange" @change="tableChange" :columns="tableColumns" :data-source="tableData"  :expanded-row-keys="expandedRowKeys"	 :pagination="false" :loading="loading" v-bind="$attrs" row-key="eadmin_id" ref="dragTable">
             <template #title v-if="header">
                 <div class="header"><render :data="header"></render></div>
             </template>
@@ -92,7 +92,7 @@
                 </div>
             </template>
             <template #sortInput="{ text , record , index }">
-                   <el-input v-model="text.content.default[0]" @change="sortInput(record.id,text.content.default[0])"></el-input>
+                   <el-input v-model="text.content.default[0]" @change="sortInput(record.eadmin_id,text.content.default[0])"></el-input>
             </template>
         </a-table>
 
@@ -107,11 +107,19 @@
                        :page-size="size"
                        :current-page="page">
         </el-pagination>
+        <!-- 导出excel进度-->
+        <el-dialog title="导出进度" v-model="excel.excelVisible" width="30%" :before-close="excelVisibleClose" :close-on-click-modal="false">
+            <div style="text-align: center">
+                <el-progress type="circle" :percentage="excel.progress" :status="excel.status"></el-progress>
+                <div v-if="excel.status == 'success'">已导出成功，请点击<el-link :href="excel.file" type="primary">下载</el-link></div>
+                <div v-else-if="excel.status == 'exception'" style="color: red">导出失败</div>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
 <script>
-    import {defineComponent, ref, watch, inject,nextTick,computed,unref,onActivated,onMounted} from "vue"
+    import {defineComponent, ref, watch,reactive, inject,nextTick,computed,unref,onActivated,onMounted,onUnmounted} from "vue"
     import render from "@/components/render.vue"
     import {useHttp} from '@/hooks'
    // import {tableDefer} from '@/hooks/use-defer'
@@ -182,6 +190,13 @@
             const expandedRowKeys = ref([])
             const eadminActionWidth = ref(0)
             const trashed = ref(false)
+            const excel  = reactive({
+                excelVisible:false,
+                excelTimer:null,
+                progress:0,
+                file:'',
+                status:'',
+            })
             const quickSearchOn = ctx.attrs.quickSearch
             const quickSearchText = ctx.attrs.quickSearchText || '请输入关键字'
             const columns = ref(props.columns)
@@ -224,9 +239,17 @@
                     loading.value = true
                 }
             })
+            onUnmounted((e)=>{
+                if(excel.excelTimer != null){
+                    clearInterval(excel.excelTimer)
+                }
+            })
             onActivated((e)=>{
                 if(!props.static){
                     loading.value = true
+                }
+                if(excel.excelTimer != null){
+                    clearInterval(excel.excelTimer)
                 }
             })
             watch(() => props.modelValue, (value) => {
@@ -287,7 +310,7 @@
                             const targetRow = tableData.value.splice(evt.oldIndex, 1)[0]
                             tableData.value.splice(evt.newIndex, 0, targetRow)
                             if(evt.newIndex != evt.oldIndex){
-                                sortRequest(oldItem.id,startPage +newIndex).catch(()=>{
+                                sortRequest(oldItem.eadmin_id,startPage +newIndex).catch(()=>{
                                     const targetRow = tableData.value.splice(evt.newIndex, 1)[0]
                                     tableData.value.splice(evt.oldIndex, 0, targetRow)
                                 })
@@ -317,7 +340,7 @@
             }
             //排序置顶
             function sortTop(index,data){
-                sortRequest(data.id,0).then(res=>{
+                sortRequest(data.eadmin_id,0).then(res=>{
                     if(page === 1){
                         const targetRow = tableData.value.splice(index, 1)[0]
                         tableData.value.unshift(targetRow)
@@ -330,7 +353,7 @@
             }
             //排序置底
             function sortBottom(index,data){
-                sortRequest(data.id,total.value-1).then(res=>{
+                sortRequest(data.eadmin_id,total.value-1).then(res=>{
                     if(page === 1){
                         const targetRow = tableData.value.splice(index, 1)[0]
                         tableData.value.push(targetRow)
@@ -366,7 +389,7 @@
                         //当用户手动勾选数据行的 Checkbox 时触发的事件
                         onSelect: (record, selected, selectedRows, nativeEvent) => {
                             const ids = selectedRows.map(item=>{
-                                return item.id
+                                return item.eadmin_id
                             })
                             if(selected){
                                 if(props.selectionType === 'checkbox'){
@@ -375,19 +398,19 @@
                                     selectIds.value = ids
                                 }
                             }else{
-                                deleteArr(selectIds.value,record.id)
+                                deleteArr(selectIds.value,record.eadmin_id)
                             }
                             ctx.emit('update:selection',selectIds.value)
                         },
                         onSelectAll:(selected, selectedRows, changeRows)=>{
                             const ids = selectedRows.map(item=>{
-                                return item.id
+                                return item.eadmin_id
                             })
                             if(selected){
                                 selectIds.value = unique(selectIds.value.concat(ids))
                             }else{
                                 changeRows.map(item=>{
-                                    deleteArr(selectIds.value,item.id)
+                                    deleteArr(selectIds.value,item.eadmin_id)
                                 })
                             }
                             ctx.emit('update:selection',selectIds.value)
@@ -489,6 +512,13 @@
                 }
                 loading.value = true
             }
+            //导出进度关闭定时器
+            function excelVisibleClose(done){
+                if(excel.excelTimer != null){
+                    clearInterval(excel.excelTimer)
+                }
+                done()
+            }
             //导出
             function exportData(type){
                 if(tableData.value.length == 0){
@@ -502,7 +532,38 @@
                         eadmin_ids:selectIds.value
                 }
                 requestParams = Object.assign(globalRequestParams(),requestParams)
-                location.href = buildURL('/eadmin.rest',requestParams)
+                if(type == 'all'){
+                    excel.progress = 0
+                    excel.file = ''
+                    request({
+                        url:'/eadmin.rest',
+                        params: Object.assign(requestParams,{eadmin_queue:true})
+                    }).then(res=>{
+                        excel.status = ''
+                        excel.excelVisible = true
+                        excel.excelTimer = setInterval(()=>{
+                            request({
+                                url: 'queue/progress',
+                                params: {
+                                    id: res.data
+                                }
+                            }).then(result=>{
+                                excel.progress = result.data.progress
+                                if(result.data.status == 4){
+                                    excel.status = 'exception'
+                                    clearInterval(excel.excelTimer)
+                                }
+                                if(result.data.status == 3){
+                                    clearInterval(excel.excelTimer)
+                                    excel.status = 'success'
+                                    excel.file = result.data.history.slice(-2)[0].message
+                                }
+                            })
+                        },500)
+                    })
+                }else{
+                    location.href = buildURL('/eadmin.rest',requestParams)
+                }
             }
             const pageLayout = computed(()=>{
                 if(state.device === 'mobile'){
@@ -520,9 +581,9 @@
             })
             function expandChange(bool,record) {
                 if(bool){
-                    expandedRowKeys.value.push(record.id)
+                    expandedRowKeys.value.push(record.eadmin_id)
                 }else{
-                    deleteArr(expandedRowKeys.value,record.id)
+                    deleteArr(expandedRowKeys.value,record.eadmin_id)
                 }
             }
             function visibleFilter() {
@@ -565,6 +626,8 @@
                 exportData,
                 header,
                 tools,
+                excel,
+                excelVisibleClose,
             }
         }
     })

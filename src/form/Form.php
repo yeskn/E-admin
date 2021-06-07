@@ -687,7 +687,6 @@ class Form extends Component
             $component = $class::create($field);
             $component->bindFields($arguments);
             $prop = $component->bindAttr('modelValue');
-            $this->except([$prop]);
         }
         if ($component instanceof Input) {
             $component->placeholder('请输入' . $label);

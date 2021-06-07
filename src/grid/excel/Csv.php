@@ -8,6 +8,9 @@
 
 namespace Eadmin\grid\excel;
 
+use Eadmin\service\QueueService;
+use think\facade\Filesystem;
+
 /**
  * csv导出
  * Class Csv
@@ -15,17 +18,8 @@ namespace Eadmin\grid\excel;
  */
 class Csv extends AbstractExporter
 {
-    static $fp = null;
-    public function export()
-    {
-        static $nums = 0;
-        if(is_null(self::$fp)){
-            set_time_limit(0);
-            ini_set('memory_limit', '128M');
-            header('Content-Type: application/vnd.ms-execl');
-            header('Content-Disposition: attachment;filename="' . $this->fileName . '.csv"');
-            self::$fp = fopen('php://output', 'a');
-        }
+    protected $rowIndex = 0;
+    protected function writeRowData($fp){
         $this->filterColumns();
         //设置标题
         $title  = array_values($this->columns);
@@ -34,8 +28,8 @@ class Csv extends AbstractExporter
             $title[$key] = mb_convert_encoding($item, 'GBK', 'UTF-8');
         }
         //将标题写到标准输出中
-        if ($nums == 0) {
-            fputcsv(self::$fp, $title);
+        if ($this->rowIndex == 0) {
+            fputcsv($fp, $title);
         }
         foreach ($this->data as $item) {
             $row = [];
@@ -43,13 +37,31 @@ class Csv extends AbstractExporter
                 $value = is_null($item[$field]) ? '' : $item[$field];
                 $row[] = mb_convert_encoding($value, 'GBK', 'UTF-8');
             }
-            fputcsv(self::$fp, $row);
-            $nums++;
-            if ($nums == 5000) {
-                $nums = 1;
-                ob_flush();
-                flush();
-            }
+            fputcsv($fp, $row);
+            $this->rowIndex++;
         }
+        fclose($fp);
+    }
+    public function queueExport($count){
+        $path = Filesystem::path('excel');
+        $filesystem = new \Symfony\Component\Filesystem\Filesystem;
+        $filesystem->mkdir($path);
+        $fileName = $path.DIRECTORY_SEPARATOR.$this->fileName . '.csv';
+        $fp = fopen($fileName, 'a');
+        $this->writeRowData($fp);
+        $queue = new QueueService(request()->get('system_queue_id'));
+        $queue->percentage($count,$this->rowIndex-1,'正在导出');
+        if($this->rowIndex >= $count){
+            $queue->progress('/upload/excel/' . $this->fileName . '.csv');
+        }
+    }
+    public function export()
+    {
+        $fp = fopen('php://output', 'a');
+        set_time_limit(0);
+        ini_set('memory_limit', '128M');
+        header('Content-Type: application/vnd.ms-execl');
+        header('Content-Disposition: attachment;filename="' . $this->fileName . '.csv"');
+        $this->writeRowData($fp);
     }
 }

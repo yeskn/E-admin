@@ -9,6 +9,7 @@
 namespace Eadmin\grid\excel;
 
 
+use Eadmin\service\QueueService;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -124,12 +125,15 @@ class Excel extends AbstractExporter
     public function queueExport($count){
         $this->init();
         $this->writeRowData();
+        $queue = new QueueService(request()->get('system_queue_id'));
+        $queue->percentage($count,$this->rowIndex-1,'正在导出');
         if($this->rowIndex > $count){
             $writer = IOFactory::createWriter($this->excel, 'Xls');
             $path = Filesystem::path('excel');
             $filesystem = new \Symfony\Component\Filesystem\Filesystem;
             $filesystem->mkdir($path);
             $writer->save($path.DIRECTORY_SEPARATOR.$this->fileName . '.xls');
+            $queue->progress('/upload/excel/' . $this->fileName . '.xls');
         }
     }
     public function export()

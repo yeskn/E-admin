@@ -153,7 +153,7 @@ export default defineComponent({
       }
       AMap.event.addListener(auto, 'select', select)// 注册监听，当选中某条记录时会触发
       AMap.event.addListener(placeSearch, 'markerClick', e => {
-        updateEmit(e.data.address,e.location.lat,e.location.lng)
+        updateEmit(e.data.address,e.data.location.lat,e.data.location.lng)
       })
     }
     function updateEmit(address,lat,lng) {

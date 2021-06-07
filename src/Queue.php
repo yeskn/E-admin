@@ -29,6 +29,26 @@ abstract class Queue
         $this->progress('任务开始', 0, 2);
     }
 
+    /**
+     * 更新进度百分比
+     * @param int $total 总和
+     * @param int $count 当前记录总数
+     * @param string|null $message 描述
+     */
+    public function percentage(int $total,int $count,string $message = null){
+        $total = $total < 1 ? 1 : $total;
+        $progress = sprintf("%.2f", $count / $total * 100);
+        $this->progress($message,$progress);
+    }
+
+    /**
+     * 更新进度
+     * @param string|null $message 描述
+     * @param null $progress 百分比
+     * @param null $status 状态 3完成，4失败
+     * @return array|mixed
+     * @throws \think\db\exception\DbException
+     */
     public function progress(string $message = null, $progress = null, $status = null)
     {
         if (is_numeric($status)) {

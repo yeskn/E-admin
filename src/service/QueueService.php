@@ -27,6 +27,7 @@ class QueueService extends Queue
      * @param string $job 任务
      * @param array $data 数据
      * @param int $delay 延迟时间
+     * @return int|string
      */
     public function queue($title, $job, array $data, $delay = 0)
     {
@@ -37,6 +38,7 @@ class QueueService extends Queue
             'plan_time' => date('Y-m-d H:i:s', time() + $delay),
         ]);
         $data['system_queue_id'] = $id;
-        queue($job, $data, $delay);
+        queue($job,$data,$delay);
+        return $id;
     }
 }

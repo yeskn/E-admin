@@ -70,7 +70,7 @@ class Column extends Component
     public function rate($max = 5)
     {
         $this->display(function ($val) use ($max) {
-            return Rate::create(null, $val)->max($max)->disabled();
+            return Rate::create(null, floatval($val))->max(floatval($max))->disabled();
         });
         return $this;
     }

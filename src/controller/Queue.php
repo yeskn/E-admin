@@ -68,7 +68,7 @@ class Queue extends Controller
                         ->sizeSmall()
                         ->icon('el-icon-document')
                         ->dialog()
-                        ->content(\Eadmin\Admin::view('/queue')
+                        ->content(\Eadmin\Admin::view(__DIR__.'/../view/queue.vue')
                             ->attrs([
                                 'id'=>$data['id'],
                                 'title'=>$data['name'],
