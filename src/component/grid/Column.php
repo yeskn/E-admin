@@ -71,7 +71,7 @@ class Column extends Component
 	public function rate($max = 5)
 	{
 		$this->display(function ($val) use ($max) {
-			return Rate::create(null, $val)->max($max)->disabled();
+			return Rate::create(null, floatval($val))->max(floatval($val))->disabled();
 		});
 		return $this;
 	}
@@ -224,9 +224,6 @@ class Column extends Component
         } else {
             return Html::create()->content($value);
         }
-
-
-		return Html::create()->content($value);
 	}
 
 	public function getExportData()
