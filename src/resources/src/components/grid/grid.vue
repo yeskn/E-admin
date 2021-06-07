@@ -114,7 +114,7 @@
     import {defineComponent, ref, watch, inject,nextTick,computed,unref,onActivated,onMounted} from "vue"
     import render from "@/components/render.vue"
     import {useHttp} from '@/hooks'
-    import {tableDefer} from '@/hooks/use-defer'
+   // import {tableDefer} from '@/hooks/use-defer'
     import request from '@/utils/axios'
     import {store} from '@/store'
     import {forEach, unique, deleteArr, buildURL, findTree,treeMap} from '@/utils'
@@ -263,6 +263,7 @@
                 dragSort()
             })
             function actionAutoWidth(){
+                eadminActionWidth.value = 0
                 //操作列宽度自适应
                 document.getElementsByClassName('EadminAction').forEach(item=>{
                     if(eadminActionWidth.value < item.offsetWidth){
