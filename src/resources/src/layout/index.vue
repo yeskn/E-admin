@@ -62,7 +62,6 @@
                             })
                     )
                     if(!getCurrentInstance().appContext.components[route.fullPath]){
-                        console.log('加载')
                         AsyncComp.name = route.fullPath
                         getCurrentInstance().appContext.app.component(route.fullPath,AsyncComp)
                     }

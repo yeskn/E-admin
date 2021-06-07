@@ -82,7 +82,6 @@ class Column extends Component
 	 */
 	public function tip()
 	{
-		$this->attr('ellipsis', true);
 		$this->tip = true;
 		return $this;
 	}
@@ -209,9 +208,23 @@ class Column extends Component
 			$value = call_user_func_array($this->exportClosure, [$originValue, $data]);
 			$this->exportData = $value;
 		}
-		if ($this->tip) {
-			$value = Tip::create($value)->content($value)->placement('right');
-		}
+		//内容过长超出tip显示
+        if ($this->tip) {
+            if(!$this->attr('width')){
+               $this->width(120);
+            }
+            return Tip::create(Html::create($value)
+                ->style([
+                    'width' => $this->attr('width') . 'px',
+                    'textOverflow' => 'ellipsis',
+                    'overflow' => 'hidden',
+                    'whiteSpace' => 'nowrap',
+                ])
+                ->tag('div'))->content($value)->placement('top');
+        } else {
+            return Html::create()->content($value);
+        }
+
 
 		return Html::create()->content($value);
 	}
