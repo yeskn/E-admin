@@ -126,8 +126,8 @@ class FormAction extends Component
         if ($this->hideResetButton) {
             $this->resetButton = null;
         }
-        if ($this->hideSubmitButton) {
-            $this->submitButton = null;
+        if ($this->hideCancelButton) {
+            $this->cancelButton = null;
         }
         if ($this->hideSubmitButton) {
             $this->submitButton = null;
