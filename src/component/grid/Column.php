@@ -71,7 +71,7 @@ class Column extends Component
 	public function rate($max = 5)
 	{
 		$this->display(function ($val) use ($max) {
-			return Rate::create(null, $val)->max($max)->disabled();
+			return Rate::create(null, floatval($val))->max(floatval($val))->disabled();
 		});
 		return $this;
 	}
@@ -210,7 +210,14 @@ class Column extends Component
 			$this->exportData = $value;
 		}
 		if ($this->tip) {
-			$value = Tip::create($value)->content($value)->placement('right');
+			$value = Tip::create(Html::create($value)
+				->style([
+					'width'        => '400px',
+					'textOverflow' => 'ellipsis',
+					'overflow'     => 'hidden',
+					'whiteSpace'   => 'nowrap',
+				])
+				->tag('div'))->content($value)->placement('right');
 		}
 
 		return Html::create()->content($value);
