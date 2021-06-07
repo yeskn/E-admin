@@ -126,7 +126,7 @@ abstract class Field extends Component
      */
     public function help($content)
     {
-        $this->formItem->content(Html::create($content)->attr('style', ['fontSize' => '12px']));
+        $this->formItem->content(Html::create($content)->attr('style', ['fontSize' => '12px'])->tag('div'));
         return $this;
     }
 
