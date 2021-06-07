@@ -382,6 +382,7 @@ class Column extends Component
 		[$active, $inactive] = $switchArr;
 		if (!empty($text)) $text .= "：";
 		return Html::create([
+			$text,
 			Switchs::create(null, $data[$field])
 				->state($active, $inactive)
 				->url('/eadmin/batch.rest')
