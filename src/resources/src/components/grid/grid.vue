@@ -182,7 +182,7 @@
             const state = inject(store)
             const proxyData = state.proxyData
             const dragTable = ref('')
-            const grid = {grid:ctx.attrs.eadmin_grid}
+            const grid = {grid:ctx.attrs.eadmin_grid, gridParam:ctx.attrs.eadmin_grid_param}
             const {loading,http} = useHttp()
             const filterShow = ref(props.expandFilter)
             const quickSearch = ref('')

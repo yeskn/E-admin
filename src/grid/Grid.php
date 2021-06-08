@@ -115,8 +115,9 @@ class Grid extends Component
         $this->pagination->pageSize(20)->background();
         //操作列
         $this->actionColumn = new Actions($this);
-
         $this->bindAttValue('modelValue', false, true);
+        $this->bindAttValue('addParams',[]);
+        $this->attr('eadmin_grid_param', $this->bindAttr('addParams'));
         $this->attr('eadmin_grid', $this->bindAttr('modelValue'));
         $this->scroll(['x' => true]);
         $this->attr('locale', ['emptyText' => '暂无数据']);

@@ -186,6 +186,15 @@ abstract class Component implements \JsonSerializable
     }
 
     /**
+     * 刷新表格
+     * @param array $params 附加请求参数
+     * @return $this
+     */
+    public function gridRefresh(array $params){
+        $this->event('click',['gridRefresh'=>$params]);
+        return $this;
+    }
+    /**
      * 跳转路径
      * @param string $url
      * @param array $params

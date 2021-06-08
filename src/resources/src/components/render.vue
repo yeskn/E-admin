@@ -146,7 +146,12 @@
 
                         data.attribute['on'+event] = (e)=>{
                             for (let field in eventBind) {
-                                setObjectValue(modelValue,field,eventBind[field])
+                                if(field == 'gridRefresh'){
+                                    setObjectValue(modelValue,slotProps.gridParam,eventBind[field])
+                                    modelValue[slotProps.grid] = true
+                                }else{
+                                    setObjectValue(modelValue,field,eventBind[field])
+                                }
                             }
                         }
                     }
