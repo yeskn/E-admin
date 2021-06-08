@@ -476,7 +476,7 @@ class Grid extends Component
                     $row[$field] = $column->getExportData();
                 }
             }
-            if (!$this->hideAction) {
+            if (!$this->hideAction && !$export) {
                 $actionColumn = clone $this->actionColumn;
                 $actionColumn->row($data);
                 $row['EadminAction'] = $actionColumn;
