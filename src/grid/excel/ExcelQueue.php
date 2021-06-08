@@ -15,7 +15,6 @@ class ExcelQueue extends Queue
      */
     public function handel($data): bool
     {
-        $this->job->delete();
         unset($data['eadmin_queue']);
         request()->withGet($data);
         $class    = request()->param('eadmin_class');

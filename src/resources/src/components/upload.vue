@@ -134,6 +134,10 @@ export default defineComponent({
       type: String,
       default: '/'
     },
+    params: {
+      type: Object,
+      default: {}
+    },
     upType: {
       type: String,
       default: 'local'
@@ -273,11 +277,11 @@ export default defineComponent({
     }
     const uploader = new Uploader({
       target: props.url,
-      query: {
+      query: Object.assign(props.params,{
         saveDir: props.saveDir,
         isUniqidmd5: props.isUniqidmd5,
         upType: props.upType
-      },
+      }),
       testChunks: props.chunk,
       chunkSize: props.chunk ? 1 * 1024 * 1024 : 500 * 1024 * 1024,
       headers: {

@@ -99,7 +99,7 @@ class Select extends Field
             ]
          ];
         */
-
+        $bindOptions = [];
         foreach ($data as $key => $option) {
             $groups = [];
             $options = [];
@@ -120,6 +120,7 @@ class Select extends Field
                     'disabled' => $disabled,
                 ];
             }
+            $bindOptions = array_merge($bindOptions,$options);
             $selectOption = SelectOption::create();
             $selectOption->map($options)
                 ->mapAttr('label', 'label')
@@ -132,6 +133,9 @@ class Select extends Field
                 ->content($selectOption);
             $this->content($selectGroup);
         }
+        $this->bindValue($bindOptions, 'options', $this->optionBindField);
+        $this->formItem->form()->except([$this->optionBindField]);
+        return $this;
     }
 
     /**

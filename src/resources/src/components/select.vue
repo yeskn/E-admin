@@ -1,5 +1,5 @@
 <template>
-    <el-select v-model="value"><slot>{{a}}</slot></el-select>
+    <el-select v-model="value"><slot></slot></el-select>
 </template>
 
 <script>
@@ -17,6 +17,7 @@
         },
         emits:['update:modelValue','update:loadField','update:loadOptionField'],
         setup(props,ctx){
+            console.log(props.options)
             const value = ref(props.modelValue)
             const loadFieldValue = props.loadField
             watch(()=>props.modelValue,val=>{

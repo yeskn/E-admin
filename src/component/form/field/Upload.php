@@ -19,8 +19,9 @@ use think\facade\Filesystem;
  * @method $this drag(bool $value = true) 是否启用拖拽上传
  * @method $this multiple(bool $id = true) 多文件上传
  * @method $this finder(bool $value = true) finer文件管理
- * @method $this chunk(bool $value = true) 本地分配上传
+ * @method $this chunk(bool $value = true) 本地分片上传
  * @method $this url(string $value) 上传url
+ * @method $this params(array $value) 上传参数
  * @package Eadmin\component\form\field
  */
 class Upload extends Field
