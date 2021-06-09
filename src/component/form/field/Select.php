@@ -132,10 +132,10 @@ class Select extends Field
                 ->attr('disabled', $disabled)
                 ->content($selectOption);
             $this->content($selectGroup);
-            $this->bindValue($bindOptions, 'options', $this->optionBindField);
-            $this->formItem->form()->except([$this->optionBindField]);
-            return $this;
         }
+        $this->bindValue($bindOptions, 'options', $this->optionBindField);
+        $this->formItem->form()->except([$this->optionBindField]);
+        return $this;
     }
 
     /**
