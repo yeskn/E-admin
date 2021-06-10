@@ -11,6 +11,10 @@
                 default: '',
             },
             slotProps:Object,
+            proxyData:{
+                type:Object,
+                default:{},
+            },
         },
         render() {
             if (this.data) {
@@ -28,8 +32,8 @@
                 return null
             }
         },
-        setup() {
-            const modelValue = reactive({})
+        setup(props) {
+            const modelValue = reactive(props.proxyData)
             const renderComponent = (data, slotProps) => {
                 if(!data.attribute){
                     return

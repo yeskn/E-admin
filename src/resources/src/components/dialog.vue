@@ -35,7 +35,7 @@
                 type: String,
                 default: 'get'
             },
-            slotProps:Object
+            slotProps:Object,
         },
         emits: ['update:modelValue','update:show'],
         setup(props, ctx) {
