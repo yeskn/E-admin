@@ -54,6 +54,7 @@
             filter: [Object, Boolean],
             modelValue: Boolean,
             filterField:String,
+            proxyData:Object,
         },
         emits: ['update:modelValue'],
         setup(props,ctx){
@@ -63,8 +64,7 @@
                 }
             })
             const route = useRoute()
-            const state = inject(store)
-            const proxyData = state.proxyData
+            const proxyData = props.proxyData
             const {loading,http} = useHttp()
             const params = reactive(Object.assign({
                 date_type:'today'

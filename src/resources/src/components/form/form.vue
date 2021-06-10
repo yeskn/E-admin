@@ -45,7 +45,8 @@
             exceptField:{
                 type:Array,
                 default:[],
-            }
+            },
+            proxyData:Object,
         },
         emits: ['success','gridRefresh','update:submit','update:validate','update:step','update:eadminForm'],
         setup(props,ctx){
@@ -53,7 +54,7 @@
             const disabled = ref(false)
             const {loading,http} = useHttp()
             const state = inject(store)
-            const proxyData = state.proxyData
+            const proxyData = props.proxyData
             const validateStatus = ref(false)
 
             //提交

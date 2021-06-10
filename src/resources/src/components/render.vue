@@ -1,6 +1,5 @@
 <script>
-    import {defineComponent, toRaw, h, resolveComponent, inject,isProxy,resolveDirective,withDirectives,getCurrentInstance,onBeforeUnmount} from 'vue'
-    import {store} from '@/store'
+    import {defineComponent, toRaw, h,reactive, resolveComponent,isProxy,resolveDirective,withDirectives,getCurrentInstance} from 'vue'
     import {splitCode} from '@/utils/splitCode'
     import {setObjectValue} from '@/utils'
     import dayjs from 'dayjs'
@@ -15,7 +14,7 @@
         },
         render() {
             if (this.data) {
-                this.setProxyData(this.data,1)
+                this.setProxyData(this.data)
                 const jsonRender = toRaw(this.data)
                 if (jsonRender.where.AND.length > 0 || jsonRender.where.OR.length > 0) {
                     let expression = this.whereCompile(jsonRender.where.AND, jsonRender.where.OR,this.slotProps)
@@ -29,14 +28,8 @@
                 return null
             }
         },
-        setup(props,ctx) {
-            onBeforeUnmount(()=>{
-                if(props.data){
-                    setProxyData(props.data,0)
-                }
-            })
-            const state = inject(store)
-            const modelValue = state.proxyData
+        setup() {
+            const modelValue = reactive({})
             const renderComponent = (data, slotProps) => {
                 if(!data.attribute){
                     return
@@ -180,7 +173,7 @@
                         }
                         return h(resolveComponent(attribute.key),attribute)
                     }else{
-                        return _createVnode(attribute['data-tag'] || 'span', attribute, children,data.directive)
+                        return _createVnode(data.name,attribute['data-tag'] || 'span', attribute, children,data.directive)
                     }
                 }
                 name = resolveComponent(data.name)
@@ -218,14 +211,17 @@
                             children.default = ()=> mapAttribute.slotDefault
                         }
                         let mapChildren = {...children}
-                        return _createVnode(name, mapAttribute, mapChildren,data.directive)
+                        return _createVnode(data.name,name, mapAttribute, mapChildren,data.directive)
 
                     })
                 } else {
-                    return _createVnode(name, attribute, children,data.directive)
+                    return _createVnode(data.name,name, attribute, children,data.directive)
                 }
             }
-            function _createVnode(name, attribute, children,directives) {
+            function _createVnode(name,component, attribute, children,directives) {
+                if(name == 'EadminGrid' || name == 'EadminForm' || name == 'EadminEchartCard'){
+                    attribute.proxyData = modelValue
+                }
                 //自定义指令绑定
                 let directiveBind = []
                 directives.forEach(item=>{
@@ -234,9 +230,9 @@
                     ])
                 })
                 if(directiveBind.length > 0){
-                    return withDirectives(h(name, attribute, children),directiveBind)
+                    return withDirectives(h(component, attribute, children),directiveBind)
                 }else{
-                    return h(name, attribute, children)
+                    return h(component, attribute, children)
                 }
             }
             //日期格式格式化 value日期,format格式
@@ -364,19 +360,16 @@
                 return expression
             }
             //赋值方法
-            function setProxyData(data,type){
+            function setProxyData(data){
                 for(let field in data.bind){
-                    if(!modelValue.hasOwnProperty(field) && type === 1){
+                    if(!modelValue.hasOwnProperty(field)){
                         modelValue[field] = data.bind[field]
-                    }
-                    if(modelValue.hasOwnProperty(field) && type === 0){
-                        delete state.proxyData[field]
                     }
                 }
                 for(let slot in data.content){
                     data.content[slot].forEach(item=>{
                         if(typeof(item) == 'object'){
-                            setProxyData(item,type)
+                            setProxyData(item)
                         }
                     })
                 }

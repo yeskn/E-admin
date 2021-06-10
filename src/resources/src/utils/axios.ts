@@ -21,10 +21,6 @@ service.interceptors.request.use(
         // ['X-Token'] is a custom headers key
         // please modify it according to the actual situation
         config.headers['Authorization'] = localStorage.getItem('eadmin_token')
-        // if(config.data){
-        //
-        //     config.data = Object.assign(config.data,{parameters:state.proxyData})
-        // }
         return config
     },
     (error: any) => {
@@ -48,11 +44,6 @@ service.interceptors.response.use(
         */
        response: { data: any }) => {
         const res = response.data
-        if(res.proxyData){
-            for(let field in res.proxyData){
-                action.setProxyData(field,res.proxyData[field])
-            }
-        }
         // if the custom code is not 20000, it is judged as an error.
         if (res.code !== 200) {
             // 登陆验证token判断

@@ -170,6 +170,7 @@
             },
             params:Object,
             addParams:Object,
+            proxyData:Object,
             // defer:{
             //     type:Boolean,
             //     default:false
@@ -178,9 +179,10 @@
         inheritAttrs: false,
         emits: ['update:modelValue','update:selection'],
         setup(props, ctx) {
+            console.log(props.proxyData)
             const route = useRoute()
             const state = inject(store)
-            const proxyData = state.proxyData
+            const proxyData = props.proxyData
             const dragTable = ref('')
             const grid = {grid:ctx.attrs.eadmin_grid, gridParam:ctx.attrs.eadmin_grid_param}
             const {loading,http} = useHttp()
