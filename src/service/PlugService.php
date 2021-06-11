@@ -79,7 +79,12 @@ class PlugService extends Service
             }
         }
         $names = array_column($plugs,'name');
-        $plugNames = Db::name('system_plugs')->whereIn('name', $names)->where('status',1)->column('name');
+
+        try {
+            $plugNames = Db::name('system_plugs')->whereIn('name', $names)->where('status',1)->column('name');
+        }catch (\Exception $exception){
+            $plugNames = [];
+        }
         foreach ($this->plugPaths as $plugPaths) {
             $file = $plugPaths . DIRECTORY_SEPARATOR . 'composer.json';
             if (is_file($file)) {
