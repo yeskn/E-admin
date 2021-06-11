@@ -85,7 +85,10 @@ class Detail extends Html
         $grid->hidePage();
         $grid->hideSelection();
         call_user_func($closure, $grid);
-        $card = $this->createCard()->header("<b>{$title}</b>");
+		$card = $this->createCard();
+		if (!empty($title)) {
+			$card->header("<b>{$title}</b>");
+		}
         $card->attr('bodyStyle', ['padding' => '0px']);
         $card->content($grid);
         $this->push($card);
