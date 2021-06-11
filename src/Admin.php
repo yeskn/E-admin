@@ -19,6 +19,7 @@ use think\facade\Db;
 use think\facade\Request;
 use think\facade\Route;
 use think\facade\View;
+use think\helper\Str;
 use think\route\dispatch\Callback;
 use think\route\dispatch\Controller;
 
@@ -68,7 +69,7 @@ class Admin
         } else {
             $content = View::fetch($template, $vars);
         }
-        return Html::create($content)->tag('component');
+        return Html::create($content)->tag('component')->attr('key',Str::random(30, 3));
     }
 
     public static function notification()
@@ -119,6 +120,7 @@ class Admin
     {
         $nodeId = md5($class . $function . strtolower($method));
         $permissions = self::permissions();
+     
         foreach ($permissions as $permission) {
             if ($permission['id'] == $nodeId) {
 

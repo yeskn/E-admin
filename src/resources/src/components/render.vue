@@ -1,5 +1,5 @@
 <script>
-    import {defineComponent, toRaw, h,reactive, resolveComponent,isProxy,resolveDirective,withDirectives,getCurrentInstance} from 'vue'
+    import {defineComponent, toRaw, h,reactive, resolveComponent,isProxy,resolveDirective,withDirectives,getCurrentInstance,onBeforeUnmount} from 'vue'
     import {splitCode} from '@/utils/splitCode'
     import {setObjectValue} from '@/utils'
     import dayjs from 'dayjs'
@@ -17,12 +17,9 @@
             },
         },
         render() {
-            if (this.data) {
 
-                if(this.data.name == 'ElButton'){
-                 //   return this.renderComponent(jsonRender,this.slotProps)
-                }
-                this.setProxyData(this.data)
+            if (this.data) {
+                this.setProxyData(this.data,1)
                 const jsonRender = toRaw(this.data)
                 if (jsonRender.where.AND.length > 0 || jsonRender.where.OR.length > 0) {
                     let expression = this.whereCompile(jsonRender.where.AND, jsonRender.where.OR,this.slotProps)
@@ -38,6 +35,11 @@
         },
         setup(props) {
             const modelValue = reactive(props.proxyData)
+            onBeforeUnmount(()=>{
+                if(props.data){
+                    setProxyData(props.data,0)
+                }
+            })
             const renderComponent = (data, slotProps) => {
                 if(!data.attribute){
                     return
@@ -227,6 +229,7 @@
                 }
             }
             function _createVnode(name,component, attribute, children,directives) {
+
                 if(name == 'EadminGrid' || name == 'EadminForm' || name == 'EadminEchartCard'){
                     attribute.proxyData = modelValue
                 }
@@ -237,6 +240,7 @@
                         resolveDirective(item.name),item.value,item.argument
                     ])
                 })
+
                 if(directiveBind.length > 0){
                     return withDirectives(h(component, attribute, children),directiveBind)
                 }else{
@@ -368,16 +372,20 @@
                 return expression
             }
             //赋值方法
-            function setProxyData(data){
+            function setProxyData(data,type){
                 for(let field in data.bind){
-                    if(!modelValue.hasOwnProperty(field)){
+                    if(!modelValue.hasOwnProperty(field) && type === 1){
                         modelValue[field] = data.bind[field]
                     }
+                    if(modelValue.hasOwnProperty(field) && type === 0){
+                        delete modelValue[field]
+                    }
+
                 }
                 for(let slot in data.content){
                     data.content[slot].forEach(item=>{
                         if(typeof(item) == 'object'){
-                            setProxyData(item)
+                            setProxyData(item,type)
                         }
                     })
                 }
