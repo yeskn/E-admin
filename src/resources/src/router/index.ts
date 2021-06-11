@@ -43,7 +43,6 @@ router.beforeEach( async(to:RouteLocationNormalized, from:RouteLocationNormalize
         await loadComponent(from.fullPath)
         return next(from.fullPath)
     }
-    action.cachesVariable(from.fullPath)
     if(to.fullPath !== '/' && action.getComponentIndex(to.fullPath) === -1){
         await loadComponent(to.fullPath)
     }

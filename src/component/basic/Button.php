@@ -39,6 +39,7 @@ class Button extends Component
 
     public function __construct($content)
     {
+        $this->sizeSmall();
         $this->event('gridRefresh', []);
         $this->content($content);
     }

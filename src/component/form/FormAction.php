@@ -33,11 +33,11 @@ class FormAction extends Component
     {
         $this->form = $form;
         $submitField = $this->form->bindAttr('submit');
-        $this->submitButton = Button::create('保存')
+        $this->submitButton = Button::create('保存')->sizeMedium()
             ->nativeType('submit')
             ->type('primary')
             ->event('click', [$submitField => true]);
-        $this->resetButton = Button::create('重置');
+        $this->resetButton = Button::create('重置')->sizeMedium();
     }
 
     /**
@@ -50,7 +50,7 @@ class FormAction extends Component
     }
     /**
      * 提交确认弹窗
-     * @param $message 确认内容
+     * @param string $message 确认内容
      * @return \Eadmin\component\basic\Confirm
      */
     public function confirm($message)
@@ -75,7 +75,7 @@ class FormAction extends Component
      */
     public function cancelButton()
     {
-        $this->cancelButton = Button::create('取消');
+        $this->cancelButton = Button::create('取消')->sizeMedium();
         return $this->cancelButton;
     }
 

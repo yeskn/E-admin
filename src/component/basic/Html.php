@@ -9,7 +9,6 @@ use Eadmin\component\Component;
 /**
  * Class Html
  * @package Eadmin\component\basic
- * @method $this style(array $value) 样式
  */
 class Html extends Component
 {

@@ -9,5 +9,5 @@ use Eadmin\component\Component;
 class DropdownMenu extends Component
 {
     protected $name = 'ElDropdownMenu';
-   
+
 }

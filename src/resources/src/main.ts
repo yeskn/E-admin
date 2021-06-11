@@ -11,7 +11,9 @@ import zhLocale from 'element-plus/lib/locale/lang/zh-cn'
 import request from '@/utils/axios'
 import Switch from "ant-design-vue/lib/switch"; // 加载 JS
 import Table from "ant-design-vue/lib/table"; // 加载 JS
+import Button from "ant-design-vue/lib/button"; // 加载 JS
 
+app.use(Button)
 app.use(Table)
 app.use(Switch)
 app.use(ElementPlus,{size: 'medium', locale :zhLocale})

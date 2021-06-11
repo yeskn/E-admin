@@ -563,7 +563,26 @@ class Grid extends Component
         $excel->rows($exportData)->export();
         exit;
     }
+    protected function parseData(){
+        //总条数
+        $this->pagination->total($this->drive->getTotal());
+        //排序
+        if (Request::has('eadmin_sort_field')) {
+            $this->drive->db()->removeOption('order')->order(Request::get('eadmin_sort_field'), Request::get('eadmin_sort_by'));
+        }
 
+        $page = Request::get('page', 1);
+        $size = Request::get('size', $this->pagination->attr('pageSize'));
+        $data = $this->drive->getData($this->hidePage, $page, $size);
+        //解析列
+        $data = $this->parseColumn($data);
+
+        //树形
+        if ($this->isTree) {
+            $data = Admin::tree($data, $this->treeId, $this->treeParent);
+        }
+        return $data;
+    }
     public function jsonSerialize()
     {
         $this->exec();
@@ -607,8 +626,6 @@ class Grid extends Component
         }
 
         //是否分页
-        $page = Request::get('page', 1);
-        $size = Request::get('size', $this->pagination->attr('pageSize'));
         if (!$this->hidePage) {
             $this->attr('pagination', $this->pagination->attribute);
         }
@@ -616,21 +633,12 @@ class Grid extends Component
         if (!$this->hideAction) {
             $this->column[] = $this->actionColumn->column();
         }
+        if($this->attr('static')){
+            $data = $this->parseData();
+            $this->attr('data',$data);
+        }
         if (request()->has('ajax_request_data')) {
-            //总条数
-            $this->pagination->total($this->drive->getTotal());
-            //排序
-            if (Request::has('eadmin_sort_field')) {
-                $this->drive->db()->removeOption('order')->order(Request::get('eadmin_sort_field'), Request::get('eadmin_sort_by'));
-            }
-            $data = $this->drive->getData($this->hidePage, $page, $size);
-            //解析列
-            $data = $this->parseColumn($data);
-
-            //树形
-            if ($this->isTree) {
-                $data = Admin::tree($data, $this->treeId, $this->treeParent);
-            }
+            $data = $this->parseData();
             return [
                 'code' => 200,
                 'data' => $data,

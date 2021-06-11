@@ -23,7 +23,7 @@ abstract class Field extends Component
     protected $default = null;
     protected $value = null;
     protected $formItem;
-    protected $md = 24;
+    public $md = 24;
 
     public function __construct($field = null, $value = '')
     {

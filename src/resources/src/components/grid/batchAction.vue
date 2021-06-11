@@ -15,15 +15,16 @@
             ids:Array,
             gridParams:Object,
             params:Object,
-            confirm:String,
+            confirm:Object,
         },
-        setup(props){
+        emits: ['gridRefresh'],
+        setup(props,ctx){
             function clickHandel() {
                 if(props.ids.length == 0){
                     return ElMessage('请勾选操作数据')
                 }
                 if(props.confirm){
-                    ElMessageBox.confirm(props.confirm,'提示').then(()=>{
+                    ElMessageBox.confirm(props.confirm.message,props.confirm.title,{type:props.confirm.type}).then(()=>{
                         save()
                     })
                 }else{
@@ -34,7 +35,7 @@
                 request({
                     url: props.url || '/eadmin/batch.rest',
                     method: 'put',
-                    data: Object.assign(props.gridParams,props.params,{eadmin_ids:props.ids})
+                    data: Object.assign(JSON.parse(JSON.stringify(props.gridParams)),props.params,{eadmin_ids:props.ids})
                 }).then((res) => {
                     ctx.emit('gridRefresh')
                 })

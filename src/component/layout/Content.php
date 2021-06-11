@@ -40,11 +40,11 @@ class Content extends Component
         $this->bind('eadmin_title', $title);
         return $this;
     }
-
     /**
      * 添加一行
      * @param \Closure|String $content 内容
      * @param int $span 栅格占据的列数,默认24
+     * @return Row
      */
     public function row($content, $span = 24)
     {
@@ -54,6 +54,7 @@ class Content extends Component
         } else {
             $row->column($content, $span);
         }
-        return $this->content($row);
+        $this->content($row);
+        return $row;
     }
 }

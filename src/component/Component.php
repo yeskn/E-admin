@@ -13,6 +13,11 @@ use Eadmin\form\Form;
 use Eadmin\grid\Grid;
 use think\helper\Str;
 
+/**
+ * Class Component
+ * @package Eadmin\component
+ * @method $this style(array $value) 样式
+ */
 abstract class Component implements \JsonSerializable
 {
     use Where, ForMap;

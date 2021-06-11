@@ -81,9 +81,10 @@
             <template #expandedRowRender="{ record  }" v-if="expandedRow">
                 <render :data="record.EadminExpandRow" :slot-props="grid"></render>
             </template>
-            <template  #default="{ text , record , index }">
+            <template #default="{ text , record , index }">
                  <render :data="text" :slot-props="grid"></render>
             </template>
+
             <template #sortDrag="{ text , record , index }">
                 <div style="display: flex;flex-direction: column">
                     <el-tooltip  effect="dark" content="置顶" placement="right-start"><i @click="sortTop(index,record)" class="el-icon-caret-top" style="cursor: pointer"></i></el-tooltip>
@@ -436,8 +437,7 @@
                     params: globalRequestParams()
                 }).then(res => {
                     if(ctx.attrs.defaultExpandAllRows){
-                        findTree()
-                        expandedRowKeys.value = treeMap(res.data,'id')
+                        expandedRowKeys.value = treeMap(res.data,'eadmin_id')
                     }
                     columns.value = res.columns
                     tableData.value = res.data

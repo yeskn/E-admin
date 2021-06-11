@@ -18,6 +18,10 @@
         },
         render() {
             if (this.data) {
+
+                if(this.data.name == 'ElButton'){
+                 //   return this.renderComponent(jsonRender,this.slotProps)
+                }
                 this.setProxyData(this.data)
                 const jsonRender = toRaw(this.data)
                 if (jsonRender.where.AND.length > 0 || jsonRender.where.OR.length > 0) {

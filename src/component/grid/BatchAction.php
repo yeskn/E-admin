@@ -17,7 +17,7 @@ use Eadmin\component\Component;
  * @package Eadmin\component\grid
  * @method $this url(string $value) ajax请求url
  * @method $this params(array $value) 提交ajax参数
- * @method $this confirm(string $value) 确认提示框
+
  */
 class BatchAction extends Component
 {
@@ -25,9 +25,25 @@ class BatchAction extends Component
 
     public function __construct($content)
     {
+        $this->event('gridRefresh',[]);
         $this->content($content);
     }
 
+    /**
+     * 确认框
+     * @param string $message  正文内容
+     * @param string $title  标题
+     * @param string $type success / info / warning / error
+     * @return $this
+     */
+    public function confirm($message,$title='提示',$type=''){
+        $this->attr('confirm',[
+            'message'=>$message,
+            'title'=>$title,
+            'type'=>$type
+        ]);
+        return $this;
+    }
     /**
      * 创建批量操作
      * @param $content

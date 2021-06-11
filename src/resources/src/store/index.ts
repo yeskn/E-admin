@@ -20,8 +20,6 @@ const states = reactive({
     mainTitle: '',
     mainDescription: '',
     component: null,
-    componentVariable: [],
-    proxyData: {},
     //是否刷新
     refresh:false,
     //错误信息
@@ -61,23 +59,9 @@ const action = {
     sidebarVisible: function (bool: boolean) {
         states.sidebar.visible = bool
     },
-    //设置绑定值
-    setProxyData(path,value){
-        setObjectValue(states.proxyData,path,value)
-    },
     //设置加载状态
     loading: function (bool: boolean) {
         states.mainLoading = bool
-    },
-    //缓存组件变量
-    cachesVariable(url: string) {
-        const index = action.getComponentIndex(url)
-
-        if (index > -1) {
-            // @ts-ignore
-            states.componentVariable[index].proxyData = {...states.proxyData}
-
-        }
     },
     cacheCss(url:string,css){
         const index = action.getCacheCssIndex(url)
@@ -106,7 +90,6 @@ const action = {
         let index = action.getComponentIndex(url)
         if(index > -1){
             states.mainComponent.splice(index, 1)
-            states.componentVariable.splice(index, 1)
         }
         index = action.getCacheCssIndex(url)
         if(index > -1) {
@@ -121,20 +104,12 @@ const action = {
     },
     //设置主内容组件
     component: function (data: object, url: string) {
-
         state.component = null
         const index = action.getComponentIndex(url)
         if (index === -1) {
             // @ts-ignore
             const menu = findTree(state.menus, url.substr(1), 'url')
             if (menu) {
-
-                states.componentVariable.push({
-                    // @ts-ignore
-                    url: url,
-                    // @ts-ignore
-                    proxyData: {}
-                })
                 states.mainComponent.push({
                     // @ts-ignore
                     title: menu.name || url,
@@ -162,18 +137,13 @@ const action = {
                     appendCss(url,css,false)
                 })
             }
-            // @ts-ignore
-            for (let field in states.componentVariable[index].proxyData) {
-                // @ts-ignore
-                states.proxyData[field] = states.componentVariable[index].proxyData[field]
-            }
+
             // @ts-ignore
             state.mainTitle = states.mainComponent[index].title || ''
             //@ts-ignore
             state.mainDescription = states.mainComponent[index].description || ''
         }
         action.loading(false)
-
     },
     //关闭错误页面
     errorPageClose() {
@@ -236,7 +206,6 @@ const action = {
             }).then((res: any) => {
                 states.menuModule = ''
                 states.mainComponent = []
-                states.componentVariable = []
                 resolve(res)
             }).catch((res: any) => {
                 reject(res)
@@ -250,7 +219,6 @@ const action = {
             }).then((res: any) => {
                 states.info.id = 0
                 states.mainComponent = []
-                states.componentVariable = []
                 localStorage.removeItem('eadmin_token')
                 resolve(res)
             }).catch((res: any) => {

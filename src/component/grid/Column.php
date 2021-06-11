@@ -7,6 +7,7 @@ namespace Eadmin\component\grid;
 use Eadmin\component\basic\DownloadFile;
 use Eadmin\component\basic\Html;
 use Eadmin\component\basic\Popover;
+use Eadmin\component\basic\Space;
 use Eadmin\component\basic\Tag;
 use Eadmin\component\basic\Tip;
 use Eadmin\component\basic\Tooltip;
@@ -209,8 +210,8 @@ class Column extends Component
         }
         //内容过长超出tip显示
         if ($this->tip) {
-            if(!$this->attr('width')){
-               $this->width(120);
+            if (!$this->attr('width')) {
+                $this->width(120);
             }
             return Tip::create(Html::create($value)
                 ->style([
@@ -344,6 +345,32 @@ class Column extends Component
     }
 
     /**
+     * switch开关组
+     * @param array $fields 字段
+     * @return $this
+     */
+    public function switchGroup(array $fields)
+    {
+        return $this->display(function ($val, $data) use ($fields) {
+            $params = $this->grid->getCallMethod();
+            $params['eadmin_ids'] = [$data[$this->grid->drive()->getPk()]];
+            $content = [];
+            foreach ($fields as $field=>$label){
+                $switch = Switchs::create(null, $data[$field])
+                    ->state([1 => ''], [0 => ''])
+                    ->url('/eadmin/batch.rest')
+                    ->field($field)
+                    ->params($params);
+                $content[] =  Html::create([
+                    Html::create($label . ': '),
+                    $switch
+                ])->style(['display'=>'flex','justifyContent'=>'space-between'])->tag('p');
+            }
+            return $content;
+        });
+    }
+
+    /**
      * switch开关
      * @param array $switchArr 二维数组 开启的在下标0 关闭的在下标1
      *                         $arr = [
@@ -354,6 +381,7 @@ class Column extends Component
     public function switch($switchArr = [[1 => '开启'], [0 => '关闭']])
     {
         return $this->display(function ($val, $data) use ($switchArr) {
+
             $params = $this->grid->getCallMethod();
             $params['eadmin_ids'] = [$data[$this->grid->drive()->getPk()]];
             [$active, $inactive] = $switchArr;

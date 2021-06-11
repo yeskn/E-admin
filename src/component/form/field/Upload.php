@@ -33,7 +33,11 @@ class Upload extends Field
         parent::__construct($field, $value);
         $this->attr('url', '/eadmin/upload');
         $this->attr('token', Admin::token()->get());
-        $this->disk(config('admin.uploadDisks'));
+        $uploadType = config('admin.uploadDisks');
+        $this->disk($uploadType);
+        if ($uploadType != 'local') {
+            $this->finder(false);
+        }
     }
 
 

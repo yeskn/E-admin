@@ -1,6 +1,6 @@
 <template>
     <component :is="dialog" v-model="visible" v-bind="$attrs">
-        <template #title>
+                    <template #title>
                         <slot name="title"></slot>
                     </template>
                     <slot></slot>

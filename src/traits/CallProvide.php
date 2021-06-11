@@ -54,7 +54,8 @@ trait CallProvide
     }
     public function renderable()
     {
+
         $method = $this->callFunction;
-        return app($this->callClass)->$method();
+        return call_user_func_array([app($this->callClass),$method],array_values($this->callParams));
     }
 }

@@ -62,7 +62,7 @@ use think\Model;
  * @method \Eadmin\component\form\field\DatePicker dates($field, $label = '') 多选日期
  * @method \Eadmin\component\form\field\DatePicker year($field, $label = '') 年
  * @method \Eadmin\component\form\field\DatePicker month($field, $label = '') 月
- * @method \Eadmin\component\form\field\TimePicker timeRange($startFiled, $endField, $label = '') 日期范围时间
+ * @method \Eadmin\component\form\field\TimePicker timeRange($startFiled, $endField, $label = '') 时间范围时间
  * @method \Eadmin\component\form\field\TimePicker time($field, $label = '') 时间
  * @method \Eadmin\component\form\field\Slider slider($field, $label = '') 滑块
  * @method \Eadmin\component\form\field\Color color($field, $label = '') 颜色选择器
