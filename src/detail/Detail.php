@@ -40,6 +40,7 @@ class Detail extends Component
         $this->title($this->title);
         $this->card = $this->createCard();
         $this->bind('eadmin_description', '详情');
+        $this->attr('class','eadmin-detail');
     }
 
     public static function create($data, $id, \Closure $closure)

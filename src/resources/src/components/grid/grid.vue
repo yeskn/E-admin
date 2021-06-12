@@ -247,6 +247,7 @@
                 }
             })
             onActivated((e)=>{
+
                 if(!props.static){
                     loading.value = true
                 }
