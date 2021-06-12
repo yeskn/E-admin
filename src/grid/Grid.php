@@ -644,7 +644,6 @@ class Grid extends Component
                 'data' => $data,
                 'header'=> $this->attr('header'),
                 'tools'=> $this->attr('tools'),
-                'columns' => array_column($this->column, 'attribute'),
                 'total' => $this->pagination->attr('total')
             ];
         } else {

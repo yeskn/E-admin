@@ -33,7 +33,7 @@ class Dropdown extends Component
     /**
      * 创建一个拉菜单
      * @param mixed $content 触发内容
-     * @return Button|mixed
+     * @return $this
      */
     public static function create($content)
     {

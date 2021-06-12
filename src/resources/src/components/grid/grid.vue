@@ -275,6 +275,15 @@
                 return columns.value.filter(item=>{
                     if(item.prop === 'EadminAction'){
                         item.width = eadminActionWidth.value
+                        //有滚动条操作列fixed
+                        if(dragTable.value && !item.fixed){
+                            const el = dragTable.value.$el.querySelectorAll('.ant-table-body')[0]
+                            const table = dragTable.value.$el.querySelectorAll('.ant-table-body > table')[0]
+                            if(table.clientWidth > el.clientWidth){
+                                item.fixed = 'right'
+                            }
+                        }
+
                     }
                     return checkboxColumn.value.indexOf(item.prop) >= 0 && !item.hide
                 })
@@ -284,18 +293,18 @@
                 if(proxyData[props.filterField]){
                     filterInitData = JSON.parse(JSON.stringify(proxyData[props.filterField]))
                 }
-                actionAutoWidth()
                 dragSort()
             })
             function actionAutoWidth(){
-                eadminActionWidth.value = 0
+                let width = 0
                 //操作列宽度自适应
                 document.getElementsByClassName('EadminAction').forEach(item=>{
-                    if(eadminActionWidth.value < item.offsetWidth){
-                        eadminActionWidth.value = item.offsetWidth
+                    if(width < item.offsetWidth){
+                        width = item.offsetWidth
                     }
                 })
-                eadminActionWidth.value += 30
+                width += 30
+                eadminActionWidth.value = width
             }
             //拖拽排序
             function dragSort(){
@@ -321,17 +330,17 @@
                     })
                 }
             }
-            function sortRequest(id,sort) {
+            function sortRequest(id,sort,action='eadmin_sort') {
                 return new Promise((resolve, reject) =>{
                     request({
                         url: 'eadmin/batch.rest',
                         params:Object.assign(props.params,route.query),
                         method: 'put',
                         data:{
-                            action:'eadmin_sort',
+                            action:action,
                             id:id,
                             sort: sort,
-                            eadmin_ids:[]
+                            eadmin_ids:[id]
                         }
                     }).then(res=>{
                         resolve(res)
@@ -367,7 +376,7 @@
             }
             //输入框排序
             function sortInput(id,sort){
-                sortRequest(id,sort)
+                sortRequest(id,sort,'')
             }
             //分页大小改变
             function handleSizeChange(val) {
@@ -439,7 +448,6 @@
                     if(ctx.attrs.defaultExpandAllRows){
                         expandedRowKeys.value = treeMap(res.data,'eadmin_id')
                     }
-                    columns.value = res.columns
                     tableData.value = res.data
                     total.value = res.total
                     header.value = res.header
