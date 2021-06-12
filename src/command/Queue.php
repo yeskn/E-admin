@@ -26,6 +26,7 @@ class Queue extends Command
         // 指令配置
         $this->setName('eadmin:job')->setDescription('创建队列任务');
         $this->addArgument('name', 1, "The name of the class");
+        $this->addOption('force', 'f', Option::VALUE_NONE, 'Force overwrite file');
 
     }
 
@@ -43,6 +44,7 @@ class Queue extends Command
     protected function execute(Input $input, Output $output)
     {
         $class = $input->getArgument('name');
+        $force = $input->getOption('force');
         $path = $this->getPath();
         if (!file_exists($path)) {
             if ($this->output->confirm($this->input, 'Create queue directory? [y]/n')) {
