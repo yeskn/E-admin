@@ -1,5 +1,5 @@
 <template>
-    <el-dropdown-item @click.native="clickHandel"><slot></slot></el-dropdown-item>
+    <a-menu-item @click.native="clickHandel"><slot></slot></a-menu-item>
 </template>
 
 <script>

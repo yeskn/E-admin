@@ -67,6 +67,13 @@ class Dropdown extends Component
     }
 
     /**
+     * 下划线
+     */
+    public function divided(){
+        $item = new MenuDivider();
+        $this->menu->content($item);
+    }
+    /**
      * @param mixed $content 内容
      * @param string $icon 图标
      * @return DropdownItem
@@ -81,7 +88,6 @@ class Dropdown extends Component
         $item->content($content);
         return $item;
     }
-
     /**
      * 下拉菜单选项
      * @param mixed $content

@@ -71,7 +71,7 @@
             </el-row>
         </div>
         <!--表格-->
-        <a-table v-else :row-selection="rowSelection" @expand="expandChange" @change="tableChange" :columns="tableColumns" :data-source="tableData"  :expanded-row-keys="expandedRowKeys"	 :pagination="false" :loading="loading" v-bind="$attrs" row-key="eadmin_id" ref="dragTable">
+        <a-table v-else :row-selection="rowSelection" @expand="expandChange" @change="tableChange" :columns="tableColumns" :data-source="tableData"  :expanded-row-keys="expandedRowKeys" :pagination="false" :loading="loading" v-bind="$attrs" row-key="eadmin_id" ref="dragTable">
             <template #title v-if="header">
                 <div class="header"><render :data="header"></render></div>
             </template>

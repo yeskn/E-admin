@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@vue/cli-plugin-typescript": "^4.5.11",
-    "ant-design-vue": "^2.1.6",
+    "ant-design-vue": "^2.2.0-beta.3",
     "clipboard": "^2.0.8",
     "core-js": "^3.6.5",
     "element-plus": "1.0.2-beta.36",

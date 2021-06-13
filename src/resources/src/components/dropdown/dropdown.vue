@@ -1,10 +1,10 @@
 <template>
-    <el-dropdown>
+    <a-dropdown>
         <slot></slot>
-        <template #dropdown>
+        <template #overlay>
             <slot name="dropdown"></slot>
         </template>
-    </el-dropdown>
+    </a-dropdown>
     <slot name="reference"></slot>
 </template>
 

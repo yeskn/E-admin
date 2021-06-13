@@ -19,24 +19,26 @@
                 </div>
             </el-tooltip>
             <notice></notice>
-            <el-dropdown trigger="click" class="avatar-container">
-                <div class="avatar-wrapper">
-                    <img :src="state.info.avatar" class="user-avatar ">
-                    <span class="right-menu-item" style="line-height: 1">
+            <a-dropdown trigger="click" class="avatar-container" >
+                <div>
+                    <div class="avatar-wrapper">
+                        <img :src="state.info.avatar" class="user-avatar">
+                        <span class="right-menu-item" style="line-height: 1">
                         <span style="color: #777777">{{ state.info.nickname }}</span>
                         <div style="line-height: 18px"><el-badge is-dot type="success" style="top:4px;"/> <span style="color: #999999">{{ state.info.username }}</span></div>
-                    </span>
-                    <i class="el-icon-caret-bottom" style="line-height: 30px"/>
+                        </span>
+                        <i class="el-icon-caret-bottom" style="line-height: 30px"/>
+                    </div>
                 </div>
-                <template #dropdown>
-                    <el-dropdown-menu v-if="state.info.dropdownMenu">
+                <template #overlay>
+                    <a-menu v-if="state.info.dropdownMenu">
                         <render v-for="item in state.info.dropdownMenu" :data="item"></render>
-                        <el-dropdown-item divided @click.native="logout">
+                        <a-menu-item divided @click.native="logout">
                             <span style="display:block;">退出登陆</span>
-                        </el-dropdown-item>
-                    </el-dropdown-menu>
+                        </a-menu-item>
+                    </a-menu>
                 </template>
-            </el-dropdown>
+            </a-dropdown>
         </div>
     </div>
 </template>
@@ -222,7 +224,12 @@
         }
 
         .avatar-container {
-
+            .user-avatar {
+                width: 35px;
+                height: 35px;
+                border-radius: 50%;
+                cursor: pointer;
+            }
             .avatar-wrapper {
                 height: 58px;
                 display: flex;
@@ -238,15 +245,6 @@
                     transition: background .3s;
                     background-color: #f9f9f9;
                 }
-
-                .user-avatar {
-                    cursor: pointer;
-                    width: 35px;
-                    height: 35px;
-                    border-radius: 50%;
-
-                }
-
                 .el-icon-caret-bottom {
                     cursor: pointer;
                     right: -20px;

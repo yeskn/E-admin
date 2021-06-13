@@ -108,7 +108,7 @@ class Grid extends Component
             $this->drive = new \Eadmin\grid\drive\Arrays($data);
         }
 
-
+       
         $this->hideTrashed(!$this->drive->trashed());
         //分页初始化
         $this->pagination = new Pagination();

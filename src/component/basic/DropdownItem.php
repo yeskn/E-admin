@@ -11,8 +11,6 @@ use think\app\Url;
  * Class DropdownItem
  * @package Eadmin\component\basic
  * @method $this disabled(bool $bool = true) 禁用
- * @method $this divided(bool $bool = true) 显示分割线
- * @method $this icon(string $value) 图标类名
  * @method $this url(string $value) ajax请求url
  * @method $this method(string $value) ajax请求method get / post /put / delete
  * @method $this params(array $value) 提交ajax参数
@@ -35,7 +33,6 @@ class DropdownItem extends Component
         $this->dropdown = $dropdown;
         return $this->dropdown;
     }
-
     /**
      * 模态对话框
      * @return Dialog
