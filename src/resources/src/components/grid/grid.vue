@@ -82,7 +82,7 @@
                 <render :data="record.EadminExpandRow" :slot-props="grid"></render>
             </template>
             <template #default="{ text , record , index }">
-                 <render :data="text" :slot-props="grid"></render>
+                <render :data="text" :slot-props="grid"></render>
             </template>
 
             <template #sortDrag="{ text , record , index }">

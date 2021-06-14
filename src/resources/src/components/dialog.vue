@@ -41,6 +41,7 @@
         setup(props, ctx) {
             const {visible,hide,useHttp} = useVisible(props,ctx)
             const {content,http} = useHttp()
+            let init = false
             watch(()=>props.modelValue,(value)=>{
                if(visible.value && !value){
                    hide()
@@ -53,10 +54,11 @@
                 ctx.emit('update:show',value)
             })
             function open(){
+                init = true
                 http(props)
             }
             const dialog = computed(()=>{
-                if(visible.value ){
+                if(visible.value || init){
                     return 'ElDialog'
                 }else{
                     return null

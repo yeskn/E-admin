@@ -1,6 +1,6 @@
 <template>
     <a-dropdown>
-        <slot></slot>
+        <div><slot></slot></div>
         <template #overlay>
             <slot name="dropdown"></slot>
         </template>

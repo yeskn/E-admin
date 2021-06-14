@@ -52,7 +52,8 @@ class Filter
             ->removeAttr('setAction')
             ->size('small');
         $this->form->actions(function (FormAction $action) {
-            $action->submitButton()->content('搜索')->icon('el-icon-search');
+            $action->submitButton()->content('搜索')->sizeSmall()->icon('el-icon-search');
+            $action->resetButton()->sizeSmall();
         });
     }
 

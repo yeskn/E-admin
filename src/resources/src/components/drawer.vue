@@ -39,6 +39,7 @@
         setup(props,ctx){
             const {visible,hide,useHttp} = useVisible(props,ctx)
             const {content,http} = useHttp()
+            let init = false
             watch(()=>props.modelValue,(value)=>{
                 if(visible.value && !value){
                     hide()
@@ -53,7 +54,7 @@
                 http(props)
             }
             const drawer = computed(()=>{
-                if(visible.value ){
+                if(visible.value || init){
                     return 'ElDrawer'
                 }else{
                     return null

@@ -415,13 +415,14 @@ class Form extends Component
             for ($i = 1; $i <= $count; $i++) {
                 if ($i > 1) {
                     $back = $i - 1;
-                    $this->actions->addLeftAction(Button::create('上一步')->where($active, $i)->event('click', [$active => $back]));
+                    $this->actions->addLeftAction(Button::create('上一步')->sizeMedium()->where($active, $i)->event('click', [$active => $back]));
                 }
                 if ($count > $i) {
                     $next = $i + 1;
                     $this->actions->addLeftAction(
                         Button::create('下一步')
                             ->typePrimary()->plain()
+                            ->sizeMedium()
                             ->where($active, $i)
                             ->event('click', [$validateField => true])
                     );
