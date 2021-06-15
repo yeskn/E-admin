@@ -279,7 +279,7 @@ abstract class Component implements \JsonSerializable
 
     public function jsonSerialize()
     {
-        
+        $this->attribute['key'] = Str::random(30, 3);
         if($this->componentVisible){
             return [
                 'name' => $this->name,
