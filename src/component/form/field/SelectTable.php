@@ -67,7 +67,7 @@ class SelectTable extends Field
             }
         }
         $from = Admin::dispatch($from);
-        $this->params(array_merge($params, $from->getCallMethod()));
+        $this->params(array_merge($from->getCallMethod(),$params));
         return $this;
     }
 
