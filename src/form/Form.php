@@ -587,10 +587,12 @@ class Form extends Component
         $itemComponent = $this->itemComponent;
         $datas = $this->getData($relation) ?: [];
         $manyData = [];
+
         foreach ($itemComponent as $component) {
             $componentClone = clone $component;
             $this->valueModel($componentClone, []);
         }
+
         $manyItem->attr('manyData', $this->data);
         if (!$this->isEdit && empty($datas)) {
             //添加模式默认添加一条
@@ -615,6 +617,7 @@ class Form extends Component
             $manyData[] = $this->data;
             $this->data = [];
         }
+
         $manyItem->value($manyData);
         $this->itemComponent = $originItemComponent;
         foreach ($formItems as $item) {
@@ -857,6 +860,7 @@ class Form extends Component
             $pk = $this->drive->getPk();
             $this->data[$pk] = $this->drive->getData($pk);
         }
+
         //将值绑定到form
         $this->bind($field, $this->data);
     }
@@ -895,6 +899,7 @@ class Form extends Component
 
     public function jsonSerialize()
     {
+
         $this->exec();
         $this->parseComponent();
         $this->parseSteps();

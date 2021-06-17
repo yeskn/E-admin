@@ -17,7 +17,7 @@
   "php": ">=7.1.0",
     "iidestiny/flysystem-oss": "^2.0",
     "overtrue/flysystem-qiniu": "^1.0",
-    "overtrue/wechat": "~4.0",
+    "overtrue/wechat": "~5.0",
     "symfony/finder": "v4.4.9",
     "symfony/filesystem": "v5.2.4",
     "guzzlehttp/guzzle": "~6.0",
