@@ -37,14 +37,14 @@ class FunnelChart extends EchartAbstract
      * @param string $name
      * @param array $data
      */
-    public function series(string $name, array $data)
+    public function series(string $name, array $data,array $options = [])
     {
         $names          = array_column($data, 'name');
         $this->legend   = array_merge($this->legend, $names);
         $length         = count($this->series);
         $start          = $length * 30 + 10;
         $end            = ($length + 1) * 20;
-        $this->series[] = [
+        $this->series[] = array_merge([
             'name'      => $name,
             'type'      => 'funnel',
             'minSize'   => '0%',
@@ -70,7 +70,7 @@ class FunnelChart extends EchartAbstract
             ],
             'color'=>Color::ECHART,
             'data'      => $data,
-        ];
+        ],$options);
         return $this;
     }
 

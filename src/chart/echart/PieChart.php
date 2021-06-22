@@ -22,9 +22,7 @@ class PieChart extends EchartAbstract
             ],
             'tooltip' => [
                 'trigger'   => 'item',
-                'formatter' => '{a} <br/>{b} => {c} ({d}%)'
             ],
-
             'legend' => [
                 'left'   => 'center',
                 'bottom' => '0',
@@ -39,47 +37,14 @@ class PieChart extends EchartAbstract
      * @param string $name
      * @param array $data
      */
-    public function series(string $name, array $data)
+    public function series(string $name, array $data,array $options = [])
     {
         $names        = array_column($data, 'name');
         $this->legend = array_merge($this->legend, $names);
         $length       = count($this->series);
         $start        = $length * 30 + 10;
         $end          = ($length + 1) * 20;
-        $this->series[] = [
-            'label'             => [
-                'formatter'       => '{b|{b}：}{c}  {per|{d}%}',
-                'backgroundColor' => '#fff',
-                'borderColor'     => '#ededed',
-                'borderWidth'     => 1,
-                'borderRadius'    => 4,
-                'rich'            => [
-                    'a'   => [
-                        'color'      => '#999',
-                        'lineHeight' => 22,
-                        'align'      => 'center',
-
-                    ],
-                    'hr'  => [
-                        'borderColor' => '#ededed',
-                        'width'       => '100%',
-                        'borderWidth' => 0.5,
-                        'height'      => 0
-                    ],
-                    'b'   => [
-                        'fontSize'   => 14,
-                        'lineHeight' => 33,
-                        'padding'    => [10, 10],
-                    ],
-                    'per' => [
-                        'color'           => '#eee',
-                        'backgroundColor' => '#334455',
-                        'padding'         => [10, 10],
-                        'borderRadius'    => 2
-                    ]
-
-                ]
-            ],
+        $this->series[] = array_merge([
             'name'              => $name,
             'type'              => 'pie',
             'roseType'          => 'radius',
@@ -90,7 +55,7 @@ class PieChart extends EchartAbstract
             'symbolSize'        => 8,
             'data'              => $data,
             'color'=>Color::ECHART
-        ];
+        ],$options);
         return $this;
     }
 

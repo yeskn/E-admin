@@ -34,6 +34,7 @@
                 </el-col>
             </el-row>
         </template>
+        <render :data="header" v-if="header"></render>
         <render :data="filter" v-if="filter"></render>
         <render :data="chart" v-loading="loading"></render>
     </el-card>
@@ -51,6 +52,7 @@
             echart:Object,
             params:Object,
             title:String,
+            header: [Object, Boolean],
             filter: [Object, Boolean],
             modelValue: Boolean,
             filterField:String,
@@ -70,6 +72,7 @@
                 date_type:'today'
             },route.query,props.params))
             const chart = ref(props.echart)
+            const header = ref(props.header)
             const rangeDate = ref([])
             watch(rangeDate,(value)=>{
                 if(value == null){
@@ -87,7 +90,8 @@
                     url: '/eadmin.rest',
                     params: Object.assign(proxyData[props.filterField] || {},route.query,params)
                 }).then(res=>{
-                    chart.value = res
+                    header.value = res.header
+                    chart.value = res.content
                 }).finally(() => {
                     ctx.emit('update:modelValue', false)
                 })
@@ -97,6 +101,7 @@
                 rangeDate,
                 loading,
                 chart,
+                header,
                 requestData
             }
         }

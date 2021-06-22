@@ -23,7 +23,7 @@ use Eadmin\component\Component;
  */
 class Process extends Component
 {
-    protected $name = 'ElProcess';
+    protected $name = 'ElProgress';
     public static function create()
     {
         return new self();

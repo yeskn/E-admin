@@ -20,7 +20,7 @@ abstract class EchartAbstract extends Component
     protected $width;
     protected $height;
     protected $colors = [];
-
+    protected $hideLegend = false;
     public function __construct($height, $width)
     {
         $this->width = $width;
@@ -28,7 +28,7 @@ abstract class EchartAbstract extends Component
         $this->colors = Color::GRADUAL;
     }
 
-    abstract function series(string $name, array $data);
+    abstract function series(string $name, array $data,array $options = []);
 
     public function getColors()
     {
@@ -58,13 +58,15 @@ abstract class EchartAbstract extends Component
     {
         return $this->options;
     }
-
+    public function hideLegend(){
+        $this->hideLegend = true;
+    }
     public function jsonSerialize()
     {
         if (!empty($this->series)) {
             $this->options['series'] = $this->series;
         }
-        if (!empty($this->legend)) {
+        if (!empty($this->legend) && !$this->hideLegend) {
             $this->options['legend']['data'] = $this->legend;
         }
         $this->attr('options', $this->options);

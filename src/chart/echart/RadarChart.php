@@ -58,12 +58,12 @@ class RadarChart extends EchartAbstract
      * @param string $name
      * @param array $data
      */
-    public function series(string $name, array $data)
+    public function series(string $name, array $data,array $options = [])
     {
         $names        = array_column($data, 'name');
         $this->legend = array_merge($this->legend, $names);
 
-        $this->series[] = [
+        $this->series[] = array_merge([
             'name'    => $name,
             'color'=>Color::ECHART,
             'type'    => 'radar',
@@ -71,7 +71,7 @@ class RadarChart extends EchartAbstract
                 'trigger' => 'item'
             ],
             'data'    => $data,
-        ];
+        ],$options);
         return $this;
     }
 

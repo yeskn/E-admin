@@ -50,7 +50,6 @@ class Echart extends Component
     protected $radarMaxKey = -1;
     protected $date_type = null;
     protected $groupMode = false;
-
     /**
      * Echart constructor.
      * @param string $title 标题
@@ -60,6 +59,7 @@ class Echart extends Component
     public function __construct($title, $type = 'line', $height = "350px")
     {
         $this->title = $title;
+        $this->parseCallMethod();
         $this->attr('params', $this->getCallMethod());
         $this->attr('title', $title);
         $this->chartType = $type;
@@ -83,7 +83,9 @@ class Echart extends Component
     {
         return $this->chart;
     }
-
+    public function header($content){
+        $this->attr('header',$content);
+    }
     /**
      * 查询过滤
      * @param mixed $callback
@@ -351,7 +353,7 @@ class Echart extends Component
             $this->chart->series($this->title, $this->seriesData);
         }
         if (Request::has('ajax')) {
-            return $this->chart;
+            return ['header'=>$this->attr('header'),'content'=>$this->chart];
         }
 
         $this->attr('echart', $this->chart);

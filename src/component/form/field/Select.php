@@ -194,12 +194,13 @@ class Select extends Field
         }
 
         $this->bindValue($options, 'options', $this->optionBindField);
-        $this->formItem->form()->except([$this->optionBindField]);
         $mapField = $this->optionBindField;
-        if (empty($this->formItem->form()->manyRelation())) {
-            $mapField = $this->formItem->form()->bindAttr('model') . '.' . $this->optionBindField;
+        if($this->formItem){
+            $this->formItem->form()->except([$this->optionBindField]);
+            if (empty($this->formItem->form()->manyRelation())) {
+                $mapField = $this->formItem->form()->bindAttr('model') . '.' . $this->optionBindField;
+            }
         }
-      
         $this->selectOption->map($options, $mapField)
             ->mapAttr('label', 'label')
             ->mapAttr('key', 'id')

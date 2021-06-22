@@ -170,7 +170,6 @@ abstract class Field extends Component
     {
         return new static($field, $value);
     }
-
     /**
      * 双向绑定值
      * @param mixed $value 值

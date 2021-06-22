@@ -57,7 +57,7 @@ class LineChart extends EchartAbstract
      * @param string $name
      * @param array $data
      */
-    public function series(string $name, array $data)
+    public function series(string $name, array $data,array $options=[])
     {
         $colors = $this->getColors();
         $this->legend[] = $name;
@@ -82,22 +82,24 @@ class LineChart extends EchartAbstract
                 'globalCoord'=>true
             ];
         }
-        $this->series[] = [
+        $this->series[] = array_merge([
             'name' => $name,
             'type' => $this->type,
             'symbolSize' => 8,
             'color'=>$color,
             'data' => $data,
-        ];
+        ],$options);
         return $this;
     }
-
     /**
      * 设置X轴数据
      * @param array $data
+     * @param array $options
+     * @return $this
      */
-    public function xAxis(array $data)
+    public function xAxis(array $data,array $options = [])
     {
+        $this->options['xAxis'] = array_merge($this->options['xAxis'],$options);
         $this->options['xAxis']['data'] = $data;
         return $this;
     }
