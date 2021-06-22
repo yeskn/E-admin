@@ -5,7 +5,7 @@ namespace Eadmin\component\form\field;
 
 
 use Eadmin\component\form\Field;
-
+use think\helper\Str;
 
 /**
  * 单选框组
@@ -60,8 +60,10 @@ class RadioGroup extends Field
         $field = $radio->bindAttr('modelValue');
         $radio->removeBind($field);
         $radio->removeAttr('modelValue');
+        $optionBindField = Str::random(30, 3);
+        $this->bindValue($options, 'options', $optionBindField);
         $radioOption = $radio
-            ->map($options)
+            ->map($options,$optionBindField)
             ->mapAttr('label', 'value')
             ->mapAttr('key', 'value')
             ->mapAttr('slotDefault', 'label')
