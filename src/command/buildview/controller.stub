@@ -17,7 +17,7 @@ use {%model_namespace%};
  */
 class {%className%} extends Controller
 {
-    protected $title = '标题';
+    protected $title = '列表';
 
     /**
      * 列表
@@ -59,6 +59,10 @@ class {%className%} extends Controller
         $form = new Form(new {%model%});
         $form->title($this->title);
 {%form%}
+        // 表单操作自定义
+        $form->actions(function (FormItem $actions) {
+
+        });
         return $form;
     }
 

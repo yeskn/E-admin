@@ -94,8 +94,8 @@ class Upload extends Field
 
     /**
      * 图片建议提示
-     * @param $width 宽度
-     * @param $height 高度
+     * @param int $width 宽度
+     * @param int $height 高度
      */
     public function helpSize($width,$height){
         $this->help("建议上传图片尺寸 $width * $height");
