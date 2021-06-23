@@ -41,6 +41,7 @@ class RadioGroup extends Field
      */
     public function options(array $data, bool $buttonTheme = false)
     {
+    	$options = [];
         foreach ($data as $value => $label) {
             if (in_array($value, $this->disabledData)) {
                 $disabled = true;
