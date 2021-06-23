@@ -87,7 +87,7 @@ class Auth extends Controller
      */
     public function menu($id)
     {
-        return Form::create(new SystemAuth(), function (Form $form) {
+        return Form::create(new SystemAuth(), function (Form $form) use ($id) {
             $form->edit($id);
             $form->labelPosition('top');
             $menus = SystemAuthMenu::where('auth_id', request()->get('id'))->column('menu_id');
@@ -121,7 +121,7 @@ class Auth extends Controller
      */
     public function authNode($id)
     {
-        return Form::create(new SystemAuth(), function (Form $form) {
+        return Form::create(new SystemAuth(), function (Form $form) use ($id) {
             $form->edit($id);
             $form->labelPosition('top');
             $nodes = SystemAuthNode::where('auth_id', $id)->column('node_id');
