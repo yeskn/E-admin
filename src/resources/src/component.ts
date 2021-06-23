@@ -29,6 +29,7 @@ import EadminTag from './components/EadminTag.vue'
 import spec from './components/spec.vue'
 import display from './components/display.vue'
 import im from './components/im/index.vue'
+import watchComponent from './components/watchComponent.vue'
 
 app.component(form.name,form)
 app.component(manyItem.name,manyItem)
@@ -60,4 +61,5 @@ app.component(spec.name,spec)
 app.component(display.name,display)
 app.component(eadminErrorPage.name,eadminErrorPage)
 app.component(im.name,im)
+app.component(watchComponent.name,watchComponent)
 

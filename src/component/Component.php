@@ -251,7 +251,9 @@ abstract class Component implements \JsonSerializable
         return $this;
     }
 
-
+    public function change(\Closure $closure){
+        return $this;
+    }
 
     /**
      * 条件执行

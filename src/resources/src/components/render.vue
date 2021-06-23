@@ -17,7 +17,6 @@
             },
         },
         render() {
-
             if (this.data) {
                 this.setProxyData(this.data,1)
                 const jsonRender = toRaw(this.data)
@@ -230,7 +229,7 @@
             }
             function _createVnode(name,component, attribute, children,directives) {
 
-                if(name == 'EadminGrid' || name == 'EadminForm' || name == 'EadminEchartCard'){
+                if(name == 'EadminGrid' || name == 'EadminForm' || name == 'EadminEchartCard' || name == 'watchComponent'){
                     attribute.proxyData = modelValue
                 }
                 //自定义指令绑定
