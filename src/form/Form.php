@@ -31,6 +31,7 @@ use Eadmin\component\form\FormMany;
 use Eadmin\component\layout\Row;
 use Eadmin\contract\FormInterface;
 use Eadmin\form\traits\ComponentForm;
+use Eadmin\form\traits\Validator;
 use Eadmin\form\traits\WatchForm;
 use Eadmin\traits\CallProvide;
 use Eadmin\traits\Exec;
@@ -82,7 +83,7 @@ use think\Model;
  */
 class Form extends Component
 {
-    use CallProvide,ComponentForm,WatchForm;
+    use CallProvide,ComponentForm,WatchForm, Validator;
 
     protected $name = 'EadminForm';
     protected $actions;
@@ -750,7 +751,7 @@ class Form extends Component
         }
 
         if (strpos($field, '.')) {
-            list($relation, $field) = explode('.', $field);
+            [$relation, $field] = explode('.', $field);
             $this->data[$relation][$field] = $value;
         } else {
             $this->data[$field] = $value;
