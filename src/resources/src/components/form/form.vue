@@ -15,7 +15,6 @@
 
 <script>
     import {defineComponent, inject,nextTick,ref,watch,computed,isReactive} from 'vue'
-    import render from "@/components/render.vue"
     import manyItem from "./manyItem.vue"
     import { store } from '@/store'
     import { useHttp } from '@/hooks'
@@ -23,7 +22,7 @@
     import request from '@/utils/axios'
     export default defineComponent({
         components:{
-            render,manyItem
+            manyItem
         },
         inheritAttrs: false,
         name: "EadminForm",

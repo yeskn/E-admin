@@ -28,7 +28,6 @@
     import {defineComponent, inject,computed,h,getCurrentInstance,defineAsyncComponent,resolveComponent} from 'vue'
     import headerTop from './headerTop.vue'
     import Sidebar from './sidebar/sidebar.vue'
-    import render from '@/components/render.vue'
     import breadcrumb from '@/components/breadcrumb.vue'
     import tagsView from './tagsView.vue'
     import { store,action} from '@/store'
@@ -37,7 +36,6 @@
         components: {
             Sidebar,
             headerTop,
-            render,
             breadcrumb,
             tagsView
         },
