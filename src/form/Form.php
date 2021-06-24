@@ -793,12 +793,12 @@ class Form extends Component
      */
     public function save(array $data)
     {
-        //监听watch
+		$this->exec();
+		//监听watch
         $this->watchCall($data);
         //验证数据
         $validatorMode = $this->isEdit() ? 2 : 1;
         $this->validator->check($data, $validatorMode);
-        $this->exec();
         //保存前回调
         if (!is_null($this->beforeSave)) {
             $beforeData = call_user_func($this->beforeSave, $data);

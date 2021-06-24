@@ -8,7 +8,7 @@ trait Validator
 {
 	/**
 	 * 验证最多字符
-	 * @param int    $num   字符
+	 * @param int    $num   数量
 	 * @param string $text  文案，必须带上[字段]、[数量]
 	 * @return $this
 	 */
