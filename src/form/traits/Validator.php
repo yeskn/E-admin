@@ -14,7 +14,7 @@ trait Validator
 	 */
 	public function maxRule($num = 100, $text = '[字段]不能超过[数量]字')
 	{
-		$this->formItem->rule([
+		$this->formItem->rules([
 			"max:$num" => str_replace([
 				'[字段]',
 				'[数量]',
@@ -34,7 +34,7 @@ trait Validator
 	 */
 	public function minRule($num = 5, $text = '[字段]不能超过[数量]字')
 	{
-		$this->formItem->rule([
+		$this->formItem->rules([
 			"min:$num" => str_replace([
 				'[字段]',
 				'[数量]',
@@ -53,7 +53,7 @@ trait Validator
 	 */
 	public function emailRule($text = '[字段]格式不正确')
 	{
-		$this->formItem->rule(['email' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
+		$this->formItem->rules(['email' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
 		return $this;
 	}
 
@@ -64,7 +64,7 @@ trait Validator
 	 */
 	public function mobileRule($text = '[字段]格式不正确')
 	{
-		$this->formItem->rule(['mobile' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
+		$this->formItem->rules(['mobile' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
 		return $this;
 	}
 
@@ -77,7 +77,7 @@ trait Validator
 	 */
 	public function uniqueRule($table, $filed, $text = '[字段]已重复')
 	{
-		$this->formItem->rule(["unique:{$table},{$this->formItem->attr('prop')}" => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
+		$this->formItem->rules(["unique:{$table},{$this->formItem->attr('prop')}" => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
 		return $this;
 	}
 
@@ -88,7 +88,7 @@ trait Validator
 	 */
 	public function idCardRule($text = '[字段]不是有效的身份证')
 	{
-		$this->formItem->rule(['id_card' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
+		$this->formItem->rules(['id_card' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
 		return $this;
 	}
 
@@ -101,7 +101,7 @@ trait Validator
 	 */
 	public function betweenRule($start, $end, $text = '[字段]在[开始] - [结束]之间')
 	{
-		$this->formItem->rule([
+		$this->formItem->rules([
 			"between:{$start},{$end}" => str_replace([
 				'[开始]',
 				'[结束]',
@@ -124,7 +124,7 @@ trait Validator
 	 */
 	public function notBetweenRule($start, $end, $text = '[字段]不在[开始] - [结束]之间')
 	{
-		$this->formItem->rule([
+		$this->formItem->rules([
 			"notBetween:{$start},{$end}" => str_replace([
 				'[开始]',
 				'[结束]',
@@ -147,7 +147,7 @@ trait Validator
 	 */
 	public function confirmRule($field = 'confirm_password', $confirmLabel = '重复密码', $text = '[被对比]和[对比]输入不一致')
 	{
-		$this->formItem->rule([
+		$this->formItem->rules([
 			"confirm:{$field}" => str_replace([
 				'[被对比]',
 				'[对比]',
@@ -168,7 +168,7 @@ trait Validator
 	 */
 	public function differentRule($field, $differentLabel, $text = '[被对比]和[对比]输入一致')
 	{
-		$this->formItem->rule([
+		$this->formItem->rules([
 			"different:{$field}" => str_replace([
 				'[被对比]',
 				'[对比]',
@@ -187,7 +187,7 @@ trait Validator
 	 */
 	public function urlRule($text = '[字段]不是有效的url')
 	{
-		$this->formItem->rule(['url' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
+		$this->formItem->rules(['url' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
 		return $this;
 	}
 
@@ -198,7 +198,7 @@ trait Validator
 	 */
 	public function alphaRule($text = '[字段]不是纯字母')
 	{
-		$this->formItem->rule(['alpha' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
+		$this->formItem->rules(['alpha' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
 		return $this;
 	}
 
@@ -209,7 +209,7 @@ trait Validator
 	 */
 	public function alphaNumRule($text = '[字段]不是纯字母和数字')
 	{
-		$this->formItem->rule(['alphaNum' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
+		$this->formItem->rules(['alphaNum' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
 		return $this;
 	}
 
@@ -220,7 +220,7 @@ trait Validator
 	 */
 	public function alphaDashRule($text = '[字段]不是字母和数字，下划线_及破折号-')
 	{
-		$this->formItem->rule(['alphaDash' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
+		$this->formItem->rules(['alphaDash' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
 		return $this;
 	}
 
@@ -231,7 +231,7 @@ trait Validator
 	 */
 	public function chsRule($text = '[字段]不是汉字')
 	{
-		$this->formItem->rule(['chs' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
+		$this->formItem->rules(['chs' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
 		return $this;
 	}
 
@@ -242,7 +242,7 @@ trait Validator
 	 */
 	public function chsAlphaRule($text = '[字段]不是汉字、字母')
 	{
-		$this->formItem->rule(['chsAlpha' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
+		$this->formItem->rules(['chsAlpha' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
 		return $this;
 	}
 
@@ -253,7 +253,7 @@ trait Validator
 	 */
 	public function chsAlphaNumRule($text = '[字段]不是只能是汉字、字母和数字')
 	{
-		$this->formItem->rule(['chsAlphaNum' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
+		$this->formItem->rules(['chsAlphaNum' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
 		return $this;
 	}
 
@@ -264,7 +264,7 @@ trait Validator
 	 */
 	public function chsDashRule($text = '[字段]不是汉字、字母、数字和下划线_及破折号-')
 	{
-		$this->formItem->rule(['chsDash' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
+		$this->formItem->rules(['chsDash' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
 		return $this;
 	}
 
@@ -275,7 +275,7 @@ trait Validator
 	 */
 	public function lowerRule($text = '[字段]不是是小写字符')
 	{
-		$this->formItem->rule(['lower' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
+		$this->formItem->rules(['lower' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
 		return $this;
 	}
 
@@ -286,7 +286,7 @@ trait Validator
 	 */
 	public function upperRule($text = '[字段]不是是大写字符')
 	{
-		$this->formItem->rule(['upper' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
+		$this->formItem->rules(['upper' => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
 		return $this;
 	}
 
@@ -298,7 +298,7 @@ trait Validator
 	 */
 	public function inRule($str = '1,2,3', $text = '[字段]在[范围]内')
 	{
-		$this->formItem->rule(["in:{$str}" => str_replace([
+		$this->formItem->rules(["in:{$str}" => str_replace([
 			'[字段]',
 			'[范围]',
 		], [
@@ -316,7 +316,7 @@ trait Validator
 	 */
 	public function notInRule($str = '1,2,3', $text = '[字段]在[范围]内')
 	{
-		$this->formItem->rule(["notIn:{$str}" => str_replace([
+		$this->formItem->rules(["notIn:{$str}" => str_replace([
 			'[字段]',
 			'[范围]',
 		], [
