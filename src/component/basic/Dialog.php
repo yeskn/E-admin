@@ -56,7 +56,7 @@ class Dialog extends Field
 
     /**
      * 表单异步加载
-     * @param Form|Detail|Grid $form
+     * @param mixed $form
      * @return Dialog
      */
     public function form($form)

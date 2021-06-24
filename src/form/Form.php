@@ -31,7 +31,6 @@ use Eadmin\component\form\FormMany;
 use Eadmin\component\layout\Row;
 use Eadmin\contract\FormInterface;
 use Eadmin\form\traits\ComponentForm;
-use Eadmin\form\traits\Validator;
 use Eadmin\form\traits\WatchForm;
 use Eadmin\traits\CallProvide;
 use Eadmin\traits\Exec;
@@ -83,7 +82,7 @@ use think\Model;
  */
 class Form extends Component
 {
-    use CallProvide,ComponentForm,WatchForm, Validator;
+    use CallProvide,ComponentForm,WatchForm;
 
     protected $name = 'EadminForm';
     protected $actions;
