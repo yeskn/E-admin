@@ -77,7 +77,7 @@ trait Validator
 	 */
 	public function uniqueRule($table = '', $field = '', $text = '[字段]已重复')
 	{
-		$table = $table ?: $table = $table ?: $this->formItem->form()->getDrive()->model()->getTable();;
+		$table = $table ?: $this->formItem->form()->getDrive()->model()->getTable();;
 		$field = $field ?: $this->formItem->attr('prop');
 		$this->formItem->rules(["unique:{$table},{$field}" => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
 		return $this;
