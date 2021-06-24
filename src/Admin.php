@@ -64,7 +64,7 @@ class Admin
     public static function view($template, $vars = [])
     {
         if (is_file($template)) {
-          
+
             $content = View::display(file_get_contents($template), $vars);
         } else {
             $content = View::fetch($template, $vars);
@@ -120,7 +120,7 @@ class Admin
     {
         $nodeId = md5($class . $function . strtolower($method));
         $permissions = self::permissions();
-     
+
         foreach ($permissions as $permission) {
             if ($permission['id'] == $nodeId) {
 
@@ -304,12 +304,14 @@ class Admin
                 parse_str($parse['query'], $vars);
             }
         }
+
         $data = $url;
         if ($dispatch) {
             $dispatch->init(app());
             $request = app()->request;
             $get = $request->get();
             $request->withGet($vars);
+
             if ($dispatch instanceof Controller) {
                 list($controller, $action) = $dispatch->getDispatch();
                 try {
@@ -324,7 +326,11 @@ class Admin
             }
             $request->withGet($get);
         }
-        return $data;
+        if($data instanceof Component){
+            return $data;
+        }else{
+            return $url;
+        }
     }
 
     public static function registerRoute()

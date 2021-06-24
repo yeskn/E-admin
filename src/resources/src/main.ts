@@ -1,5 +1,4 @@
 import ElementPlus from "element-plus";
-import 'ant-design-vue/dist/antd.css';
 import 'element-plus/lib/theme-chalk/index.css';
 import router from './router'
 import {store,state,action} from './store'
@@ -9,13 +8,9 @@ import './component'
 import './directive'
 import zhLocale from 'element-plus/lib/locale/lang/zh-cn'
 import request from '@/utils/axios'
-import Switch from "ant-design-vue/lib/switch"; // 加载 JS
-import Table from "ant-design-vue/lib/table"; // 加载 JS
-import dropdown from "ant-design-vue/lib/dropdown"; // 加载 JS
-import menu from "ant-design-vue/lib/menu"; // 加载 JS
-
-app.use(dropdown)
-app.use(menu)
+import { Switch ,Table ,Dropdown,Menu} from "ant-design-vue";
+app.use(Dropdown)
+app.use(Menu)
 app.use(Table)
 app.use(Switch)
 app.use(ElementPlus,{size: 'medium', locale :zhLocale})
