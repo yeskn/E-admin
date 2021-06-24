@@ -1,4 +1,7 @@
-let MiniCssExtractPlugin = require("mini-css-extract-plugin");
+// gzip压缩插件
+const CompressionWebpackPlugin = require('compression-webpack-plugin')
+// 代码打包之后取出console.log压缩代码
+const TerserPlugin = require('terser-webpack-plugin')
 module.exports = {
 	lintOnSave: false,
 	publicPath: '/eadmin',
@@ -6,27 +9,53 @@ module.exports = {
 	assetsDir: 'static',
 	indexPath:'../admin/view/index.vue',
 	runtimeCompiler: true,
-
 	productionSourceMap : false,
 	filenameHashing: true,
 	devServer: {
 		disableHostCheck: true,
 	},
-	css: {
-		// 将组件内的 CSS 提取到一个单独的 CSS 文件 (只用在生产环境中)
-		// 也可以是一个传递给 `extract-text-webpack-plugin` 的选项对象
-		extract: true,
+	chainWebpack: config => {
+		// 移除prefetch插件，避免加载多余的资源
+		config.plugins.delete('prefetch')
+	},
+	// webpack的配置
+	configureWebpack: config => {
 
-		// 是否开启 CSS source map？
-		sourceMap: false,
+		// 生产环境配置
+		if (process.env.NODE_ENV === 'production') {
+			// 代码压缩去除console.log
+			config.plugins.push(
+				new TerserPlugin({
+					terserOptions: {
+						ecma: undefined,
+						warnings: false,
+						parse: {},
+						compress: {
+							drop_console: true,
+							drop_debugger: false,
+							pure_funcs: ['console.log'] // 移除console
+						}
+					}
+				})
+			)
+		}
 
-		// 为预处理器的 loader 传递自定义选项。比如传递给
-		// sass-loader 时，使用 `{ sass: { ... } }`。
-		loaderOptions: {},
-
-		// 为所有的 CSS 及其预处理文件开启 CSS Modules。
-		// 这个选项不会影响 `*.vue` 文件。
-		requireModuleExtension: false
+		// 开启gzip压缩
+		config.plugins.push(
+			new CompressionWebpackPlugin(
+				{
+					filename: info => {
+						return `${info.path}.gz${info.query}`
+					},
+					algorithm: 'gzip',
+					threshold: 10240, // 只有大小大于该值的资源会被处理 10240
+					test: new RegExp('\\.(' + ['js'].join('|') + ')$'
+					),
+					minRatio: 0.8, // 只有压缩率小于这个值的资源才会被处理
+					deleteOriginalAssets: false // 删除原文件
+				}
+			)
+		)
 	},
 
 };
