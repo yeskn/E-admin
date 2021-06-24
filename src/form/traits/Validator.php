@@ -70,14 +70,16 @@ trait Validator
 
 	/**
 	 * 验证唯一性
-	 * @param string $table 表名
-	 * @param string $filed 字段
+	 * @param string $table 表名,为空则为当前表
+	 * @param string $field 字段，为空则当前字段
 	 * @param string $text  文案，必须带上[字段]
 	 * @return $this
 	 */
-	public function uniqueRule($table, $filed, $text = '[字段]已重复')
+	public function uniqueRule($table = '', $field = '', $text = '[字段]已重复')
 	{
-		$this->formItem->rules(["unique:{$table},{$this->formItem->attr('prop')}" => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
+		$table = $table ?: $this->formItem->form()->getDrive()->model()->getTable();;
+		$field = $field ?: $this->formItem->attr('prop');
+		$this->formItem->rules(["unique:{$table},{$field}" => str_replace('[字段]', $this->formItem->attr('label'), $text)]);
 		return $this;
 	}
 

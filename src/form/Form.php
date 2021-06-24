@@ -749,6 +749,11 @@ class Form extends Field
         return $this->drive->getData($field);
     }
 
+    public function getDrive()
+	{
+		return $this->drive;
+	}
+
     /**
      * 表单操作定义
      * @param \Closure $closure
