@@ -3,16 +3,23 @@
 
 namespace app\admin\controller;
 
+use app\admin\example\BarCard;
+use app\admin\example\LineCard;
+use app\admin\example\PieCard;
+use app\admin\example\ProgressCard;
 use Eadmin\chart\Echart;
 
 
+use Eadmin\chart\echart\LineChart;
 use Eadmin\component\basic\Badge;
 use Eadmin\component\basic\Card;
 use Eadmin\component\basic\Html;
 use Eadmin\component\basic\Statistic;
 use Eadmin\component\basic\Tabs;
+use Eadmin\component\form\field\Select;
 use Eadmin\component\layout\Content;
 use Eadmin\component\layout\Row;
+use Eadmin\constant\Style;
 use Eadmin\Controller;
 use Eadmin\grid\Filter;
 use Eadmin\grid\Grid;
@@ -45,36 +52,59 @@ class Index extends Controller
             $row->column(Statistic::create('通知', '998', 'el-icon-message-solid', '#4789e7', '#c28af9'), 4);
             $row->column(Statistic::create('待办', '2,128', 'el-icon-s-opportunity', '#ff431e', '#fba457'), 4);
         });
-
+        $content->row(function (Row $row)  {
+            $row->gutter(10);
+            $row->column(new LineCard(), 6);
+            $row->column(new BarCard(), 6);
+            $row->column(new PieCard(), 6);
+            $row->column(new ProgressCard(), 6);
+        });
 
         $content->row(function (Row $row) {
             $row->gutter(10);
-            $tab = Tabs::create()
-                ->tabPosition('left')
-                ->pane('漏斗图', $this->funnelchart())
-                ->pane('饼图', $this->pieEchart())
-                ->pane('柱状图', $this->barEchart())
-                ->pane('雷达图', $this->radarEchart());
 
-            $row->column(Card::create($tab), 18);
+
+            $row->column(Card::create(Tabs::create()
+                ->pane('折线图',$this->lineEchart('line'))
+                ->pane('柱状图',$this->lineEchart('bar'))
+            ), 18);
             $row->column($this->rank(), 6);
         });
-        $contentChart = new Content();
-        $contentChart->row(function (Row $row){
-            $row->gutter(10)->attr('style',['textAlign'=>'center']);
-            $row->column('<p>访问次数</p><p style="margin-top: 15px;font-size: 24px;color: #333;font-weight: 700">222</p>',6);
-            $row->column('<p>新增用户</p><p style="margin-top: 15px;font-size: 24px;color: #333;font-weight: 700">35</p>',6);
-            $row->column('<p>系统用户</p><p style="margin-top: 15px;font-size: 24px;color: #333;font-weight: 700">551</p>',6);
-        });
-        $contentChart->row($this->lineEchart());
-        $card = Card::create($contentChart)->header('系统用户分析');
-        $content->row($card);
+
+
         $content->row(function (Row $row) {
             $row->gutter(10);
             $row->column($this->pieEchart(), 12);
             $row->column($this->radarEchart(), 12);
         });
+
+
         return $content;
+    }
+
+    public function line()
+    {
+        $echart = new LineChart('50px');
+        $echart->hideLegend();
+        $echart->xAxis(['', '', '', '', '', '', ''], [
+            'show' => false,
+        ]);
+        $echart->series('sdf', [28, 40, 36, 52, 38, 60, 55], [
+            'areaStyle' => [],
+            'showSymbol' => false,
+        ]);
+        $echart->setOptions([
+            'yAxis' => [
+                'splitLine' => ['show' => false],
+            ],
+            'grid' => [
+                'left' => '0',
+                'right' => '0',
+                'top' => '10%',
+                'bottom' => '0',
+            ],
+        ]);
+        return $echart;
     }
 
     public function rank()
@@ -112,20 +142,35 @@ class Index extends Controller
                 'id' => 8,
                 'name' => '未知',
             ],
-
+            [
+                'id' => 8,
+                'name' => '未知',
+            ],
+            [
+                'id' => 8,
+                'name' => '未知',
+            ],
+            [
+                'id' => 8,
+                'name' => '未知',
+            ],
+            [
+                'id' => 8,
+                'name' => '未知',
+            ],
         ];
         $grid = new Grid($data);
         $grid->column('id', '排名')->display(function ($val) {
-            $badge =  Badge::create()->value($val);
-            if($val == 1){
+            $badge = Badge::create()->value($val);
+            if ($val == 1) {
                 $badge->type('danger');
-            }elseif($val == 2){
+            } elseif ($val == 2) {
                 $badge->type('warning');
-            }elseif($val == 3){
+            } elseif ($val == 3) {
                 $badge->type('success');
-            }elseif($val == 4){
+            } elseif ($val == 4) {
                 $badge->type('primary');
-            }else{
+            } else {
                 $badge->type('info');
             }
             return $badge;
@@ -207,9 +252,17 @@ class Index extends Controller
     /**
      * 折线图
      */
-    public function lineEchart()
+    public function lineEchart($type)
     {
-        $echart = new Echart('折线图', 'line');
+        $echart = new Echart('', $type,'335px');
+        $contentChart = new Content();
+        $contentChart->row(function (Row $row){
+            $row->gutter(10)->attr('style',['textAlign'=>'center']);
+            $row->column('<p>访问次数</p><p style="margin-top: 15px;font-size: 24px;color: #333;font-weight: 700">111</p>',6);
+            $row->column('<p>新增用户</p><p style="margin-top: 15px;font-size: 24px;color: #333;font-weight: 700">351</p>',6);
+            $row->column('<p>系统用户</p><p style="margin-top: 15px;font-size: 24px;color: #333;font-weight: 700">881</p>',6);
+        });
+        $echart->header($contentChart);
         $echart->table('system_user');
         //筛选
         $echart->filter(function (Filter $filter) {
