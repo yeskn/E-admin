@@ -139,10 +139,11 @@ class Admin extends Controller
      * 重置密码
      * @auth true
      * @login true
+	 * @param int $id 系统用户id
      */
     public function resetPassword($id)
     {
-        return Form::create(new AdminModel(),function (Form $form){
+        return Form::create(new AdminModel(),function (Form $form) use ($id){
             $form->edit($id);
             $form->password('new_password', '新密码')->required()->rule([
                 'confirm' => '输入密码不一致',
