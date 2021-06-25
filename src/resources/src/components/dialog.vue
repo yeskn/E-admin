@@ -13,14 +13,10 @@
 
 <script>
     import {defineComponent, watch,computed} from "vue";
-    import render from '@/components/render.vue'
     import {useVisible} from '@/hooks'
 
     export default defineComponent({
         name: "EadminDialog",
-        components: {
-            render,
-        },
         inheritAttrs: false,
         props: {
             modelValue: {

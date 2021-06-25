@@ -235,6 +235,7 @@ abstract class Component implements \JsonSerializable
         } else {
             if (!($content instanceof Component)) {
                 $content = Admin::dispatch($content);
+                
             }
             if ($content instanceof Form && ($this instanceof Dialog || $this instanceof Drawer)) {
                 $field = $this->bindAttr('modelValue');

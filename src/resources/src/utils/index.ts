@@ -206,3 +206,39 @@ export function uniqidMd5() {
     const rand = ('0000' + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4)
     return md5(rand)
 }
+//节流防抖  mark传入标识自动判断开启节流
+export function debounce(fun, delay) {
+    return (args,mark) => {
+        // @ts-ignore
+        let that = this
+        //传入的参数
+        let _args = args
+        if(!fun.throttle){
+            //默认不开启节流
+            fun.throttle = false
+        }
+        //传入标识
+        mark = md5(mark)
+        if(mark){
+            if(fun[mark]){
+                let now = new Date().getTime()
+                // @ts-ignore 判断是否开启节流
+                if(now - fun[mark] < delay){
+                    fun.throttle = true
+                }
+            }
+            //标记最新调用时间用于判断是否开启节流
+            fun[mark] = new Date().getTime()
+        }
+        if(fun.throttle){
+            //节流执行
+            clearTimeout(fun.id)
+            fun.id = setTimeout(function () {
+                fun.call(that, _args)
+            }, delay)
+        }else{
+            //默认不执行节流
+            fun.call(that, _args)
+        }
+    }
+}

@@ -121,7 +121,6 @@
 
 <script>
     import {defineComponent, ref, watch,reactive, inject,nextTick,computed,unref,onActivated,onMounted,onUnmounted} from "vue"
-    import render from "@/components/render.vue"
     import {useHttp} from '@/hooks'
    // import {tableDefer} from '@/hooks/use-defer'
     import request from '@/utils/axios'
@@ -132,9 +131,6 @@
     import {useRoute} from 'vue-router'
     export default defineComponent({
         name: "EadminGrid",
-        components: {
-            render,
-        },
         props: {
             data: Array,
             columns: Array,

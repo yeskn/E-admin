@@ -15,15 +15,14 @@
 
 <script>
     import {defineComponent, inject,nextTick,ref,watch,computed,isReactive} from 'vue'
-    import render from "@/components/render.vue"
     import manyItem from "./manyItem.vue"
     import { store } from '@/store'
     import { useHttp } from '@/hooks'
-    import { forEach } from '@/utils'
+    import { forEach ,debounce} from '@/utils'
     import request from '@/utils/axios'
     export default defineComponent({
         components:{
-            render,manyItem
+            manyItem
         },
         inheritAttrs: false,
         name: "EadminForm",
@@ -63,6 +62,17 @@
                     sumbitForm()
                 }
             })
+            const debounceWatch = debounce((args)=>{
+                const length = watchData.length
+                watchData.push({
+                    field:args[0],
+                    newValue:args[1],
+                    oldValue:args[2],
+                })
+                if(length === 0){
+                    watchListen()
+                }
+            }, 300)
             //watch监听变化
             const watchData = []
             props.watch.forEach(field=>{
@@ -72,15 +82,7 @@
                     oldValue:ctx.attrs.model[field],
                 })
                 watch(()=>ctx.attrs.model[field],(newValue,oldValue)=>{
-                    const length = watchData.length
-                    watchData.push({
-                        field:field,
-                        newValue:newValue,
-                        oldValue:oldValue,
-                    })
-                    if(length === 0){
-                        watchListen()
-                    }
+                    debounceWatch([field,newValue,oldValue],field)
                 },{deep:true})
             })
             watchListen()
@@ -100,7 +102,6 @@
             //watch ajax请求
             function watchAjax(field,newValue,oldValue){
                 return new Promise((resolve,reject) => {
-
                     request({
                         url: props.setAction,
                         method: props.setActionMethod,
