@@ -82,7 +82,7 @@ use think\Model;
  */
 class Form extends Component
 {
-    use CallProvide,ComponentForm,WatchForm;
+    use CallProvide, ComponentForm, WatchForm;
 
     protected $name = 'EadminForm';
     protected $actions;
@@ -125,7 +125,7 @@ class Form extends Component
             $this->drive = new \Eadmin\form\drive\Arrays($data);
         }
         $field = Str::random(15, 3);
-        $this->attr('exceptField',$this->exceptField);
+        $this->attr('exceptField', $this->exceptField);
         $this->bindAttr('model', $field);
         $this->bindAttValue('submit', false, true);
         $this->bindAttValue('validate', false, true);
@@ -141,12 +141,15 @@ class Form extends Component
             call_user_func(self::$init, $this);
         }
     }
-    public static function create($data,\Closure $closure){
-        $self  = new self($data);
-        $self->parseCallMethod(true,2);
+
+    public static function create($data, \Closure $closure)
+    {
+        $self = new self($data);
+        $self->parseCallMethod(true, 2);
         $self->setExec($closure);
         return $self;
     }
+
     /**
      * 初始化
      * @param \Closure $closure
@@ -155,6 +158,7 @@ class Form extends Component
     {
         self::$init = $closure;
     }
+
     /**
      * 设置标题
      * @param string $title
@@ -330,19 +334,19 @@ class Form extends Component
                 $value = $component->bind($field);
             }
             //级联relation解析关联数据bind回显
-            if($component instanceof Cascader && $attr == 'relation'){
-                $cascaderField = explode('.',$component->bindAttr('modelValue'));
+            if ($component instanceof Cascader && $attr == 'relation') {
+                $cascaderField = explode('.', $component->bindAttr('modelValue'));
                 $cascaderField = array_pop($cascaderField);
                 $this->setData($cascaderField, $component->parseRelationData($value));
             }
             //display组件定义显示
-            if($component instanceof Display && $component->getClosure() instanceof \Closure){
-                $value = call_user_func($component->getClosure(),$value,$data);
+            if ($component instanceof Display && $component->getClosure() instanceof \Closure) {
+                $value = call_user_func($component->getClosure(), $value, $data);
             }
             if ($component instanceof DatePicker || $component instanceof TimePicker) {
-                $value = empty($value) ? null:$value;
-                $this->setData($field, $value );
-            }else{
+                $value = empty($value) ? null : $value;
+                $this->setData($field, $value);
+            } else {
 
                 $this->setData($field, $value ?? '');
             }
@@ -391,7 +395,7 @@ class Form extends Component
             $prop = $this->steps->bindAttr('modelValue');
             $this->except([$prop]);
             $this->push($this->steps);
-            $this->bindAttr('step', $this->steps->bindAttr('active'),true);
+            $this->bindAttr('step', $this->steps->bindAttr('active'), true);
         }
         $formItems = $this->collectFields($closure);
         $this->steps->step($title, $description, $icon);
@@ -480,11 +484,11 @@ class Form extends Component
     public function item($prop = '', $label = '')
     {
         $item = FormItem::create($prop, $label, $this);
-        if(empty($this->manyRelation)){
-            $ifField = str_replace('.','_',$prop);
-            $ifField = $this->bindAttr('model').$ifField.'Show';
-            $this->bind($ifField,1);
-            $item->where($ifField,1);
+        if (empty($this->manyRelation)) {
+            $ifField = str_replace('.', '_', $prop);
+            $ifField = $this->bindAttr('model') . $ifField . 'Show';
+            $this->bind($ifField, 1);
+            $item->where($ifField, 1);
         }
         $this->push($item);
         return $item;
@@ -497,15 +501,15 @@ class Form extends Component
      * @param int $gutter
      * @return $this
      */
-    public function row(\Closure $closure, string $title = '',$gutter = 0)
+    public function row(\Closure $closure, string $title = '', $gutter = 0)
     {
 
         $row = new Row();
-        if($gutter > 0){
+        if ($gutter > 0) {
             $row->gutter($gutter);
         }
         $formItems = $this->collectFields($closure);
-        if(!empty($title)){
+        if (!empty($title)) {
             $this->push("<h4 style='font-size:16px;'>{$title}</h4>");
         }
         foreach ($formItems as $item) {
@@ -543,23 +547,23 @@ class Form extends Component
         return $this;
     }
 
-    public function manyRelation($relation=null)
+    public function manyRelation($relation = null)
     {
-        if(is_null($relation)){
+        if (is_null($relation)) {
             return $this->manyRelation;
         }
         $this->manyRelation = $relation;
     }
 
-    public function batch(\Closure $closure,$data = [])
+    public function batch(\Closure $closure, $data = [])
     {
         $this->batch = true;
         $manyItem = $this->hasMany('eadmin_batch', '', $closure);
-        if(count($data) == 0){
+        if (count($data) == 0) {
             $data[] = $manyItem->attr('manyData');
-        }else{
-            foreach ($data as &$row){
-                $row = array_merge($manyItem->attr('manyData'),$row);
+        } else {
+            foreach ($data as &$row) {
+                $row = array_merge($manyItem->attr('manyData'), $row);
             }
         }
         $manyItem->value($data);
@@ -610,7 +614,7 @@ class Form extends Component
                 }
                 $this->valueModel($componentClone, $data);
             }
-            if($data instanceof Model) {
+            if ($data instanceof Model) {
                 $pk = $data->getPk();
                 $this->data[$pk] = $data[$pk];
             }
@@ -663,7 +667,7 @@ class Form extends Component
             $component->displayType('image')->accept('image/*')->size(120, 120)->isUniqidmd5();
         }
         if (in_array($name, $componentArr)) {
-            if($component instanceof TimePicker || $component instanceof DatePicker){
+            if ($component instanceof TimePicker || $component instanceof DatePicker) {
                 //由于element时间范围字段返回是一个数组,这里特殊绑定处理成2个字段
                 if ($name == 'dateRange' || $name == 'datetimeRange' || $name == 'timeRange') {
                     $component = $class::create();
@@ -676,7 +680,7 @@ class Form extends Component
                 $this->except([$prop]);
             }
             $component->type($name);
-            if($name === 'password'){
+            if ($name === 'password') {
                 $component->showPassword();
             }
         }
@@ -698,12 +702,12 @@ class Form extends Component
             $component->placeholder('请选择' . $label);
         }
         $item = $this->item($prop, $label);
-        $item->attr('validateField',$field);
+        $item->attr('validateField', $field);
         $item->content($component);
         $component->setFormItem($item);
         if ($name == 'hidden') {
             //隐藏域
-            $item->attr('style',['display'=>'none']);
+            $item->attr('style', ['display' => 'none']);
         }
         return $component;
     }
@@ -764,9 +768,9 @@ class Form extends Component
     }
 
     public function getDrive()
-	{
-		return $this->drive;
-	}
+    {
+        return $this->drive;
+    }
 
     /**
      * 表单操作定义
@@ -776,15 +780,17 @@ class Form extends Component
     {
         call_user_func_array($closure, [$this->actions]);
     }
+
     public function itemComponent()
     {
         return $this->itemComponent;
     }
+
     public function setItemComponent($component)
     {
-        if(is_array($component)){
+        if (is_array($component)) {
             $this->itemComponent = $component;
-        }else{
+        } else {
             $this->itemComponent[] = $component;
         }
 
@@ -798,8 +804,8 @@ class Form extends Component
      */
     public function save(array $data)
     {
-		$this->exec();
-		//监听watch
+        $this->exec();
+        //监听watch
         $this->watchCall($data);
         //验证数据
         $validatorMode = $this->isEdit() ? 2 : 1;
@@ -853,15 +859,24 @@ class Form extends Component
     {
         foreach ($this->formItem as $item) {
             $this->content($item);
+            if ($item instanceof Tabs) {
+                foreach ($item->content['default'] as $pane) {
+                    foreach ($pane->content['default'] as $content) {
+                        if ($content instanceof FormMany) {
+                            $this->valueModel($content);
+                        }
+                    }
+                }
+            }
         }
         foreach ($this->itemComponent as $component) {
             //各个组件绑定值赋值
             $this->valueModel($component);
         }
         $field = $this->bindAttr('model');
-        $this->data = array_merge($this->callParams, $this->callMethod,$this->data);
+        $this->data = array_merge($this->callParams, $this->callMethod, $this->data);
         //主键值
-        if($this->isEdit){
+        if ($this->isEdit) {
             $pk = $this->drive->getPk();
             $this->data[$pk] = $this->drive->getData($pk);
         }
@@ -892,11 +907,13 @@ class Form extends Component
      * 排除字段数据
      * @param array $fields
      */
-    public function except(array $fields){
-        $this->exceptField =  array_merge($this->exceptField,$fields);
+    public function except(array $fields)
+    {
+        $this->exceptField = array_merge($this->exceptField, $fields);
         //排除字段
-        $this->attr('exceptField',$this->exceptField);
+        $this->attr('exceptField', $this->exceptField);
     }
+
     public static function extend($name, $component)
     {
         self::$component[$name] = $component;
