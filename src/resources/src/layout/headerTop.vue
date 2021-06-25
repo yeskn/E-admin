@@ -72,6 +72,7 @@
                 if(route.path === '/' && menus.length > 0){
                     action.selectMenuModule('')
                     selectMenu(menus[0].id)
+
                     return state.menuModule
                 } else if (menu) {
                     menuLevels = findParent(state.menus, menu.pid)
@@ -112,11 +113,10 @@
                         }
                         break;
                     } else {
-
                         action.sidebarVisible(false)
                     }
-
                 }
+                linkMenuBool = false
             }
             //侧边栏展开收缩
             function collapse() {
