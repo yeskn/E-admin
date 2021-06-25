@@ -1,7 +1,7 @@
 <template>
     <div :class="[sidebar.opend ? '':'collapse',sidebar.opend ? '':'collapse','sidebar-container']">
         <logo :collapse="sidebar.opend"></logo>
-        <el-scrollbar>
+        <el-scrollbar style="height: calc(100vh - 60px)">
             <el-menu :default-active="activeIndex"
                      text-color="#FFFFFF"
                      :collapse="!sidebar.opend"

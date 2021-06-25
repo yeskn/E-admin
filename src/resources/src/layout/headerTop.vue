@@ -115,6 +115,7 @@
                     }
 
                 }
+                linkMenuBool = false
             }
             //侧边栏展开收缩
             function collapse() {
