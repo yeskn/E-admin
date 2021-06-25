@@ -128,7 +128,7 @@ class ResourceController extends Controller
         $this->request->setAction($actionName);
 		$paramArr = [];
 		foreach ($this->request->param() as $field => $param){
-			if(json_decode($param, true)){
+			if(is_string($param) && is_null(json_decode($param))){
 				$paramArr[$field] = json_decode($param, true);
 			}elseif ($param == 'true'){
 				$paramArr[$field] = true;
