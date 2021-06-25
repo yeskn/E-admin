@@ -126,7 +126,18 @@ class ResourceController extends Controller
         $this->request->setController($controller);
         $actionName = $reflect->getName();
         $this->request->setAction($actionName);
-        $data     = app()->invokeReflectMethod($instance, $reflect, $this->request->param());
-        return $data;
+		$paramArr = [];
+		foreach ($this->request->param() as $field => $param){
+			if(json_decode($param, true)){
+				$paramArr[$field] = json_decode($param, true);
+			}elseif ($param == 'true'){
+				$paramArr[$field] = true;
+			}elseif($param == 'false'){
+				$paramArr[$field] = false;
+			} else {
+				$paramArr[$field] = $param;
+			}
+		}
+		return app()->invokeReflectMethod($instance, $reflect, $paramArr);
     }
 }

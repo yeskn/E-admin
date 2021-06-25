@@ -50,8 +50,6 @@ class Upload extends Field
     {
         $config          = config('filesystem.disks.' . $diskType);
         $uptype          = $config['type'];
-        $accessKey       = '';
-        $accessKeySecret = '';
         $this->attr('upType', $diskType);
         if ($uptype == 'qiniu') {
             $this->attr('bucket', $config['bucket']);
@@ -97,8 +95,8 @@ class Upload extends Field
 
     /**
      * 图片建议提示
-     * @param $width 宽度
-     * @param $height 高度
+     * @param int $width 宽度
+     * @param int $height 高度
      */
     public function helpSize($width,$height){
         $this->help("建议上传图片尺寸 $width * $height");
