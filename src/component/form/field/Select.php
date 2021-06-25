@@ -69,14 +69,16 @@ class Select extends Field
 
     /**
      * 设置分组选项数据
-     * @param array $data
+     * @param array  $data
      * @param string $name 分组字段名
+	 * @param string $id id字段
+	 * @param string $label label字段
      * @return $this
      */
-    public function groupOptions(array $data, $name = 'options')
+    public function groupOptions(array $data, $name = 'options', $id = 'id', $label = 'label')
     {
         /* 格式
-         $datas = [
+         $data = [
             [
                 'label' => '第一个分组',
                 'id' => 2,
@@ -101,22 +103,21 @@ class Select extends Field
         */
         $bindOptions = [];
         foreach ($data as $key => $option) {
-            $groups = [];
             $options = [];
-            if (in_array($option['id'], $this->disabledData)) {
+            if (in_array($option[$id], $this->disabledData)) {
                 $disabled = true;
             } else {
                 $disabled = false;
             }
             foreach ($option[$name] as $item) {
-                if (in_array($item['id'], $this->disabledData)) {
+                if (in_array($item[$id], $this->disabledData)) {
                     $disabled = true;
                 } else {
                     $disabled = false;
                 }
                 $options[] = [
-                    'id' => $item['id'],
-                    'label' => $item['label'],
+                    'id' => $item[$id],
+                    'label' => $item[$label],
                     'disabled' => $disabled,
                 ];
             }
