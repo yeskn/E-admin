@@ -73,7 +73,7 @@
                 </el-button>
             </div>
         </el-form>
-        <div class="icp">{{webMiitbeian}} | <a href="http://beian.miit.gov.cn" target="_blank">{{webCopyright}}</a>
+        <div class="icp"><a href="http://beian.miit.gov.cn" target="_blank">{{webMiitbeian}}</a> | {{webCopyright}}
         </div>
     </div>
 </template>
