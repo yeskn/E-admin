@@ -71,11 +71,11 @@ class Select extends Field
      * 设置分组选项数据
      * @param array  $data
      * @param string $name 分组字段名
-	 * @param string $id id字段
 	 * @param string $label label字段
-     * @return $this
+	 * @param string $id id字段
+	 * @return $this
      */
-    public function groupOptions(array $data, $name = 'options', $id = 'id', $label = 'label')
+    public function groupOptions(array $data, $name = 'options', $label = 'label', $id = 'id')
     {
         /* 格式
          $data = [
@@ -129,7 +129,7 @@ class Select extends Field
                 ->mapAttr('value', 'id')
                 ->mapAttr('disabled', 'disabled');
             $selectGroup = OptionGroup::create()
-                ->attr('label', $option['label'])
+                ->attr('label', $option[$label])
                 ->attr('disabled', $disabled)
                 ->content($selectOption);
             $this->content($selectGroup);
