@@ -638,7 +638,7 @@ class Grid extends Component
             $data = $this->parseData();
             $this->attr('data',$data);
         }
-        if (request()->has('ajax_request_data')) {
+        if (request()->has('ajax_request_data') && !$this->attr('static')) {
             $data = $this->parseData();
             return [
                 'code' => 200,
