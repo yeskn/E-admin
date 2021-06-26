@@ -245,7 +245,6 @@ class TokenService
             return null;
         }
         if (is_null(self::$userModel)) {
-        	halt($this->model);
             $user = new $this->model;
             $tableFields = $user->getTableFields();
             self::$userModel = $user->lock($lock)
