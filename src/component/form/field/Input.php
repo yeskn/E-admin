@@ -28,7 +28,7 @@ minRows: 2, maxRows: 6
 }
  * @method $this autocomplete(string $complete) 原生属性，自动补全 on / off
  * @method $this resize(string $resize) 控制是否能被用户缩放 none / both / horizontal / vertical
- * @method $this readonly(bool $read) 原生属性，是否只读
+ * @method $this readonly(bool $read = false) 原生属性，是否只读
  * @method $this max($num) 原生属性，设置最大值
  * @method $this min($num) 原生属性，设置最小值
  * @method $this step($step) 原生属性，设置输入字段的合法数字间隔

@@ -85,7 +85,7 @@ class LogService extends Service
     {
         $logs = $this->getLogFiles();
         $logs = current($logs);
-        return $logs['path'];
+        return $logs['path'] ?? '';
     }
 
     /**
