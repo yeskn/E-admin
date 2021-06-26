@@ -135,7 +135,7 @@ class Button extends Component
     }
     /**
      * 复制
-     * @param $content 复制内容
+     * @param string $content 复制内容
      * @return $this
      */
     public function copy($content){

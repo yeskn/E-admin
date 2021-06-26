@@ -236,6 +236,7 @@ class TokenService
 
     /**
      * 返回用户模型
+	 * @param bool $lock 是否锁表
      * @return mixed
      */
     public function user($lock = false)
@@ -244,6 +245,7 @@ class TokenService
             return null;
         }
         if (is_null(self::$userModel)) {
+        	halt($this->model);
             $user = new $this->model;
             $tableFields = $user->getTableFields();
             self::$userModel = $user->lock($lock)

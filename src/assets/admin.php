@@ -16,9 +16,9 @@ return [
         //令牌key
         'key' => 'QsoYEClMJsgOSWUBkSCq26yWkApqSuH3',
         //令牌过期时间
-        'expire' => 7200,
+        'expire' => 86400,
         //是否唯一登陆
-        'unique' => true,
+        'unique' => false,
         //系统用户模型
         'model' => AdminModel::class,
         //验证字段
