@@ -2,7 +2,8 @@
     <el-main class='form'>
     <el-form ref="eadminForm" :label-position="labelPosition" v-bind="$attrs" @submit.native.prevent>
         <slot></slot>
-        <el-form-item>
+        <render :data="stepResult"></render>
+        <el-form-item v-if="!action.hide" v-bind="action.attr">
             <slot name="leftAction"></slot>
             <render v-if="action.submit" :loading="loading" :data="action.submit" :disabled="disabled"></render>
             <render v-if="action.reset" :data="action.reset" @click="resetForm"></render>
@@ -34,6 +35,7 @@
                 type:String,
                 default:'post'
             },
+            reset:Boolean,
             submit:Boolean,
             validate:Boolean,
             step:Number,
@@ -47,19 +49,27 @@
             },
             proxyData:Object,
         },
-        emits: ['success','gridRefresh','update:submit','update:validate','update:step','update:eadminForm'],
+        emits: ['success','gridRefresh','update:submit','update:reset','update:validate','update:step','update:eadminForm'],
         setup(props,ctx){
             const eadminForm = ref(null)
+            const stepResult = ref(null)
             const disabled = ref(false)
             const {loading,http} = useHttp()
             const state = inject(store)
             const proxyData = props.proxyData
             const validateStatus = ref(false)
-
+            const initModel = JSON.parse(JSON.stringify(ctx.attrs.model))
             //提交
             watch(()=>props.submit,val=>{
                 if(val){
                     sumbitForm()
+                }
+            })
+            //重置
+            watch(()=>props.reset,val=>{
+                if(val){
+                    resetForm()
+                    stepResult.value = null
                 }
             })
             const debounceWatch = debounce((args)=>{
@@ -201,6 +211,10 @@
                                 }else  if(res.code === 412){
                                     validateStatus.value = true
                                 }else{
+                                    if(res.type == 'step'){
+                                        stepResult.value = res.data
+                                        ctx.emit('update:step',++props.step)
+                                    }
                                     ctx.emit('success')
                                     ctx.emit('gridRefresh')
                                 }
@@ -240,6 +254,7 @@
                     }
                 }
                 eadminForm.value.clearValidate()
+
             }
             const labelPosition = computed(()=>{
                 if(state.device === 'mobile'){
@@ -252,12 +267,15 @@
             function resetForm() {
                 clearValidator()
                 eadminForm.value.resetFields();
+                Object.assign(ctx.attrs.model,initModel)
+                ctx.emit('update:reset',false)
             }
             //取消
             function cancelForm(){
                 ctx.emit('success')
             }
             return {
+                stepResult,
                 disabled,
                 eadminForm,
                 loading,
