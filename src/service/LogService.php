@@ -101,7 +101,7 @@ class LogService extends Service
      */
     public function fetch($seek = 0, $lines = 20, $buffer = 4096, $filterContent = '', $filterTime = [])
     {
-        if (!file_exists($this->filePath)) {
+        if (empty($this->filePath) || !file_exists($this->filePath)) {
             return [];
         }
         $f = fopen($this->filePath, 'rb');
