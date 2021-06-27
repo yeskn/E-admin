@@ -62,6 +62,16 @@ class FormSteps extends Steps
     }
 
     /**
+     * 返回步骤数量
+     * @return int
+     */
+    public function count(){
+        if(isset($this->content['default'])){
+            return count($this->content['default']);
+        }
+        return 0;
+    }
+    /**
      * 完成结果步骤
      * @param \Closure $closure
      * @param string $title 完成步骤标题

@@ -40,20 +40,6 @@ class Result
     public function getId(){
         return $this->id;
     }
-
-    /**
-     * 自动返回成功失败
-     * @param $title 标题
-     * @param $content 内容
-     * @return \Eadmin\component\basic\Result
-     */
-    public function auto($title, $content){
-        if($this->isSuccess){
-            return $this->sucess($title, $content);
-        }else{
-            return $this->error($title,$content)->extra($this->resetButton()->typeInfo());
-        }
-    }
     /**
      * 返回成功
      * @param $title 标题
@@ -62,7 +48,7 @@ class Result
      */
     public function sucess($title, $content)
     {
-        return $this->result($title, $content, 'success');
+        return $this->result($title, $content, 'success')->extra($this->resetButton()->typePrimary());
     }
 
     /**
@@ -128,7 +114,6 @@ class Result
     public function resetButton($text = '重新提交')
     {
         return Button::create($text)
-            ->typePrimary()
             ->event('click', [
                 $this->data['eadmin_step'] => 0,
                 $this->data['eadmin_step_reset'] => true

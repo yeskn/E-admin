@@ -10,6 +10,7 @@
             <render v-if="action.cancel" :data="action.cancel" @click="cancelForm"></render>
             <slot name="rightAction"></slot>
         </el-form-item>
+        <slot name="footer"></slot>
     </el-form>
     </el-main>
 </template>
