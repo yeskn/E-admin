@@ -9,6 +9,9 @@ use Eadmin\component\Component;
 /**
  * Class Html
  * @package Eadmin\component\basic
+ * @method Html p() p标签
+ * @method Html div() div标签
+ * @method Html strong() div标签
  */
 class Html extends Component
 {
@@ -30,6 +33,12 @@ class Html extends Component
     {
         $this->attr('data-tag', $tag);
         return $this;
+    }
+    public static function __callStatic($name, $arguments)
+    {
+        $self =  new static();
+        $self->tag($name);
+        return $self;
     }
 
     public static function create($content = '')
