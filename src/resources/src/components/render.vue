@@ -1,5 +1,5 @@
 <script>
-    import {defineComponent, toRaw, h,reactive, resolveComponent,isProxy,resolveDirective,withDirectives,getCurrentInstance,onBeforeUnmount} from 'vue'
+    import {defineComponent, toRaw, h,reactive, resolveComponent,isProxy,isReactive,resolveDirective,withDirectives,getCurrentInstance,onBeforeUnmount} from 'vue'
     import {splitCode} from '@/utils/splitCode'
     import {setObjectValue} from '@/utils'
     import dayjs from 'dayjs'
@@ -165,7 +165,7 @@
                 //插槽名称对应内容
                 for (let slot in data.content) {
                     children[slot] = (scope) => {
-                        if (!isProxy(scope) && (JSON.stringify(scope) === '{}' || scope === undefined)) {
+                        if (scope === undefined || !isProxy(scope) && (scope instanceof Object && Object.keys(scope).length == 0)) {
                             scope = slotProps
                         }else{
                             scope = Object.assign(scope,slotProps)

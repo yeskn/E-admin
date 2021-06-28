@@ -91,7 +91,7 @@ class Detail extends Component
 
     public function grid($relation, $title, \Closure $closure)
     {
-        $grid = new Grid($this->getData($relation));
+        $grid = new Grid([['id'=>1,'a'=>'a']]);
         $grid->tableMode();
         call_user_func($closure, $grid);
         $card = $this->createCard()->header("<b>{$title}</b>");

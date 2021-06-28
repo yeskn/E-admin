@@ -230,7 +230,7 @@ abstract class Component implements \JsonSerializable
         }
         if (is_array($content)) {
             foreach ($content as $item) {
-                $this->content($item);
+                $this->content($item,$name);
             }
         } else {
             if (!($content instanceof Component)) {

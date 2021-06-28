@@ -17,6 +17,7 @@ use Eadmin\component\form\field\Icon;
 use Eadmin\component\form\field\Input;
 use Eadmin\component\form\field\Map;
 use Eadmin\component\form\field\Mobile;
+use Eadmin\component\form\field\Money;
 use Eadmin\component\form\field\Number;
 use Eadmin\component\form\field\RadioGroup;
 use Eadmin\component\form\field\Rate;
@@ -68,5 +69,6 @@ trait ComponentForm
         'tag' => DynamicTag::class,
         'spec' => Spec::class,
         'display' => Display::class,
+        'money' => Money::class,
     ];
 }

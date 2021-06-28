@@ -28,6 +28,8 @@ use Eadmin\component\form\field\TimePicker;
 use Eadmin\component\form\FormAction;
 use Eadmin\component\form\FormItem;
 use Eadmin\component\form\FormMany;
+use Eadmin\component\form\step\FormSteps;
+use Eadmin\component\form\step\Result;
 use Eadmin\component\layout\Row;
 use Eadmin\contract\FormInterface;
 use Eadmin\form\traits\ComponentForm;
@@ -49,8 +51,9 @@ use think\Model;
  * @method \Eadmin\component\form\field\Input textarea($field, $label = '') 多行文本输入框
  * @method \Eadmin\component\form\field\Input password($field, $label = '') 密码输入框
  * @method \Eadmin\component\form\field\Mobile mobile($field, $label = '') 手机号输入框
- * @method \Eadmin\component\form\field\Mobile email($field, $label = '') 邮箱输入框
+ * @method \Eadmin\component\form\field\Email email($field, $label = '') 邮箱输入框
  * @method \Eadmin\component\form\field\Number number($field, $label = '') 数字输入框
+ * @method \Eadmin\component\form\field\Money money($field, $label = '') 金额输入框
  * @method \Eadmin\component\form\field\Select select($field, $label = '') 下拉选择器
  * @method \Eadmin\component\form\field\RadioGroup radio($field, $label = '') 单选框
  * @method \Eadmin\component\form\field\CheckboxGroup checkbox($field, $label = '') 多选框
@@ -128,6 +131,7 @@ class Form extends Component
         $this->attr('exceptField', $this->exceptField);
         $this->bindAttr('model', $field);
         $this->bindAttValue('submit', false, true);
+        $this->bindAttValue('reset', false, true);
         $this->bindAttValue('validate', false, true);
         $this->actions = new FormAction($this);
         $this->labelWidth('100px');
@@ -167,6 +171,15 @@ class Form extends Component
     public function title(string $title)
     {
         return $this->bind('eadmin_title', $title);
+    }
+
+    /**
+     * 居中对齐
+     * @param int $width 宽度
+     */
+    public function alignCenter(int $width = 1000)
+    {
+        $this->attr('style', ['width' => $width . 'px', 'margin' => '0 auto']);
     }
 
     /**
@@ -276,6 +289,27 @@ class Form extends Component
     }
 
     /**
+     * 底部元素
+     * @param $content
+     * @return $this
+     */
+    public function footer($content)
+    {
+        $html = Html::create($content)->tag('div');
+
+        //按步骤表单显示
+        $backtrace          = debug_backtrace(1, 5);
+        if($this->steps && $backtrace[4]['class'] == FormSteps::class  && $backtrace[4]['function'] == 'add'){
+            $active = $this->steps->bindAttr('current');
+            $count = $this->steps->count();
+            $html->where($active, $count);
+        }
+
+        $this->content($html, 'footer');
+        return $this;
+    }
+
+    /**
      * 设置提交url
      * @param string $sumbitUrl 提交url
      * @param string $method 提交method
@@ -380,59 +414,45 @@ class Form extends Component
         return $value;
     }
 
-    /**
-     * 步骤表单
-     * @param \Closure $closure
-     * @param string $title 标题
-     * @param string $description 描述
-     * @param string $icon 图标
-     * @return $this
-     */
-    public function step(\Closure $closure, $title, $description = '', $icon = '')
+    public function steps()
     {
-        if (!$this->steps) {
-            $this->steps = Steps::create();
-            $prop = $this->steps->bindAttr('modelValue');
-            $this->except([$prop]);
-            $this->push($this->steps);
-            $this->bindAttr('step', $this->steps->bindAttr('active'), true);
-        }
-        $formItems = $this->collectFields($closure);
-        $this->steps->step($title, $description, $icon);
-        $html = Html::create();
-        $active = $this->steps->bindAttr('active');
-        foreach ($formItems as $item) {
-            $count = count($this->steps->content['default']);
-            $html->content($item)->where($active, $count);
-        }
-        $this->push($html);
-        return $this;
+        $this->steps = new FormSteps($this);
+        $prop = $this->steps->bindAttr('current');
+        $this->except([$prop]);
+        $this->push($this->steps);
+        $this->bindAttr('step', $this->steps->bindAttr('current'), true);
+        return $this->steps;
     }
 
     public function parseSteps()
     {
-        $validateField = $this->bindAttr('validate');
 
         if ($this->steps && isset($this->steps->content['default'])) {
-            $active = $this->steps->bindAttr('active');
+            $validateField = $this->bindAttr('validate');
+            $active = $this->steps->bindAttr('current');
             $count = count($this->steps->content['default']);
-            for ($i = 1; $i <= $count; $i++) {
-                if ($i > 1) {
+            for ($i = 0; $i <= $count; $i++) {
+                if ($i < ($count - 1) && $i > 0) {
                     $back = $i - 1;
-                    $this->actions->addLeftAction(Button::create('上一步')->sizeMedium()->where($active, $i)->event('click', [$active => $back]));
+                    $this->actions->addLeftAction(
+                        Button::create('上一步')
+                            ->sizeMedium()
+                            ->where($active, $i)
+                            ->event('click', [$active => $back])
+                    );
                 }
-                if ($count > $i) {
+                if ($count - 2 > $i) {
                     $next = $i + 1;
                     $this->actions->addLeftAction(
                         Button::create('下一步')
-                            ->typePrimary()->plain()
                             ->sizeMedium()
                             ->where($active, $i)
                             ->event('click', [$validateField => true])
                     );
                 }
             }
-            $this->actions->submitButton()->where($active, $count);
+            $this->actions->style(['margin:0 80px']);
+            $this->actions->submitButton()->where($active, $count - 2);
             $this->actions->hideResetButton();
         }
     }
@@ -775,10 +795,14 @@ class Form extends Component
     /**
      * 表单操作定义
      * @param \Closure $closure
+     * @return FormAction
      */
-    public function actions(\Closure $closure)
+    public function actions(\Closure $closure = null)
     {
-        call_user_func_array($closure, [$this->actions]);
+        if ($closure) {
+            call_user_func_array($closure, [$this->actions]);
+        }
+        return $this->actions;
     }
 
     public function itemComponent()
@@ -827,6 +851,11 @@ class Form extends Component
         if (!is_null($this->afterSave)) {
             call_user_func_array($this->afterSave, [$data, $this->drive->model()]);
         }
+        //步骤表单
+        if (isset($data['eadmin_step'])) {
+            $id = $this->drive->model()[$this->drive->getPk()];
+            call_user_func_array($this->steps->getClosure(), [new Result($data, $result, $id)]);
+        }
         return $result;
     }
 
@@ -839,6 +868,11 @@ class Form extends Component
     {
         $this->event('success', $value);
         return $this;
+    }
+
+    public function __get($name)
+    {
+        return $this->getData($name);
     }
 
     public function __call($name, $arguments)
@@ -880,7 +914,11 @@ class Form extends Component
             $pk = $this->drive->getPk();
             $this->data[$pk] = $this->drive->getData($pk);
         }
-
+        //步骤表单
+        if ($this->steps) {
+            $this->setData('eadmin_step', $this->steps->bindAttr('current'));
+            $this->setData('eadmin_step_reset', $this->bindAttr('reset'));
+        }
         //将值绑定到form
         $this->bind($field, $this->data);
     }

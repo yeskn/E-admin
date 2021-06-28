@@ -28,7 +28,8 @@ class FormAction extends Component
     protected $hideSubmitButton = false;
     //隐藏取消按钮
     protected $hideCancelButton = false;
-
+    //隐藏操作
+    protected $hideAction = false;
     public function __construct($form)
     {
         $this->form = $form;
@@ -80,27 +81,34 @@ class FormAction extends Component
     }
 
     /**
+     * 隐藏操作
+     * @param bool $bool
+     */
+    public function hide($bool = true){
+        $this->hideAction = $bool;
+    }
+    /**
      * 隐藏取消按钮
      */
-    public function hideCancelButton()
+    public function hideCancelButton($bool = true)
     {
-        $this->hideCancelButton = true;
+        $this->hideCancelButton = $bool;
     }
 
     /**
      * 隐藏提交按钮
      */
-    public function hideSubmitButton()
+    public function hideSubmitButton($bool = true)
     {
-        $this->hideSubmitButton = true;
+        $this->hideSubmitButton = $bool;
     }
 
     /**
      * 隐藏重置按钮
      */
-    public function hideResetButton()
+    public function hideResetButton($bool = true)
     {
-        $this->hideResetButton = true;
+        $this->hideResetButton = $bool;
     }
 
     /**
@@ -133,6 +141,8 @@ class FormAction extends Component
             $this->submitButton = null;
         }
         $this->form->attr('action', [
+            'attr'=>$this->attribute,
+            'hide' => $this->hideAction,
             'submit' => $this->submitButton,
             'reset' => $this->resetButton,
             'cancel' => $this->cancelButton,
