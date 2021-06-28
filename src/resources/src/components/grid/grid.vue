@@ -1,7 +1,7 @@
 <template>
     <div class="grid">
         <!--工具栏-->
-        <div class="tools" v-if="!hideTools">
+        <div :class="['tools',custom?'custom':'']" v-if="!hideTools">
             <el-row style="padding-top: 10px">
                 <el-col :md="6" style="display: flex;margin-bottom: 10px" v-if="quickSearchOn">
                     <!--快捷搜索-->
@@ -32,7 +32,7 @@
                     <render v-for="tool in tools" :data="tool" :ids="selectIds" :grid-params="params" :slot-props="grid"></render>
                 </el-col>
                 <el-col :md="4" >
-                    <div style="float: right;margin-right: 15px">
+                    <div style="float: right;margin-left: 15px">
                         <el-tooltip placement="top" :content="trashed?'数据列表':'回收站'"  v-if="!hideTrashed">
                             <el-button :type="trashed?'primary':'info'" size="mini" circle :icon="trashed?'el-icon-s-grid':'el-icon-delete'" @click="trashedHandel"></el-button>
                         </el-tooltip>
@@ -40,7 +40,7 @@
                         <el-button icon="el-icon-refresh" size="mini" circle style="margin-right: 10px"
                                    @click="loading=true"></el-button>
                         <!--列过滤器-->
-                        <el-dropdown trigger="click" :hide-on-click="false">
+                        <el-dropdown trigger="click" :hide-on-click="false" v-if="!custom">
                             <el-button icon="el-icon-s-grid" size="mini"></el-button>
                             <template #dropdown>
                                 <el-dropdown-menu>
@@ -60,45 +60,62 @@
         <div class="filter" v-if="filter" v-show="filterShow">
             <render :data="filter" ></render>
         </div>
-        <div v-if="isMobile" style="background: #ffffff;overflow: auto" v-loading="loading">
-            <el-row v-for="row in tableData" :key="row.eadmin_id" style="border-top: 1px solid rgb(240, 240, 240);">
-                <el-col :span="24" >
+        <div v-if="custom" >
+            <a-list :data-source="tableData" :loading="loading" row-key="eadmin_id" v-bind="custom.attribute">
+                <template #header v-if="custom.header"><render :data="custom.header" :slot-props="grid"></render></template>
+                <template #footer v-if="custom.footer"><render :data="custom.footer" :slot-props="grid"></render></template>
+                <template #renderItem="{ item }">
+                    <a-list-item>
+                        <render :data="item.custom" :slot-props="grid"></render>
+                        <div v-if="item.EadminAction" style="margin-top: 10px">
+                            <render :data="item.EadminAction" :slot-props="grid"></render>
+                        </div>
+                    </a-list-item>
+                </template>
+            </a-list>
+        </div>
+        <div v-else>
+            <div v-if="isMobile" style="background: #ffffff;overflow: auto" v-loading="loading">
+                <el-row v-for="row in tableData" :key="row.eadmin_id" style="border-top: 1px solid rgb(240, 240, 240);">
+                    <el-col :span="24" >
                         <div v-for="column in tableColumns" style="padding: 15px 10px;font-size: 14px;display: flex">
                             <div v-if="column.label" style="margin-right: 5px;color: #888888">{{column.label}}<span>:</span></div>
                             <render :data="row[column.prop]" :slot-props="grid"></render>
                         </div>
-                </el-col>
-            </el-row>
-        </div>
-        <!--表格-->
-        <a-table v-else :row-selection="rowSelection" @expand="expandChange" @change="tableChange" :columns="tableColumns" :data-source="tableData"  :expanded-row-keys="expandedRowKeys" :pagination="false" :loading="loading" v-bind="$attrs" row-key="eadmin_id" ref="dragTable">
-            <template #title v-if="header">
-                <div class="header"><render :data="header"></render></div>
-            </template>
-            <template v-for="column in tableColumns" v-slot:[column.slots.title]>
-                <render :data="column.header" :slot-props="grid"></render>
-            </template>
-            <template #expandedRowRender="{ record  }" v-if="expandedRow">
-                <render :data="record.EadminExpandRow" :slot-props="grid"></render>
-            </template>
-            <template #default="{ text , record , index }">
-                <render :data="text" :slot-props="grid"></render>
-            </template>
+                    </el-col>
+                </el-row>
+            </div>
+            <!--表格-->
+            <a-table v-else :row-selection="rowSelection" @expand="expandChange" @change="tableChange" :columns="tableColumns" :data-source="tableData"  :expanded-row-keys="expandedRowKeys" :pagination="false" :loading="loading" v-bind="$attrs" row-key="eadmin_id" ref="dragTable">
+                <template #title v-if="header">
+                    <div class="header"><render :data="header"></render></div>
+                </template>
+                <template v-for="column in tableColumns" v-slot:[column.slots.title]>
+                    <render :data="column.header" :slot-props="grid"></render>
+                </template>
+                <template #expandedRowRender="{ record  }" v-if="expandedRow">
+                    <render :data="record.EadminExpandRow" :slot-props="grid"></render>
+                </template>
+                <template #default="{ text , record , index }">
+                    <render :data="text" :slot-props="grid"></render>
+                </template>
 
-            <template #sortDrag="{ text , record , index }">
-                <div style="display: flex;flex-direction: column">
-                    <el-tooltip  effect="dark" content="置顶" placement="right-start"><i @click="sortTop(index,record)" class="el-icon-caret-top" style="cursor: pointer"></i></el-tooltip>
-                    <el-tooltip effect="dark" content="拖动排序" placement="right-start"><i class="el-icon-rank sortHandel" style="font-weight:bold;cursor: grab"></i></el-tooltip>
-                    <el-tooltip  effect="dark" content="置底" placement="right-start"><i @click="sortBottom(index,record)" class="el-icon-caret-bottom" style="cursor: pointer"></i></el-tooltip>
-                </div>
-            </template>
-            <template #sortInput="{ text , record , index }">
-                   <el-input v-model="text.content.default[0]" @change="sortInput(record.eadmin_id,text.content.default[0])"></el-input>
-            </template>
-        </a-table>
+                <template #sortDrag="{ text , record , index }">
+                    <div style="display: flex;flex-direction: column">
+                        <el-tooltip  effect="dark" content="置顶" placement="right-start"><i @click="sortTop(index,record)" class="el-icon-caret-top" style="cursor: pointer"></i></el-tooltip>
+                        <el-tooltip effect="dark" content="拖动排序" placement="right-start"><i class="el-icon-rank sortHandel" style="font-weight:bold;cursor: grab"></i></el-tooltip>
+                        <el-tooltip  effect="dark" content="置底" placement="right-start"><i @click="sortBottom(index,record)" class="el-icon-caret-bottom" style="cursor: pointer"></i></el-tooltip>
+                    </div>
+                </template>
+                <template #sortInput="{ text , record , index }">
+                    <el-input v-model="text.content.default[0]" @change="sortInput(record.eadmin_id,text.content.default[0])"></el-input>
+                </template>
+            </a-table>
+
+        </div>
 
         <!--分页-->
-        <el-pagination class="pagination"
+        <el-pagination :class="['pagination',custom?'custom':'']"
                        @size-change="handleSizeChange"
                        @current-change="handleCurrentChange"
                        v-if="pagination"
@@ -168,10 +185,8 @@
             params:Object,
             addParams:Object,
             proxyData:Object,
-            // defer:{
-            //     type:Boolean,
-            //     default:false
-            // },
+            //自定义视图
+            custom:[Object, Boolean],
         },
         inheritAttrs: false,
         emits: ['update:modelValue','update:selection'],
@@ -640,6 +655,10 @@
 </script>
 
 <style scoped>
+    .custom{
+        background: none !important;
+        padding-left: 0 !important;
+    }
     .header{
         margin-left: 10px;
 
