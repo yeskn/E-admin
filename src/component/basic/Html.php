@@ -40,7 +40,12 @@ class Html extends Component
         $self->tag($name);
         return $self;
     }
-
+    public static function code($content){
+        $self =  new static();
+        $self->name = 'highlight';
+        $self->attr('code',$content);
+        return $self;
+    }
     public static function create($content = '')
     {
         return new static($content);
