@@ -92,7 +92,10 @@ const im = defineAsyncComponent(() =>
 const watchComponent = defineAsyncComponent(() =>
     import('./components/watchComponent.vue')
 )
-
+const highlight = defineAsyncComponent(() =>
+    import('./components/highlight.vue')
+)
+app.component('highlight',highlight)
 app.component('EadminForm',form)
 app.component('EadminManyItem',manyItem)
 app.component('EadminDialog',dialog)

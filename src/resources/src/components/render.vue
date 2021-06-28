@@ -243,6 +243,7 @@
                 if(directiveBind.length > 0){
                     return withDirectives(h(component, attribute, children),directiveBind)
                 }else{
+
                     return h(component, attribute, children)
                 }
             }
