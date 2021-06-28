@@ -287,6 +287,7 @@ class Grid extends Component
 	 */
 	public function destroy($id)
 	{
+		$this->exec();
 		$trueDelete = Request::delete('trueDelete');
 		if (!is_null($this->beforeDel)) {
 			call_user_func($this->beforeDel, $id, $trueDelete);
@@ -302,7 +303,8 @@ class Grid extends Component
      */
     public function update($ids, $data)
     {
-        if (!is_null($this->beforeUpdate)) {
+		$this->exec();
+		if (!is_null($this->beforeUpdate)) {
             call_user_func($this->beforeUpdate, $ids, $data);
         }
         return $this->drive->update($ids, $data);
