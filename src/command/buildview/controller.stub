@@ -5,6 +5,7 @@ namespace {%namespace%};
 use Eadmin\Controller;
 use Eadmin\form\Form;
 use Eadmin\grid\Actions;
+use Eadmin\component\form\FormAction;
 use Eadmin\detail\Detail;
 use Eadmin\grid\Filter;
 use Eadmin\grid\Grid;
@@ -64,8 +65,9 @@ class {%className%} extends Controller
             $form->title($this->title);
 {%form%}
             // 操作栏
-			$form->actions(function (FormItem $formItem) {
-
+			$form->actions(function (FormAction $action) {
+			    // 隐藏重置按钮
+                // $action->hideResetButton();
 			});
             // 保存前回调
             $form->saving(function ($post) {
