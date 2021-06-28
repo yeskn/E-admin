@@ -78,7 +78,7 @@ class Backup extends Controller
             $form->number('database_number', '最多保留')->min(1)->append('<span style="padding-left: 12px">份</span>')->required();
             $form->number('database_day', '	数据库每')->min(1)->append('<span style="padding-left: 12px">天自动备份</span>')->required();
             $form->actions(function (FormAction $action) {
-                $action->submitButton()->sizeSmall();
+                $action->submitButton()->sizeMini();
                 $action->addRightAction(Button::create('备份数据库')->typeWarning()->sizeMini()->save([], 'backup/add'));
                 $action->hideResetButton();
             });
@@ -108,6 +108,7 @@ class Backup extends Controller
     {
         $res = BackupData::instance()->backup();
         if ($res === true) {
+            
             admin_success_message('数据库备份成功')->refresh();
         } else {
             admin_error_message($res);
