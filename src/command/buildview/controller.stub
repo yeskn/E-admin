@@ -33,6 +33,10 @@ class {%className%} extends Controller
             $grid->quickSearch();
             $grid->setForm($this->form())->dialog();
             $grid->setDetail($this->detail());
+            // 工具栏内容（可html组件嵌套）
+            // $grid->tools('');
+            // 头部内容（可html组件嵌套）
+            // $grid->header('');
             // 操作工具栏
             $grid->actions(function (Actions $action, $data) {
 
@@ -59,6 +63,18 @@ class {%className%} extends Controller
          return Form::create(new {%model%},function (Form $form){
             $form->title($this->title);
 {%form%}
+            // 操作栏
+			$form->actions(function (FormItem $formItem) {
+
+			});
+            // 保存前回调
+            $form->saving(function ($post) {
+
+            });
+            // 保存后回调
+            $form->saved(function ($post, $data) {
+
+            });
          });
     }
 
