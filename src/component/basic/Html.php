@@ -42,8 +42,8 @@ class Html extends Component
     }
     public static function code($content){
         $self =  new static();
-        $self->name = 'highlight';
-        $self->attr('code',$content);
+        $self->name = 'pre';
+        $self->content(Html::create($content)->tag('code'))->directive('highlight','');
         return $self;
     }
     public static function create($content = '')

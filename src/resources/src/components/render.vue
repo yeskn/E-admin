@@ -1,5 +1,5 @@
 <script>
-    import {defineComponent, toRaw, h,reactive, resolveComponent,isProxy,isReactive,resolveDirective,withDirectives,getCurrentInstance,onBeforeUnmount} from 'vue'
+    import {defineComponent, toRaw, h,reactive, resolveComponent,isProxy,resolveDirective,withDirectives,getCurrentInstance,onBeforeUnmount} from 'vue'
     import {splitCode} from '@/utils/splitCode'
     import {setObjectValue} from '@/utils'
     import dayjs from 'dayjs'
@@ -272,25 +272,34 @@
                     if (typeof (item.where) == 'object' && (item.where.AND.length > 0 || item.where.OR.length > 0)) {
                         // //条件if渲染实现
                         let expression = whereCompile(item.where.AND, item.where.OR,scope)
-                        if (typeof (item) == 'object') {
-                            expression = expression + ' ? renderComponent(item,scope) : null'
-                        } else {
-                            expression = expression + ' ? h({setup(){return {...modelValue}},template:item}) : null'
-                        }
+                        expression = expression + ' ? renderComponent(item,scope) : null'
                         return eval(expression)
                     } else {
                         if (typeof (item) == 'object') {
                             return renderComponent(item, scope)
                         } else {
                             if(item && typeof(item) == 'string' &&item.indexOf('#') !== 0){
-                                return h({
-                                    setup() {
-                                        return {
-                                            ...modelValue
+                                if(checkHtml(item) || checkTemplate(item)){
+                                    return h({
+                                        setup() {
+                                            return {
+                                                ...modelValue
+                                            }
+                                        },
+                                        template: `${item}`,
+                                    })
+                                }else{
+                                    return h({
+                                        setup() {
+                                            return {
+                                                ...modelValue
+                                            }
+                                        },
+                                        render() {
+                                            return item
                                         }
-                                    },
-                                    template: `${item}`
-                                })
+                                    })
+                                }
                             }else{
                                 return item
                             }
@@ -299,7 +308,22 @@
                     }
                 })
             }
-
+            /**
+             * 字符串是否含有html标签的检测
+             * @param htmlStr
+             */
+            function checkHtml(htmlStr) {
+                var  reg = /<[^>^\n]+>/g;
+                return reg.test(htmlStr);
+            }
+            /**
+             * 字符串是否含有{{}}标签的检测
+             * @param htmlStr
+             */
+            function checkTemplate(htmlStr) {
+                var  reg = /\{\{([a-zA-Z]+)\}\}/g;
+                return reg.test(htmlStr);
+            }
             /**
              * 合并where
              * @param whereAnd
