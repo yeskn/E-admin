@@ -279,27 +279,35 @@
                             return renderComponent(item, scope)
                         } else {
                             if(item && typeof(item) == 'string' &&item.indexOf('#') !== 0){
-                                if(checkHtml(item) || checkTemplate(item)){
-                                    return h({
-                                        setup() {
-                                            return {
-                                                ...modelValue
-                                            }
-                                        },
-                                        template: `${item}`,
-                                    })
-                                }else{
-                                    return h({
-                                        setup() {
-                                            return {
-                                                ...modelValue
-                                            }
-                                        },
-                                        render() {
-                                            return item
-                                        }
-                                    })
-                                }
+                                return h({
+                                            setup() {
+                                                return {
+                                                    ...modelValue
+                                                }
+                                            },
+                                            template: `${item}`,
+                                })
+                                // if(checkHtml(item) || checkTemplate(item)){
+                                //     return h({
+                                //         setup() {
+                                //             return {
+                                //                 ...modelValue
+                                //             }
+                                //         },
+                                //         template: `${item}`,
+                                //     })
+                                // }else{
+                                //     return h({
+                                //         setup() {
+                                //             return {
+                                //                 ...modelValue
+                                //             }
+                                //         },
+                                //         render() {
+                                //             return item
+                                //         }
+                                //     })
+                                // }
                             }else{
                                 return item
                             }

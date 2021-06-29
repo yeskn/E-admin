@@ -98,6 +98,10 @@ const highlight = defineAsyncComponent(() =>
 const EadminCheckboxGroup = defineAsyncComponent(() =>
     import('./components/checkbox.vue')
 )
+const EadminStep = defineAsyncComponent(() =>
+    import('./components/step.vue')
+)
+app.component('EadminStep',EadminStep)
 app.component('EadminCheckboxGroup',EadminCheckboxGroup)
 app.component('highlight',highlight)
 app.component('EadminForm',form)

@@ -3,7 +3,7 @@
     <div style="display: flex;align-items:center;height: 35px" @mouseover="showDownload=true" @mouseout="showDownload=false">
       <i v-show="showDownload" class="el-icon-download down" />
       <el-image v-show="!showDownload" :src="fileIcon(url)" style="width: 32px;height: 32px;">
-        <div slot="error" style="display: flex; align-items: center;"> <i class="el-icon-document" style="font-size: 32px" /></div>
+        <template #error style="display: flex; align-items: center;"> <i class="el-icon-document" style="font-size: 32px" /></template>
       </el-image>
       &nbsp;&nbsp;{{ lastName(url,filename) }}
     </div>
