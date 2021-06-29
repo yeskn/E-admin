@@ -91,7 +91,7 @@ class Detail extends Component
 
     public function grid($relation, $title, \Closure $closure)
     {
-        $grid = new Grid([['id'=>1,'a'=>'a']]);
+        $grid = new Grid($this->getData($relation));
         $grid->tableMode();
         call_user_func($closure, $grid);
         $card = $this->createCard()->header("<b>{$title}</b>");
@@ -113,7 +113,10 @@ class Detail extends Component
      */
     public function card($title, \Closure $closure)
     {
-        $card = $this->createCard()->header(Html::create($title)->tag('b'));
+        $card = $this->createCard();
+        if($title){
+            $card->header(Html::create($title)->tag('b'));
+        }
         $fields = $this->collectFields($closure);
         $row = new Row();
         $row->gutter(5);
@@ -153,7 +156,7 @@ class Detail extends Component
         return $field;
     }
 
-    protected function push($field)
+    public function push($field)
     {
         $this->fields[] = $field;
     }

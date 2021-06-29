@@ -39,7 +39,7 @@ class Field extends Column
         $this->attr('style', [
             'fontSize'     => '14px',
             'borderBottom' => '1px solid rgb(240, 240, 240)',
-            'padding'      => '15px 0',
+            'padding'      => '13px 0',
             'display'=>'flex'
         ]);
         if (!empty($label)) {
@@ -220,6 +220,9 @@ class Field extends Column
      */
     public function md($span = 24)
     {
+        $style = $this->attr('style');
+        unset($style['borderBottom']);
+        $this->style($style);
         $this->span($span);
         return $this;
     }
