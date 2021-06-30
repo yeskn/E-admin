@@ -10,7 +10,7 @@ class Steps extends Component
 {
     protected $name = 'ASteps';
 
-    public function __construct($value)
+    public function __construct($value=0)
     {
         $this->bindAttValue('current',$value);
     }
