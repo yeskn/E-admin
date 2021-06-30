@@ -109,7 +109,7 @@ class systemMenuSeeder extends Seeder
                     'pid'    => 0,
                     'name'   => '总览',
                     'icon'   => '',
-                    'url'    => 'index/dashboard',
+                    'url'    => 'admin/index/dashboard',
                     'sort'   => 0,
                     'mark'   => '',
                     'status' => 1,

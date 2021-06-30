@@ -4,6 +4,7 @@
 namespace Eadmin\command;
 
 
+use Symfony\Component\Finder\Finder;
 use think\console\Command;
 use think\console\Input;
 use think\console\input\Option;
@@ -27,7 +28,7 @@ class Install extends Command
      */
     protected function execute(Input $input, Output $output)
     {
-        $force = $input->getOption('force');
+12        $force = $input->getOption('force');
         $params = [];
         if($force){
             //获取数据库所有表
@@ -44,7 +45,12 @@ class Install extends Command
         Console::call('migrate:eadmin',['cmd'=>'run','path'=>$path.'/database/migrations']);
         Console::call('seed:eadmin',['path'=> $path.'/database/seeds']);
         Console::call('eadmin:publish',$params);
-        copy($path.'/assets/admin.php',app()->getConfigPath().'admin.php');
+        $configPath = $path.'/assets/config';
+        $finder = new Finder();
+        foreach ($finder->in($configPath) as $file) {
+            $path = $file->getRealPath();
+            copy($path,app()->getConfigPath().$file->getFilename());
+        }
         $output->writeln("<info>install success</info>");
     }
 }

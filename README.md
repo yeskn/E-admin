@@ -1,3 +1,7 @@
+<div align="center">
+    <img src="http://rocky-git.gitee.io/e-admin-sites/static/logo.50c3504.png" height="80"> 
+</div>
+<br>
 <p align=""><code>E-admin</code>是一个基于<a href="https://www.laravel-admin.org/" target="_blank">Element Plus</a>开发而成后台系统构建工具，无需关注页面模板JavaScript，只用php代码即可快速构建出一个功能完善的后台系统。。</p>
 
 
@@ -6,7 +10,7 @@
 
 
 
-![](http://rocky-git.gitee.io/e-admin-sites/static/theme-index-bg2.987199c.png)
+![](http://rocky-git.gitee.io/e-admin-sites/static/theme-index-bg1.fed340c.png)
 
 
 

@@ -8,5 +8,5 @@ use Eadmin\component\Component;
 
 class Step extends Component
 {
-    protected $name = 'AStep';
+    protected $name = 'EadminStep';
 }

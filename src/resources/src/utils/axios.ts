@@ -54,7 +54,7 @@ service.interceptors.response.use(
                     type: 'error',
                     duration: 1000,
                     onClose: function () {
-                        if (!localStorage.getItem('eadmin_token') && location.href.indexOf('/#/login') === -1) {
+                        if (!localStorage.getItem('eadmin_token') && location.href.indexOf('/#/admin/login') === -1) {
                             location.reload()
                         }
                     }
