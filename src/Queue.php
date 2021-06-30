@@ -117,7 +117,7 @@ abstract class Queue
             } else {
                 $this->error('<b style="color: red">任务失败</b>');
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             $this->error('<b style="color: red">任务失败</b>：' . $exception->getMessage());
         }
     }

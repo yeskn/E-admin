@@ -17,8 +17,8 @@ class ExcelQueue extends Queue
     {
         unset($data['eadmin_queue']);
         request()->withGet($data);
-        $class    = request()->param('eadmin_class');
-        $action   = request()->param('eadmin_function');
+        $class    = request()->get('eadmin_class');
+        $action   = request()->get('eadmin_function');
         $instance = app($class);
         $reflect  = new \ReflectionMethod($instance, $action);
         $class = explode('\\',$class);
