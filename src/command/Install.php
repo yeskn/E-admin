@@ -28,7 +28,7 @@ class Install extends Command
      */
     protected function execute(Input $input, Output $output)
     {
-12        $force = $input->getOption('force');
+        $force = $input->getOption('force');
         $params = [];
         if($force){
             //获取数据库所有表

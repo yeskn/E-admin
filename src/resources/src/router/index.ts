@@ -11,7 +11,7 @@ import app from "@/app";
 let asyncCmponent:any
 const routes = [
     {
-        path: '/login',
+        path: '/admin/login',
         component: Login,
     },
     {

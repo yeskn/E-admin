@@ -154,7 +154,7 @@
             //退出登录
             function logout() {
                 action.logout().then(res=>{
-                    router.push(`/login?redirect=${route.fullPath}`)
+                    router.push(`/admin/login?redirect=${route.fullPath}`)
                 })
             }
             //刷新
