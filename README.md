@@ -7,6 +7,8 @@
 
 - [中文文档](http://rocky-git.gitee.io/e-admin-sites/#/zh-CN/component/installation)
 - [Demo / 在线演示](https://eadmin.togy.com.cn)
+- [github](https://github.com/rocky-git/E-admin)
+- [gitee(码云)](https://gitee.com/rocky-git/eadmin)
 
 
 
