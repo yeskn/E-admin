@@ -31,7 +31,7 @@
 
 
 ### 环境
- - PHP >= 7.4.0
+ - PHP >= 7.1.0
  - ThinkPhP 6.0
  - Fileinfo PHP Extension
 
