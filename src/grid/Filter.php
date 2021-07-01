@@ -403,16 +403,18 @@ class Filter
 
     /**
      * 分组下拉框
-     * @param array $options 选项值
+     * @param array  $options 选项值
      * @param string $name 分组字段名
+	 * @param string $optionLabel 选项名称
+	 * @param string $id 选项id
      * @return \Eadmin\component\form\field\Select
      */
-    public function selectGroup(array $options, $name = 'options')
+    public function selectGroup(array $options, $name = 'options', $optionLabel = 'label', $id = 'id')
     {
         $item  = $this->form->popItem();
         $field = $item->attr('prop');
         $label = $item->attr('label');
-        return $this->form->select($field, $label)->groupOptions($options, $name);
+        return $this->form->select($field, $label)->groupOptions($options, $name, $optionLabel, $id);
     }
 
     /**
