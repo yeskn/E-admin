@@ -11,6 +11,10 @@ namespace Eadmin\component\basic;
 
 use Eadmin\component\Component;
 
+/**
+ * Class Lists
+ * @package Eadmin\component\basic
+ */
 class Lists extends Component
 {
     protected $name = 'AList';

@@ -92,7 +92,18 @@ const im = defineAsyncComponent(() =>
 const watchComponent = defineAsyncComponent(() =>
     import('./components/watchComponent.vue')
 )
-
+const highlight = defineAsyncComponent(() =>
+    import('./components/highlight.vue')
+)
+const EadminCheckboxGroup = defineAsyncComponent(() =>
+    import('./components/checkbox.vue')
+)
+const EadminStep = defineAsyncComponent(() =>
+    import('./components/step.vue')
+)
+app.component('EadminStep',EadminStep)
+app.component('EadminCheckboxGroup',EadminCheckboxGroup)
+app.component('highlight',highlight)
 app.component('EadminForm',form)
 app.component('EadminManyItem',manyItem)
 app.component('EadminDialog',dialog)

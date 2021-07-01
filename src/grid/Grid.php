@@ -11,6 +11,7 @@ use Eadmin\component\basic\Image;
 use Eadmin\component\basic\Router;
 use Eadmin\component\Component;
 use Eadmin\component\grid\Column;
+use Eadmin\component\grid\Custom;
 use Eadmin\component\grid\Pagination;
 use Eadmin\component\layout\Content;
 use Eadmin\contract\GridInterface;
@@ -97,6 +98,9 @@ class Grid extends Component
     //初始化
     protected static $init = null;
 
+    //自定义列表元素
+    protected $customClosure = null;
+
     public function __construct($data)
     {
 
@@ -108,11 +112,11 @@ class Grid extends Component
             $this->drive = new \Eadmin\grid\drive\Arrays($data);
         }
 
-       
+
         $this->hideTrashed(!$this->drive->trashed());
         //分页初始化
         $this->pagination = new Pagination();
-        $this->pagination->pageSize(20)->background();
+        $this->pagination->pageSize(20);
         //操作列
         $this->actionColumn = new Actions($this);
         $this->bindAttValue('modelValue', false, true);
@@ -459,6 +463,17 @@ class Grid extends Component
     }
 
     /**
+     * 自定义列表元素
+     * @param \Closure $closure
+     * @return Custom
+     */
+    public function custom(\Closure $closure){
+        $this->customClosure = $closure;
+        $custom = new Custom();
+        $this->attr('custom',$custom);
+        return $custom;
+    }
+    /**
      * 解析列返回表格数据
      * @param array $datas 数据源
      * @param bool $export
@@ -472,26 +487,30 @@ class Grid extends Component
         foreach ($datas as $data) {
             //主键
             $row = ['eadmin_id' => $data[$this->drive->getPk()]];
-            //树形父级pid
-            if ($this->isTree) {
-                $row[$this->treeId] = $data[$this->treeId];
-                $row[$this->treeParent] = $data[$this->treeParent];
-            }
-            foreach ($this->column as $column) {
-                $field = $column->attr('prop');
-                $row[$field] = $column->row($data);
-                if ($export) {
-                    $row[$field] = $column->getExportData();
+            if(is_null($this->customClosure)){
+                //树形父级pid
+                if ($this->isTree) {
+                    $row[$this->treeId] = $data[$this->treeId];
+                    $row[$this->treeParent] = $data[$this->treeParent];
                 }
+                foreach ($this->column as $column) {
+                    $field = $column->attr('prop');
+                    $row[$field] = $column->row($data);
+                    if ($export) {
+                        $row[$field] = $column->getExportData();
+                    }
+                }
+                if (!is_null($this->expandRow)) {
+                    $expandRow = call_user_func($this->expandRow, $data);
+                    $row['EadminExpandRow'] = Html::create($expandRow);
+                }
+            }else{
+                $row['custom'] = call_user_func($this->customClosure,$data);
             }
             if (!$this->hideAction && !$export) {
                 $actionColumn = clone $this->actionColumn;
                 $actionColumn->row($data);
                 $row['EadminAction'] = $actionColumn;
-            }
-            if (!is_null($this->expandRow)) {
-                $expandRow = call_user_func($this->expandRow, $data);
-                $row['EadminExpandRow'] = Html::create($expandRow);
             }
             $tableData[] = $row;
         }

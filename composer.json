@@ -14,10 +14,13 @@
     }
   ],
   "require": {
-  "php": ">=7.1.0",
+    "php": ">=7.1.0",
+    "topthink/framework": "^6.0.0",
+    "topthink/think-migration": "^3.0",
+    "topthink/think-multi-app": "^1.0",
+    "topthink/think-view": "^1.0",
     "iidestiny/flysystem-oss": "^2.0",
     "overtrue/flysystem-qiniu": "^1.0",
-    "overtrue/wechat": "~5.0",
     "symfony/finder": "v4.4.9",
     "symfony/filesystem": "v5.2.4",
     "guzzlehttp/guzzle": "~6.0",

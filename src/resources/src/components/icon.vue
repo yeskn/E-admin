@@ -19,8 +19,7 @@
 </template>
 
 <script>
-    import 'font-awesome/css/font-awesome.css'
-    import {defineComponent,ref,watch,computed} from 'vue'
+    import {defineComponent,ref,watch} from 'vue'
     export default defineComponent({
         name: "EadminIcon",
         props: {

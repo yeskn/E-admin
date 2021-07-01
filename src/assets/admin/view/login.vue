@@ -222,7 +222,7 @@
     .login-container {
         min-height: 100%;
         width: 100%;
-        background: url("{:request()->domain()}/login.png") no-repeat;
+        background: url("{:request()->domain()}/eadmin/login.png") no-repeat;
         overflow: hidden;
         display: flex;
         align-items: center;

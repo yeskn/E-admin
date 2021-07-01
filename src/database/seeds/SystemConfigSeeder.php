@@ -25,7 +25,7 @@ class SystemConfigSeeder extends Seeder
                 array(
                     'id'    => 2,
                     'name'  => 'web_logo',
-                    'value' => 'http://eadmin.com/upload/20210218/912e2cac2983c1485f985b71b9a1a057.png',
+                    'value' => 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
                 ),
             2 =>
                 array(

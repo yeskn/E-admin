@@ -17,6 +17,7 @@ class SystemUserSeeder extends Seeder
         $data = [
             'id'       => 1,
             'username' => 'admin',
+            'avatar' => 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
             'nickname' => 'admin',
             'password' => password_hash('admin', PASSWORD_DEFAULT),
         ];

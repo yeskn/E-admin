@@ -1,9 +1,11 @@
 @import './variables.scss';
 @import './element-ui.scss';
 @import './sidebar.scss';
+@import './highlight.scss';
 html {
   height: 100%;
 }
+
 body {
   height: 100%;
   background: #e9ecf3;

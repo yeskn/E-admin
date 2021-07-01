@@ -11,7 +11,7 @@ import app from "@/app";
 let asyncCmponent:any
 const routes = [
     {
-        path: '/login',
+        path: '/admin/login',
         component: Login,
     },
     {
@@ -31,8 +31,8 @@ const router = createRouter({
 var formRoute:RouteLocationNormalized
 router.beforeEach( async(to:RouteLocationNormalized, from:RouteLocationNormalized,next:NavigationGuardNext) => {
     formRoute = from
-    if(!localStorage.getItem('eadmin_token') && to.path !== '/login'){
-        return next('/login?redirect='+to.fullPath)
+    if(!localStorage.getItem('eadmin_token') && to.path !== '/admin/login'){
+        return next('/admin/login?redirect='+to.fullPath)
     }
     if(!state.info.id && localStorage.getItem('eadmin_token')){
         await action.getInfo()

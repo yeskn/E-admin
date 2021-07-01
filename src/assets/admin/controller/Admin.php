@@ -105,6 +105,7 @@ class Admin extends Controller
             });
             $grid->quickSearch();
             $grid->setForm($this->form())->dialog();
+			$grid->hideDeleteButton();
         });
 
     }
