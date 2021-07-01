@@ -37,7 +37,7 @@ class FileSystemService extends Service
 				}
 				$datas[] = [
 					'name'=>$file->getFilename(),
-					'url'=> FileService::instance()->url($urlPath),
+					'url'=> FileService::instance()->url($urlPath, 'local'),
 					'download'=> app()->request->domain().'/eadmin/download?filename='.$file->getFilename().'&path='.$file->getPathname(),
 					'path'=>$file->getPathname(),
 					'dir'=>$file->isDir(),
