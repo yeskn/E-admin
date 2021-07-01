@@ -35,9 +35,6 @@ class Upload extends Field
         $this->attr('token', Admin::token()->get());
         $uploadType = config('admin.uploadDisks');
         $this->disk($uploadType);
-        if ($uploadType != 'local') {
-            $this->finder(false);
-        }
     }
 
 
