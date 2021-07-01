@@ -135,7 +135,9 @@ class Select extends Field
             $this->content($selectGroup);
         }
         $this->bindValue($bindOptions, 'options', $this->optionBindField);
-        $this->formItem->form()->except([$this->optionBindField]);
+        if ($this->formItem) {
+			$this->formItem->form()->except([$this->optionBindField]);
+		}
         return $this;
     }
 
