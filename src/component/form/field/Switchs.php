@@ -26,17 +26,25 @@ class Switchs extends Field
     public function __construct($field = null, $value = '')
     {
         parent::__construct($field, $value);
-        $this->state([1 => '开启'], [0 => '关闭']);
+        $this->state([
+        	[1 => '开启'],
+			[0 => '关闭']
+		]);
     }
 
     /**
      * 设置状态
-     * @param array $active 开启状态 [1=>'开启']
-     * @param array $inactive 关闭状态 [0=>'关闭]
-     * @return $this
+     * @param array $options 选项数组 (二维数组)
+	 * 开启状态的在下标0，关闭状态的在下标1
+	 *      $arr = [
+	 *			[1 => '开启'],
+	 *			[0 => '关闭'],
+	 * 		]
+	 * @return $this
      */
-    public function state(array $active, array $inactive)
+    public function state($options)
     {
+    	list($active, $inactive) = $options;
         $this->checkedChildren(current($active));
         $this->activeValue(key($active));
         $this->unCheckedChildren(current($inactive));
