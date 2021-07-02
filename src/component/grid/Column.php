@@ -357,7 +357,7 @@ class Column extends Component
             $content = [];
             foreach ($fields as $field=>$label){
                 $switch = Switchs::create(null, $data[$field])
-                    ->state([1 => ''], [0 => ''])
+                    ->state([[1 => ''], [0 => '']])
                     ->url('/eadmin/batch.rest')
                     ->field($field)
                     ->params($params);
@@ -384,9 +384,8 @@ class Column extends Component
 
             $params = $this->grid->getCallMethod();
             $params['eadmin_ids'] = [$data[$this->grid->drive()->getPk()]];
-            [$active, $inactive] = $switchArr;
             return Switchs::create(null, $val)
-                ->state($active, $inactive)
+                ->state($switchArr)
                 ->url('/eadmin/batch.rest')
                 ->field($this->prop)
                 ->params($params);
@@ -409,11 +408,11 @@ class Column extends Component
     {
         $params = $this->grid->getCallMethod();
         $params['eadmin_ids'] = [$data[$this->grid->drive()->getPk()]];
-        [$active, $inactive] = $switchArr;
         if (!empty($text)) $text .= "：";
         return Html::create([
+        	$text,
             Switchs::create(null, $data[$field])
-                ->state($active, $inactive)
+                ->state($switchArr)
                 ->url('/eadmin/batch.rest')
                 ->field($field)
                 ->params($params),
