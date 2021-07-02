@@ -64,6 +64,12 @@ class RadioGroup extends Field
         $radio->removeAttr('modelValue');
         $optionBindField = Str::random(30, 3);
         $this->bindValue($options, 'options', $optionBindField);
+        if($this->formItem){
+            $this->formItem->form()->except([$optionBindField]);
+            if (empty($this->formItem->form()->manyRelation())) {
+                $mapField = $this->formItem->form()->bindAttr('model') . '.' . $optionBindField;
+            }
+        }
         $radioOption = $radio
             ->map($options,$optionBindField)
             ->mapAttr('label', 'value')
