@@ -26,7 +26,7 @@ class CheckboxGroup extends Field
     //禁用数据
     protected $disabledData = [];
 
-    public function __construct($field = null, $value = '')
+    public function __construct($field = null, $value = [])
     {
         if (empty($value)) {
             $value = [];
@@ -41,6 +41,7 @@ class CheckboxGroup extends Field
     public function disabledData(array $data)
     {
         $this->disabledData = $data;
+        return $this;
     }
 
     /**
