@@ -1,5 +1,5 @@
 <template>
-    <render v-loading="loading" :data="component" v-show="show"></render>
+    <render :data="component"></render>
 </template>
 
 <script>
@@ -24,7 +24,6 @@
                     params:Object.assign(props.params,{value:value,field:props.field})
                 }).then(res=>{
                     component.value = res.content.default[0]
-                    show.value = true
                 })
             }, 300)
             watch(()=>props.proxyData[props.field],value=>{
