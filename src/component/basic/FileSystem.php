@@ -36,6 +36,7 @@ class FileSystem extends Component
 			->disk('local')
 			->content(
 				Button::create('上传')
+                    ->icon('el-icon-upload')
 					->sizeMini()
 			));
 	}

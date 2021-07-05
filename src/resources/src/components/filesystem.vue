@@ -2,7 +2,7 @@
     <el-card class="filesystem" shadow="never">
         <template #header>
             <el-row style="display: flex;align-items: center;justify-content: space-between">
-                <el-col :md="16" :xs="24" style="display: flex;align-items: center">
+                <el-col :md="16" :xs="24" >
                     <el-button-group style="display: flex">
                         <el-button icon="el-icon-back" size="mini" @click="back"></el-button>
                         <div class="breadcrumb">
@@ -14,7 +14,7 @@
                             </el-breadcrumb>
                         </div>
                         <el-button icon="el-icon-refresh" size="mini" @click="loading = true"></el-button>
-                        <render :data="upload" multiple :save-dir="savePath" :on-progress="uploadProgress" @success="uploadSuccess"></render>
+                        <render :data="upload" multiple :accept="accept" :save-dir="savePath" :on-progress="uploadProgress" @success="uploadSuccess"></render>
                         <el-button  size="mini" @click="mkdir">新建文件夹</el-button>
                         <el-button  size="mini" type="danger" v-if="selectPaths.length > 0" @click="delSelect">删除选中</el-button>
                     </el-button-group>
@@ -131,6 +131,10 @@
             display:{
                 type: String,
                 default: 'grid'
+            },
+            accept: {
+                type: String,
+                default: '*'
             },
         },
         emits: ['update:modelValue','update:selection'],

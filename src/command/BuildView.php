@@ -160,10 +160,8 @@ class BuildView extends Make
      */
     protected function execute(Input $input, Output $output)
     {
-
-
+        
         if($input->hasOption('model')){
-
             $model = $input->getOption('model');
             $names = explode('/',$model);
             $names = array_filter($names);
@@ -189,6 +187,9 @@ class BuildView extends Make
                 file_put_contents($pathname, $this->buildClasses($classname_model,'model'));
             }
 
+        }else{
+            $output->writeln('<error>--model not exists</error>');
+            return false;
         }
 
         $name = trim($input->getArgument('name'));
@@ -196,8 +197,10 @@ class BuildView extends Make
         $names = array_filter($names);
         if(isset($names[1])){
             $classname = $this->getClassNames($names[0],'controller\\'.$names[1]);
+            $controller = $names[1];
         }else{
             $classname = $this->getClassNames('admin','controller\\'.$name);
+            $controller = $name;
         }
         $pathname = $this->getPathName($classname);
         if (is_file($pathname)) {
@@ -208,6 +211,12 @@ class BuildView extends Make
             mkdir(dirname($pathname), 0755, true);
         }
         if (!is_file($pathname)) {
+            if($model == $controller){
+                $model = '\\'.$classname_model;
+                $classname_model = '';
+            }else{
+                $classname_model = 'use '.$classname_model.';';
+            }
             file_put_contents($pathname, $this->buildClasses($classname,'controller',$model,$classname_model,$grid,$detail,$form));
         }
         $output->writeln('<info>created successfully.</info>');

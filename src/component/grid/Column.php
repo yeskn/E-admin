@@ -274,6 +274,16 @@ class Column extends Component
     }
 
     /**
+     * 音频显示
+     * @return $this
+     */
+    public function audio(){
+        $this->display(function ($val){
+            return "<audio controls src='{$val}'>您的浏览器不支持 audio 标签。</audio>";
+        });
+        return $this;
+    }
+    /**
      * 视频显示
      * @param int|string $width 宽度
      * @param int|string $height 高度

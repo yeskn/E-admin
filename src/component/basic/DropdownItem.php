@@ -52,9 +52,10 @@ class DropdownItem extends Component
      * @param array $data
      * @param mixed $url
      * @param string $confirm
-     * @return $this|Confirm
+     * @param string $input 
+     * @return $this
      */
-    public function save(array $data, $url, $confirm = '')
+    public function save(array $data, $url, $confirm = '',$input = false)
     {
         if($url instanceof Url){
             $url = (string)$url;
@@ -70,6 +71,9 @@ class DropdownItem extends Component
         } else {
             $confirm       = Confirm::create($this->content['default'][0])
                 ->message($confirm)->url($url)->params($data)->type('warning');
+            if($input !== false){
+                $confirm->input($input);
+            }
             $this->content = [];
             $this->content($confirm);
         }

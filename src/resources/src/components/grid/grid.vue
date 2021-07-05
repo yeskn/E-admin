@@ -3,13 +3,16 @@
         <!--工具栏-->
         <div :class="['tools',custom?'custom':'']" v-if="!hideTools">
             <el-row style="padding-top: 10px">
-                <el-col :md="6" style="display: flex;margin-bottom: 10px" v-if="quickSearchOn">
+                <el-col :md="5" style="display: flex;margin-bottom: 10px" v-if="quickSearchOn">
                     <!--快捷搜索-->
                     <el-input class="hidden-md-and-down" v-model="quickSearch" clearable prefix-icon="el-icon-search"
-                              size="small" style="margin-right: 10px;flex: 1" :placeholder="quickSearchText" @change="handleFilter" ></el-input>
-                    <el-button class="hidden-md-and-down" type="primary" size="small" icon="el-icon-search" @click="handleFilter">搜索</el-button>
+                              size="small" style="margin-right: 10px;flex: 1" :placeholder="quickSearchText" @change="handleFilter"  @keyup.enter="handleFilter">
+                        <template #append>
+                            <el-button class="hidden-md-and-down searchButton" type="primary" size="small" @click="handleFilter">搜索</el-button>
+                        </template>
+                    </el-input>
                 </el-col>
-                <el-col :md="quickSearchOn ? 14:20" style="margin-bottom: 10px">
+                <el-col :md="quickSearchOn ? 15:20" style="margin-bottom: 10px">
                     <!--添加-->
                     <render v-if="addButton" :data="addButton" :slot-props="grid"></render>
                     <!--导出-->
@@ -28,6 +31,15 @@
                     <el-button plain size="small" icon="el-icon-delete" v-if="!hideDeleteSelection && selectIds.length > 0" @click="deleteSelect">删除选中</el-button>
                     <el-button plain size="small" icon="el-icon-help" v-if="trashed && selectIds.length > 0" @click="recoverySelect">恢复选中</el-button>
                     <el-button type="danger" size="small" icon="el-icon-delete" v-if="!hideDeleteButton" @click="deleteAll()">{{trashed && !hideTrashed?'清空回收站':'清空数据'}}</el-button>
+<!--                    <a-popover-->
+<!--                            placement="bottom"-->
+<!--                            trigger="click"-->
+<!--                    >-->
+<!--                        <template #content>-->
+<!--                            <render :data="filter" ></render>-->
+<!--                        </template>-->
+<!--                        <el-button v-if="filter" type="primary" size="small" icon="el-icon-zoom-in" @click="visibleFilter">筛选</el-button>-->
+<!--                    </a-popover>-->
                     <el-button v-if="filter" type="primary" size="small" icon="el-icon-zoom-in" @click="visibleFilter">筛选</el-button>
                     <render v-for="tool in tools" :data="tool" :ids="selectIds" :grid-params="params" :slot-props="grid"></render>
                 </el-col>
@@ -57,7 +69,7 @@
             </el-row>
         </div>
         <!--筛选-->
-        <div class="filter" v-if="filter" v-show="filterShow">
+        <div :class="['filter',custom?'filterCustom':'']" v-if="filter" v-show="filterShow">
             <render :data="filter" ></render>
         </div>
         <div v-if="custom" >
@@ -88,7 +100,7 @@
             <!--表格-->
             <a-table v-else :row-selection="rowSelection" @expand="expandChange" @change="tableChange" :columns="tableColumns" :data-source="tableData"  :expanded-row-keys="expandedRowKeys" :pagination="false" :loading="loading" v-bind="$attrs" row-key="eadmin_id" ref="dragTable">
                 <template #title v-if="header">
-                    <div class="header"><render :data="header"></render></div>
+                    <div class="header"><render :data="header" :slot-props="grid"></render></div>
                 </template>
                 <template v-for="column in tableColumns" v-slot:[column.slots.title]>
                     <render :data="column.header" :slot-props="grid"></render>
@@ -197,6 +209,7 @@
             const dragTable = ref('')
             const grid = {grid:ctx.attrs.eadmin_grid, gridParam:ctx.attrs.eadmin_grid_param}
             const {loading,http} = useHttp()
+
             const filterShow = ref(props.expandFilter)
             const quickSearch = ref('')
             const selectIds = ref(props.selection || [])
@@ -655,6 +668,13 @@
 </script>
 
 <style scoped>
+    .searchButton{
+        background:#409eff!important;
+        color: #FFFFFF!important;
+        border-radius:0!important;
+        border-top-right-radius:4px!important;
+        border-bottom-right-radius:4px!important;
+    }
     .custom{
         background: none !important;
         padding-left: 0 !important;
@@ -687,5 +707,7 @@
         border-top: 1px solid #ededed;
         background: #fff;
     }
-
+    .filterCustom{
+        margin-bottom: 10px;
+    }
 </style>

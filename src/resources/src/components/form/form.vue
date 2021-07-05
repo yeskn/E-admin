@@ -1,17 +1,17 @@
 <template>
-    <el-main class='form'>
-    <el-form ref="eadminForm" :label-position="labelPosition" v-bind="$attrs" @submit.native.prevent>
-        <slot></slot>
-        <render :data="stepResult"></render>
-        <el-form-item v-if="!action.hide" v-bind="action.attr">
-            <slot name="leftAction"></slot>
-            <render v-if="action.submit" :loading="loading" :data="action.submit" :disabled="disabled"></render>
-            <render v-if="action.reset" :data="action.reset" @click="resetForm"></render>
-            <render v-if="action.cancel" :data="action.cancel" @click="cancelForm"></render>
-            <slot name="rightAction"></slot>
-        </el-form-item>
-        <slot name="footer"></slot>
-    </el-form>
+    <el-main class='form' :style="$attrs.style">
+        <el-form ref="eadminForm" :label-position="labelPosition" v-bind="$attrs" @submit.native.prevent>
+            <slot></slot>
+            <render :data="stepResult"></render>
+            <el-form-item v-if="!action.hide" v-bind="action.attr">
+                <slot name="leftAction"></slot>
+                <render v-if="action.submit" :loading="loading" :data="action.submit" :disabled="disabled"></render>
+                <render v-if="action.reset" :data="action.reset" @click="resetForm"></render>
+                <render v-if="action.cancel" :data="action.cancel" @click="cancelForm"></render>
+                <slot name="rightAction"></slot>
+            </el-form-item>
+            <slot name="footer"></slot>
+        </el-form>
     </el-main>
 </template>
 

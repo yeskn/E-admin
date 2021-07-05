@@ -60,7 +60,7 @@ class Button extends Component
      */
     public function dialog()
     {
-        $dialog = Dialog::create($this);
+        $dialog = Dialog::create($this)->title($this->content['default'][0]);
         return $dialog;
     }
 

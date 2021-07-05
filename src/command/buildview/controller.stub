@@ -9,7 +9,7 @@ use Eadmin\component\form\FormAction;
 use Eadmin\detail\Detail;
 use Eadmin\grid\Filter;
 use Eadmin\grid\Grid;
-use {%model_namespace%};
+{%model_namespace%}
 
 /**
  *

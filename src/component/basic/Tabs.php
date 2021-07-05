@@ -26,12 +26,17 @@ class Tabs extends Field
     protected $name = 'ElTabs';
     protected $tabPane = null;
 
+    /**
+     * @param $title 标题
+     * @param $content 内容
+     * @return TabPane
+     */
     public function pane($title, $content)
     {
         $tabPane = new TabPane();
         $tabPane->content($title, 'label');
         $tabPane->content($content);
         $this->content($tabPane);
-        return $this;
+        return $tabPane;
     }
 }

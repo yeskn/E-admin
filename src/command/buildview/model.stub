@@ -1,5 +1,6 @@
 <?php
 namespace {%namespace%};
+use Eadmin\model\BaseModel;
 
 class {%className%} extends BaseModel
 {

@@ -14,6 +14,7 @@ use think\helper\Str;
  * @link https://element-plus.gitee.io/#/zh-CN/component/radio
  * @method $this textColor(string $color) 按钮形式的 Radio 激活时的文本颜色    #ffffff
  * @method $this fill(string $color) 按钮形式的 Radio 激活时的填充色和边框色 #409EFF
+ * @method $this border(bool $border) 是否显示边框
  * @method $this size(string $size) 单选框组尺寸，仅对按钮形式的 Radio 或带有边框的 Radio 有效 medium / small / mini
  * @package Eadmin\component\form\field
  */
@@ -37,6 +38,7 @@ class RadioGroup extends Field
      * 设置选项数据
      * @param array $data 选项数据
      * @param bool $buttonTheme 是否按钮样式
+     * @param bool $border 边框样式
      * @return $this
      */
     public function options(array $data, bool $buttonTheme = false)
@@ -58,6 +60,9 @@ class RadioGroup extends Field
             $radio = RadioButton::create();
         } else {
             $radio = Radio::create();
+            if($this->attr('border')){
+                $radio->border();
+            }
         }
         $field = $radio->bindAttr('modelValue');
         $radio->removeBind($field);

@@ -9,7 +9,8 @@ import './component'
 import './directive'
 import zhLocale from 'element-plus/lib/locale/lang/zh-cn'
 import request from '@/utils/axios'
-import { Switch ,Table ,Dropdown,Menu,Steps,Result,List} from "ant-design-vue";
+import { Switch ,Table ,Dropdown,Menu,Steps,Result,List,Popover} from "ant-design-vue";
+app.use(Popover)
 app.use(List)
 app.use(Result)
 app.use(Steps)

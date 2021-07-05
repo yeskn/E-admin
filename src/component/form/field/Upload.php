@@ -101,7 +101,7 @@ class Upload extends Field
     }
     /**
      * 限制上传类型
-     * @param string $val
+     * @param string|array $val
      */
     public function ext($val)
     {
