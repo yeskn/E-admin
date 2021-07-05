@@ -297,6 +297,9 @@
 </script>
 
 <style scoped>
+.el-dialog__body .form{
+    padding:0;
+}
 .form{
     background: rgb(255, 255, 255);
     border-radius: 4px;
