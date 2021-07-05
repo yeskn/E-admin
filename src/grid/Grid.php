@@ -812,6 +812,7 @@ EOF;
                         //修复模糊查询，兼容mysql5.5以上
 //                        $q->whereLike($fields, "%{$keyword}%", 'OR');
                         foreach ($fields as $field) {
+                            if ($field == 'like') continue;
                             $q->whereOr("{$field} like binary '%{$keyword}%'");
                         }
                     });
@@ -830,6 +831,7 @@ EOF;
                 //修复模糊查询，兼容mysql5.5以上
 //                $q->whereLike($fields, "%{$keyword}%", 'OR');（废弃）
                 foreach ($whereFields as $field) {
+                    if ($field == 'like') continue;
                     $q->whereOr("{$field} like binary '%{$keyword}%'");
                 }
                 foreach ($whereOr as $field => $value) {
