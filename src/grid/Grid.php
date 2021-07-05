@@ -99,7 +99,6 @@ class Grid extends View
 
     public function __construct(Model $model)
     {
-
         $this->model = $model;
         $this->db = $this->model->db();
         $this->tableFields = $this->model->getTableFields();
@@ -803,13 +802,18 @@ EOF;
                 $relationTableFields = $db->getTableFields();
                 if (isset($relationWhereFields[$relationName])) {
                     $relationWhereFields[$relationName] = array_intersect($relationWhereFields[$relationName], $relationTableFields);
-                    $fields = implode('|', $relationWhereFields[$relationName]);
+//                    $fields = implode('|', $relationWhereFields[$relationName]);
+                    $fields = $relationWhereFields[$relationName];
                     $relationWhereCondtion = $relationWhereOr[$relationName] ?? [];
                     $db->where(function ($q) use ($fields, $keyword, $relationWhereCondtion) {
                         foreach ($relationWhereCondtion as $field => $value) {
                             $q->whereOr($field, $value);
                         }
-                        $q->whereLike($fields, "%{$keyword}%", 'OR');
+                        //修复模糊查询，兼容mysql5.5以上
+//                        $q->whereLike($fields, "%{$keyword}%", 'OR');
+                        foreach ($fields as $field) {
+                            $q->whereOr("{$field} like binary '%{$keyword}%'");
+                        }
                     });
                     $filter->paseFilter(null, $relationFilter . '.');
                     $wheres = $filter->db()->getOptions('where');
@@ -822,8 +826,12 @@ EOF;
                 }
             }
             $fields = implode('|', $whereFields);
-            $this->db->where(function ($q) use ($relationWhereSqls, $fields, $keyword, $whereOr) {
-                $q->whereLike($fields, "%{$keyword}%", 'OR');
+            $this->db->where(function ($q) use ($relationWhereSqls,$whereFields, $fields, $keyword, $whereOr) {
+                //修复模糊查询，兼容mysql5.5以上
+//                $q->whereLike($fields, "%{$keyword}%", 'OR');（废弃）
+                foreach ($whereFields as $field) {
+                    $q->whereOr("{$field} like binary '%{$keyword}%'");
+                }
                 foreach ($whereOr as $field => $value) {
                     $q->whereOr($field, $value);
                 }
