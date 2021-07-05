@@ -181,6 +181,14 @@
                         forEach(submitData,function (val,key) {
                             if(props.exceptField.indexOf(key) > -1){
                                 delete submitData[key]
+                            }else if(Array.isArray(val)){
+                                forEach(val,function (many) {
+                                    forEach(many,function (value,field) {
+                                        if(props.exceptField.indexOf(field) > -1){
+                                            delete many[field]
+                                        }
+                                    })
+                                })
                             }
                         })
                         if(bool){

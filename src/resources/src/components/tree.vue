@@ -1,5 +1,5 @@
 <template>
-    <el-tree :class="[horizontal ? 'eadmin-tree':'']"  @check="handleCheckChange" :default-checked-keys="defaultChecked"></el-tree>
+    <el-tree :class="[horizontal ? 'eadmin-tree':'']"  :current-node-key="modelValue" @node-click='handelClick' @check="handleCheckChange" :default-checked-keys="defaultChecked"></el-tree>
 </template>
 
 <script>
@@ -7,15 +7,17 @@
     export default defineComponent({
         name: "EadminTree",
         props: {
-            modelValue:[Array,Object],
+            modelValue:[Array,Object,String],
             horizontal:Boolean,
         },
         emits: ['update:modelValue'],
         setup(props, ctx) {
             const defaultChecked = [];
-            props.modelValue.forEach(item=>{
-                checked(item,ctx.attrs.data,defaultChecked)
-            })
+            if(Array.isArray(props.modelValue)){
+                props.modelValue.forEach(item=>{
+                    checked(item,ctx.attrs.data,defaultChecked)
+                })
+            }
             function checked(id,data,newArr){
                 data.forEach(item => {
                     if(item.id == id){
@@ -32,7 +34,13 @@
             function handleCheckChange(node,{checkedKeys,halfCheckedKeys}){
                 ctx.emit('update:modelValue',checkedKeys.concat(halfCheckedKeys))
             }
+            function handelClick(data) {
+                if(!ctx.showCheckbox){
+                    ctx.emit('update:modelValue',data.id)
+                }
+            }
             return {
+                handelClick,
                 defaultChecked,
                 handleCheckChange
             }
